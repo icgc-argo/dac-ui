@@ -8,12 +8,25 @@
     "start": "next start"
   },
   "dependencies": {
+    "@emotion/babel-plugin": "^11.3.0",
+    "@emotion/core": "^10.0.10",
+    "@emotion/styled": "^10.0.11",
+    "@icgc-argo/uikit": "^1.9.0",
     "next": "10.2.0",
+    "next-compose-plugins": "^2.2.1",
+    "next-images": "^1.7.0",
+    "next-transpile-modules": "^7.0.0",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-grid-system": "^7.1.2"
   },
   "devDependencies": {
     "@types/react": "^17.0.4",
     "typescript": "^4.2.4"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "trailingComma": "all",
+    "singleQuote": true
   }
 }

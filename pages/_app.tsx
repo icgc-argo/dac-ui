@@ -1,7 +1,11 @@
-import '../styles/globals.css';
+import Root from 'components/Root';
 
 const App = ({ Component, pageProps }: { Component: any; pageProps: any }) => {
-  return <Component {...pageProps} />;
+  return (
+    <Root pageContext={{}}>
+      <Component {...pageProps} />
+    </Root>
+  );
 };
 
 export default App;
