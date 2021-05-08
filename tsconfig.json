@@ -15,7 +15,8 @@
     "jsx": "preserve",
     "baseUrl": "./",
     "jsxImportSource": "@emotion/core",
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "types": ["@emotion/core"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "next.config.js"],
   "exclude": ["node_modules", "scripts/*", "**/*.test.ts"]
