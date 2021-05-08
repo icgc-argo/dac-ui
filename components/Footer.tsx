@@ -92,7 +92,11 @@ const showBreak = (i: number, total: number) => {
 
 const LinksSection = () => {
   return (
-    <div>
+    <div
+      css={css`
+        margin: 0 0.5rem;
+      `}
+    >
       <div>
         {footerLinks.map((link, i) => (
           <span key={`${link.title}-${i}`}>
