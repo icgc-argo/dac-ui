@@ -1,7 +1,9 @@
 import React from 'react';
 
-import DefaultPageLayout from 'components/DefaultPageLayout';
+import Home from 'components/pages/Home';
 
-export default function Home() {
-  return <DefaultPageLayout />;
-}
+const HomePage = () => {
+  return <Home />;
+};
+
+export default HomePage;
