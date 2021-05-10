@@ -5,9 +5,7 @@ const Head = () => {
   return (
     <NextHead>
       <link
-        href={
-          'https://fonts.googleapis.com/css?family=Lato:300,400,600&display=swap'
-        }
+        href={'https://fonts.googleapis.com/css?family=Lato:300,400,600&display=swap'}
         rel="stylesheet"
       />
       <link rel="shortcut icon" href={`/images/favicon.ico`} />
@@ -18,7 +16,7 @@ const Head = () => {
 export const PageHead = ({ title = '' }: { title?: string }) => {
   return (
     <NextHead>
-      <title>ICGC-DACO{` ${title}`}</title>
+      <title>ICGC-DACO{` ${title ? `| ${title}` : ''}`}</title>
     </NextHead>
   );
 };

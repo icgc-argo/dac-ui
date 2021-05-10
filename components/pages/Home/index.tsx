@@ -3,7 +3,7 @@ import React from 'react';
 import DefaultPageLayout from 'components/DefaultPageLayout';
 
 const Home = () => {
-  return <DefaultPageLayout />;
+  return <DefaultPageLayout title={'Homepage'} />;
 };
 
 export default Home;
