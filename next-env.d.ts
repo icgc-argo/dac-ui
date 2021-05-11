@@ -3,3 +3,4 @@
 
 declare module '@icgc-argo/uikit';
 declare module '@emotion/core/jsx-runtime';
+declare module 'url-join';
