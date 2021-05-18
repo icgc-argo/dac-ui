@@ -4,7 +4,6 @@ import { ContentHeader } from '@icgc-argo/uikit/PageLayout';
 
 const PageHeader = ({ children }: { children: ReactElement }): ReactElement => (
   <ContentHeader
-      as="header"
       css={css`
         background: #f8f8fb;
         height: fit-content;

@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { PageContainer } from '@icgc-argo/uikit/PageLayout';
 import { styled } from '@icgc-argo/uikit/index';
 
@@ -11,7 +11,7 @@ const ThreeRowPageContainer = styled(PageContainer)`
   grid-template-rows: 58px 1fr 110px;
 `;
 
-const DefaultPageLayout = ({ children, title = '' }: { children: ReactElement, title?: string }): ReactElement => {
+const DefaultPageLayout = ({ children, title = '' }: { children?: ReactNode, title?: string }): ReactElement => {
   return (
     <ThreeRowPageContainer>
       <PageHead title={title} />
