@@ -1,14 +1,19 @@
-import AppBar, { Logo, MenuGroup, MenuItem, NavBarElement, Section } from '@icgc-argo/uikit/AppBar';
+import { useRouter } from 'next/router';
+import urlJoin from 'url-join';
+import AppBar, { Logo, MenuGroup, MenuItem, Section } from '@icgc-argo/uikit/AppBar';
 import Button from '@icgc-argo/uikit/Button';
 import Typography from '@icgc-argo/uikit/Typography';
 import { css, styled, UikitTheme } from '@icgc-argo/uikit/index';
+import Link from '@icgc-argo/uikit/Link';
+import Icon from '@icgc-argo/uikit/Icon';
+
 import {
   CONTACT_PAGE,
   CONTROLLED_DATA_USERS_PAGE,
   HELP_PAGE,
   POLICIES_PAGE,
 } from 'global/constants/externalPaths';
-import Link from '@icgc-argo/uikit/Link';
+import { getConfig } from 'global/config';
 
 const StyledMenuItem = styled(MenuItem)`
   ${({ theme }: { theme: UikitTheme }) => `
@@ -40,6 +45,41 @@ const navBarLinks: LinkProps[] = [
     href: CONTROLLED_DATA_USERS_PAGE,
   },
 ];
+
+const LoginButton = () => {
+  const router = useRouter();
+  const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
+  const egoLoginUrl = new URL(urlJoin(NEXT_PUBLIC_EGO_API_ROOT, 'oauth/login/google'));
+  egoLoginUrl.searchParams.append('client_id', NEXT_PUBLIC_EGO_CLIENT_ID);
+  return (
+    <Button
+      onClick={(e) => router.push(egoLoginUrl.href)}
+      css={(theme: UikitTheme) =>
+        css`
+          background-color: ${theme.colors.accent2};
+          border: 1px solid ${theme.colors.accent2};
+        `
+      }
+    >
+      <div
+        css={css`
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+        `}
+      >
+        <Icon width="14px" height="14px" name="google" fill="none" />
+        <span
+          css={css`
+            padding-left: 8px;
+          `}
+        >
+          Login
+        </span>
+      </div>
+    </Button>
+  );
+};
 
 const NavBar = () => {
   return (
@@ -106,16 +146,7 @@ const NavBar = () => {
               `
             }
           >
-            <Button
-              css={(theme: UikitTheme) =>
-                css`
-                  background-color: ${theme.colors.accent2};
-                  border: 1px solid ${theme.colors.accent2};
-                `
-              }
-            >
-              Login
-            </Button>
+            <LoginButton />
           </StyledMenuItem>
         </MenuGroup>
       </Section>

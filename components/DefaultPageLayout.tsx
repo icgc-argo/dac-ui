@@ -4,13 +4,19 @@ import NavBar from './NavBar';
 import Footer from './Footer';
 import { PageHead } from './Head';
 
-const DefaultPageLayout = ({ title = '' }: { title?: string }) => {
+const DefaultPageLayout = ({
+  children,
+  title = '',
+}: {
+  children: React.ReactNode;
+  title?: string;
+}) => {
   return (
     <div>
       <PageHead title={title} />
       <NavBar />
       <PageBody className="noSidebar">
-        <PageContent></PageContent>
+        <PageContent>{children}</PageContent>
       </PageBody>
       <Footer />
     </div>

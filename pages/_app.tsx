@@ -1,8 +1,19 @@
-import Root from 'components/Root';
+import { NextPageContext } from 'next';
 
-const App = ({ Component, pageProps }: { Component: any; pageProps: any }) => {
+import Root from 'components/Root';
+import { PageConfigProps, PageWithConfig } from 'global/utils/pages/types';
+
+const App = ({
+  Component,
+  pageProps,
+  ctx,
+}: {
+  Component: PageWithConfig;
+  pageProps: PageConfigProps;
+  ctx: NextPageContext;
+}) => {
   return (
-    <Root pageContext={{}}>
+    <Root pageContext={ctx}>
       <Component {...pageProps} />
     </Root>
   );

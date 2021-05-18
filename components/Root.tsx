@@ -1,14 +1,10 @@
-import ThemeProvider from '@icgc-argo/uikit/ThemeProvider';
-import Head from 'components/Head';
 import React from 'react';
+import ThemeProvider from '@icgc-argo/uikit/ThemeProvider';
 
-const Root = ({
-  children,
-  pageContext,
-}: {
-  children: any;
-  pageContext: any;
-}) => {
+import Head from 'components/Head';
+import { AuthProvider } from 'global/hooks/useAuthContext';
+
+const Root = ({ children, pageContext }: { children: any; pageContext: any }) => {
   return (
     <React.Fragment>
       <style>
@@ -31,7 +27,9 @@ const Root = ({
       `}
       </style>
       <Head />
-      <ThemeProvider>{children}</ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider>{children}</ThemeProvider>
+      </AuthProvider>
     </React.Fragment>
   );
 };
