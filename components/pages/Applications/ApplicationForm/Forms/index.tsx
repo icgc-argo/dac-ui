@@ -129,7 +129,7 @@ const ApplicationFormsBase = (): ReactElement => {
           </VerticalTabs.Item>
         </VerticalTabs>
 
-        <main
+        <div
           css={css`
             border-radius: 0 8px 8px 0;
             display: flex;
@@ -205,7 +205,7 @@ const ApplicationFormsBase = (): ReactElement => {
               />
             </Button>
           </footer>
-        </main>
+        </div>
       </ContentBox>
     </ContentBody>
   );
