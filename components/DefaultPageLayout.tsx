@@ -1,8 +1,15 @@
-import React from 'react';
-import { PageBody, PageContent } from '@icgc-argo/uikit/PageLayout';
-import NavBar from './NavBar';
-import Footer from './Footer';
+import { ReactElement, ReactNode } from 'react';
+import { PageContainer } from '@icgc-argo/uikit/PageLayout';
+import { styled } from '@icgc-argo/uikit/index';
+
 import { PageHead } from './Head';
+import Footer from './Footer';
+import NavBar from './NavBar';
+
+const ThreeRowPageContainer = styled(PageContainer)`
+  background: none;
+  grid-template-rows: 58px 1fr 110px;
+`;
 
 const DefaultPageLayout = ({
   children,
@@ -10,16 +17,14 @@ const DefaultPageLayout = ({
 }: {
   children: React.ReactNode;
   title?: string;
-}) => {
+}): ReactElement => {
   return (
-    <div>
+    <ThreeRowPageContainer>
       <PageHead title={title} />
       <NavBar />
-      <PageBody className="noSidebar">
-        <PageContent>{children}</PageContent>
-      </PageBody>
+      <main>{children}</main>
       <Footer />
-    </div>
+    </ThreeRowPageContainer>
   );
 };
 
