@@ -1,0 +1,7 @@
+.env.local
+.env.test
+.env.schema
+.env
+.next
+node_modules
+Dockerfile
