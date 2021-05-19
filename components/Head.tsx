@@ -8,7 +8,7 @@ const Head = () => {
         href={'https://fonts.googleapis.com/css?family=Lato:300,400,600&display=swap'}
         rel="stylesheet"
       />
-      <link rel="shortcut icon" href={`/images/favicon.ico`} />
+      <link rel="shortcut icon" href={`favicon.ico`} />
     </NextHead>
   );
 };
