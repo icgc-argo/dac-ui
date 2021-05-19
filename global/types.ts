@@ -18,6 +18,10 @@ export enum Language {
 
 export enum ProviderType {
   GOOGLE = 'GOOGLE',
+  ORCID = 'ORCID',
+  LINKEDIN = 'LINKEDIN',
+  GITHUB = 'GITHUB',
+  FACEBOOK = 'FACEBOOK',
 }
 
 export interface User {
@@ -28,10 +32,9 @@ export interface User {
   lastName: string;
   createdAt: number;
   lastLogin: number;
-  preferredLanguage?: Language;
+  preferredLanguage?: string | undefined;
   providerType: ProviderType;
   providerSubjectId: string;
-  scope: string[];
 }
 
 export type EgoJwtData = {

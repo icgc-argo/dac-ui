@@ -14,14 +14,15 @@ import {
   POLICIES_PAGE,
 } from 'global/constants/externalPaths';
 import { getConfig } from 'global/config';
+import useAuthContext from 'global/hooks/useAuthContext';
 
 const StyledMenuItem = styled(MenuItem)`
   ${({ theme }: { theme: UikitTheme }) => `
     border: none;
     color: ${theme.colors.black};
     &:hover {
-      background-color: ${theme.colors.grey_3};
-      color: ${theme.colors.black};
+      background-color: ${theme.colors.grey_4};
+      color: ${theme.colors.secondary};
     }
   `}
 `;
@@ -82,6 +83,8 @@ const LoginButton = () => {
 };
 
 const NavBar = () => {
+  const { user } = useAuthContext();
+
   return (
     <AppBar
       css={(theme: UikitTheme) =>
