@@ -30,10 +30,6 @@ const StyledMenuItem = styled(MenuItem)`
 export type LinkProps = { title: string; href: string; target?: string };
 const navBarLinks: LinkProps[] = [
   {
-    title: 'Contact Us',
-    href: CONTACT_PAGE,
-  },
-  {
     title: 'Policies & Guidelines',
     href: POLICIES_PAGE,
   },
@@ -93,6 +89,7 @@ const NavBar = () => {
           border: none;
           display: flex;
           justify-content: space-between;
+          box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.1), 0 1px 5px 0 rgba(0, 0, 0, 0.08);
         `
       }
     >
