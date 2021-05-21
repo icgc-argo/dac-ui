@@ -11,14 +11,18 @@ const ThreeRowPageContainer = styled(PageContainer)`
   grid-template-rows: 58px 1fr 110px;
 `;
 
-const DefaultPageLayout = ({ children, title = '' }: { children?: ReactNode, title?: string }): ReactElement => {
+const DefaultPageLayout = ({
+  children,
+  title = '',
+}: {
+  children?: ReactNode;
+  title?: string;
+}): ReactElement => {
   return (
     <ThreeRowPageContainer>
       <PageHead title={title} />
       <NavBar />
-      <main>
-        {children}
-      </main>
+      <main>{children}</main>
       <Footer />
     </ThreeRowPageContainer>
   );
