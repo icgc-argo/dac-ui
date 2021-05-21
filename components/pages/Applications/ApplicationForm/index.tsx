@@ -3,7 +3,7 @@ import { ReactElement } from 'react';
 import ApplicationHeader from './Header';
 import ApplicationFormsBase from './Forms';
 
-const ApplicationForm = ({ ID='none' }): ReactElement => {
+const ApplicationForm = ({ ID = 'none' }): ReactElement => {
   return (
     <>
       <ApplicationHeader ID={ID} />
@@ -11,6 +11,6 @@ const ApplicationForm = ({ ID='none' }): ReactElement => {
       <ApplicationFormsBase />
     </>
   );
-}
+};
 
 export default ApplicationForm;
