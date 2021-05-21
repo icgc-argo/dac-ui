@@ -6,11 +6,11 @@ import Actions from './Actions';
 import Details from './Details';
 import Progress from './Progress';
 
-const ApplicationHeader = ({ ID='none' }): ReactElement => {
+const ApplicationHeader = ({ ID = 'none' }): ReactElement => {
   const [applicationDetails, setApplicationDetails] = useState({
     createdAt: 'May. 22, 2021',
     lastUpdated: 'May. 24, 2021  1:57 p.m.',
-  }); 
+  });
 
   return (
     <PageHeader>
@@ -32,6 +32,6 @@ const ApplicationHeader = ({ ID='none' }): ReactElement => {
       </div>
     </PageHeader>
   );
-}
+};
 
 export default ApplicationHeader;
