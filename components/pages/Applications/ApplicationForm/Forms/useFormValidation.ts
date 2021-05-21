@@ -38,4 +38,4 @@ export const useFormValidation = () => {
   }
 }
 
-export * from './types';
+export type { FormSectionNames, ValidationActionType, ValidationParametersType } from './types';
