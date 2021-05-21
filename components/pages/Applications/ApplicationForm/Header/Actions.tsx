@@ -31,7 +31,7 @@ const HeaderActions = (): ReactElement => {
           height="12px"
           name="download"
         />{' '}
-        Download PDF
+        Draft PDF
       </Button>
     </section>
   );
