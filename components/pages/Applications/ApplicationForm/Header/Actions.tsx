@@ -18,19 +18,11 @@ const HeaderActions = (): ReactElement => {
         }
       `}
     >
-      <Button
-        onClick={function noRefCheck(){}}
-        size="sm"
-        variant="secondary"
-      >
+      <Button onClick={function noRefCheck() {}} size="sm" variant="secondary">
         Close Application
       </Button>
 
-      <Button
-        onClick={function noRefCheck(){}}
-        size="sm"
-        variant="secondary"
-      >
+      <Button onClick={function noRefCheck() {}} size="sm" variant="secondary">
         <Icon
           css={css`
             margin-bottom: -2px;
@@ -39,7 +31,7 @@ const HeaderActions = (): ReactElement => {
           height="12px"
           name="download"
         />{' '}
-        Download PDF
+        Draft PDF
       </Button>
     </section>
   );
