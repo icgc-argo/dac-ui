@@ -2,7 +2,12 @@ import React, { createContext, useState } from 'react';
 import { useRouter } from 'next/router';
 
 import { EGO_JWT_KEY } from '../constants/auth';
-import { decodeToken, extractUser, isValidJwt } from '../utils/egoTokenUtils';
+import {
+  decodeToken,
+  extractUser,
+  getPermissionsFromToken,
+  isValidJwt,
+} from '../utils/egoTokenUtils';
 import { UserWithId } from '../types';
 
 type T_AuthContext = {
@@ -10,6 +15,7 @@ type T_AuthContext = {
   logout: () => void;
   user?: UserWithId;
   fetchWithAuth: typeof fetch;
+  permissions: string[];
 };
 
 const AuthContext = createContext<T_AuthContext>({
@@ -17,6 +23,7 @@ const AuthContext = createContext<T_AuthContext>({
   logout: () => {},
   user: undefined,
   fetchWithAuth: fetch,
+  permissions: [],
 });
 
 export const AuthProvider = ({
@@ -64,11 +71,14 @@ export const AuthProvider = ({
 
   const userInfo = token ? decodeToken(token) : null;
   const user = userInfo ? extractUser(userInfo) : undefined;
+  const permissions = getPermissionsFromToken(token);
+
   const authData = {
     token,
     logout,
     user,
     fetchWithAuth,
+    permissions,
   };
 
   return <AuthContext.Provider value={authData}>{children}</AuthContext.Provider>;

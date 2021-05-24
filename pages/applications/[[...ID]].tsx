@@ -1,4 +1,5 @@
 import Applications from 'components/pages/Applications';
+import useAuthContext from 'global/hooks/useAuthContext';
 import { createPage } from 'global/utils/pages/createPage';
 
 const ApplicationPage = createPage({
@@ -8,6 +9,7 @@ const ApplicationPage = createPage({
   },
   isPublic: false,
 })(() => {
+  const { permissions } = useAuthContext();
   return <Applications />;
 });
 

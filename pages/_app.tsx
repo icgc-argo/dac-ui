@@ -20,7 +20,6 @@ const App = ({
   const [initialJwt, setInitialJwt] = useState<string | undefined>();
   useEffect(() => {
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || undefined;
-    console.log('wat: ', egoJwt);
     if (isValidJwt(egoJwt)) {
       setInitialJwt(egoJwt);
     } else {
