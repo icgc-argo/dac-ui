@@ -21,11 +21,12 @@
 
 import React, { useEffect } from 'react';
 import urlJoin from 'url-join';
+import Router from 'next/router';
 import { css } from '@emotion/core';
+import DnaLoader from '@icgc-argo/uikit/DnaLoader';
 
 import { getConfig } from '../global/config';
 import { EGO_JWT_KEY } from 'global/constants/auth';
-import Router from 'next/router';
 import { isValidJwt } from '../global/utils/egoTokenUtils';
 import { createPage } from 'global/utils/pages/createPage';
 import DefaultPageLayout from 'components/DefaultPageLayout';
@@ -79,26 +80,20 @@ const LoginLoaderPage = createPage({
   return (
     <DefaultPageLayout>
       <div
-        css={(theme) =>
-          css`
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: ${theme.colors.grey_2};
-          `
-        }
+        css={css`
+          display: flex;
+          flex: 1;
+        `}
       >
         <div
-          css={(theme) =>
-            css`
-              margin-top: 2rem;
-              color: ${theme.colors.accent};
-              ${theme.typography.heading}
-            `
-          }
+          css={css`
+            display: flex;
+            flex: 1 1 0;
+            justify-content: center;
+            align-items: center;
+          `}
         >
-          Logging in...
+          <DnaLoader />
         </div>
       </div>
     </DefaultPageLayout>
