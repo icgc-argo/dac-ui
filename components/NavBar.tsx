@@ -168,6 +168,7 @@ const NavBar = () => {
           display: flex;
           justify-content: space-between;
           box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.1), 0 1px 5px 0 rgba(0, 0, 0, 0.08);
+          z-index: 1;
         `
       }
     >
