@@ -11,6 +11,7 @@
     "@emotion/babel-plugin": "^11.3.0",
     "@emotion/core": "^10.0.10",
     "@emotion/styled": "^10.0.11",
+    "@icgc-argo/ego-token-utils": "^8.1.1",
     "@icgc-argo/uikit": "^1.10.0",
     "next": "10.2.0",
     "next-compose-plugins": "^2.2.1",
