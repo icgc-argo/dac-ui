@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 
 import DefaultPageLayout from 'components/DefaultPageLayout';
 import ApplicationForm from './ApplicationForm';
+import Dashboard from './Dashboard';
 
 type QueryType = {
   query: {
@@ -19,12 +20,7 @@ const Application = (): ReactElement => {
 
   return (
     <DefaultPageLayout title={pageTitle}>
-      {appId ? (
-        <ApplicationForm appId={appId} />
-      ) : (
-        // placeholder for the Dashboard
-        <></>
-      )}
+      {appId ? <ApplicationForm appId={appId} /> : <Dashboard />}
     </DefaultPageLayout>
   );
 };
