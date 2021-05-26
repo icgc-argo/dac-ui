@@ -2,46 +2,44 @@ import { css } from '@icgc-argo/uikit';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Icon from '@icgc-argo/uikit/Icon';
 import { styled } from '@icgc-argo/uikit';
+import Link from '@icgc-argo/uikit/Link';
+import Image from 'next/image';
 
-/* const hasAccessMessage = (
-  <div>
-    You have access to <a href="">ICGC Controlled Data »</a>
-  </div>
-);
-const noAccessMessage = 'You do not have access to ICGC Controlled Data.';
- */
+const IconWithText = styled('div')``;
 
-const IconWithText = styled('div')`
-  color: ${({ theme }: { theme: any }) => theme.colors.accent1_dark};
-  svg {
-    margin-right: 7px;
-    display: inline-block;
-    vertical-align: middle;
-  }
-`;
+//const getConfig = (hasAccess: boolean): {iconName: string} => (hasAccess ? {} : {});
 
 const AccessBox = ({ hasAccess = false }: { hasAccess?: boolean }) => {
   const theme = useTheme();
+  const iconName = hasAccess ? 'success' : 'dna_locked';
+  const iconFill = hasAccess ? 'white' : 'accent2';
+
+  // const config = getConfig(hasAccess);
+
   return (
     <div
       css={css`
         border: 1px solid ${theme.colors.grey_2};
         border-radius: 8px;
-        padding: 8px;
+        padding: 18px 16px;
+        display: flex;
+        align-items: center;
       `}
     >
-      <IconWithText>
-        <Icon name="success" width="40px" height="40px" fill="accent1_dimmed" />
-        ICGC DACO Approved!
+      <IconWithText hasAccess={hasAccess}>
+        <Image src="/icons/controlled_data.svg" width={40} height={40} />
+        <div> {hasAccess ? 'ICGC DACO Approved!' : 'No Access'}</div>
       </IconWithText>
-      <div
-        css={css`
-          height: 10px;
-          width: 0;
-          border: 1px solid grey;
-        `}
-      />
-      <div>You have access to ICGC Controlled Data »</div>
+
+      <div>
+        {hasAccess ? (
+          <div>
+            You have access to <Link>ICGC Controlled Data »</Link>
+          </div>
+        ) : (
+          'You do not have access to ICGC Controlled Data.'
+        )}
+      </div>
     </div>
   );
 };
