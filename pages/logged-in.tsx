@@ -22,8 +22,6 @@
 import React, { useEffect } from 'react';
 import urlJoin from 'url-join';
 import Router from 'next/router';
-import { css } from '@emotion/core';
-import DnaLoader from '@icgc-argo/uikit/DnaLoader';
 
 import { getConfig } from '../global/config';
 import { EGO_JWT_KEY } from 'global/constants/auth';
@@ -79,23 +77,7 @@ const LoginLoaderPage = createPage({
 
   return (
     <DefaultPageLayout>
-      <div
-        css={css`
-          display: flex;
-          flex: 1;
-        `}
-      >
-        <div
-          css={css`
-            display: flex;
-            flex: 1 1 0;
-            justify-content: center;
-            align-items: center;
-          `}
-        >
-          <DnaLoader />
-        </div>
-      </div>
+      <div></div>
     </DefaultPageLayout>
   );
 });

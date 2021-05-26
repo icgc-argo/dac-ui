@@ -1,6 +1,6 @@
 import { ReactElement, ReactNode } from 'react';
 import { PageContainer } from '@icgc-argo/uikit/PageLayout';
-import { css, styled } from '@icgc-argo/uikit/index';
+import { styled } from '@icgc-argo/uikit/index';
 
 import { PageHead } from './Head';
 import Footer from './Footer';
@@ -22,14 +22,7 @@ const DefaultPageLayout = ({
     <ThreeRowPageContainer>
       <PageHead title={title} />
       <NavBar />
-      <main
-        css={css`
-          display: flex;
-          flex: 1;
-        `}
-      >
-        {children}
-      </main>
+      <main>{children}</main>
       <Footer />
     </ThreeRowPageContainer>
   );
