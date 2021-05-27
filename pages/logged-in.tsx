@@ -24,7 +24,7 @@ import urlJoin from 'url-join';
 import Router from 'next/router';
 
 import { getConfig } from '../global/config';
-import { EGO_JWT_KEY } from 'global/constants/auth';
+import { EGO_JWT_KEY } from 'global/constants';
 import { isValidJwt } from '../global/utils/egoTokenUtils';
 import { createPage } from 'global/utils/pages/createPage';
 import DefaultPageLayout from 'components/DefaultPageLayout';
