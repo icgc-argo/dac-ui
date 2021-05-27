@@ -1,6 +1,8 @@
 import { UikitIconNames } from '@icgc-argo/uikit/Icon/icons';
 import { TAG_VARIANTS } from '@icgc-argo/uikit/Tag';
 
+import { FormSectionOverallStates } from '../types';
+
 // <Tag> colour reference:
 //   DISABLED: #dcdde1
 //   ERROR: #df1b42
@@ -13,11 +15,11 @@ import { TAG_VARIANTS } from '@icgc-argo/uikit/Tag';
 //   EDITABLE: #7f55cc
 
 type ValidationConfigType = {
-  iconName: UikitIconNames,
-  tagVariant: keyof typeof TAG_VARIANTS,
-}
+  iconName: UikitIconNames;
+  tagVariant: keyof typeof TAG_VARIANTS;
+};
 
-export const getValidationUIConfig = (status: string): ValidationConfigType => {
+export const getValidationUIConfig = (status: FormSectionOverallStates): ValidationConfigType => {
   switch (status) {
     case 'complete':
       return {
@@ -48,7 +50,7 @@ export const getValidationUIConfig = (status: string): ValidationConfigType => {
         iconName: 'lock',
         tagVariant: 'NEUTRAL',
       };
-    
+
     default:
       return {
         iconName: 'question',
@@ -56,3 +58,5 @@ export const getValidationUIConfig = (status: string): ValidationConfigType => {
       };
   }
 };
+
+export type { FormSectionOverallStates } from '../types';

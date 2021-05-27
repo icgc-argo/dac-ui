@@ -6,12 +6,12 @@ import Typography from '@icgc-argo/uikit/Typography';
 const HeaderDetails = ({
   applicant,
   createdAt,
-  ID,
+  appId,
   lastUpdated,
 }: {
   applicant?: string;
   createdAt?: string;
-  ID: string;
+  appId: string;
   lastUpdated?: string;
 }): ReactElement => (
   <section
@@ -26,7 +26,7 @@ const HeaderDetails = ({
         margin: 0 0 5px;
       `}
     >
-      <Link>My Applications</Link>: {ID}
+      <Link>My Applications</Link>: {appId.toUpperCase()}
     </Typography>
 
     {(createdAt || lastUpdated) && (

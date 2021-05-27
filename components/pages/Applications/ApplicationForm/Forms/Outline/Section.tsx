@@ -3,6 +3,7 @@ import { css } from '@icgc-argo/uikit';
 import Typography from '@icgc-argo/uikit/Typography';
 import VerticalTabs from '@icgc-argo/uikit/VerticalTabs';
 
+import { FormSectionOverallStates } from './helpers';
 import ValidationIcon from './ValidationIcon';
 
 const FormSection = ({
@@ -14,7 +15,7 @@ const FormSection = ({
 }: {
   active?: boolean;
   label?: string;
-  status?: string;
+  status?: FormSectionOverallStates;
   switchSection?: MouseEventHandler<HTMLButtonElement>;
   tooltip?: string;
 }): ReactElement => {
@@ -40,7 +41,7 @@ const FormSection = ({
         {label}
       </Typography>
 
-      {!['disabled', 'pristine'].includes(status) && <ValidationIcon status={status} />}
+      {!['disabled', 'pristine', 'touched'].includes(status) && <ValidationIcon status={status} />}
     </VerticalTabs.Item>
   );
 };

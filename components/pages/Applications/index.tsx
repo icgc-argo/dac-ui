@@ -12,13 +12,15 @@ type QueryType = {
 
 const Application = (): ReactElement => {
   const {
-    query: { ID: [applicationID] = [] },
+    query: { ID: [appID = ''] = [] },
   }: QueryType = useRouter();
 
+  const pageTitle = appID.toUpperCase() || 'Application page';
+
   return (
-    <DefaultPageLayout title={'Application page'}>
-      {applicationID ? (
-        <ApplicationForm ID={applicationID} />
+    <DefaultPageLayout title={pageTitle}>
+      {appID ? (
+        <ApplicationForm appId={appID} />
       ) : (
         // placeholder for the Dashboard
         <></>

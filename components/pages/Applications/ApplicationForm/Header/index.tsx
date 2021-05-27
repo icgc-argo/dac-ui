@@ -6,7 +6,7 @@ import Actions from './Actions';
 import Details from './Details';
 import Progress from './Progress';
 
-const ApplicationHeader = ({ ID = 'none' }): ReactElement => {
+const ApplicationHeader = ({ appId = 'none' }): ReactElement => {
   const [applicationDetails, setApplicationDetails] = useState({
     createdAt: 'May. 22, 2021',
     lastUpdated: 'May. 24, 2021  1:57 p.m.',
@@ -24,7 +24,7 @@ const ApplicationHeader = ({ ID = 'none' }): ReactElement => {
           width: 100%;
         `}
       >
-        <Details ID={ID} {...applicationDetails} />
+        <Details appId={appId} {...applicationDetails} />
 
         <Progress />
 

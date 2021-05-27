@@ -4,10 +4,10 @@ import { css, UikitTheme } from '@icgc-argo/uikit/index';
 import Tag from '@icgc-argo/uikit/Tag';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 
-import { getValidationUIConfig } from './helpers';
+import { FormSectionOverallStates, getValidationUIConfig } from './helpers';
 
-const ValidationIcon = ({ status = '' }): ReactElement => {
-  const theme = useTheme();
+const ValidationIcon = ({ status }: { status: FormSectionOverallStates }): ReactElement => {
+  const theme: UikitTheme = useTheme();
   const { iconName, tagVariant } = getValidationUIConfig(status);
 
   return (
