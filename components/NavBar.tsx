@@ -1,22 +1,40 @@
-import AppBar, { Logo, MenuGroup, MenuItem, NavBarElement, Section } from '@icgc-argo/uikit/AppBar';
+import { createRef, useState } from 'react';
+import { useRouter } from 'next/router';
+import urlJoin from 'url-join';
+import AppBar, {
+  DropdownMenu,
+  Logo,
+  MenuGroup,
+  MenuItem,
+  Section,
+  NavBarElement,
+} from '@icgc-argo/uikit/AppBar';
 import Button from '@icgc-argo/uikit/Button';
 import Typography from '@icgc-argo/uikit/Typography';
 import { css, styled, UikitTheme } from '@icgc-argo/uikit/index';
+import Link from '@icgc-argo/uikit/Link';
+import Icon from '@icgc-argo/uikit/Icon';
+import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import useClickAway from '@icgc-argo/uikit/utils/useClickAway';
+
 import {
-  CONTACT_PAGE,
   CONTROLLED_DATA_USERS_PAGE,
   HELP_PAGE,
   POLICIES_PAGE,
 } from 'global/constants/externalPaths';
-import Link from '@icgc-argo/uikit/Link';
+import { getConfig } from 'global/config';
+import useAuthContext from 'global/hooks/useAuthContext';
+import { UserWithId } from 'global/types';
+import { isDacoAdmin } from 'global/utils/egoTokenUtils';
+import { ADMIN_APPLICATIONS_LABEL, APPLICANT_APPLICATIONS_LABEL } from 'global/constants';
 
 const StyledMenuItem = styled(MenuItem)`
   ${({ theme }: { theme: UikitTheme }) => `
     border: none;
     color: ${theme.colors.black};
     &:hover {
-      background-color: ${theme.colors.grey_3};
-      color: ${theme.colors.black};
+      background-color: ${theme.colors.grey_4};
+      color: ${theme.colors.secondary};
     }
   `}
 `;
@@ -37,7 +55,118 @@ const navBarLinks: LinkProps[] = [
   },
 ];
 
+const UserDisplayName = ({ user, dropdownOpen }: { user: UserWithId; dropdownOpen: boolean }) => {
+  const theme = useTheme();
+  return (
+    <div
+      css={css`
+        display: flex;
+        align-items: center;
+      `}
+    >
+      <div
+        css={(theme: UikitTheme) => css`
+          background-color: ${theme.colors.secondary};
+          border-radius: 50%;
+          width: 30px;
+          height: 30px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-right: 0.5rem;
+        `}
+      >
+        <Icon name="user" fill={theme.colors.white} />
+      </div>
+
+      <div
+        css={css`
+          display: flex;
+          flex-direction: column;
+          margin-right: 0.5rem;
+          align-items: flex-start;
+        `}
+      >
+        <Typography
+          variant="data"
+          css={css`
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 2px;
+          `}
+        >
+          Hello, {user.firstName}
+        </Typography>
+        {user.email && (
+          <Typography
+            css={css`
+              max-width: 125px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            `}
+            variant="data"
+          >
+            <span>{user.email}</span>
+          </Typography>
+        )}
+      </div>
+
+      {dropdownOpen ? <Icon name="chevron_up" /> : <Icon name="chevron_down" />}
+    </div>
+  );
+};
+
+const LoginButton = () => {
+  const router = useRouter();
+  const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
+  const egoLoginUrl = new URL(urlJoin(NEXT_PUBLIC_EGO_API_ROOT, 'oauth/login/google'));
+  egoLoginUrl.searchParams.append('client_id', NEXT_PUBLIC_EGO_CLIENT_ID);
+  return (
+    <Button
+      onClick={(e) => router.push(egoLoginUrl.href)}
+      css={(theme: UikitTheme) =>
+        css`
+          background-color: ${theme.colors.accent2};
+          border: 1px solid ${theme.colors.accent2};
+        `
+      }
+    >
+      <div
+        css={css`
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+        `}
+      >
+        <Icon width="14px" height="14px" name="google" fill="none" />
+        <span
+          css={css`
+            padding-left: 8px;
+          `}
+        >
+          Login
+        </span>
+      </div>
+    </Button>
+  );
+};
+
 const NavBar = () => {
+  const { user, logout, permissions } = useAuthContext();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = createRef() as React.RefObject<HTMLDivElement>;
+
+  useClickAway({
+    domElementRef: dropdownRef,
+    onClickAway: () => setDropdownOpen(false),
+    onElementClick: () => setDropdownOpen(!dropdownOpen),
+  });
+
+  const applicationsTitle = isDacoAdmin(permissions)
+    ? ADMIN_APPLICATIONS_LABEL
+    : APPLICANT_APPLICATIONS_LABEL;
+
   return (
     <AppBar
       css={(theme: UikitTheme) =>
@@ -83,38 +212,74 @@ const NavBar = () => {
       </Section>
       <Section>
         <MenuGroup>
-          <StyledMenuItem>
-            <Typography
-              css={(theme) => css`
-                ${theme.typography.data};
-                text-transform: uppercase;
-                font-weight: bold;
-                color: ${theme.colors.accent2_dark};
-              `}
-            >
-              Apply for Access
-            </Typography>
-          </StyledMenuItem>
-          <StyledMenuItem
-            css={(theme: UikitTheme) =>
-              css`
-                &:hover {
-                  background-color: ${theme.colors.white};
-                }
-              `
-            }
-          >
-            <Button
+          {user ? (
+            <StyledMenuItem
               css={(theme: UikitTheme) =>
                 css`
-                  background-color: ${theme.colors.accent2};
-                  border: 1px solid ${theme.colors.accent2};
+                  color: ${theme.colors.secondary};
+                  border-left: 1px solid ${theme.colors.grey_2};
+                  border-right: 1px solid ${theme.colors.grey_2};
+                  border-bottom: 3px solid ${theme.colors.secondary};
                 `
               }
             >
-              Login
-            </Button>
-          </StyledMenuItem>
+              {applicationsTitle}
+            </StyledMenuItem>
+          ) : (
+            <StyledMenuItem>
+              <Typography
+                css={(theme) => css`
+                  ${theme.typography.data};
+                  text-transform: uppercase;
+                  font-weight: bold;
+                  color: ${theme.colors.accent2_dark};
+                `}
+              >
+                Apply for Access
+              </Typography>
+            </StyledMenuItem>
+          )}
+          {user ? (
+            <StyledMenuItem
+              css={(theme: UikitTheme) =>
+                css`
+                  &:hover {
+                    background-color: ${theme.colors.grey_4};
+                    svg {
+                      fill: ${theme.colors.secondary};
+                    }
+                  }
+                `
+              }
+              ref={dropdownRef}
+              dropdownMenu={
+                <DropdownMenu>
+                  <NavBarElement
+                    active={false}
+                    name={'Log out'}
+                    href={''}
+                    isDropdown={true}
+                    isLink={false}
+                    LinkComp={() => <div />}
+                    onClick={() => logout()}
+                  />
+                </DropdownMenu>
+              }
+            >
+              <UserDisplayName dropdownOpen={dropdownOpen} user={user} />
+            </StyledMenuItem>
+          ) : (
+            <StyledMenuItem
+              css={(theme: UikitTheme) => css`
+                cursor: auto;
+                &:hover {
+                  background-color: ${theme.colors.white};
+                }
+              `}
+            >
+              <LoginButton />
+            </StyledMenuItem>
+          )}
         </MenuGroup>
       </Section>
     </AppBar>

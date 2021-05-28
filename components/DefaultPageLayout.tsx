@@ -15,7 +15,7 @@ const DefaultPageLayout = ({
   children,
   title = '',
 }: {
-  children?: ReactNode;
+  children: ReactNode;
   title?: string;
 }): ReactElement => {
   return (
