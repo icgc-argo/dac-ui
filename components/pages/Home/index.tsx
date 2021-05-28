@@ -183,14 +183,14 @@ const Home = () => {
             >
               The ICGC Data Access Compliance Office (ICGC DACO) handles requests from scientists, researchers and commercial teams for access to ICGC Controlled Data.
           </Typography>
-            <Button
-              css={css`
-                margin-bottom: 24px;
-              `}
-              size="md"
-              variant="secondary"
-            >
-              Get Started: Apply for Access
+          <Button
+            css={css`
+              margin-bottom: 24px;
+            `}
+            size="md"
+            variant="secondary"
+          >
+            Get Started: Apply for Access
           </Button>
           </PaddedColumn>
           <PaddedColumn>

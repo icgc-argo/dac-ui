@@ -7,8 +7,8 @@ const {
   NEXT_PUBLIC_ARGO_PLATFORM_ROOT,
 } = getConfig();
 
+export const ARGO_ROOT = NEXT_PUBLIC_ARGO_PLATFORM_ROOT;
 const ARGO_POLICIES = urlJoin(NEXT_PUBLIC_ARGO_ROOT, 'page');
-
 export const CONTACT_PAGE = urlJoin(NEXT_PUBLIC_ARGO_PLATFORM_ROOT, 'contact');
 export const POLICIES_PAGE = NEXT_PUBLIC_ARGO_ROOT; // tbd
 export const HELP_PAGE = NEXT_PUBLIC_ARGO_DOCS_ROOT; // tbd
