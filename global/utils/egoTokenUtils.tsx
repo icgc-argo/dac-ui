@@ -31,4 +31,4 @@ export const extractUser: (decodedToken: EgoJwtData) => UserWithId | undefined =
 export const getPermissionsFromToken: (egoJwt: string) => string[] = (egoJwt) =>
   isValidJwt(egoJwt) ? TokenUtils.getPermissionsFromToken(egoJwt) : [];
 
-export const isDccMember = (permissions: string[]): boolean => TokenUtils.isDccMember(permissions);
+export const isDacoAdmin = (permissions: string[]): boolean => TokenUtils.isDacoAdmin(permissions);

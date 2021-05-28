@@ -1,3 +1,4 @@
+import { createRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import urlJoin from 'url-join';
 import AppBar, {
@@ -24,7 +25,8 @@ import {
 import { getConfig } from 'global/config';
 import useAuthContext from 'global/hooks/useAuthContext';
 import { UserWithId } from 'global/types';
-import { createRef, useState } from 'react';
+import { isDacoAdmin } from 'global/utils/egoTokenUtils';
+import { ADMIN_APPLICATIONS_LABEL, APPLICANT_APPLICATIONS_LABEL } from 'global/constants';
 
 const StyledMenuItem = styled(MenuItem)`
   ${({ theme }: { theme: UikitTheme }) => `
@@ -151,14 +153,20 @@ const LoginButton = () => {
 };
 
 const NavBar = () => {
-  const { user, logout } = useAuthContext();
+  const { user, logout, permissions } = useAuthContext();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = createRef() as React.RefObject<HTMLDivElement>;
+
   useClickAway({
     domElementRef: dropdownRef,
     onClickAway: () => setDropdownOpen(false),
     onElementClick: () => setDropdownOpen(!dropdownOpen),
   });
+
+  const applicationsTitle = isDacoAdmin(permissions)
+    ? ADMIN_APPLICATIONS_LABEL
+    : APPLICANT_APPLICATIONS_LABEL;
+
   return (
     <AppBar
       css={(theme: UikitTheme) =>
@@ -215,7 +223,7 @@ const NavBar = () => {
                 `
               }
             >
-              My Applications
+              {applicationsTitle}
             </StyledMenuItem>
           ) : (
             <StyledMenuItem>

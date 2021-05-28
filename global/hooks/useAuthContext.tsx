@@ -1,7 +1,7 @@
 import React, { createContext, useState } from 'react';
 import { useRouter } from 'next/router';
 
-import { EGO_JWT_KEY } from '../constants/auth';
+import { EGO_JWT_KEY } from '../constants';
 import {
   decodeToken,
   extractUser,

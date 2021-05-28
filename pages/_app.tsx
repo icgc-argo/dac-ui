@@ -4,7 +4,7 @@ import { AppContext } from 'next/app';
 
 import Root from 'components/Root';
 import { PageConfigProps, PageWithConfig } from 'global/utils/pages/types';
-import { EGO_JWT_KEY } from 'global/constants/auth';
+import { EGO_JWT_KEY } from 'global/constants';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
 import Router from 'next/router';
 
