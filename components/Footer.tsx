@@ -3,8 +3,6 @@ import { css } from '@icgc-argo/uikit';
 import { styled, UikitTheme } from '@icgc-argo/uikit/index';
 import Link from '@icgc-argo/uikit/Link';
 import {
-  ARGO_PLATFORM_ROOT,
-  ARGO_ROOT,
   CONTACT_PAGE,
   CONTROLLED_DATA_USERS_PAGE,
   GLASGOW_UNI_LINK,
@@ -16,6 +14,9 @@ import {
   TERMS_PAGE,
 } from 'global/constants/externalPaths';
 import { LinkProps } from './NavBar';
+import { getConfig } from 'global/config';
+
+const { NEXT_PUBLIC_ARGO_ROOT, NEXT_PUBLIC_ARGO_PLATFORM_ROOT } = getConfig();
 
 const StyledLink = styled(Link)`
   ${({ theme }: { theme: UikitTheme }) => css`
@@ -49,11 +50,11 @@ const footerLinks: LinkProps[] = [
   },
   {
     title: 'ICGC ARGO Website',
-    href: ARGO_ROOT,
+    href: NEXT_PUBLIC_ARGO_ROOT,
   },
   {
     title: 'ARGO Data Platform',
-    href: ARGO_PLATFORM_ROOT,
+    href: NEXT_PUBLIC_ARGO_PLATFORM_ROOT,
   },
 ];
 
@@ -157,7 +158,7 @@ const Footer = () => {
           border-top: 1px solid ${theme.colors.grey_2};
         `}
       >
-        <Link href={ARGO_ROOT} target="_blank">
+        <Link href={NEXT_PUBLIC_ARGO_ROOT} target="_blank">
           <img src={'/argo-full-logo.svg'} />
         </Link>
         <LinksSection />

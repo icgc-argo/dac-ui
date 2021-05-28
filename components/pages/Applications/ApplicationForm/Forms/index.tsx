@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
@@ -6,128 +6,49 @@ import { UikitTheme } from '@icgc-argo/uikit/index';
 import { ContentBody, ContentBox } from '@icgc-argo/uikit/PageLayout';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
-import VerticalTabs from '@icgc-argo/uikit/VerticalTabs';
+
+import { sectionsOrder } from './constants';
+import Outline from './Outline';
+import { FormSectionNames } from './types';
+import { useFormValidation, ValidationParametersType } from './useFormValidation';
+
+const enabledSections = (sections: FormSectionNames[], state: ValidationParametersType) =>
+  sections.filter((sectionName) => !(state[sectionName]?.overall === 'disabled'));
 
 const ApplicationFormsBase = (): ReactElement => {
+  const [selectedSection, setSelectedSection] = useState(sectionsOrder[0] as FormSectionNames);
   const theme: UikitTheme = useTheme();
+  const { validationState } = useFormValidation();
+
+  const sectionIndex = sectionsOrder.indexOf(selectedSection);
+  const sectionsAfter = enabledSections(sectionsOrder.slice(sectionIndex + 1), validationState);
+  const sectionsBefore = enabledSections(sectionsOrder.slice(0, sectionIndex), validationState);
+
+  const handlePreviousNextSectionClick = (direction: 'next' | 'previous') => () =>
+    setSelectedSection(
+      direction === 'next'
+        ? sectionsAfter[0] // next <<available>>
+        : sectionsBefore.slice(-1)[0], // previous <<available>>
+    );
 
   return (
     <ContentBody>
-      <ContentBox 
+      <ContentBox
         css={css`
           box-sizing: border-box;
           display: flex;
-          margin: 10px auto 0;
+          margin: 10px auto;
           max-width: 1200px;
           min-width: 665px;
           width: 100%;
         `}
       >
-        <VerticalTabs
-          css={css`
-            background: ${theme.colors.grey_4};
-            border-radius: 8px 0 0 8px;
-            margin: -8px 0;
-            margin-left: -8px;
-            min-width: 205px;
-            max-width: 280px;
-          `}
-        >
-          <VerticalTabs.Item>
-            Table of Contents
-          </VerticalTabs.Item>
-          
-          <VerticalTabs.Item
-            active
-            onClick={function noRefCheck(){}}
-          >
-            Introduction
-            {/* <VerticalTabs.Tag variant="UPDATE">
-              12
-            </VerticalTabs.Tag> */}
-          </VerticalTabs.Item>
-          
-          <VerticalTabs.Item
-            onClick={function noRefCheck(){}}
-          >
-            A. Application Information
-            {/* <VerticalTabs.Tag variant="WARNING">
-              23
-            </VerticalTabs.Tag> */}
-          </VerticalTabs.Item>
-          
-          <VerticalTabs.Item
-            onClick={function noRefCheck(){}}
-          >
-            B. Institutional Representative
-            {/* <VerticalTabs.Tag variant="ERROR">
-              !
-            </VerticalTabs.Tag> */}
-          </VerticalTabs.Item>
-          
-          <VerticalTabs.Item
-            onClick={function noRefCheck(){}}
-          >
-            C. Collaborators
-            {/* <VerticalTabs.Tag variant="SUCCESS">
-              45
-            </VerticalTabs.Tag> */}
-          </VerticalTabs.Item>
-          
-          <VerticalTabs.Item
-            onClick={function noRefCheck(){}}
-          >
-            D. Project Information
-            {/* <VerticalTabs.Tag variant="SUCCESS">
-              45
-            </VerticalTabs.Tag> */}
-          </VerticalTabs.Item>
-
-          <VerticalTabs.Item
-            onClick={function noRefCheck(){}}
-          >
-            E. Ethics
-            {/* <VerticalTabs.Tag variant="SUCCESS">
-              45
-            </VerticalTabs.Tag> */}
-          </VerticalTabs.Item>
-
-          <VerticalTabs.Item
-            onClick={function noRefCheck(){}}
-          >
-            F. IT Agreements
-            {/* <VerticalTabs.Tag variant="SUCCESS">
-              45
-            </VerticalTabs.Tag> */}
-          </VerticalTabs.Item>
-
-          <VerticalTabs.Item
-            onClick={function noRefCheck(){}}
-          >
-            G. Data Access Agreement
-            {/* <VerticalTabs.Tag variant="SUCCESS">
-              45
-            </VerticalTabs.Tag> */}
-          </VerticalTabs.Item>
-
-          <VerticalTabs.Item
-            onClick={function noRefCheck(){}}
-          >
-            H. Appendices
-            {/* <VerticalTabs.Tag variant="SUCCESS">
-              45
-            </VerticalTabs.Tag> */}
-          </VerticalTabs.Item>
-
-          <VerticalTabs.Item
-            onClick={function noRefCheck(){}}
-          >
-            Sign &amp; Submit
-            {/* <VerticalTabs.Tag variant="SUCCESS">
-              45
-            </VerticalTabs.Tag> */}
-          </VerticalTabs.Item>
-        </VerticalTabs>
+        <Outline
+          sections={sectionsOrder}
+          selectedSection={selectedSection}
+          setSelectedSection={setSelectedSection}
+          validationState={validationState as Record<FormSectionNames, any>}
+        />
 
         <div
           css={css`
@@ -139,14 +60,19 @@ const ApplicationFormsBase = (): ReactElement => {
             margin-right: -8px;
             min-width: 460px;
             width: 100%;
+
+            > article {
+              height: 100%;
+              padding: 30px 40px;
+            }
           `}
         >
           <header
             css={css`
               align-items: center;
               border-bottom: 1px solid ${theme.colors.grey_2};
-              height: 40px;
               display: flex;
+              min-height: 45px;
               padding: 0 40px;
             `}
           >
@@ -169,41 +95,33 @@ const ApplicationFormsBase = (): ReactElement => {
             </Typography>
           </header>
 
+          <article>
+            {selectedSection} placeholder
+          </article>
+
           <footer
             css={css`
               align-items: center;
               border-top: 1px solid ${theme.colors.grey_2};
               display: flex;
-              height: 40px;
               justify-content: space-between;
+              min-height: 45px;
               padding: 0 40px;
             `}
           >
-            <Button
-              onClick={function noRefCheck(){}}
-              size="sm"
-            >
-              <Icon
-                fill={theme.colors.white}
-                height="9px"
-                name="chevron_left"
-              />{' '}
+            {sectionsBefore.length > 0 && (
+              <Button onClick={handlePreviousNextSectionClick('previous')} size="sm">
+                <Icon fill={theme.colors.white} height="9px" name="chevron_left" /> Previous Section
+              </Button>
+            )}
 
-              Previous Section
-            </Button>
+            <>&nbsp;</>
 
-            <Button
-              onClick={function noRefCheck(){}}
-              size="sm"
-            >
-              Next Section{' '}
-
-              <Icon
-                fill={theme.colors.white}
-                height="9px"
-                name="chevron_right"
-              />
-            </Button>
+            {sectionsAfter.length > 0 && (
+              <Button onClick={handlePreviousNextSectionClick('next')} size="sm">
+                Next Section <Icon fill={theme.colors.white} height="9px" name="chevron_right" />
+              </Button>
+            )}
           </footer>
         </div>
       </ContentBox>

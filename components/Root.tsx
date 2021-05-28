@@ -1,13 +1,17 @@
-import ThemeProvider from '@icgc-argo/uikit/ThemeProvider';
-import Head from 'components/Head';
 import React from 'react';
+import ThemeProvider from '@icgc-argo/uikit/ThemeProvider';
+
+import Head from 'components/Head';
+import { AuthProvider } from 'global/hooks/useAuthContext';
 
 const Root = ({
   children,
   pageContext,
+  egoJwt,
 }: {
   children: any;
   pageContext: any;
+  egoJwt?: string;
 }) => {
   return (
     <React.Fragment>
@@ -31,7 +35,9 @@ const Root = ({
       `}
       </style>
       <Head />
-      <ThemeProvider>{children}</ThemeProvider>
+      <AuthProvider egoJwt={egoJwt}>
+        <ThemeProvider>{children}</ThemeProvider>
+      </AuthProvider>
     </React.Fragment>
   );
 };

@@ -14,15 +14,14 @@ const Application = (): ReactElement => {
   const {
     query: { ID: [applicationID] = [] },
   }: QueryType = useRouter();
-  
 
   return (
-    <DefaultPageLayout title={'Application page'} >
+    <DefaultPageLayout title={'Application page'}>
       {applicationID ? (
         <ApplicationForm ID={applicationID} />
-      ) : ( // placeholder for the Dashboard
-        <> 
-        </>
+      ) : (
+        // placeholder for the Dashboard
+        <></>
       )}
     </DefaultPageLayout>
   );

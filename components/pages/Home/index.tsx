@@ -1,15 +1,12 @@
 import { css, styled } from '@icgc-argo/uikit';
-import useTheme from '@icgc-argo/uikit/utils/useTheme';
 import Typography from '@icgc-argo/uikit/Typography';
 import Button from '@icgc-argo/uikit/Button';
 import Link from '@icgc-argo/uikit/Link';
-import Icon from '@icgc-argo/uikit/Icon';
 
-import NextLink from 'next/link';
 import { Col, Row } from 'react-grid-system';
 
 import DefaultPageLayout from 'components/DefaultPageLayout';
-import { ARGO_PLATFORM_ROOT, ICGC_DCC_LINK, ICGC_PCAWG_LINK } from 'global/constants/externalPaths';
+import { ARGO_ROOT, ICGC_DCC_LINK, ICGC_PCAWG_LINK } from 'global/constants/externalPaths';
 
 import heroBackground from 'static/home-hero-bg.jpeg';
 import icgcArgoLogo from 'static/icgc-argo-logo-white.svg';
@@ -210,9 +207,9 @@ const Home = () => {
             </Typography>
             <LogoParagraphRow
               Img={<img src={icgcArgoLogo} width={'145px'} height={'23px'} />}
-              imageLink={ARGO_PLATFORM_ROOT}
+              imageLink={ARGO_ROOT}
             >
-              <LinkWhite href={ARGO_PLATFORM_ROOT}>ICGC ARGO</LinkWhite> plans to uniformly analyze specimens from 100,000 cancer patients with high quality clinical data.
+              <LinkWhite href={ARGO_ROOT}>ICGC ARGO</LinkWhite> plans to uniformly analyze specimens from 100,000 cancer patients with high quality clinical data.
             </LogoParagraphRow>
             <LogoParagraphRow
               Img={<img src={icgcLogo} width={'140px'} height={'46px'} />}

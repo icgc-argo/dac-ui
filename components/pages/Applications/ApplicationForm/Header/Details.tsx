@@ -9,10 +9,10 @@ const HeaderDetails = ({
   ID,
   lastUpdated,
 }: {
-  applicant?: string,
-  createdAt?: string,
-  ID: string,
-  lastUpdated?: string,
+  applicant?: string;
+  createdAt?: string;
+  ID: string;
+  lastUpdated?: string;
 }): ReactElement => (
   <section
     css={css`
@@ -26,10 +26,9 @@ const HeaderDetails = ({
         margin: 0 0 5px;
       `}
     >
-      <Link>My Applications</Link>:
-      Daco-{ID}
+      <Link>My Applications</Link>: {ID}
     </Typography>
-    
+
     {(createdAt || lastUpdated) && (
       <Typography
         component="p"
@@ -44,13 +43,13 @@ const HeaderDetails = ({
         variant="paragraph"
       >
         {createdAt && (
-            <>
-              {'Created: '}
-              <span>{createdAt}</span>
-              {lastUpdated && ' | '}
-            </>
+          <>
+            {'Created: '}
+            <span>{createdAt}</span>
+            {lastUpdated && ' | '}
+          </>
         )}
-        
+
         {lastUpdated && (
           <>
             {'Last Updated: '}
@@ -65,8 +64,9 @@ const HeaderDetails = ({
       css={css`
         font-size: 12px;
         margin: 0;
-        
-        ${applicant && `
+
+        ${applicant &&
+        `
           span {
             font-weight: bold;
           }
