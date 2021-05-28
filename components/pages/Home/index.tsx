@@ -8,18 +8,28 @@ import { Col, Row } from 'react-grid-system';
 import DefaultPageLayout from 'components/DefaultPageLayout';
 import { ARGO_ROOT, ICGC_DCC_LINK, ICGC_PCAWG_LINK } from 'global/constants/externalPaths';
 
-import heroBackground from 'static/home-hero-bg.jpeg';
-import icgcArgoLogo from 'static/icgc-argo-logo-white.svg';
-import icgcLogo from 'static/icgc-logo-rgb-divided.svg';
-import iconApply from 'static/icons-brand-apply.svg';
-import iconSign from 'static/icons-brand-sign.svg';
-import iconReview from 'static/icons-brand-review.svg';
+import heroBackground from 'public/home-hero-bg.jpeg';
+import icgcArgoLogo from 'public/icgc-argo-logo-white.svg';
+import icgcLogo from 'public/icgc-logo-rgb-divided.svg';
+import iconApply from 'public/icons-brand-apply.svg';
+import iconSign from 'public/icons-brand-sign.svg';
+import iconReview from 'public/icons-brand-review.svg';
 
-const LinkWhite = ({ children, href }: { children: any, href: string }) => (
-  <Link href={href} style={{ color: '#fff' }} target="_blank">{children}</Link>
+const LinkWhite = ({ children, href }: { children: any; href: string }) => (
+  <Link href={href} style={{ color: '#fff' }} target="_blank">
+    {children}
+  </Link>
 );
 
-const LogoParagraphRow = ({ children, Img, imageLink }: { children: any, Img: any, imageLink: string }) => (
+const LogoParagraphRow = ({
+  children,
+  Img,
+  imageLink,
+}: {
+  children: any;
+  Img: any;
+  imageLink: string;
+}) => (
   <div
     css={css`
       display: flex;
@@ -32,10 +42,7 @@ const LogoParagraphRow = ({ children, Img, imageLink }: { children: any, Img: an
         flex: 0 0 170px;
       `}
     >
-      <Link
-        href={imageLink}
-        target="_blank"
-      >
+      <Link href={imageLink} target="_blank">
         {Img}
       </Link>
     </div>
@@ -59,7 +66,15 @@ const LogoParagraphRow = ({ children, Img, imageLink }: { children: any, Img: an
   </div>
 );
 
-const ParagraphBlack = ({ bold = false, children, marginBottom = 0 }: { bold?: boolean, children: any, marginBottom?: number }) => (
+const ParagraphBlack = ({
+  bold = false,
+  children,
+  marginBottom = 0,
+}: {
+  bold?: boolean;
+  children: any;
+  marginBottom?: number;
+}) => (
   <Typography
     as="p"
     bold={bold}
@@ -72,7 +87,7 @@ const ParagraphBlack = ({ bold = false, children, marginBottom = 0 }: { bold?: b
   </Typography>
 );
 
-const IconParagraphRow = ({ children, img }: { children: any, img: string }) => (
+const IconParagraphRow = ({ children, img }: { children: any; img: string }) => (
   <div
     css={css`
       display: flex;
@@ -172,26 +187,27 @@ const Home = () => {
               variant="hero"
             >
               Apply for Access to Controlled Data
-          </Typography>
+            </Typography>
             <Typography
               bold={true}
               color="white"
               css={css`
-              line-height: 24px;
-            `}
+                line-height: 24px;
+              `}
               variant="subtitle2"
             >
-              The ICGC Data Access Compliance Office (ICGC DACO) handles requests from scientists, researchers and commercial teams for access to ICGC Controlled Data.
-          </Typography>
-          <Button
-            css={css`
-              margin-bottom: 24px;
-            `}
-            size="md"
-            variant="secondary"
-          >
-            Get Started: Apply for Access
-          </Button>
+              The ICGC Data Access Compliance Office (ICGC DACO) handles requests from scientists,
+              researchers and commercial teams for access to ICGC Controlled Data.
+            </Typography>
+            <Button
+              css={css`
+                margin-bottom: 24px;
+              `}
+              size="md"
+              variant="secondary"
+            >
+              Get Started: Apply for Access
+            </Button>
           </PaddedColumn>
           <PaddedColumn>
             <Typography
@@ -209,13 +225,16 @@ const Home = () => {
               Img={<img src={icgcArgoLogo} width={'145px'} height={'23px'} />}
               imageLink={ARGO_ROOT}
             >
-              <LinkWhite href={ARGO_ROOT}>ICGC ARGO</LinkWhite> plans to uniformly analyze specimens from 100,000 cancer patients with high quality clinical data.
+              <LinkWhite href={ARGO_ROOT}>ICGC ARGO</LinkWhite> plans to uniformly analyze specimens
+              from 100,000 cancer patients with high quality clinical data.
             </LogoParagraphRow>
             <LogoParagraphRow
               Img={<img src={icgcLogo} width={'140px'} height={'46px'} />}
               imageLink={ICGC_DCC_LINK}
             >
-              <LinkWhite href={ICGC_DCC_LINK}>ICGC 25K Data Portal</LinkWhite> to date has produced &gt;20,000 tumour genomes for 26 cancer types (including <LinkWhite href={ICGC_PCAWG_LINK}>PCAWG</LinkWhite> data).
+              <LinkWhite href={ICGC_DCC_LINK}>ICGC 25K Data Portal</LinkWhite> to date has produced
+              &gt;20,000 tumour genomes for 26 cancer types (including{' '}
+              <LinkWhite href={ICGC_PCAWG_LINK}>PCAWG</LinkWhite> data).
             </LogoParagraphRow>
           </PaddedColumn>
         </PaddedRow>
@@ -228,28 +247,34 @@ const Home = () => {
       >
         <PaddedRow>
           <PaddedColumn>
-            <PrimaryH2>
-              Overview
-            </PrimaryH2>
+            <PrimaryH2>Overview</PrimaryH2>
             <ParagraphBlack>
-              While there is great potential of data sharing for scientific research, caution is required when sharing data about individuals participating in genomic research because genomic data, like other types of medical data, can contain personal and identifying information. The ICGC DACO has been created to ensure that potentially identifying data from the ICGC will only be used by qualified scientists for public health objectives.
+              While there is great potential of data sharing for scientific research, caution is
+              required when sharing data about individuals participating in genomic research because
+              genomic data, like other types of medical data, can contain personal and identifying
+              information. The ICGC DACO has been created to ensure that potentially identifying
+              data from the ICGC will only be used by qualified scientists for public health
+              objectives.
             </ParagraphBlack>
             <ParagraphBlack bold>
-              Before starting your application, please review our <Link href="TODO">frequently asked questions</Link>.
+              Before starting your application, please review our{' '}
+              <Link href="TODO">frequently asked questions</Link>.
             </ParagraphBlack>
           </PaddedColumn>
           <PaddedColumn>
-            <PrimaryH2>
-              The Application Process is Simple
-            </PrimaryH2>
+            <PrimaryH2>The Application Process is Simple</PrimaryH2>
             <IconParagraphRow img={iconApply}>
-              Log in and start an application. Carefully complete all required sections and review all policies and agreements.
+              Log in and start an application. Carefully complete all required sections and review
+              all policies and agreements.
             </IconParagraphRow>
             <IconParagraphRow img={iconSign}>
-              When completed, obtain the required signatures and submit the signed application for review.
+              When completed, obtain the required signatures and submit the signed application for
+              review.
             </IconParagraphRow>
             <IconParagraphRow img={iconReview}>
-              The ICGC DACO will review the application and <Link href="TODO">eligible project teams</Link> will be granted 1 year of access to ICGC Controlled Data.
+              The ICGC DACO will review the application and{' '}
+              <Link href="TODO">eligible project teams</Link> will be granted 1 year of access to
+              ICGC Controlled Data.
             </IconParagraphRow>
           </PaddedColumn>
         </PaddedRow>
