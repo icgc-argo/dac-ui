@@ -17,3 +17,5 @@ export const PUBLICATION_POLICY_PAGE = urlJoin(ARGO_POLICIES, '77/e3-publication
 
 export const GLASGOW_UNI_LINK = 'https://www.gla.ac.uk/';
 export const OICR_LINK = 'https://www.oicr.on.ca/';
+export const ICGC_DCC_LINK = 'https://dcc.icgc.org/';
+export const ICGC_PCAWG_LINK = urlJoin(ICGC_DCC_LINK, 'pcawg');
