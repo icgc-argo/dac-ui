@@ -8,13 +8,6 @@ import { Col, Row } from 'react-grid-system';
 import DefaultPageLayout from 'components/DefaultPageLayout';
 import { ARGO_ROOT, ICGC_DCC_LINK, ICGC_PCAWG_LINK } from 'global/constants/externalPaths';
 
-import heroBackground from 'public/home-hero-bg.jpeg';
-import icgcArgoLogo from 'public/icgc-argo-logo-white.svg';
-import icgcLogo from 'public/icgc-logo-rgb-divided.svg';
-import iconApply from 'public/icons-brand-apply.svg';
-import iconSign from 'public/icons-brand-sign.svg';
-import iconReview from 'public/icons-brand-review.svg';
-
 const LinkWhite = ({ children, href }: { children: any; href: string }) => (
   <Link href={href} style={{ color: '#fff' }} target="_blank">
     {children}
@@ -159,7 +152,7 @@ const HeroDiv = styled('div')`
     `linear-gradient(to bottom, 
       ${theme.colors.primary}, 
       ${theme.colors.accent2}00 105%),
-      url(${heroBackground});`};
+      url("/home-hero-bg.jpeg");`};
   background-color: ${({ theme }: { theme: any }) => theme.colors.primary};
   background-position: center;
   background-size: cover;
@@ -222,14 +215,14 @@ const Home = () => {
               What will you get access to?
             </Typography>
             <LogoParagraphRow
-              Img={<img src={icgcArgoLogo} width={'145px'} height={'23px'} />}
+              Img={<img src="/icgc-argo-logo-white.svg" width={'145px'} height={'23px'} />}
               imageLink={ARGO_ROOT}
             >
               <LinkWhite href={ARGO_ROOT}>ICGC ARGO</LinkWhite> plans to uniformly analyze specimens
               from 100,000 cancer patients with high quality clinical data.
             </LogoParagraphRow>
             <LogoParagraphRow
-              Img={<img src={icgcLogo} width={'140px'} height={'46px'} />}
+              Img={<img src="/icgc-logo-rgb-divided.svg" width={'140px'} height={'46px'} />}
               imageLink={ICGC_DCC_LINK}
             >
               <LinkWhite href={ICGC_DCC_LINK}>ICGC 25K Data Portal</LinkWhite> to date has produced
@@ -263,15 +256,15 @@ const Home = () => {
           </PaddedColumn>
           <PaddedColumn>
             <PrimaryH2>The Application Process is Simple</PrimaryH2>
-            <IconParagraphRow img={iconApply}>
+            <IconParagraphRow img="/icons-brand-apply.svg">
               Log in and start an application. Carefully complete all required sections and review
               all policies and agreements.
             </IconParagraphRow>
-            <IconParagraphRow img={iconSign}>
+            <IconParagraphRow img="/icons-brand-sign.svg">
               When completed, obtain the required signatures and submit the signed application for
               review.
             </IconParagraphRow>
-            <IconParagraphRow img={iconReview}>
+            <IconParagraphRow img="/icons-brand-review.svg">
               The ICGC DACO will review the application and{' '}
               <Link href="TODO">eligible project teams</Link> will be granted 1 year of access to
               ICGC Controlled Data.
