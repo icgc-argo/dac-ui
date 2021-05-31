@@ -22,6 +22,7 @@ import {
   HELP_PAGE,
   POLICIES_PAGE,
 } from 'global/constants/externalPaths';
+import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
 import { getConfig } from 'global/config';
 import useAuthContext from 'global/hooks/useAuthContext';
 import { UserWithId } from 'global/types';
@@ -213,18 +214,26 @@ const NavBar = () => {
       <Section>
         <MenuGroup>
           {user ? (
-            <StyledMenuItem
-              css={(theme: UikitTheme) =>
-                css`
+            <Link
+              // TODO should be a next link
+              css={css`
+                text-decoration: none;
+              `}
+              href={APPLICATIONS_PATH}
+            >
+              <StyledMenuItem
+                css={(theme: UikitTheme) =>
+                  css`
                   color: ${theme.colors.secondary};
                   border-left: 1px solid ${theme.colors.grey_2};
                   border-right: 1px solid ${theme.colors.grey_2};
                   border-bottom: 3px solid ${theme.colors.secondary};
                 `
-              }
-            >
-              {applicationsTitle}
-            </StyledMenuItem>
+                }
+              >
+                {applicationsTitle}
+              </StyledMenuItem>
+            </Link>
           ) : (
             <StyledMenuItem>
               <Typography
