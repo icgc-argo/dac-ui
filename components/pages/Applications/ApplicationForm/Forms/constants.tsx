@@ -293,4 +293,4 @@ export const countriesList = [
   { code: 'ZW', name: 'Zimbabwe' },
 ];
 
-export const honorificsList = ['Dr. ', 'Miss', 'Mr.', 'Mrs.', 'Ms.', 'Prof.'];
+export const honorificsList = ['Dr.', 'Miss', 'Mr.', 'Mrs.', 'Ms.', 'Prof.'];
