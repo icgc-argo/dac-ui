@@ -1,58 +1,62 @@
 import { UikitIconNames } from '@icgc-argo/uikit/Icon/icons';
 import { TAG_VARIANTS } from '@icgc-argo/uikit/Tag';
 
+import { FormSectionOverallStates } from '../types';
+
 // <Tag> colour reference:
-//   DISABLED: #dcdde1
+//   DISABLED: #a1a4b1
 //   ERROR: #df1b42
 //   HIGHLIGHT: #9bc7ed
 //   INFO: #0774d3
-//   NEUTRAL: #  #a1a4b1
+//   NEUTRAL: #  #dcdde1
 //   SUCCESS: #00C79D
 //   UPDATE: #00b3d3
 //   WARNING: #fea430
 //   EDITABLE: #7f55cc
 
 type ValidationConfigType = {
-  iconName: UikitIconNames,
-  tagVariant: keyof typeof TAG_VARIANTS,
-}
+  iconName: UikitIconNames;
+  tagVariant: keyof typeof TAG_VARIANTS;
+};
 
-export const getValidationUIConfig = (status: string): ValidationConfigType => {
+export const getValidationUIConfig = (status: FormSectionOverallStates): ValidationConfigType => {
   switch (status) {
     case 'complete':
       return {
         iconName: 'checkmark',
-        tagVariant: 'SUCCESS',
+        tagVariant: TAG_VARIANTS.SUCCESS,
       };
 
     case 'incomplete':
       return {
         iconName: 'exclamation',
-        tagVariant: 'ERROR',
+        tagVariant: TAG_VARIANTS.ERROR,
       };
 
     case 'canEdit':
       return {
         iconName: 'edit',
-        tagVariant: 'EDITABLE',
+        tagVariant: TAG_VARIANTS.EDITABLE,
       };
 
     case 'mustEdit':
       return {
         iconName: 'edit',
-        tagVariant: 'WARNING',
+        tagVariant: TAG_VARIANTS.WARNING,
       };
 
     case 'locked':
       return {
         iconName: 'lock',
-        tagVariant: 'NEUTRAL',
+        tagVariant: TAG_VARIANTS.DISABLED,
       };
-    
+
     default:
       return {
         iconName: 'question',
-        tagVariant: 'DISABLED',
+        tagVariant: TAG_VARIANTS.NEUTRAL,
       };
   }
 };
+
+export type { FormSectionOverallStates } from '../types';
