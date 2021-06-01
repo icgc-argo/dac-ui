@@ -1,7 +1,6 @@
-import { UikitIconNames } from '@icgc-argo/uikit/Icon/icons';
-import { TAG_VARIANTS } from '@icgc-argo/uikit/Tag';
+import { FORM_STATES } from '../types';
 
-import { FormSectionOverallStates } from '../types';
+import { FormSectionOverallState, TAG_VARIANTS, ValidationConfigType } from '../types';
 
 // <Tag> colour reference:
 //   DISABLED: #a1a4b1
@@ -14,38 +13,33 @@ import { FormSectionOverallStates } from '../types';
 //   WARNING: #fea430
 //   EDITABLE: #7f55cc
 
-type ValidationConfigType = {
-  iconName: UikitIconNames;
-  tagVariant: keyof typeof TAG_VARIANTS;
-};
-
-export const getValidationUIConfig = (status: FormSectionOverallStates): ValidationConfigType => {
+export const getValidationUIConfig = (status: FormSectionOverallState): ValidationConfigType => {
   switch (status) {
-    case 'complete':
+    case FORM_STATES.COMPLETE:
       return {
         iconName: 'checkmark',
         tagVariant: TAG_VARIANTS.SUCCESS,
       };
 
-    case 'incomplete':
+    case FORM_STATES.INCOMPLETE:
       return {
         iconName: 'exclamation',
         tagVariant: TAG_VARIANTS.ERROR,
       };
 
-    case 'canEdit':
+    case FORM_STATES.CAN_EDIT:
       return {
         iconName: 'edit',
         tagVariant: TAG_VARIANTS.EDITABLE,
       };
 
-    case 'mustEdit':
+    case FORM_STATES.MUST_EDIT:
       return {
         iconName: 'edit',
         tagVariant: TAG_VARIANTS.WARNING,
       };
 
-    case 'locked':
+    case FORM_STATES.LOCKED:
       return {
         iconName: 'lock',
         tagVariant: TAG_VARIANTS.DISABLED,
@@ -58,5 +52,3 @@ export const getValidationUIConfig = (status: FormSectionOverallStates): Validat
       };
   }
 };
-
-export type { FormSectionOverallStates } from '../types';

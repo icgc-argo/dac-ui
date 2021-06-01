@@ -1,19 +1,39 @@
-import { Dispatch, ReactNode } from 'react';
+import { ChangeEvent, Dispatch, ReactNode } from 'react';
 import { SchemaDescription, SchemaObjectDescription } from 'yup/lib/schema';
+import { UikitIconNames } from '@icgc-argo/uikit/Icon/icons';
+import { TAG_VARIANTS } from '@icgc-argo/uikit/Tag';
 
-import { sectionsOrder } from './constants';
+import { countriesList, honorificsList, sectionsOrder } from './constants';
 
+export type CountryNamesAndAbbreviations = typeof countriesList[number];
 export type FormSectionNames = typeof sectionsOrder[number];
+export type HonorificsListTypes = typeof honorificsList[number];
 
-export type FormSectionOverallStates =
-  | 'canEdit'
-  | 'complete'
-  | 'disabled'
-  | 'incomplete'
-  | 'locked'
-  | 'mustEdit'
-  | 'touched'
-  | 'pristine';
+export enum EVENT_TARGET_TAGS {
+  INPUT = 'INPUT',
+  MULTISELECT = 'MULTISELECT',
+  SELECT = 'SELECT',
+}
+
+export enum FORM_STATES {
+  CAN_EDIT = 'canEdit',
+  COMPLETE = 'complete',
+  DISABLED = 'disabled',
+  INCOMPLETE = 'incomplete',
+  LOCKED = 'locked',
+  MUST_EDIT = 'mustEdit',
+  TOUCHED = 'touched',
+  PRISTINE = 'pristine',
+}
+
+export type FormSectionOverallState = `${FORM_STATES}`;
+
+export type ValidationConfigType = {
+  iconName: UikitIconNames;
+  tagVariant: keyof typeof TAG_VARIANTS;
+};
+
+export { TAG_VARIANTS };
 
 export type FormFieldType = {
   error?: string[];
@@ -26,8 +46,23 @@ type FormSectionValidationState_SectionsGenericType<T extends Record<string, For
 
 export type FormSectionValidationState_Appendices =
   FormSectionValidationState_SectionsGenericType<{}>;
-export type FormSectionValidationState_Applicant =
-  FormSectionValidationState_SectionsGenericType<{}>;
+export type FormSectionValidationState_Applicant = FormSectionValidationState_SectionsGenericType<{
+  info_firstName: { value: string };
+  info_googleEmail: { value: string };
+  info_institutionWebsite: { value: string };
+  info_institutionEmail: { value: string };
+  info_lastName: { value: string };
+  info_middleName: { value: string };
+  info_positionTitle: { value: string };
+  info_primaryAffiliation: { value: string };
+  info_suffix: { value: string };
+  info_title: { value: string };
+  address_building: { value: string };
+  address_cityAndProvince: { value: string };
+  address_country: { value: string };
+  address_street: { value: string };
+  address_postalCod: { value: string };
+}>;
 export type FormSectionValidationState_Collaborators =
   FormSectionValidationState_SectionsGenericType<{}>;
 export type FormSectionValidationState_Data = FormSectionValidationState_SectionsGenericType<{}>;
@@ -56,17 +91,17 @@ export type FormSectionValidationState_Sections =
   | FormSectionValidationState_Signature;
 
 export type FormSectionValidationState_SectionBase = {
-  fields?: Partial<FormSectionValidationState_Sections>;
-  overall?: FormSectionOverallStates;
-  tooltips?: Partial<Record<FormSectionOverallStates, ReactNode>>;
+  fields: Partial<FormSectionValidationState_Sections>;
+  overall: FORM_STATES;
+  tooltips: Partial<Record<FormSectionOverallState, ReactNode>>;
 } & Partial<SchemaObjectDescription>;
 
-export type FormValidationActionTypes = 'boolean' | 'overall';
+export type FormValidationActionTypes = 'boolean' | 'string' | 'overall';
 
 export type FormValidationAction = {
   error?: string[];
   field: string;
-  overall: FormSectionOverallStates;
+  overall: FormSectionOverallState;
   section: FormSectionNames;
   type: FormValidationActionTypes;
   value?: any;
@@ -78,19 +113,42 @@ interface FormValidationState_Base {
 }
 
 export type FormValidationStateParameters = FormValidationState_Base &
-  Partial<Record<FormSectionNames, FormSectionValidationState_SectionBase>>;
+  Record<FormSectionNames, FormSectionValidationState_SectionBase>;
 
 export type FormSectionUpdateLocalStateFunction = (fieldData: FormValidationAction) => void;
 
-export type FormSectionValidatorFunction_Field = (
+export type FormFieldDataFromEvent = (event: ChangeEvent<HTMLInputElement>) =>
+  | {
+      eventType: string;
+      field: string;
+      fieldType: 'checkbox';
+      value: boolean;
+    }
+  | {
+      eventType: string;
+      field: string;
+      fieldType: 'multiselect';
+      value: any[];
+    }
+  | {
+      eventType?: string;
+      field?: string;
+      fieldType?: string;
+      value?: string;
+    };
+
+export type FormFieldValidatorFunction = (
   field?: string,
   value?: any,
-  updateLocalState?: FormSectionUpdateLocalStateFunction,
-) => Promise<string | void>;
+  shouldPersistData?: Boolean,
+) => Promise<FormValidationAction | void>;
+
 export type FormSectionValidatorFunction_Origin = (
   origin: FormSectionNames,
-  state?: FormValidationStateParameters,
-) => FormSectionValidatorFunction_Field;
+  validateSection?: boolean,
+) => FormFieldValidatorFunction;
+
 export type FormSectionValidatorFunction_Main = (
+  state: FormValidationStateParameters,
   dispatch: Dispatch<FormValidationAction>,
 ) => FormSectionValidatorFunction_Origin;

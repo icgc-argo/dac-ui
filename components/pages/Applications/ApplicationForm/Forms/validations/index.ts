@@ -1,15 +1,15 @@
 import { Dispatch, useCallback, useEffect, useReducer, useState } from 'react';
-import { debounce } from 'lodash';
 
-import { handleFieldTypes } from './helpers';
+import { getFieldDataFromEvent, schemaValidator } from './helpers';
 import yup, { combinedSchema } from './schemas';
 import {
   FormFieldType,
   FormSectionValidationState_Sections,
-  FormSectionValidatorFunction_Field,
+  FormFieldValidatorFunction,
   FormSectionValidatorFunction_Main,
   FormValidationAction,
   FormValidationStateParameters,
+  FORM_STATES,
 } from '../types';
 
 export const validationReducer = (
@@ -17,13 +17,16 @@ export const validationReducer = (
   action: FormValidationAction,
 ): FormValidationStateParameters => {
   switch (action.type) {
-    case 'boolean': {
+    case 'boolean':
+    case 'string': {
       return {
         ...state,
         [action.section]: {
           ...state[action.section],
           ...(action.overall &&
-            state[action.section]?.overall === 'pristine' && { overall: action.overall }),
+            state[action.section]?.overall === FORM_STATES.PRISTINE && {
+              overall: action.overall,
+            }),
           fields: {
             ...state[action.section]?.fields,
             [action.field]: {
@@ -52,58 +55,52 @@ export const validationReducer = (
 };
 
 export const validator: FormSectionValidatorFunction_Main =
-  (dispatch) => (origin, validationState) => async (field, value, setLocalState) => {
-    if (field) {
-      try {
-        const fieldSchema = await yup.reach(combinedSchema[origin], field);
+  (validationState, dispatch) =>
+  (origin, validateSection) =>
+  async (field, value, shouldPersistResults) => {
+    if (validateSection) {
+      const { error } = await schemaValidator(
+        combinedSchema[origin],
+        Object.entries(validationState[origin]?.fields as object).reduce(
+          (acc, [field, data]) => ({
+            ...acc,
+            [field]: data.value,
+          }),
+          {},
+        ),
+      );
 
-        const { error } = await fieldSchema.validate(value).catch((error: yup.ValidationError) => ({
-          error: error?.errors?.length > 0 ? error.errors : error.message,
-        }));
-
-        (setLocalState || dispatch)({
-          field,
-          section: origin,
-          type: fieldSchema.describe().type,
-          value,
-          ...(error && { error }),
-          ...(!setLocalState && { overall: 'touched' }),
-        } as FormValidationAction);
-      } catch (error) {
-        console.error(error);
-      }
-    } else if (validationState) {
-      const { error, ...response } =
-        (await combinedSchema[origin]
-          ?.validate(
-            Object.entries(validationState[origin]?.fields as object).reduce(
-              (acc, [field, data]) => ({
-                ...acc,
-                [field]: data.value,
-              }),
-              {},
-            ),
-          )
-          .catch((error: yup.ValidationError) => {
-            return {
-              error: error?.errors?.length > 0 ? error.errors : error.message,
-            };
-          })) || {};
-
-      dispatch({
+      const results = {
         section: origin,
         type: 'overall',
         overall: error
-          ? 'incomplete'
-          : !['', 'disabled', 'pristine'].includes(validationState[origin]?.overall || '')
-          ? 'complete'
+          ? FORM_STATES.INCOMPLETE
+          : !['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
+              validationState[origin]?.overall || '',
+            )
+          ? FORM_STATES.COMPLETE
           : undefined,
-        value,
         ...(error && { error }),
-      } as FormValidationAction);
-    }
+      } as FormValidationAction;
+      dispatch(results);
 
-    return Promise.resolve();
+      return results;
+    } else if (field) {
+      const { error } = await schemaValidator(yup.reach(combinedSchema[origin], field), value);
+
+      const results = {
+        ...(error && { error }),
+        field,
+        ...(shouldPersistResults && { overall: FORM_STATES.TOUCHED }),
+        section: origin,
+        type: validationState[origin]?.fields?.[field]?.type,
+        value,
+      } as FormValidationAction;
+
+      shouldPersistResults && dispatch(results);
+
+      return results;
+    }
   };
 
 export const useFormValidation = (appId: string) => {
@@ -117,19 +114,19 @@ export const useFormValidation = (appId: string) => {
         ...acc,
         [field]: {
           ...(schema?.describe?.() || schema),
-          overall: 'pristine',
+          overall: FORM_STATES.PRISTINE,
         },
       }),
       {},
     ),
     signature: {
       ...combinedSchema.signature.describe(),
-      overall: 'disabled',
+      overall: FORM_STATES.DISABLED,
     },
     version: 0,
   } as FormValidationStateParameters);
 
-  const validateSection = validator(validationDispatch);
+  const validateSection = validator(validationState, validationDispatch);
 
   return {
     validationState,
@@ -142,7 +139,7 @@ export const isRequired = (fieldData?: FormFieldType) =>
 
 export const useLocalValidation = (
   storedFields: FormSectionValidationState_Sections,
-  sectionValidator: FormSectionValidatorFunction_Field,
+  fieldValidator: FormFieldValidatorFunction,
 ) => {
   const [localState, setLocalState] = useState(storedFields);
   const [fieldsTouched, setFieldTouched] = useState(
@@ -158,27 +155,15 @@ export const useLocalValidation = (
     setLocalState(storedFields);
   }, [storedFields]);
 
-  useEffect(() => {
-    fieldsTouched.forEach((field) => {
-      const fieldData: FormFieldType =
-        localState[field as keyof FormSectionValidationState_Sections] || {};
-
-      setLocalState((prev) => ({
-        ...prev,
-        [field]: {
-          ...fieldData,
-        },
-      }));
-    });
-  }, [fieldsTouched]);
-
   const updateLocalState = useCallback(
     ({ error, field, value }: FormValidationAction) => {
+      fieldsTouched.has(field) || setFieldTouched((prev) => new Set(prev.add(field)));
+
       setLocalState((prev) => ({
         ...prev,
         [field]: {
           ...prev[field],
-          error,
+          ...(error && { error }),
           value,
         },
       }));
@@ -186,31 +171,58 @@ export const useLocalValidation = (
     [localState],
   );
 
-  const validateFieldTouched = (event: any): void => {
-    const { field, type, value } = handleFieldTypes(event);
+  const validateFieldTouched = async (event: any) => {
+    const { eventType, field, fieldType, value } = getFieldDataFromEvent(event);
 
-    if (field && type) {
-      switch (type) {
-        case 'change':
-          setLocalState(
-            (prev) =>
-              ({
-                ...prev,
-                [field]: {
-                  ...((prev[field as keyof FormSectionValidationState_Sections] || {}) as object),
-                  value,
-                },
-              } as FormSectionValidationState_Sections),
+    if (eventType && field && fieldType) {
+      switch (eventType) {
+        case 'blur': {
+          const canBlur = !(
+            ['text'].includes(fieldType) &&
+            ['address_country'].includes(field) &&
+            localState[field]?.value
           );
 
-          sectionValidator(field, value);
-          break;
+          if (canBlur) {
+            const shouldPersistData =
+              !!fieldType &&
+              ['text'].includes(fieldType) &&
+              fieldsTouched.has(field) &&
+              storedFields[field]?.value !== value;
 
-        case 'blur':
-          sectionValidator(field, value, updateLocalState).then(() => {
-            setFieldTouched((prev) => new Set(prev.add(field)));
-          });
+            const changes = await fieldValidator(field, value, shouldPersistData);
+
+            changes && updateLocalState(changes);
+          }
           break;
+        }
+
+        case 'mousedown':
+        case 'change': {
+          if ('text' === fieldType) {
+            setFieldTouched((prev) => new Set(prev.add(field)));
+
+            setLocalState(
+              (prev) =>
+                ({
+                  ...prev,
+                  [field]: {
+                    ...((prev[field as keyof FormSectionValidationState_Sections] || {}) as object),
+                    value,
+                  },
+                } as FormSectionValidationState_Sections),
+            );
+          } else {
+            const shouldPersistData = ['checkbox', 'select-one'].includes(fieldType);
+            const checkMultiSelectValue =
+              fieldType === 'select-one' && Array.isArray(value) ? value[0] : value;
+
+            const changes = await fieldValidator(field, checkMultiSelectValue, shouldPersistData);
+
+            changes && updateLocalState(changes);
+          }
+          break;
+        }
       }
     }
   };
