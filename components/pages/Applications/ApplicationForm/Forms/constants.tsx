@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
-const Applicant = dynamic(() => import('./applicant'));
-const Introduction = dynamic(() => import('./introduction'));
+const Applicant = dynamic(() => import('./Applicant'));
+const Introduction = dynamic(() => import('./Introduction'));
 
 export const FormSectionOverallStates = {
   CANEDIT: 'canEdit',
