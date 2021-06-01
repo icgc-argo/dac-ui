@@ -13,8 +13,8 @@ export const sectionSelector = (
   sectionName: FormSectionNames,
   {
     state,
-    validate,
-  }: { state: FormValidationStateParameters; validate: FormSectionValidatorFunction_Origin },
+    validator,
+  }: { state: FormValidationStateParameters; validator: FormSectionValidatorFunction_Origin },
 ) => {
   const SectionComponent = sectionsData[sectionName]?.component;
   const { fields: storedFields = {}, overall = 'pristine' } = state[sectionName] || {};
@@ -26,7 +26,7 @@ export const sectionSelector = (
       isSectionDisabled={isSectionDisabled}
       overall={overall}
       storedFields={storedFields}
-      validateSection={validate}
+      validateSection={validator}
     />
   ) : (
     `Section not implemented: "${sectionName}"`

@@ -6,7 +6,6 @@ import Typography from '@icgc-argo/uikit/Typography';
 
 import RequiredFieldsMessage from './RequiredFieldsMessage';
 import {
-  FormSectionOverallStates,
   FormSectionValidationState_Introduction,
   FormSectionValidatorFunction_Origin,
 } from './types';

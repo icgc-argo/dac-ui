@@ -49,7 +49,7 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
   const handleSectionChange = useCallback(
     (section: FormSectionNames) => {
       ['', 'disabled', 'pristine'].includes(validationState[selectedSection]?.overall || '') ||
-        validateSection(selectedSection, validationState)();
+        validateSection(selectedSection, !!'validateSelectedSection')();
 
       setSelectedSection(section);
     },
@@ -119,6 +119,33 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
                     margin-bottom: 23px;
                   }
                 }
+
+                // for the horizontal design in this app
+                [class$='-FormControl'] {
+                  align-items: center;
+                  display: flex;
+                  flex-wrap: wrap;
+                  width: 100%;
+
+                  > label {
+                    line-height: 1rem;
+                    margin: 0 5px 0 0;
+                    flex-shrink: 0;
+                    width: 140px;
+
+                    & ~ p {
+                      margin: 5px 0 0 150px;
+                    }
+                  }
+
+                  > div {
+                    flex-grow: 1;
+                  }
+
+                  > p {
+                    flex-basis: 100%;
+                  }
+                }
               }
             }
           `}
@@ -153,7 +180,7 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
 
           {sectionSelector(selectedSection, {
             state: validationState,
-            validate: validateSection,
+            validator: validateSection,
           })}
 
           <footer
