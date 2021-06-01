@@ -16,9 +16,6 @@ export const validationReducer = (
   state: FormValidationStateParameters,
   action: FormValidationAction,
 ): FormValidationStateParameters => {
-  // TODO: create dev mode
-  // console.log('dispatching attempt:', state, action);
-
   switch (action.type) {
     case 'boolean': {
       return {
@@ -50,16 +47,12 @@ export const validationReducer = (
     }
 
     default:
-      console.log('dispatched nothing', action);
       return state;
   }
 };
 
 export const validator: FormSectionValidatorFunction_Main =
   (dispatch) => (origin, validationState) => async (field, value, setLocalState) => {
-    // TODO: create dev mode
-    // console.log('validating', state, origin, field, value);
-
     if (field) {
       try {
         const fieldSchema = await yup.reach(combinedSchema[origin], field);
@@ -92,7 +85,6 @@ export const validator: FormSectionValidatorFunction_Main =
             ),
           )
           .catch((error: yup.ValidationError) => {
-            // console.log('error', Object.entries(error));
             return {
               error: error?.errors?.length > 0 ? error.errors : error.message,
             };
@@ -175,7 +167,6 @@ export const useLocalValidation = (
         ...prev,
         [field]: {
           ...fieldData,
-          // ...(isRequired(fieldData) && fieldData.value),
         },
       }));
     });
@@ -221,9 +212,6 @@ export const useLocalValidation = (
           });
           break;
       }
-      // } else {
-      // TODO: create dev mode
-      // console.log('unhandled event', event, field, type, value);
     }
   };
 

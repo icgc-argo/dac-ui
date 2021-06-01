@@ -11,8 +11,6 @@ export const handleFieldTypes = (event: ChangeEvent<HTMLInputElement>) => {
         };
 
       default:
-        console.log('default event handler, may malfunction', event);
-
         return {
           field: event.target.id,
           type: event.type,
@@ -21,7 +19,5 @@ export const handleFieldTypes = (event: ChangeEvent<HTMLInputElement>) => {
     }
   }
 
-  // TODO: create dev mode
-  console.log('unhandled event', event.target, event);
   return {};
 };

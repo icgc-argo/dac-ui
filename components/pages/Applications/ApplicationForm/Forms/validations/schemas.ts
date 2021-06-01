@@ -22,7 +22,6 @@ yup.setLocale({
 });
 
 export const introductionSchema = yup.object().shape({
-  // test: yup.boolean().default(false).oneOf([true]).required(),
   agreement_accepted: yup.boolean().default(false).oneOf([true]).required(),
 });
 
