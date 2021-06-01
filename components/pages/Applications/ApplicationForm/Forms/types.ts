@@ -9,6 +9,12 @@ export type CountryNamesAndAbbreviations = typeof countriesList[number];
 export type FormSectionNames = typeof sectionsOrder[number];
 export type HonorificsListTypes = typeof honorificsList[number];
 
+export enum EVENT_TARGET_TAGS {
+  INPUT = 'INPUT',
+  MULTISELECT = 'MULTISELECT',
+  SELECT = 'SELECT',
+}
+
 export enum FORM_STATES {
   CANEDIT = 'canEdit',
   COMPLETE = 'complete',

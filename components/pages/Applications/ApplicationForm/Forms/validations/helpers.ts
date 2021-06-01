@@ -1,5 +1,5 @@
-import { CountryNamesAndAbbreviations, FormFieldDataFromEvent } from '../types';
 import yup from './schemas';
+import { CountryNamesAndAbbreviations, EVENT_TARGET_TAGS, FormFieldDataFromEvent } from '../types';
 
 export const schemaValidator = (fieldSchema: any, value: any) =>
   fieldSchema.validate(value).catch((error: yup.ValidationError) => ({
@@ -7,7 +7,11 @@ export const schemaValidator = (fieldSchema: any, value: any) =>
   }));
 
 export const getFieldDataFromEvent: FormFieldDataFromEvent = (event) => {
-  if (['INPUT', 'MULTISELECT', 'SELECT'].includes(event?.target?.tagName)) {
+  if (
+    [EVENT_TARGET_TAGS.INPUT, EVENT_TARGET_TAGS.MULTISELECT, EVENT_TARGET_TAGS.SELECT].includes(
+      event?.target?.tagName as unknown as EVENT_TARGET_TAGS,
+    )
+  ) {
     switch (event?.target?.type) {
       case 'checkbox':
         return {
