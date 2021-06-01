@@ -3,20 +3,24 @@ import { SchemaDescription, SchemaObjectDescription } from 'yup/lib/schema';
 import { UikitIconNames } from '@icgc-argo/uikit/Icon/icons';
 import { TAG_VARIANTS } from '@icgc-argo/uikit/Tag';
 
-import {
-  countriesList,
-  FormSectionOverallStates,
-  honorificsList,
-  sectionsOrder,
-} from './constants';
+import { countriesList, honorificsList, sectionsOrder } from './constants';
 
 export type CountryNamesAndAbbreviations = typeof countriesList[number];
 export type FormSectionNames = typeof sectionsOrder[number];
 export type HonorificsListTypes = typeof honorificsList[number];
 
-type FormSectionOverallObj = typeof FormSectionOverallStates;
+export enum FORM_STATES {
+  CANEDIT = 'canEdit',
+  COMPLETE = 'complete',
+  DISABLED = 'disabled',
+  INCOMPLETE = 'incomplete',
+  LOCKED = 'locked',
+  MUSTEDIT = 'mustEdit',
+  TOUCHED = 'touched',
+  PRISTINE = 'pristine',
+}
 
-export type FormSectionOverallState = FormSectionOverallObj[keyof FormSectionOverallObj];
+export type FormSectionOverallState = `${FORM_STATES}`;
 
 export type ValidationConfigType = {
   iconName: UikitIconNames;
@@ -81,9 +85,9 @@ export type FormSectionValidationState_Sections =
   | FormSectionValidationState_Signature;
 
 export type FormSectionValidationState_SectionBase = {
-  fields?: Partial<FormSectionValidationState_Sections>;
-  overall?: FormSectionOverallState;
-  tooltips?: Partial<Record<FormSectionOverallState, ReactNode>>;
+  fields: Partial<FormSectionValidationState_Sections>;
+  overall: FORM_STATES;
+  tooltips: Partial<Record<FormSectionOverallState, ReactNode>>;
 } & Partial<SchemaObjectDescription>;
 
 export type FormValidationActionTypes = 'boolean' | 'string' | 'overall';
@@ -103,7 +107,7 @@ interface FormValidationState_Base {
 }
 
 export type FormValidationStateParameters = FormValidationState_Base &
-  Partial<Record<FormSectionNames, FormSectionValidationState_SectionBase>>;
+  Record<FormSectionNames, FormSectionValidationState_SectionBase>;
 
 export type FormSectionUpdateLocalStateFunction = (fieldData: FormValidationAction) => void;
 

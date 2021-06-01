@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { countriesList, honorificsList } from '../constants';
+import { countriesList } from '../constants';
 import { FormSectionNames } from '../types';
 import { transformContriesToValidationOptions } from './helpers';
 

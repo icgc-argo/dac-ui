@@ -2,17 +2,6 @@ import dynamic from 'next/dynamic';
 const Applicant = dynamic(() => import('./Applicant'));
 const Introduction = dynamic(() => import('./Introduction'));
 
-export const FormSectionOverallStates = {
-  CANEDIT: 'canEdit',
-  COMPLETE: 'complete',
-  DISABLED: 'disabled',
-  INCOMPLETE: 'incomplete',
-  LOCKED: 'locked',
-  MUSTEDIT: 'mustEdit',
-  TOUCHED: 'touched',
-  PRISTINE: 'pristine',
-};
-
 export const sectionsData = {
   appendices: { description: 'H. Appendices' },
   applicant: { component: Applicant, description: 'A. Applicant Information' },
