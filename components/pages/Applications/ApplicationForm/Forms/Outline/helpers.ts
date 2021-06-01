@@ -27,13 +27,13 @@ export const getValidationUIConfig = (status: FormSectionOverallState): Validati
         tagVariant: TAG_VARIANTS.ERROR,
       };
 
-    case FORM_STATES.CANEDIT:
+    case FORM_STATES.CAN_EDIT:
       return {
         iconName: 'edit',
         tagVariant: TAG_VARIANTS.EDITABLE,
       };
 
-    case FORM_STATES.MUSTEDIT:
+    case FORM_STATES.MUST_EDIT:
       return {
         iconName: 'edit',
         tagVariant: TAG_VARIANTS.WARNING,

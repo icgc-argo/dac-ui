@@ -16,12 +16,12 @@ export enum EVENT_TARGET_TAGS {
 }
 
 export enum FORM_STATES {
-  CANEDIT = 'canEdit',
+  CAN_EDIT = 'canEdit',
   COMPLETE = 'complete',
   DISABLED = 'disabled',
   INCOMPLETE = 'incomplete',
   LOCKED = 'locked',
-  MUSTEDIT = 'mustEdit',
+  MUST_EDIT = 'mustEdit',
   TOUCHED = 'touched',
   PRISTINE = 'pristine',
 }
