@@ -24,7 +24,6 @@ yup.setLocale({
 });
 
 export const applicantSchema = yup.object().shape({
-  // test: yup.boolean().default(false).oneOf([true]).required(),
   info_firstName: yup.string().default('').required(),
   info_googleEmail: yup
     .string()
@@ -58,14 +57,7 @@ export const applicantSchema = yup.object().shape({
     .default('')
     .required(),
   address_street: yup.string().default('').required(),
-  address_postalCode: yup
-    .string()
-    // .matches(
-    //   /(^\d{5}(?:[-\s]\d{4})?$)|(^([a-zA-Z]\d[a-zA-Z]( )?\d[a-zA-Z]\d)$)/,
-    //   'Please enter a valid Postal or Zip code.',
-    // )
-    .default('')
-    .required(),
+  address_postalCode: yup.string().default('').required(),
 });
 
 export const introductionSchema = yup.object().shape({
