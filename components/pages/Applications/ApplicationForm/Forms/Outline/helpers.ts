@@ -48,13 +48,13 @@ export const getValidationUIConfig = (status: FormSectionOverallStates): Validat
     case 'locked':
       return {
         iconName: 'lock',
-        tagVariant: 'NEUTRAL',
+        tagVariant: 'DISABLED',
       };
 
     default:
       return {
         iconName: 'question',
-        tagVariant: 'DISABLED',
+        tagVariant: 'NEUTRAL',
       };
   }
 };

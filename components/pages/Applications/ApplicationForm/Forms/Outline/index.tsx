@@ -12,12 +12,12 @@ import { FormSectionNames, FormValidationStateParameters } from '../types';
 const Outline = ({
   sections,
   selectedSection,
-  setSelectedSection = () => {},
+  setSelectedSection,
   validationState,
 }: {
   sections: readonly FormSectionNames[];
   selectedSection: FormSectionNames;
-  setSelectedSection: Dispatch<SetStateAction<FormSectionNames>>;
+  setSelectedSection: (section: FormSectionNames) => void;
   validationState: FormValidationStateParameters;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();

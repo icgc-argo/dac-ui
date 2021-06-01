@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
@@ -46,10 +46,18 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
   const sectionsAfter = enabledSections(sectionsOrder.slice(sectionIndex + 1), validationState);
   const sectionsBefore = enabledSections(sectionsOrder.slice(0, sectionIndex), validationState);
 
+  const handleSectionChange = useCallback(
+    (section: FormSectionNames) => {
+      ['', 'disabled', 'pristine'].includes(validationState[selectedSection]?.overall || '') ||
+        validateSection(selectedSection, validationState)();
+
+      setSelectedSection(section);
+    },
+    [selectedSection, validationState],
+  );
+
   const handlePreviousNextSectionClick = (direction: 'next' | 'previous') => () => {
-    ['', 'disabled', 'pristine'].includes(validationState[selectedSection]?.overall || '') ||
-      validateSection(selectedSection, validationState)();
-    setSelectedSection(
+    handleSectionChange(
       direction === 'next'
         ? sectionsAfter[0] // next <<available>>
         : sectionsBefore.slice(-1)[0], // previous <<available>>
@@ -71,7 +79,7 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
         <Outline
           sections={sectionsOrder}
           selectedSection={selectedSection}
-          setSelectedSection={setSelectedSection}
+          setSelectedSection={handleSectionChange}
           validationState={validationState}
         />
 
