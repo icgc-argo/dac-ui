@@ -1,21 +1,29 @@
 import { ChangeEvent, Dispatch, ReactNode } from 'react';
 import { SchemaDescription, SchemaObjectDescription } from 'yup/lib/schema';
+import { UikitIconNames } from '@icgc-argo/uikit/Icon/icons';
+import { TAG_VARIANTS } from '@icgc-argo/uikit/Tag';
 
-import { countriesList, honorificsList, sectionsOrder } from './constants';
+import {
+  countriesList,
+  FormSectionOverallStates,
+  honorificsList,
+  sectionsOrder,
+} from './constants';
 
 export type CountryNamesAndAbbreviations = typeof countriesList[number];
 export type FormSectionNames = typeof sectionsOrder[number];
 export type HonorificsListTypes = typeof honorificsList[number];
 
-export type FormSectionOverallStates =
-  | 'canEdit'
-  | 'complete'
-  | 'disabled'
-  | 'incomplete'
-  | 'locked'
-  | 'mustEdit'
-  | 'touched'
-  | 'pristine';
+type FormSectionOverallObj = typeof FormSectionOverallStates;
+
+export type FormSectionOverallState = FormSectionOverallObj[keyof FormSectionOverallObj];
+
+export type ValidationConfigType = {
+  iconName: UikitIconNames;
+  tagVariant: keyof typeof TAG_VARIANTS;
+};
+
+export { TAG_VARIANTS };
 
 export type FormFieldType = {
   error?: string[];
@@ -74,8 +82,8 @@ export type FormSectionValidationState_Sections =
 
 export type FormSectionValidationState_SectionBase = {
   fields?: Partial<FormSectionValidationState_Sections>;
-  overall?: FormSectionOverallStates;
-  tooltips?: Partial<Record<FormSectionOverallStates, ReactNode>>;
+  overall?: FormSectionOverallState;
+  tooltips?: Partial<Record<FormSectionOverallState, ReactNode>>;
 } & Partial<SchemaObjectDescription>;
 
 export type FormValidationActionTypes = 'boolean' | 'string' | 'overall';
@@ -83,7 +91,7 @@ export type FormValidationActionTypes = 'boolean' | 'string' | 'overall';
 export type FormValidationAction = {
   error?: string[];
   field: string;
-  overall: FormSectionOverallStates;
+  overall: FormSectionOverallState;
   section: FormSectionNames;
   type: FormValidationActionTypes;
   value?: any;

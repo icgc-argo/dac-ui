@@ -7,7 +7,7 @@ import { ContentBody, ContentBox } from '@icgc-argo/uikit/PageLayout';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
 
-import { sectionsOrder } from './constants';
+import { FormSectionOverallStates, sectionsOrder } from './constants';
 import { enabledSections, sectionSelector } from './helpers';
 import Outline from './Outline';
 import { FormSectionNames } from './types';
@@ -48,8 +48,9 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
 
   const handleSectionChange = useCallback(
     (section: FormSectionNames) => {
-      ['', 'disabled', 'pristine'].includes(validationState[selectedSection]?.overall || '') ||
-        validateSection(selectedSection, !!'validateSelectedSection')();
+      ['', FormSectionOverallStates.DISABLED, FormSectionOverallStates.PRISTINE].includes(
+        validationState[selectedSection]?.overall || '',
+      ) || validateSection(selectedSection, !!'validateSelectedSection')();
 
       setSelectedSection(section);
     },

@@ -10,6 +10,7 @@ import {
   FormValidationAction,
   FormValidationStateParameters,
 } from '../types';
+import { FormSectionOverallStates } from '../constants';
 
 export const validationReducer = (
   state: FormValidationStateParameters,
@@ -23,7 +24,9 @@ export const validationReducer = (
         [action.section]: {
           ...state[action.section],
           ...(action.overall &&
-            state[action.section]?.overall === 'pristine' && { overall: action.overall }),
+            state[action.section]?.overall === FormSectionOverallStates.PRISTINE && {
+              overall: action.overall,
+            }),
           fields: {
             ...state[action.section]?.fields,
             [action.field]: {
@@ -71,9 +74,11 @@ export const validator: FormSectionValidatorFunction_Main =
         section: origin,
         type: 'overall',
         overall: error
-          ? 'incomplete'
-          : !['', 'disabled', 'pristine'].includes(validationState[origin]?.overall || '')
-          ? 'complete'
+          ? FormSectionOverallStates.INCOMPLETE
+          : !['', FormSectionOverallStates.DISABLED, FormSectionOverallStates.PRISTINE].includes(
+              validationState[origin]?.overall || '',
+            )
+          ? FormSectionOverallStates.COMPLETE
           : undefined,
         ...(error && { error }),
       } as FormValidationAction;
@@ -86,7 +91,7 @@ export const validator: FormSectionValidatorFunction_Main =
       const results = {
         ...(error && { error }),
         field,
-        ...(shouldPersistResults && { overall: 'touched' }),
+        ...(shouldPersistResults && { overall: FormSectionOverallStates.TOUCHED }),
         section: origin,
         type: validationState[origin]?.fields?.[field]?.type,
         value,
@@ -109,14 +114,14 @@ export const useFormValidation = (appId: string) => {
         ...acc,
         [field]: {
           ...(schema?.describe?.() || schema),
-          overall: 'pristine',
+          overall: FormSectionOverallStates.PRISTINE,
         },
       }),
       {},
     ),
     signature: {
       ...combinedSchema.signature.describe(),
-      overall: 'disabled',
+      overall: FormSectionOverallStates.DISABLED,
     },
     version: 0,
   } as FormValidationStateParameters);

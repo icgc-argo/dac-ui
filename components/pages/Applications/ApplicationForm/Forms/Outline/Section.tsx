@@ -3,23 +3,24 @@ import { css } from '@icgc-argo/uikit';
 import Typography from '@icgc-argo/uikit/Typography';
 import VerticalTabs from '@icgc-argo/uikit/VerticalTabs';
 
-import { FormSectionOverallStates } from './helpers';
+import { FormSectionOverallState } from './helpers';
 import ValidationIcon from './ValidationIcon';
+import { FormSectionOverallStates } from '../constants';
 
 const FormSection = ({
   active = false,
   label = 'unnamed',
-  status = 'pristine',
+  status = FormSectionOverallStates.PRISTINE,
   switchSection,
   tooltip = '',
 }: {
   active?: boolean;
   label?: string;
-  status?: FormSectionOverallStates;
+  status?: FormSectionOverallState;
   switchSection?: MouseEventHandler<HTMLButtonElement>;
   tooltip?: string;
 }): ReactElement => {
-  const isDisabled = status === 'disabled';
+  const isDisabled = status === FormSectionOverallStates.DISABLED;
 
   return (
     <VerticalTabs.Item
@@ -41,7 +42,11 @@ const FormSection = ({
         {label}
       </Typography>
 
-      {!['disabled', 'pristine', 'touched'].includes(status) && <ValidationIcon status={status} />}
+      {![
+        FormSectionOverallStates.DISABLED,
+        FormSectionOverallStates.PRISTINE,
+        FormSectionOverallStates.TOUCHED,
+      ].includes(status) && <ValidationIcon status={status} />}
     </VerticalTabs.Item>
   );
 };
