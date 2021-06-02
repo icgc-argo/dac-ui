@@ -9,15 +9,7 @@ export type Application = {
   status: string;
 };
 
-export type Accessors =
-  | 'appId'
-  | 'institution'
-  | 'applicant'
-  | 'googleEmail'
-  | 'ethicsLetter'
-  | 'accessExpiry'
-  | 'lastUpdated'
-  | 'status';
+export type Accessors = keyof Application;
 
 export type ApplicationTable = {
   Header: string;
