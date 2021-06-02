@@ -6,7 +6,7 @@ const Dashboard = () => {
   return (
     <>
       <DashboardHeader />
-      <Applications />
+      <Applications inProgressApplications={[]} />
     </>
   );
 };
