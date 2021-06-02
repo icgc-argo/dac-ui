@@ -1,6 +1,7 @@
 import { styled } from '@icgc-argo/uikit';
 import { ContentBody } from '@icgc-argo/uikit/PageLayout';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import { UikitTheme } from '@icgc-argo/uikit/index';
 import React from 'react';
 import InProgress from './InProgress';
 import StartApplication from './Start';
