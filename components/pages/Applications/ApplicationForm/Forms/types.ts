@@ -74,7 +74,21 @@ export type FormSectionValidationState_Introduction =
 export type FormSectionValidationState_IT = FormSectionValidationState_SectionsGenericType<{}>;
 export type FormSectionValidationState_Project = FormSectionValidationState_SectionsGenericType<{}>;
 export type FormSectionValidationState_Representative =
-  FormSectionValidationState_SectionsGenericType<{}>;
+  FormSectionValidationState_SectionsGenericType<{
+    info_firstName: { value: string };
+    info_institutionEmail: { value: string };
+    info_lastName: { value: string };
+    info_middleName: { value: string };
+    info_positionTitle: { value: string };
+    info_primaryAffiliation: { value: string };
+    info_suffix: { value: string };
+    info_title: { value: string };
+    address_building: { value: string };
+    address_cityAndProvince: { value: string };
+    address_country: { value: string };
+    address_street: { value: string };
+    address_postalCod: { value: string };
+  }>;
 export type FormSectionValidationState_Signature =
   FormSectionValidationState_SectionsGenericType<{}>;
 
