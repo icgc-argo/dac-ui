@@ -1,4 +1,4 @@
-import { css } from '@emotion/core';
+import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import Link from '@icgc-argo/uikit/Link';

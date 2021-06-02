@@ -1,4 +1,4 @@
-import { css } from '@emotion/core';
+import { css } from '@icgc-argo/uikit';
 import Icon from '@icgc-argo/uikit/Icon';
 import { ContentBody, ContentBox } from '@icgc-argo/uikit/PageLayout';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
