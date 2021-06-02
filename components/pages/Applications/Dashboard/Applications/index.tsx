@@ -21,7 +21,7 @@ const Applications = ({ inProgressApplications = true }: ApplicationsProps) => {
 
   return (
     <ContentBody>
-      <TwoColGrid inProgress={true}>
+      <TwoColGrid>
         <InProgress />
         <StartApplication />
       </TwoColGrid>
