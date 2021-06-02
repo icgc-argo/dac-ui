@@ -4,6 +4,7 @@ export const instructionBoxButtonIconStyle = css`
   margin-right: 5px;
 `;
 export const instructionBoxButtonContentStyle = css`
+
   display: flex;
   align-items: center;
 `;

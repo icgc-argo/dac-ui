@@ -77,7 +77,7 @@ spec:
         stage('install') {
           steps {
             container('node') {
-              sh "npm ci"
+              sh "npm ci --legacy-peer-deps"
             }
           }
         }
