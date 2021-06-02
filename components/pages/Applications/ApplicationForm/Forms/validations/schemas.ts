@@ -27,10 +27,7 @@ export const applicantSchema = yup.object().shape({
   info_firstName: yup.string().default('').required(),
   info_googleEmail: yup
     .string()
-    .matches(
-      /^[a-z0-9](\.?[a-z0-9]){3,}@g(oogle)?mail\.com$/,
-      'Please enter a valid Google email address.',
-    )
+    .email('Please enter a valid email address.')
     .default('')
     .required(),
   info_institutionWebsite: yup.string().url('Please enter a valid url.').default('').required(),
@@ -46,11 +43,7 @@ export const applicantSchema = yup.object().shape({
   info_suffix: yup.string().default(''),
   info_title: yup.string().default(''),
   address_building: yup.string().default(''),
-  address_cityAndProvince: yup
-    .string()
-    .matches(/([^,]+),([^,]+)/, requiredMsg)
-    .default('')
-    .required(),
+  address_cityAndProvince: yup.string().default('').required(),
   address_country: yup
     .string()
     .oneOf(transformContriesToValidationOptions(countriesList))
@@ -78,11 +71,7 @@ export const representativeSchema = yup.object().shape({
   info_suffix: yup.string().default(''),
   info_title: yup.string().default(''),
   address_building: yup.string().default(''),
-  address_cityAndProvince: yup
-    .string()
-    .matches(/([^,]+),([^,]+)/, requiredMsg)
-    .default('')
-    .required(),
+  address_cityAndProvince: yup.string().default('').required(),
   address_country: yup
     .string()
     .oneOf(transformContriesToValidationOptions(countriesList))
