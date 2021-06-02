@@ -55,7 +55,6 @@ const AccessBox = ({ hasAccess = false }: { hasAccess?: boolean }) => {
           border-left: 1px solid #dcdde1;
           padding: 8px 27px 8px 16px;
           margin: 8px 0;
-          flex: 0 0 192px;
         `}
       >
         <Typography

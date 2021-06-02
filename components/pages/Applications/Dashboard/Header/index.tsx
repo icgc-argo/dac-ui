@@ -8,20 +8,13 @@ import AccessBox from './AccessBox';
 const DashboardHeader = () => (
   <>
     <PageHeader>
-      <div
-        css={css`
-          padding: 15px 0 13px 0;
-          font-size: 24px;
-          align-items: center;
-          display: flex;
-          justify-content: space-between;
-          margin: 0 auto;
-          max-width: 1200px;
-          width: 100%;
-        `}
-      >
+      <div css={css``}>
         <Typography
           css={css`
+            padding: 15px 0 13px 0;
+            align-items: center;
+            display: flex;
+
             font-size: 24px;
             margin: 0;
           `}
@@ -31,17 +24,7 @@ const DashboardHeader = () => (
       </div>
     </PageHeader>
 
-    <ContentBody
-      css={css`
-        margin-top: 66px;
-        padding: 0;
-        box-sizing: border-box;
-        margin: 10px auto 0;
-        max-width: 1200px;
-        min-width: 665px;
-        width: 100%;
-      `}
-    >
+    <ContentBody>
       <div
         css={css`
           display: flex;

@@ -1,5 +1,6 @@
 import { css } from '@emotion/core';
 import Icon from '@icgc-argo/uikit/Icon';
+import { ContentBody, ContentBox } from '@icgc-argo/uikit/PageLayout';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
 import React from 'react';
@@ -16,7 +17,15 @@ const DashboardCard = ({ title, subtitle, info, children }: DashboardCardProps) 
   const theme = useTheme();
 
   return (
-    <div>
+    <div
+      css={css`
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.1), 0 1px 5px 0 rgba(0, 0, 0, 0.08);
+      `}
+    >
       <header
         css={css`
           align-items: center;
@@ -24,7 +33,6 @@ const DashboardCard = ({ title, subtitle, info, children }: DashboardCardProps) 
           height: 60px;
           display: flex;
           padding: 0 40px;
-          margin: 0 -8px;
         `}
       >
         <Typography
