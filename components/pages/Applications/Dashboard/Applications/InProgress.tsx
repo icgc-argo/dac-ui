@@ -1,8 +1,19 @@
-import Dashboard from '..';
 import DashboardCard from '../Card';
 
-const InProgress = () => (
-  <DashboardCard title="inprogress">
+type InProgressProps = {
+  applicationNumber: string;
+  institution: string;
+};
+
+const InProgress = ({
+  applicationNumber = 'DACO-XXXXXX',
+  institution = 'Institution: to be specified',
+}: InProgressProps) => (
+  <DashboardCard
+    title={`Application: ${applicationNumber}`}
+    subtitle={institution}
+    info={`Access Expiry: May. 28, 2022`}
+  >
     <div>In Progress applications</div>
   </DashboardCard>
 );
