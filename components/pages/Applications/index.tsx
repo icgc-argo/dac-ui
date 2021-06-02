@@ -7,6 +7,7 @@ import DefaultPageLayout from 'components/DefaultPageLayout';
 
 import ApplicationForm from './ApplicationForm';
 import ManageApplications from './ManageApplications';
+import Dashboard from './Dashboard';
 
 type QueryType = {
   query: {
@@ -17,22 +18,22 @@ type QueryType = {
 
 const Application = (): ReactElement => {
   const {
-    query: { ID: [applicationID] = [] },
+    query: { ID: [appId = ''] = [] },
   }: QueryType = useRouter();
   const { permissions } = useAuthContext();
 
   const isAdmin = isDacoAdmin(permissions);
 
+  const pageTitle = appId.toUpperCase() || 'Application page';
+
   return (
-    <DefaultPageLayout title={'Application page'}>
-      {applicationID ? (
-        <ApplicationForm ID={applicationID} />
-      ) : isAdmin
-        ? (
-          <ManageApplications />
-        ) : (
-          <p>Placeholder for user dashboard</p>
-        )}
+    <DefaultPageLayout title={pageTitle}>
+      {appId
+        ? <ApplicationForm appId={appId} />
+        : isAdmin
+          ? <ManageApplications />
+          : <Dashboard />
+      }
     </DefaultPageLayout>
   );
 };

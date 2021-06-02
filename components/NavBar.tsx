@@ -192,7 +192,7 @@ const NavBar = () => {
                 align-items: center;
               `}
             >
-              <img src="/icgc-daco-logo.svg" alt="ICGC DACO Home" />
+              <img src="/icgc-daco-logo.svg" alt="ICGC DACO Home" width="208" />
             </Link>
           )}
         />

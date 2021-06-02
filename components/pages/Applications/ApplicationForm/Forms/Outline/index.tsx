@@ -5,20 +5,20 @@ import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
 import VerticalTabs from '@icgc-argo/uikit/VerticalTabs';
 
-import { sectionsData } from './constants';
+import { sectionsData } from '../constants';
 import FormSection from './Section';
-import { FormSectionNames } from '../types';
+import { FormSectionNames, FormValidationStateParameters } from '../types';
 
 const Outline = ({
   sections,
   selectedSection,
-  setSelectedSection = () => {},
+  setSelectedSection,
   validationState,
 }: {
   sections: readonly FormSectionNames[];
   selectedSection: FormSectionNames;
-  setSelectedSection: Dispatch<SetStateAction<FormSectionNames>>;
-  validationState: Record<FormSectionNames, any>;
+  setSelectedSection: (section: FormSectionNames) => void;
+  validationState: FormValidationStateParameters;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();
 
@@ -46,7 +46,7 @@ const Outline = ({
       </Typography>
 
       {sections.map((name) => {
-        const status = validationState[name]?.overall;
+        const status = validationState[name]?.overall || 'pristine';
 
         return (
           <FormSection
@@ -55,7 +55,7 @@ const Outline = ({
             label={sectionsData[name]?.description || name}
             status={status}
             switchSection={() => setSelectedSection(name)}
-            tooltip={sectionsData[name]?.tooltips?.[status]}
+            tooltip={sectionsData[name]?.tooltips?.[status] || ''}
           />
         );
       })}
