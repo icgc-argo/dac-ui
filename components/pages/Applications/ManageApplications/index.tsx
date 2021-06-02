@@ -16,6 +16,7 @@ import { ApplicationTable } from './types';
 
 import PageHeader from 'components/PageHeader';
 import { instructionBoxButtonIconStyle, instructionBoxButtonContentStyle } from 'global/styles';
+import { DATE_RANGE_DISPLAY_FORMAT } from 'global/constants';
 
 const formatTableData = (data: any) => data.map((datum: any) => ({
   appId: datum.appId,
@@ -32,6 +33,7 @@ const tableColumns: ApplicationTable[] = [
   {
     Header: 'Application #',
     accessor: 'appId',
+    // TODO: link to application page
     Cell: ({ original }) => original.appId,
   },
   {
@@ -58,12 +60,12 @@ const tableColumns: ApplicationTable[] = [
   {
     Header: 'Access Expiry',
     accessor: 'accessExpiry',
-    Cell: ({ original }) => original.accessExpiry,
+    Cell: ({ original }) => formatDate(new Date(original.accessExpiry), DATE_RANGE_DISPLAY_FORMAT),
   },
   {
     Header: 'Last Updated',
     accessor: 'lastUpdated',
-    Cell: ({ original }) => original.lastUpdated,
+    Cell: ({ original }) => formatDate(new Date(original.lastUpdated), DATE_RANGE_DISPLAY_FORMAT),
   },
   {
     Header: 'Status',
@@ -88,7 +90,6 @@ const ApplicationsDashboard = (): ReactElement => {
         // TODO with data hookup
         // loading={loading}
         >
-          {/* header row */}
           <Container
             css={css`
               margin-top: 24px;

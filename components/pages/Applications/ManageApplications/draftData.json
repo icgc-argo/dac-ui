@@ -6,7 +6,7 @@
   },
   "items": [
     {
-      "appId": "string",
+      "appId": "DAC-4534",
       "state": "DRAFT",
       "applicant": {
         "info": {
@@ -24,16 +24,16 @@
         }
       },
       "submitterId": "string",
-      "createdAtUtc": "1609459200000",
-      "updatedAtUtc": "1609459200000",
-      "submittedAtUtc": "1609459200000",
-      "approvedAtUtc": "1609459200000",
+      "createdAtUtc": "2021-06-02T15:20:35.973Z",
+      "updatedAtUtc": "2021-06-02T15:20:35.973Z",
+      "submittedAtUtc": "2021-06-02T15:20:35.973Z",
+      "approvedAtUtc": "2021-06-02T15:20:35.973Z",
       "ethics": {
         "declaredAsRequired": true
       },
       "approvedBy": "string",
-      "expiresAtUtc": "1609459200000",
-      "closedAtUtc": "1609459200000",
+      "expiresAtUtc": "2021-06-02T15:20:35.973Z",
+      "closedAtUtc": "2021-06-02T15:20:35.973Z",
       "closedBy": "string"
     }
   ]
