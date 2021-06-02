@@ -1,8 +1,10 @@
 import { ReactElement } from 'react';
 import { css } from '@icgc-argo/uikit';
 import { ContentHeader } from '@icgc-argo/uikit/PageLayout';
+import Typography from '@icgc-argo/uikit/Typography';
+import { Container } from 'react-grid-system';
 
-const PageHeader = ({ children }: { children: ReactElement }): ReactElement => (
+const PageHeader = ({ children }: { children: ReactElement | string }): ReactElement => (
   <ContentHeader
     css={css`
       background: #f8f8fb;
@@ -10,7 +12,26 @@ const PageHeader = ({ children }: { children: ReactElement }): ReactElement => (
       justify-content: space-between;
     `}
   >
-    {children}
+    {typeof children === 'string'
+      ? (
+        <Container
+          css={css`
+            width: 100%;
+          `}>
+          <Typography
+            component="h1"
+            css={css`
+              font-size: 24px;
+              line-height: 28px;
+              margin: 15px 0 13px;
+              text-align: left;
+            `}
+          >
+            {children}
+          </Typography>
+        </Container>
+      )
+      : children}
   </ContentHeader>
 );
 
