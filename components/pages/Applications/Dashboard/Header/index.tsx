@@ -1,5 +1,6 @@
 import { css } from '@emotion/core';
 import { ContentBody } from '@icgc-argo/uikit/PageLayout';
+import Typography from '@icgc-argo/uikit/Typography';
 import PageHeader from 'components/PageHeader';
 import React from 'react';
 import AccessBox from './AccessBox';
@@ -19,7 +20,14 @@ const DashboardHeader = () => (
           width: 100%;
         `}
       >
-        My Applications
+        <Typography
+          css={css`
+            font-size: 24px;
+            margin: 0;
+          `}
+        >
+          My Applications
+        </Typography>
       </div>
     </PageHeader>
 
@@ -38,18 +46,20 @@ const DashboardHeader = () => (
         css={css`
           display: flex;
           justify-content: space-between;
+          align-items: center;
           margin-bottom: 57px;
         `}
       >
-        <p
+        <Typography
+          variant="paragraph2"
           css={css`
-            margin-right: 60px;
+            margin-right: 80px;
           `}
         >
           This is where you can manage your Applications for Access to ICGC Controlled Data. Access
           will be granted for a <b>one year period</b>, starting from the date of approval by the
           ICGC DACO.
-        </p>
+        </Typography>
         <AccessBox />
       </div>
     </ContentBody>

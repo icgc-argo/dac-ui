@@ -3,6 +3,7 @@ import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import Link from '@icgc-argo/uikit/Link';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import Typography from '@icgc-argo/uikit/Typography';
 import React from 'react';
 import DashboardCard from '../Card';
 
@@ -19,8 +20,8 @@ const StartApplication = () => {
           padding: 65px 0;
         `}
       >
-        {' '}
-        <div
+        <Typography
+          variant="data"
           css={css`
             margin-bottom: 28px;
             max-width: 520px;
@@ -30,7 +31,8 @@ const StartApplication = () => {
           Start a new application, fill out all required sections, then sign and submit the
           application. The ICGC DACO will review and grant access to{' '}
           <Link>eligible project teams.</Link>
-        </div>
+        </Typography>
+
         <Button onClick={function noRefCheck() {}} size="sm">
           <Icon
             css={css`
