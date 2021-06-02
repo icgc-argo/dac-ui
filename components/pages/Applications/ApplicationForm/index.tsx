@@ -3,12 +3,12 @@ import { ReactElement } from 'react';
 import ApplicationHeader from './Header';
 import ApplicationFormsBase from './Forms';
 
-const ApplicationForm = ({ ID = 'none' }): ReactElement => {
+const ApplicationForm = ({ appId = 'none' }): ReactElement => {
   return (
     <>
-      <ApplicationHeader ID={ID} />
+      <ApplicationHeader appId={appId} />
 
-      <ApplicationFormsBase />
+      <ApplicationFormsBase appId={appId} />
     </>
   );
 };

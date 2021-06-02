@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
@@ -8,28 +8,62 @@ import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
 
 import { sectionsOrder } from './constants';
+import { enabledSections, sectionSelector } from './helpers';
 import Outline from './Outline';
-import { FormSectionNames } from './types';
-import { useFormValidation, ValidationParametersType } from './useFormValidation';
+import { FormSectionNames, FORM_STATES } from './types';
+import { useFormValidation } from './validations';
+import router, { useRouter } from 'next/router';
 
-const enabledSections = (sections: FormSectionNames[], state: ValidationParametersType) =>
-  sections.filter((sectionName) => !(state[sectionName]?.overall === 'disabled'));
+type QueryType = {
+  query: {
+    section?: FormSectionNames;
+  };
+};
 
-const ApplicationFormsBase = (): ReactElement => {
-  const [selectedSection, setSelectedSection] = useState(sectionsOrder[0] as FormSectionNames);
+const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
+  const {
+    query: { section: sectionFromQuery },
+  }: QueryType = useRouter();
+  const [selectedSection, setSelectedSection] = useState(
+    sectionFromQuery || (sectionsOrder[0] as FormSectionNames),
+  );
+  const { validationState, validateSection } = useFormValidation(appId);
   const theme: UikitTheme = useTheme();
-  const { validationState } = useFormValidation();
+
+  useEffect(() => {
+    // This adds the selected section to the history
+    // without the initial switch when it's not in the query
+    (sectionFromQuery ? router.push : router.replace)(
+      `/applications/${appId}?section=${selectedSection}`,
+      undefined,
+      {
+        shallow: true,
+      },
+    );
+  }, [selectedSection]);
 
   const sectionIndex = sectionsOrder.indexOf(selectedSection);
   const sectionsAfter = enabledSections(sectionsOrder.slice(sectionIndex + 1), validationState);
   const sectionsBefore = enabledSections(sectionsOrder.slice(0, sectionIndex), validationState);
 
-  const handlePreviousNextSectionClick = (direction: 'next' | 'previous') => () =>
-    setSelectedSection(
+  const handleSectionChange = useCallback(
+    (section: FormSectionNames) => {
+      ['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
+        validationState[selectedSection]?.overall || '',
+      ) || validateSection(selectedSection, !!'validateSelectedSection')();
+
+      setSelectedSection(section);
+    },
+    [selectedSection, validationState],
+  );
+
+  const handlePreviousNextSectionClick = (direction: 'next' | 'previous') => () => {
+    handleSectionChange(
       direction === 'next'
         ? sectionsAfter[0] // next <<available>>
         : sectionsBefore.slice(-1)[0], // previous <<available>>
     );
+  };
 
   return (
     <ContentBody>
@@ -46,8 +80,8 @@ const ApplicationFormsBase = (): ReactElement => {
         <Outline
           sections={sectionsOrder}
           selectedSection={selectedSection}
-          setSelectedSection={setSelectedSection}
-          validationState={validationState as Record<FormSectionNames, any>}
+          setSelectedSection={handleSectionChange}
+          validationState={validationState}
         />
 
         <div
@@ -63,7 +97,57 @@ const ApplicationFormsBase = (): ReactElement => {
 
             > article {
               height: 100%;
-              padding: 30px 40px;
+              padding: 30px 40px 40px;
+
+              h2 {
+                font-size: 20px;
+                margin-top: 0;
+              }
+
+              > section {
+                &:not(:first-of-type) {
+                  border-top: 1px solid ${theme.colors.grey_2};
+
+                  &:not(:last-of-type) {
+                    padding-bottom: 25px;
+                  }
+                }
+
+                p {
+                  margin: 0;
+
+                  &:not(:last-of-type) {
+                    margin-bottom: 23px;
+                  }
+                }
+
+                // for the horizontal design in this app
+                [class$='-FormControl'] {
+                  align-items: center;
+                  display: flex;
+                  flex-wrap: wrap;
+                  width: 100%;
+
+                  > label {
+                    line-height: 1rem;
+                    margin: 0 5px 0 0;
+                    flex-shrink: 0;
+                    width: 140px;
+
+                    & ~ p {
+                      margin: 5px 0 0 150px;
+                    }
+                  }
+
+                  > div {
+                    flex-grow: 1;
+                  }
+
+                  > p {
+                    flex-basis: 100%;
+                  }
+                }
+              }
             }
           `}
         >
@@ -95,9 +179,10 @@ const ApplicationFormsBase = (): ReactElement => {
             </Typography>
           </header>
 
-          <article>
-            {selectedSection} placeholder
-          </article>
+          {sectionSelector(selectedSection, {
+            state: validationState,
+            validator: validateSection,
+          })}
 
           <footer
             css={css`
