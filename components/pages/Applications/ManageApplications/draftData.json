@@ -1,0 +1,40 @@
+{
+  "pagingInfo": {
+    "totalCount": 0,
+    "pagesCount": 0,
+    "index": 0
+  },
+  "items": [
+    {
+      "appId": "string",
+      "state": "DRAFT",
+      "applicant": {
+        "info": {
+          "positionTitle": "string",
+          "institutionWebsite": "string",
+          "primaryAffiliation": "string",
+          "institutionEmail": "string",
+          "suffix": "string",
+          "googleEmail": "string",
+          "lastName": "string",
+          "displayName": "string",
+          "middleName": "string",
+          "firstName": "string",
+          "title": "string"
+        }
+      },
+      "submitterId": "string",
+      "createdAtUtc": "1609459200000",
+      "updatedAtUtc": "1609459200000",
+      "submittedAtUtc": "1609459200000",
+      "approvedAtUtc": "1609459200000",
+      "ethics": {
+        "declaredAsRequired": true
+      },
+      "approvedBy": "string",
+      "expiresAtUtc": "1609459200000",
+      "closedAtUtc": "1609459200000",
+      "closedBy": "string"
+    }
+  ]
+}

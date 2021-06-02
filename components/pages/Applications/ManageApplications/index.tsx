@@ -1,5 +1,7 @@
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 import { Col, Container, Row } from 'react-grid-system';
+import { startCase } from 'lodash';
+import { format as formatDate, parseISO } from 'date-fns';
 
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
@@ -7,13 +9,72 @@ import Icon from '@icgc-argo/uikit/Icon';
 import CardContainer from '@icgc-argo/uikit/Container';
 import Typography from '@icgc-argo/uikit/Typography';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
-import { TableActionBar } from '@icgc-argo/uikit/Table';
+import Table from '@icgc-argo/uikit/Table';
+
+import draftData from './draftData.json';
+import { ApplicationTable } from './types';
 
 import PageHeader from 'components/PageHeader';
 import { instructionBoxButtonIconStyle, instructionBoxButtonContentStyle } from 'global/styles';
 
+const formatTableData = (data: any) => data.map((datum: any) => ({
+  appId: datum.appId,
+  institution: datum.applicant.info.primaryAffiliation,
+  applicant: datum.applicant.info.displayName,
+  googleEmail: datum.applicant.info.googleEmail,
+  ethicsLetter: datum.ethics.declaredAsRequired,
+  accessExpiry: datum.expiresAtUtc,
+  lastUpdated: datum.updatedAtUtc,
+  status: datum.state,
+}));
+
+const tableColumns: ApplicationTable[] = [
+  {
+    Header: 'Application #',
+    accessor: 'appId',
+    Cell: ({ original }) => original.appId,
+  },
+  {
+    Header: 'Institution',
+    accessor: 'institution',
+    Cell: ({ original }) => original.institution,
+  },
+  {
+    Header: 'Applicant',
+    accessor: 'applicant',
+    Cell: ({ original }) => original.applicant,
+  },
+  {
+    Header: 'Applicant Google Email',
+    accessor: 'googleEmail',
+    Cell: ({ original }) => original.googleEmail,
+  },
+  {
+    Header: 'Ethics Letter',
+    accessor: 'ethicsLetter',
+    sortable: false,
+    Cell: ({ original }) => original.ethicsLetter ? 'Yes' : 'No',
+  },
+  {
+    Header: 'Access Expiry',
+    accessor: 'accessExpiry',
+    Cell: ({ original }) => original.accessExpiry,
+  },
+  {
+    Header: 'Last Updated',
+    accessor: 'lastUpdated',
+    Cell: ({ original }) => original.lastUpdated,
+  },
+  {
+    Header: 'Status',
+    accessor: 'status',
+    Cell: ({ original }) => startCase(original.status.toLowerCase()),
+  },
+];
+
 const ApplicationsDashboard = (): ReactElement => {
   const theme = useTheme();
+  const containerRef = React.createRef<HTMLDivElement>();
   return (
     <>
       <PageHeader>ICGC DACO Dashboard</PageHeader>
@@ -106,20 +167,15 @@ const ApplicationsDashboard = (): ReactElement => {
               </Col>
             </Row>
             <Row>
-              <Col>Table</Col>
-            </Row>
-            <Row
-              css={css`
-                justify-content: space-between;
-              `}
-            >
-              <Col>left</Col>
-              <Col
-                css={css`
-                  display: flex;
-                  justify-content: flex-end;
-                `}
-              >right</Col>
+              <Col>
+                <Table
+                  columns={tableColumns}
+                  data={formatTableData(draftData.items)}
+                  stripped
+                  withOutsideBorder
+                  parentRef={containerRef}
+                />
+              </Col>
             </Row>
           </Container>
         </CardContainer>
