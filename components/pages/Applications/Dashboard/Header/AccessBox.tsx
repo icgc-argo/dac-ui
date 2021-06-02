@@ -9,6 +9,7 @@ import Typography from '@icgc-argo/uikit/Typography';
 const IconWithText = styled('div')`
   font-size: 11px;
   display: flex;
+  flex: 1;
   align-items: center;
   padding: 18px 23px 18px 16px;
 
@@ -17,15 +18,19 @@ const IconWithText = styled('div')`
   }
 `;
 
-const getConfig = (hasAccess: boolean): { iconName: string; iconFill: string; iconText: string } =>
+const getConfig = (hasAccess: boolean): { iconName: string; fontColor: string; iconText: string } =>
   hasAccess
-    ? { iconName: '/icons-success.svg', iconFill: 'white', iconText: 'ICGC DACO Approved!' }
-    : { iconName: '/icons-controlled-data.svg', iconFill: 'accent2', iconText: 'No Access' };
+    ? {
+        iconName: '/icons-checkmark.svg',
+        fontColor: 'accent1_dark',
+        iconText: 'ICGC DACO Approved!',
+      }
+    : { iconName: '/icons-controlled-data.svg', fontColor: 'primary', iconText: 'No Access' };
 
 const AccessBox = ({ hasAccess = false }: { hasAccess?: boolean }) => {
   const theme = useTheme();
 
-  const { iconName, iconFill, iconText } = getConfig(hasAccess);
+  const { iconName, iconText, fontColor } = getConfig(hasAccess);
 
   return (
     <div
@@ -40,16 +45,21 @@ const AccessBox = ({ hasAccess = false }: { hasAccess?: boolean }) => {
     >
       <IconWithText hasAccess={hasAccess}>
         <img src={iconName} width={40} height={40} />
-        <Typography variant="caption">{iconText}</Typography>
+        <Typography variant="caption" color={fontColor} bold>
+          {iconText}
+        </Typography>
       </IconWithText>
+
       <div
         css={css`
           border-left: 1px solid #dcdde1;
           padding: 8px 27px 8px 16px;
           margin: 8px 0;
+          flex: 0 0 192px;
         `}
       >
         <Typography
+          as="span"
           css={css`
             line-height: 1.69;
             font-size: 13px;

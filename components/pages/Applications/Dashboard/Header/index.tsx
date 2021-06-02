@@ -60,7 +60,7 @@ const DashboardHeader = () => (
           will be granted for a <b>one year period</b>, starting from the date of approval by the
           ICGC DACO.
         </Typography>
-        <AccessBox />
+        <AccessBox hasAccess={true} />
       </div>
     </ContentBody>
   </>
