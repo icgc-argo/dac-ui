@@ -9,8 +9,6 @@ export type Application = {
   status: string;
 };
 
-export type CellProps = { original: Application };
-
 export type Accessors =
   | 'appId'
   | 'institution'
