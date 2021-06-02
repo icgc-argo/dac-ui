@@ -11,5 +11,14 @@
     ]
   ],
 
-  "plugins": ["@emotion/babel-plugin"]
+  "plugins": [
+    [
+      "@emotion",
+      {
+        "autoLabel": "always",
+        "labelFormat": "[local]",
+        "cssPropOptimization": true
+      }
+    ]
+  ]
 }
