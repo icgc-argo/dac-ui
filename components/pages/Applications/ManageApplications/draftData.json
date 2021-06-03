@@ -1,0 +1,40 @@
+{
+  "pagingInfo": {
+    "totalCount": 0,
+    "pagesCount": 0,
+    "index": 0
+  },
+  "items": [
+    {
+      "appId": "DAC-4534",
+      "state": "DRAFT",
+      "applicant": {
+        "info": {
+          "positionTitle": "string",
+          "institutionWebsite": "string",
+          "primaryAffiliation": "string",
+          "institutionEmail": "string",
+          "suffix": "string",
+          "googleEmail": "string",
+          "lastName": "string",
+          "displayName": "string",
+          "middleName": "string",
+          "firstName": "string",
+          "title": "string"
+        }
+      },
+      "submitterId": "string",
+      "createdAtUtc": "2021-06-02T15:20:35.973Z",
+      "updatedAtUtc": "2021-06-02T15:20:35.973Z",
+      "submittedAtUtc": "2021-06-02T15:20:35.973Z",
+      "approvedAtUtc": "2021-06-02T15:20:35.973Z",
+      "ethics": {
+        "declaredAsRequired": true
+      },
+      "approvedBy": "string",
+      "expiresAtUtc": "2021-06-02T15:20:35.973Z",
+      "closedAtUtc": "2021-06-02T15:20:35.973Z",
+      "closedBy": "string"
+    }
+  ]
+}
