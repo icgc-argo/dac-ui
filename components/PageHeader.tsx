@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { css } from '@icgc-argo/uikit';
+import { css } from '@emotion/core';
 import { ContentHeader } from '@icgc-argo/uikit/PageLayout';
 import Typography from '@icgc-argo/uikit/Typography';
 import { Container } from 'react-grid-system';

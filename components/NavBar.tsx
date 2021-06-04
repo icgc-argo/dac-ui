@@ -1,5 +1,6 @@
 import { createRef, useState } from 'react';
 import { useRouter } from 'next/router';
+import { css } from '@emotion/core';
 import urlJoin from 'url-join';
 import AppBar, {
   DropdownMenu,
@@ -11,7 +12,7 @@ import AppBar, {
 } from '@icgc-argo/uikit/AppBar';
 import Button from '@icgc-argo/uikit/Button';
 import Typography from '@icgc-argo/uikit/Typography';
-import { css, styled, UikitTheme } from '@icgc-argo/uikit/index';
+import { styled, UikitTheme } from '@icgc-argo/uikit/index';
 import Link from '@icgc-argo/uikit/Link';
 import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';

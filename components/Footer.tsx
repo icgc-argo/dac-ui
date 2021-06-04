@@ -1,5 +1,4 @@
-import React from 'react';
-import { css } from '@icgc-argo/uikit';
+import { css } from '@emotion/core';
 import { styled, UikitTheme } from '@icgc-argo/uikit/index';
 import Link from '@icgc-argo/uikit/Link';
 import {
@@ -20,14 +19,14 @@ const { NEXT_PUBLIC_ARGO_ROOT, NEXT_PUBLIC_ARGO_PLATFORM_ROOT } = getConfig();
 
 const StyledLink = styled(Link)`
   ${({ theme }: { theme: UikitTheme }) => css`
-    ${theme.typography.data};
+    ${css`theme.typography.data`};
     margin: 0px 5px;
   `}
 `;
 
 const StyledPolicyLink = styled(StyledLink)`
   ${({ theme }: { theme: UikitTheme }) => css`
-    ${theme.typography.caption};
+    ${css`theme.typography.caption`};
   `}
 `;
 
@@ -119,7 +118,7 @@ const LinksSection = () => {
       >
         <div
           css={(theme: UikitTheme) => css`
-            ${theme.typography.caption};
+            ${css`theme.typography.caption`};
           `}
         >
           © 2021 ICGC Data Access Compliance Office. All rights reserved.

@@ -1,5 +1,5 @@
 import { ReactElement, useState } from 'react';
-import { css } from '@icgc-argo/uikit';
+import { css } from '@emotion/core';
 
 import PageHeader from 'components/PageHeader';
 import Actions from './Actions';

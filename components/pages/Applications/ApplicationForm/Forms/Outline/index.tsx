@@ -1,5 +1,5 @@
-import { Dispatch, MouseEventHandler, ReactElement, SetStateAction } from 'react';
-import { css } from '@icgc-argo/uikit';
+import { ReactElement } from 'react';
+import { css } from '@emotion/core';
 import { UikitTheme } from '@icgc-argo/uikit/index';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';

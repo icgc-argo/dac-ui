@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { css } from '@icgc-argo/uikit';
+import { css } from '@emotion/core';
 import Link from '@icgc-argo/uikit/Link';
 import Typography from '@icgc-argo/uikit/Typography';
 

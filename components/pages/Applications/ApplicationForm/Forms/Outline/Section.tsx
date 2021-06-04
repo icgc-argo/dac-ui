@@ -1,5 +1,5 @@
 import { MouseEventHandler, ReactElement } from 'react';
-import { css } from '@icgc-argo/uikit';
+import { css } from '@emotion/core';
 import Typography from '@icgc-argo/uikit/Typography';
 import VerticalTabs from '@icgc-argo/uikit/VerticalTabs';
 

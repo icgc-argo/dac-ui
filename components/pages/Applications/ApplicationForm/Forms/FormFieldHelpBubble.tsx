@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
-import { css, UikitTheme } from '@icgc-argo/uikit/index';
+import { css } from '@emotion/core';
+import { UikitTheme } from '@icgc-argo/uikit/index';
 import Typography from '@icgc-argo/uikit/Typography';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 

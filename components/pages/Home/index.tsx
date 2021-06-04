@@ -1,4 +1,5 @@
-import { css, styled } from '@icgc-argo/uikit';
+import { css } from '@emotion/core';
+import { styled } from '@icgc-argo/uikit';
 import Typography from '@icgc-argo/uikit/Typography';
 import Button from '@icgc-argo/uikit/Button';
 import Link from '@icgc-argo/uikit/Link';
