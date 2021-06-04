@@ -1,16 +1,22 @@
 import { useEffect, useState } from 'react';
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, Method } from 'axios';
+import urlJoin from 'url-join';
 
 import { DAC_API } from 'global/constants/externalPaths';
+import { getConfig } from 'global/config';
 
 import useAuthContext from './useAuthContext';
 
-axios.defaults.baseURL = DAC_API;
+const { USE_DAC_API_PROXY } = getConfig();
+
+axios.defaults.baseURL = USE_DAC_API_PROXY ? '' : DAC_API;
+axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
+axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 
 const useAxios = ({
   data = {},
   headers = {},
-  method = 'GET',
+  method = 'GET' as Method,
   url = '/',
 }: AxiosRequestConfig) => {
   const [error, setError] = useState('');
@@ -24,10 +30,10 @@ const useAxios = ({
     headers: {
       accept: '*/*',
       ...headers,
-      Authorization: `Bearer ${token || ''}`
+      Authorization: `Bearer ${token || ''}`,
     },
     method,
-    url,
+    url: USE_DAC_API_PROXY ? urlJoin('/api', url) : url,
   }
 
   const fetchAPI = () => {
@@ -43,7 +49,7 @@ const useAxios = ({
 
   useEffect(() => {
     fetchAPI();
-  }, [data, headers, method, url]);
+  }, []);
 
   return { error, loading, response };
 };

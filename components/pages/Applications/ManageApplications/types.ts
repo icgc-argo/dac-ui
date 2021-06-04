@@ -17,3 +17,25 @@ export type ApplicationTable = {
   sortable?: boolean;
   Cell: ({ original }: { original: Application }) => string;
 };
+
+export type ApplicationsTableSort =
+  | 'appId:asc'
+  | 'appId:desc'
+  | 'displayName:asc'
+  | 'displayName:desc'
+  | 'expiresAtUtc:asc'
+  | 'expiresAtUtc:desc'
+  | 'googleEmail:asc'
+  | 'googleEmail:desc'
+  | 'primaryAffiliation:asc'
+  | 'primaryAffiliation:desc'
+  | 'state:asc'
+  | 'state:desc'
+  | 'updatedAtUtc:asc'
+  | 'updatedAtUtc:desc';
+
+export type ApplicationsRequestData = {
+  page: number;
+  pageSize: number;
+  sort: ApplicationsTableSort;
+};

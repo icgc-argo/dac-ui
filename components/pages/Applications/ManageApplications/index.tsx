@@ -17,6 +17,7 @@ import { ApplicationTable } from './types';
 import PageHeader from 'components/PageHeader';
 import { instructionBoxButtonIconStyle, instructionBoxButtonContentStyle } from 'global/styles';
 import { DATE_RANGE_DISPLAY_FORMAT } from 'global/constants';
+import { useFetchManageApplications } from 'global/hooks';
 
 const formatTableData = (data: any) => data.map((datum: any) => ({
   appId: datum.appId,
@@ -77,6 +78,11 @@ const tableColumns: ApplicationTable[] = [
 const ApplicationsDashboard = (): ReactElement => {
   const theme = useTheme();
   const containerRef = React.createRef<HTMLDivElement>();
+
+  const { error, loading, response } = useFetchManageApplications({ page: 0, pageSize: 20, sort: 'state:desc' });
+
+  console.log({ error, loading, response });
+
   return (
     <>
       <PageHeader>ICGC DACO Dashboard</PageHeader>
