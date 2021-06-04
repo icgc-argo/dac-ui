@@ -1,7 +1,8 @@
 import { Meta } from '@storybook/react';
-import ApplicationProgressBar, { ApplicationState } from '../components/ApplicationProgressBar';
+import ApplicationProgressBar from '../components/ApplicationProgressBar';
 import { Story } from '@storybook/react';
 import React from 'react';
+import { ApplicationState } from '../components/ApplicationProgressBar/progressStates';
 
 const ApplicationsStates = Object.values(ApplicationState);
 
