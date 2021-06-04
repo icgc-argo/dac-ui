@@ -1,5 +1,5 @@
 import Applications from 'components/pages/Applications';
-import useAuthContext from 'global/hooks/useAuthContext';
+import { useAuthContext } from 'global/hooks';
 import { createPage } from 'global/utils/pages/createPage';
 
 const ApplicationPage = createPage({

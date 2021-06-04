@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Col, Container, Row } from 'react-grid-system';
 import { startCase } from 'lodash';
-import { format as formatDate, parseISO } from 'date-fns';
+import { format as formatDate } from 'date-fns';
 
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';

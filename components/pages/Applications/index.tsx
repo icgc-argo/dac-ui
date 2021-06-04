@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { useRouter } from 'next/router';
 
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
-import useAuthContext from 'global/hooks/useAuthContext';
+import { useAuthContext } from 'global/hooks';
 import DefaultPageLayout from 'components/DefaultPageLayout';
 
 import ApplicationForm from './ApplicationForm';
