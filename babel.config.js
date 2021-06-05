@@ -12,9 +12,17 @@ module.exports = {
   ],
   plugins: [
     [
-      'emotion',
+      '@emotion',
       {
         autoLabel: 'always',
+        labelFormat: '-E11-[local]',
+      },
+    ],
+    [
+      'emotion',
+      {
+        autoLabel: true,
+        labelFormat: '-E10-[local]',
       },
     ],
   ],

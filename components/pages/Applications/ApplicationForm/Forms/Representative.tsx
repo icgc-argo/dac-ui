@@ -1,4 +1,4 @@
-import { css } from '@emotion/core';
+import { css } from '@icgc-argo/uikit';
 import FormCheckbox from '@icgc-argo/uikit/form/FormCheckbox';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';

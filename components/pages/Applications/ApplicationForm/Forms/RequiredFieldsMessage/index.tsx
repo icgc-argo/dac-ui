@@ -1,4 +1,4 @@
-import { css } from '@emotion/core';
+import { css } from '@icgc-argo/uikit';
 import Typography from '@icgc-argo/uikit/Typography';
 
 import RequiredStar from './RequiredStar';

@@ -1,5 +1,5 @@
 import { ReactElement, ReactNode } from 'react';
-import { css } from '@emotion/core';
+import { css } from '@icgc-argo/uikit/index';
 
 import FormFieldHelpBubble from './FormFieldHelpBubble';
 
