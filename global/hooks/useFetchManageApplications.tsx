@@ -1,19 +1,19 @@
 import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
 
-import { ApplicationsRequestData } from '../../components/pages/Applications/ManageApplications/types';
+import { ManageApplicationsRequestData } from '../../components/pages/Applications/ManageApplications/types';
 import useAxios from './useAxios';
 
 const useFetchManageApplications = ({
   page,
   pageSize,
   sort,
-}: ApplicationsRequestData) => {
+}: ManageApplicationsRequestData) => {
   const { error, loading, response } = useAxios({
     url: APPLICATIONS_PATH,
-    data: {
+    params: {
       page,
       pageSize,
-      sort,
+      sort: sort.map(({ field, order }) => `${field}:${order}`),
     }
   });
 

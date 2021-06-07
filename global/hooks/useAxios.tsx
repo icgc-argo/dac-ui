@@ -14,7 +14,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 
 const useAxios = ({
-  data = {},
+  params = {},
   headers = {},
   method = 'GET' as Method,
   url = '/',
@@ -26,7 +26,7 @@ const useAxios = ({
   const { token } = useAuthContext();
 
   const config: AxiosRequestConfig = {
-    data,
+    params,
     headers: {
       accept: '*/*',
       ...headers,

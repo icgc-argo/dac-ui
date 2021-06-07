@@ -11,31 +11,47 @@ export type Application = {
 
 export type Accessors = keyof Application;
 
-export type ApplicationTable = {
+export type ManageApplicationsTable = {
   Header: string;
   accessor: Accessors;
   sortable?: boolean;
   Cell: ({ original }: { original: Application }) => string;
 };
 
-export type ApplicationsTableSort =
-  | 'appId:asc'
-  | 'appId:desc'
-  | 'displayName:asc'
-  | 'displayName:desc'
-  | 'expiresAtUtc:asc'
-  | 'expiresAtUtc:desc'
-  | 'googleEmail:asc'
-  | 'googleEmail:desc'
-  | 'primaryAffiliation:asc'
-  | 'primaryAffiliation:desc'
-  | 'state:asc'
-  | 'state:desc'
-  | 'updatedAtUtc:asc'
-  | 'updatedAtUtc:desc';
-
-export type ApplicationsRequestData = {
+export type ManageApplicationsRequestData = {
   page: number;
   pageSize: number;
-  sort: ApplicationsTableSort;
+  sort: ManageApplicationsSort[];
+};
+
+export interface SortingRule {
+  id: ManageApplicationsField;
+  desc: boolean;
+}
+
+export type SortedChangeFunction = (
+  newSorted: SortingRule[],
+  column: any,
+  additive: boolean,
+) => void;
+
+export enum ManageApplicationsField {
+  appId = 'appId',
+  displayName = 'displayName',
+  expiresAtUtc = 'expiresAtUtc',
+  googleEmail = 'googleEmail',
+  primaryAffiliation = 'primaryAffiliation',
+  state = 'state',
+  updatedAtUtc = 'updatedAtUtc',
+}
+
+export type ManageApplicationsSortOrder = 'asc' | 'desc';
+
+export type ManageApplicationsSortingRule = SortingRule & {
+  id: ManageApplicationsField;
+};
+
+export type ManageApplicationsSort = {
+  field: ManageApplicationsField;
+  order: ManageApplicationsSortOrder;
 };
