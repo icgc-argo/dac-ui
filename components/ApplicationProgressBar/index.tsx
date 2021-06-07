@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import Progress, { ProgressItem } from '@icgc-argo/uikit/Progress';
-import { ApplicationState, defaultProgressState, progressStates } from './progressStates';
+import Progress, { ProgressItem as ProgressItemDefault } from '@icgc-argo/uikit/Progress';
+import { ApplicationState, defaultProgressItems, progressStates } from './progressStates';
+import { styled } from '@icgc-argo/uikit';
+
+const ProgressItem = styled(ProgressItemDefault)`
+  min-width: 100px;
+`;
 
 const ApplicationProgressBar = ({ state }: { state: ApplicationState }) => {
-  console.log('state', state);
   const progressItems = state ? progressStates[state] : defaultProgressItems;
   return (
     <div>
