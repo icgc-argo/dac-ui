@@ -32,8 +32,6 @@ export const progressStates: ProgressStates = {
     { label: 'Sign & Submit', state: 'disabled', completed: false },
     { label: 'Daco Review', state: 'disabled', completed: false },
   ],
-  // TPE THIS STATE
-  // labels constant
   [ApplicationState.SIGN_AND_SUBMIT]: [
     { label: 'Draft', state: 'success', completed: true },
     { label: 'Sign & Submit', state: 'pending', completed: true },

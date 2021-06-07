@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Progress, { ProgressItem as ProgressItemDefault } from '@icgc-argo/uikit/Progress';
 import { ApplicationState, defaultProgressItems, progressStates } from './progressStates';
 import { styled } from '@icgc-argo/uikit';
