@@ -4,6 +4,7 @@ import { styled, UikitTheme } from '@icgc-argo/uikit/index';
 import React from 'react';
 import InProgress from './InProgress';
 import StartApplication from './Start';
+import { css } from '@emotion/core';
 
 type ApplicationsProps = {
   inProgressApplications: any;
@@ -20,12 +21,16 @@ const Applications = ({ inProgressApplications = true }: ApplicationsProps) => {
   const theme: UikitTheme = useTheme();
 
   return (
-    <ContentBody>
+    <div
+      css={css`
+        flex: 1 0 auto;
+      `}
+    >
       <TwoColGrid>
         <InProgress />
         <StartApplication />
       </TwoColGrid>
-    </ContentBody>
+    </div>
   );
 };
 

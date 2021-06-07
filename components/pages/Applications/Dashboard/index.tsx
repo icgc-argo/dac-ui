@@ -1,12 +1,51 @@
+import { css } from '@emotion/core';
+import Typography from '@icgc-argo/uikit/Typography';
+import PageHeader from 'components/PageHeader';
 import React from 'react';
+import { Container, Row } from 'react-grid-system';
 import Applications from './Applications';
-import DashboardHeader from './Header';
+
+import AccessBox from './AccessBox';
 
 const Dashboard = () => {
   return (
     <>
-      <DashboardHeader />
-      <Applications inProgressApplications={[]} />
+      <PageHeader>My Applications</PageHeader>
+      <Container
+        css={css`
+          margin-top: 24px;
+        `}
+      >
+        <Row
+          css={css`
+            justify-content: space-between;
+          `}
+        >
+          <div
+            css={css`
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 57px;
+            `}
+          >
+            <Typography
+              variant="paragraph2"
+              css={css`
+                margin-right: 80px;
+              `}
+            >
+              This is where you can manage your Applications for Access to ICGC Controlled Data.
+              Access will be granted for a <b>one year period</b>, starting from the date of
+              approval by the ICGC DACO.
+            </Typography>
+            <AccessBox hasAccess={true} />
+          </div>
+        </Row>
+        <Row>
+          <Applications inProgressApplications={[]} />
+        </Row>
+      </Container>
     </>
   );
 };
