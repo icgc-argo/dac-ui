@@ -32,13 +32,13 @@ const DashboardCard = ({ title, subtitle, info, children }: DashboardCardProps) 
           border-bottom: 1px solid ${theme.colors.grey_2};
           height: 60px;
           display: flex;
-          padding: 0 40px;
         `}
       >
         <Typography
           component="h1"
           css={css`
             margin: 0;
+            padding-left: 23px;
           `}
           variant="subtitle"
         >

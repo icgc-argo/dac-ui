@@ -1,10 +1,8 @@
 import { css } from '@emotion/core';
 import Typography from '@icgc-argo/uikit/Typography';
 import PageHeader from 'components/PageHeader';
-import React from 'react';
 import { Container, Row } from 'react-grid-system';
 import Applications from './Applications';
-
 import AccessBox from './AccessBox';
 
 const Dashboard = () => {
@@ -19,14 +17,15 @@ const Dashboard = () => {
         <Row
           css={css`
             justify-content: space-between;
+            margin-bottom: 57px;
           `}
+          nogutter
         >
           <div
             css={css`
               display: flex;
               justify-content: space-between;
               align-items: center;
-              margin-bottom: 57px;
             `}
           >
             <Typography
@@ -42,7 +41,7 @@ const Dashboard = () => {
             <AccessBox hasAccess={true} />
           </div>
         </Row>
-        <Row>
+        <Row nogutter>
           <Applications inProgressApplications={[]} />
         </Row>
       </Container>

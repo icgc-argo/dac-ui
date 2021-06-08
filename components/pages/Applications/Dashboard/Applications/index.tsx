@@ -10,26 +10,23 @@ type ApplicationsProps = {
   inProgressApplications: any;
 };
 
-const TwoColGrid = styled('div')`
-  display: grid;
-  grid-gap: 24px;
-  grid-auto-columns: 1fr;
-  grid-auto-flow: column;
-`;
-
 const Applications = ({ inProgressApplications = true }: ApplicationsProps) => {
-  const theme: UikitTheme = useTheme();
-
   return (
     <div
       css={css`
         flex: 1 0 auto;
       `}
     >
-      <TwoColGrid>
+      <div
+        css={css`
+          display: grid;
+          grid-gap: 24px;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        `}
+      >
         <InProgress />
         <StartApplication />
-      </TwoColGrid>
+      </div>
     </div>
   );
 };
