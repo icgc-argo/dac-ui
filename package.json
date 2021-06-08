@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "mock-api": "json-server --watch --port 3004 ./mock/db.json"
   },
   "dependencies": {
     "@emotion/babel-plugin": "^11.3.0",
