@@ -11,5 +11,18 @@ module.exports = withPlugins([withTranspileModules, [withImages]], {
     NEXT_PUBLIC_ARGO_ROOT: process.env.NEXT_PUBLIC_ARGO_ROOT,
     NEXT_PUBLIC_ARGO_DOCS_ROOT: process.env.NEXT_PUBLIC_ARGO_DOCS_ROOT,
     NEXT_PUBLIC_ARGO_PLATFORM_ROOT: process.env.NEXT_PUBLIC_ARGO_PLATFORM_ROOT,
+    USE_DAC_API_PROXY: process.env.USE_DAC_API_PROXY,
   },
+  ...(process.env.USE_DAC_API_PROXY
+    ? {
+        async rewrites() {
+          return [
+            {
+              source: '/api/:path*',
+              destination: `${process.env.NEXT_PUBLIC_DAC_API_ROOT}/:path*`, // Proxy to Backend
+            },
+          ];
+        },
+      }
+    : {}),
 });
