@@ -42,7 +42,7 @@ const StartApplication = () => {
             height="12px"
             name="file"
           />
-          Start a new application
+          Start a New Application
         </Button>
       </div>
     </DashboardCard>
