@@ -13,7 +13,7 @@ const useFetchManageApplications = ({
     params: {
       page,
       pageSize,
-      sort: sort.map(({ field, order }) => `${field}:${order}`),
+      sort: `${sort.map(({ field, order }) => `${field}:${order}`)}`,
     }
   });
 
