@@ -5,19 +5,22 @@ import { css } from '@emotion/core';
 import Typography from '@icgc-argo/uikit/Typography';
 import ApplicationProgressBar, { ApplicationState } from 'components/pages/ProgressBar';
 import { format as formatDate } from 'date-fns';
+import { update } from 'lodash';
 
 type InProgressProps = {
   applicationNumber: string;
   institution: string;
   state: ApplicationState;
+  updatedAtUtc: string;
 };
 
 const EXPIRY_DATE_FORMAT = 'MMMM. dd, yyyy';
+const UPDATED_AT_DATE_FORMAT = "MMMM. dd, yyyy 'at' h:m aaaa";
 
 const getStatusText = () =>
   'Approved on May. 28, 2021. You now have access to ICGC Controlled Data.';
 
-const initState = { appId: '', state: '', submitterId: '', expiresAtUtc: '' };
+const initState = { appId: '', state: '', submitterId: '', expiresAtUtc: '', updatedAtUtc: '' };
 
 const getButtonConfig = (state = ''): { content: string; link: string; icon: string }[] => {
   switch (state) {
@@ -56,10 +59,12 @@ const InProgress = ({}) => {
       .catch((e) => console.error(e));
   }, []);
 
-  const { appId, submitterId, state, expiresAtUtc } = application;
+  const { appId, submitterId, state, expiresAtUtc, updatedAtUtc } = application;
 
   const expiryDate =
     expiresAtUtc && `Access Expiry: ${formatDate(new Date(expiresAtUtc), EXPIRY_DATE_FORMAT)}`;
+
+  const updatedAtDate = updatedAtUtc && formatDate(new Date(updatedAtUtc), UPDATED_AT_DATE_FORMAT);
 
   return (
     <DashboardCard title={`Application: DACO-${appId}`} subtitle={submitterId} info={expiryDate}>
@@ -81,7 +86,7 @@ const InProgress = ({}) => {
             <b>Status:</b> {getStatusText()}
           </div>
           <div>
-            <b>Last Updated:</b> May. 28, 2021 at 10:22 p.m.
+            <b>Last Updated:</b> {updatedAtDate}
           </div>
         </Typography>
 
