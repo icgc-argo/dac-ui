@@ -14,12 +14,31 @@ type InProgressProps = {
   updatedAtUtc: string;
 };
 
-const EXPIRY_DATE_FORMAT = 'MMMM. dd, yyyy';
-const UPDATED_AT_DATE_FORMAT = "MMMM. dd, yyyy 'at' h:m aaaa";
+const SIMPLE_DATE_FORMAT = 'MMMM. dd, yyyy';
+const TIME_AND_DATE_FORMAT = "MMMM. dd, yyyy 'at' h:m aaaa";
 
-const getStatusText = () =>
-  'Approved on May. 28, 2021. You now have access to ICGC Controlled Data.';
+const getStatusText = (state = 1, date = '') => {
+  const formattedDate = date ? formatDate(new Date(date), SIMPLE_DATE_FORMAT) : '';
 
+  switch (state) {
+    case 1:
+      return `Approved on ${formattedDate}. You now have access to ICGC Controlled Data.`;
+    case 2:
+      return `Created on ${formattedDate}.`;
+    case 3:
+      return `Submitted on ${formattedDate}. This application is locked for ICGC DACO review.`;
+    case 4:
+      return `Reopened on ${formattedDate}. Revision details were sent via email.`;
+    case 5:
+      return `Rejected on ${formattedDate}. This application cannot be reopened, reasons were sent via email.`;
+    case 6:
+      return `Closed on ${formattedDate}. You can reopen this application at anytime.`;
+    case 7:
+      `Closed on ${formattedDate}.`;
+    default:
+      return '';
+  }
+};
 const initState = { appId: '', state: '', submitterId: '', expiresAtUtc: '', updatedAtUtc: '' };
 
 const getButtonConfig = (state = ''): { content: string; link: string; icon: string }[] => {
@@ -62,9 +81,9 @@ const InProgress = ({}) => {
   const { appId, submitterId, state, expiresAtUtc, updatedAtUtc } = application;
 
   const expiryDate =
-    expiresAtUtc && `Access Expiry: ${formatDate(new Date(expiresAtUtc), EXPIRY_DATE_FORMAT)}`;
+    expiresAtUtc && `Access Expiry: ${formatDate(new Date(expiresAtUtc), SIMPLE_DATE_FORMAT)}`;
 
-  const updatedAtDate = updatedAtUtc && formatDate(new Date(updatedAtUtc), UPDATED_AT_DATE_FORMAT);
+  const updatedAtDate = updatedAtUtc && formatDate(new Date(updatedAtUtc), TIME_AND_DATE_FORMAT);
 
   return (
     <DashboardCard title={`Application: DACO-${appId}`} subtitle={submitterId} info={expiryDate}>
