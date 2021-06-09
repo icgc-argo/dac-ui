@@ -1,7 +1,8 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement } from 'react';
 import { Col, Container, Row } from 'react-grid-system';
 import { startCase } from 'lodash';
 import { format as formatDate } from 'date-fns';
+import { SortedChangeFunction } from 'react-table';
 
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
@@ -9,22 +10,33 @@ import Icon from '@icgc-argo/uikit/Icon';
 import CardContainer from '@icgc-argo/uikit/Container';
 import Typography from '@icgc-argo/uikit/Typography';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
-import Table from '@icgc-argo/uikit/Table';
+import Table, { TableColumnConfig } from '@icgc-argo/uikit/Table';
 
 import draftData from './draftData.json';
 import {
-  ManageApplicationsField,
+  ManageApplicationsRequestData,
   ManageApplicationsSort,
   ManageApplicationsSortingRule,
   ManageApplicationsSortOrder,
-  ManageApplicationsTable,
-  SortedChangeFunction,
+  ManageApplicationsField,
+  ApplicationRecord,
 } from './types';
 
 import PageHeader from 'components/PageHeader';
 import { instructionBoxButtonIconStyle, instructionBoxButtonContentStyle } from 'global/styles';
 import { DATE_RANGE_DISPLAY_FORMAT } from 'global/constants';
 import { useFetchManageApplications } from 'global/hooks';
+
+const fieldDisplayNames = {
+  appId: 'Application #',
+  'applicant.info.primaryAffiliation': 'Institution',
+  'applicant.info.displayName': 'Applicant',
+  'applicant.info.googleEmail': 'Applicant Google Email',
+  'expiresAtUtc': 'Access Expiry',
+  'updatedAtUtc': 'Last Updated',
+  'state': 'Status',
+  'ethics.declaredAsRequired': 'Ethics Letter',
+}
 
 const formatTableData = (data: any) => data.map((datum: any) => ({
   appId: datum.appId,
@@ -37,48 +49,52 @@ const formatTableData = (data: any) => data.map((datum: any) => ({
   status: datum.state,
 }));
 
-const tableColumns: ManageApplicationsTable[] = [
+const tableColumns: TableColumnConfig<ApplicationRecord> & { id: ManageApplicationsField } = [
   {
-    Header: 'Application #',
+    Header: fieldDisplayNames['appId'],
+    id: ManageApplicationsField['appId'],
     accessor: 'appId',
     // TODO: link to application page
-    Cell: ({ original }) => original.appId,
+    Cell: ({ original }: { original: ApplicationRecord }) => original.appId,
   },
   {
-    Header: 'Institution',
+    Header: fieldDisplayNames['applicant.info.primaryAffiliation'],
+    id: ManageApplicationsField['applicant.info.primaryAffiliation'],
     accessor: 'institution',
-    Cell: ({ original }) => original.institution,
   },
   {
-    Header: 'Applicant',
+    Header: fieldDisplayNames['applicant.info.displayName'],
+    id: ManageApplicationsField['applicant.info.displayName'],
     accessor: 'applicant',
-    Cell: ({ original }) => original.applicant,
   },
   {
-    Header: 'Applicant Google Email',
+    Header: fieldDisplayNames['applicant.info.googleEmail'],
+    id: ManageApplicationsField['applicant.info.googleEmail'],
     accessor: 'googleEmail',
-    Cell: ({ original }) => original.googleEmail,
   },
   {
-    Header: 'Ethics Letter',
-    accessor: 'ethicsLetter',
+    Header: fieldDisplayNames['ethics.declaredAsRequired'],
+    id: ManageApplicationsField['ethics.declaredAsRequired'],
     sortable: false,
-    Cell: ({ original }) => original.ethicsLetter ? 'Yes' : 'No',
+    Cell: ({ original }: { original: ApplicationRecord }) => original.ethicsLetter ? 'Yes' : 'No',
   },
   {
-    Header: 'Access Expiry',
+    Header: fieldDisplayNames['expiresAtUtc'],
+    id: ManageApplicationsField['expiresAtUtc'],
     accessor: 'accessExpiry',
-    Cell: ({ original }) => formatDate(new Date(original.accessExpiry), DATE_RANGE_DISPLAY_FORMAT),
+    Cell: ({ original }: { original: ApplicationRecord }) => formatDate(new Date(original.accessExpiry), DATE_RANGE_DISPLAY_FORMAT),
   },
   {
-    Header: 'Last Updated',
+    Header: fieldDisplayNames['updatedAtUtc'],
+    id: ManageApplicationsField['updatedAtUtc'],
     accessor: 'lastUpdated',
-    Cell: ({ original }) => formatDate(new Date(original.lastUpdated), DATE_RANGE_DISPLAY_FORMAT),
+    Cell: ({ original }: { original: ApplicationRecord }) => formatDate(new Date(original.lastUpdated), DATE_RANGE_DISPLAY_FORMAT),
   },
   {
-    Header: 'Status',
+    Header: fieldDisplayNames['state'],
+    id: ManageApplicationsField['state'],
     accessor: 'status',
-    Cell: ({ original }) => startCase(original.status.toLowerCase()),
+    Cell: ({ original }: { original: ApplicationRecord }) => startCase(original.status.toLowerCase()),
   },
 ];
 
@@ -154,8 +170,6 @@ const ApplicationsDashboard = (): ReactElement => {
 
   // if i put this in useEffect it STOPS WORKING
   const { error, loading, response } = useFetchManageApplications(pagingState as ManageApplicationsRequestData);
-
-  console.log({ error, loading, response });
 
   const submissionsCount = response?.data?.pagingInfo?.totalCount;
 

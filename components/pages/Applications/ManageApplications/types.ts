@@ -1,4 +1,6 @@
-export type Application = {
+import { SortingRule } from 'react-table';
+
+export type ApplicationRecord = {
   appId: string;
   institution: string;
   applicant: string;
@@ -9,25 +11,7 @@ export type Application = {
   status: string;
 };
 
-export type Accessors = keyof Application;
-
-export type ManageApplicationsTable = {
-  Header: string;
-  accessor: Accessors;
-  sortable?: boolean;
-  Cell: ({ original }: { original: Application }) => string;
-};
-
-export type ManageApplicationsRequestData = {
-  page: number;
-  pageSize: number;
-  sort: ManageApplicationsSort[];
-};
-
-export interface SortingRule {
-  id: ManageApplicationsField;
-  desc: boolean;
-}
+export type Accessors = keyof ApplicationRecord;
 
 export type SortedChangeFunction = (
   newSorted: SortingRule[],
@@ -35,15 +19,16 @@ export type SortedChangeFunction = (
   additive: boolean,
 ) => void;
 
-export enum ManageApplicationsField {
-  appId = 'appId',
-  displayName = 'displayName',
-  expiresAtUtc = 'expiresAtUtc',
-  googleEmail = 'googleEmail',
-  primaryAffiliation = 'primaryAffiliation',
-  state = 'state',
-  updatedAtUtc = 'updatedAtUtc',
-}
+export type ManageApplicationsRequestData = {
+  page: number;
+  pageSize: number;
+  sort: ManageApplicationsSort[];
+};
+
+export type ManageApplicationsSort = {
+  field: ManageApplicationsField;
+  order: ManageApplicationsSortOrder;
+};
 
 export type ManageApplicationsSortOrder = 'asc' | 'desc';
 
@@ -51,7 +36,24 @@ export type ManageApplicationsSortingRule = SortingRule & {
   id: ManageApplicationsField;
 };
 
-export type ManageApplicationsSort = {
-  field: ManageApplicationsField;
-  order: ManageApplicationsSortOrder;
+export type ManageApplicationsResponseItem = {};
+
+export type ManageApplicationsResponseData = {
+  pagingInfo: {
+    totalCount: number;
+    pagesCount: number;
+    index: number;
+  };
+  items: ManageApplicationsResponseItem[];
 };
+
+export enum ManageApplicationsField {
+  'applicant.info.displayName' = 'applicant.info.displayName',
+  'applicant.info.googleEmail' = 'applicant.info.googleEmail',
+  'applicant.info.primaryAffiliation' = 'applicant.info.primaryAffiliation',
+  'ethics.declaredAsRequired' = 'ethics.declaredAsRequired',
+  appId = 'appId',
+  expiresAtUtc = 'expiresAtUtc',
+  state = 'state',
+  updatedAtUtc = 'updatedAtUtc',
+}
