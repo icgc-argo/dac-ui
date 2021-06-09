@@ -15,7 +15,6 @@ type QueryType = {
   };
 };
 
-
 const Application = (): ReactElement => {
   const {
     query: { ID: [appId = ''] = [] },

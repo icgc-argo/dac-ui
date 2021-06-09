@@ -153,9 +153,11 @@ const ApplicationsDashboard = (): ReactElement => {
   } = useManageApplicationsState();
 
   // if i put this in useEffect it STOPS WORKING
-  const { error, loading, response } = useFetchManageApplications(pagingState);
+  const { error, loading, response } = useFetchManageApplications(pagingState as ManageApplicationsRequestData);
 
   console.log({ error, loading, response });
+
+  const submissionsCount = response?.data?.pagingInfo?.totalCount;
 
   return (
     <>

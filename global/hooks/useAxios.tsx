@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios, { AxiosRequestConfig, Method } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, Method } from 'axios';
 import urlJoin from 'url-join';
 
 import { DAC_API } from 'global/constants/externalPaths';
@@ -19,9 +19,9 @@ const useAxios = ({
   method = 'GET' as Method,
   url = '/',
 }: AxiosRequestConfig) => {
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [response, setResponse] = useState({});
+  const [error, setError] = useState<AxiosError | undefined>();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [response, setResponse] = useState<AxiosResponse | undefined>();
 
   const { token } = useAuthContext();
 
