@@ -6,6 +6,9 @@ import Typography from '@icgc-argo/uikit/Typography';
 import ApplicationProgressBar, { ApplicationState } from 'components/pages/ProgressBar';
 import { format as formatDate } from 'date-fns';
 import { update } from 'lodash';
+import { UikitTheme } from '@icgc-argo/uikit';
+import Icon from '@icgc-argo/uikit/Icon';
+import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 
 type InProgressProps = {
   applicationNumber: string;
@@ -41,27 +44,66 @@ const getStatusText = (state = 1, date = '') => {
 };
 const initState = { appId: '', state: '', submitterId: '', expiresAtUtc: '', updatedAtUtc: '' };
 
-const getButtonConfig = (state = ''): { content: string; link: string; icon: string }[] => {
+const getButtonConfig = (state = ''): { content: string; link: string; icon: any }[] => {
   switch (state) {
     case ApplicationState.DRAFT:
     case ApplicationState.SIGN_AND_SUBMIT:
     case ApplicationState.REVISIONS_REQUESTED:
-      return [{ content: 'Edit Application', link: '/application', icon: 'edit' }];
+      return [
+        {
+          content: 'Edit Application',
+          link: '/application',
+          icon: (
+            <Icon
+              css={css`
+                position: relative;
+                top: 2px;
+              `}
+              fill="white"
+              height="12px"
+              width="12px"
+              name="edit"
+            />
+          ),
+        },
+      ];
     case ApplicationState.REVIEW:
     case ApplicationState.REJECTED:
     // closed after approval
     case ApplicationState.CLOSED:
-      return [{ content: 'View Application', link: '', icon: 'file' }];
+      return [
+        {
+          content: 'View Application',
+          link: '',
+          icon: <Icon fill="white" height="12px" width="9px" name="file" />,
+        },
+      ];
     case ApplicationState.APPROVED:
       return [
-        { content: 'View Application', link: '', icon: 'file' },
-        { content: 'Manage Collaborators', link: '', icon: 'user' },
+        {
+          content: 'View Application',
+          link: '',
+          icon: <Icon fill="white" height="12px" width="9px" name="file" />,
+        },
+        {
+          content: 'Manage Collaborators',
+          link: '',
+          icon: <Icon fill="white" height="12px" width="12px" name="user" />,
+        },
       ];
     // closed befoer approval
     case ApplicationState.CLOSED:
       [
-        { content: 'View Application', link: '', icon: 'file' },
-        { content: 'Reopen', link: '', icon: 'reset' },
+        {
+          content: 'View Application',
+          link: '',
+          icon: <Icon fill="white" height="12px" width="9px" name="file" />,
+        },
+        {
+          content: 'Reopen',
+          link: '',
+          icon: <Icon fill="white" height="12px" width="10px" name="reset" />,
+        },
       ];
   }
 
@@ -84,6 +126,7 @@ const InProgress = ({}) => {
     expiresAtUtc && `Access Expiry: ${formatDate(new Date(expiresAtUtc), SIMPLE_DATE_FORMAT)}`;
 
   const updatedAtDate = updatedAtUtc && formatDate(new Date(updatedAtUtc), TIME_AND_DATE_FORMAT);
+  const theme = useTheme();
 
   return (
     <DashboardCard title={`Application: DACO-${appId}`} subtitle={submitterId} info={expiryDate}>
@@ -118,8 +161,17 @@ const InProgress = ({}) => {
             }
           `}
         >
-          {getButtonConfig(state).map(({ content, link }) => (
-            <Button className="app-btn">{content}</Button>
+          {getButtonConfig(state).map(({ content, link, icon }) => (
+            <Button className="app-btn" size="sm">
+              <span
+                css={css`
+                  margin-right: 3px;
+                `}
+              >
+                {icon}
+              </span>
+              {content}
+            </Button>
           ))}
         </div>
       </div>
