@@ -172,14 +172,18 @@ const ApplicationsDashboard = (): ReactElement => {
     onSortedChange,
     resetCurrentPage,
   } = useManageApplicationsState();
+  // useEffect(() => {
+  //   resetCurrentPage();
+  // }, []);
 
   // if i put this in useEffect it STOPS WORKING
-  const { error, loading, response } = useFetchManageApplications(pagingState as ManageApplicationsRequestData);
+  const { error, loading = true, response } = useFetchManageApplications(pagingState as ManageApplicationsRequestData);
 
   const submissionsCount = response?.data?.pagingInfo?.totalCount;
-  const tableData = response?.data.items;
+  const tableData = response?.data.items || [];
+  const tableDataFormatted = formatTableData(tableData);
 
-  const tableDataFormatted = tableData ? formatTableData(response?.data.items) : [];
+  console.log(error, loading, response)
 
   return (
     <>
