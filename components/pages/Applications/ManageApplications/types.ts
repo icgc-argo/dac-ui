@@ -33,7 +33,7 @@ export type ManageApplicationsSort = {
 export type ManageApplicationsSortOrder = 'asc' | 'desc';
 
 export type ManageApplicationsSortingRule = SortingRule & {
-  id: ManageApplicationsField;
+  id: ManageApplicationsField | string;
 };
 
 export type ManageApplicationsResponseItem = {};
