@@ -26,7 +26,6 @@ export const fieldDisplayNames = {
   'ethics.declaredAsRequired': 'Ethics Letter',
 };
 
-// TODO cleanup any type
 export const formatTableData = (data: ManageApplicationsResponseItem[]) =>
   data.map<ApplicationRecord>((datum: ManageApplicationsResponseItem) => ({
     appId: datum.appId,
