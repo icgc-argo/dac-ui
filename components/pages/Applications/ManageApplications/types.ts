@@ -22,7 +22,7 @@ export type SortedChangeFunction = (
 export type ManageApplicationsRequestData = {
   page: number;
   pageSize: number;
-  sortString: string;
+  sort: string;
 };
 
 export type ManageApplicationsSort = {
@@ -36,7 +36,22 @@ export type ManageApplicationsSortingRule = SortingRule & {
   id: ManageApplicationsField | string;
 };
 
-export type ManageApplicationsResponseItem = {};
+export type ManageApplicationsResponseItem = {
+  appId: string;
+  applicant: {
+    info: {
+      primaryAffiliation: string;
+      displayName: string;
+      googleEmail: string;
+    };
+  };
+  ethics: {
+    declaredAsRequired: string;
+  };
+  expiresAtUtc: string;
+  updatedAtUtc: string;
+  state: string;
+};
 
 export type ManageApplicationsResponseData = {
   pagingInfo: {

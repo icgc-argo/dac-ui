@@ -25,10 +25,14 @@ const Application = (): ReactElement => {
 
   const pageTitle = appId.toUpperCase() || 'Application page';
 
-  // TODO PUT THIS BACK LATER
   return (
     <DefaultPageLayout title={pageTitle}>
-      <ManageApplications />
+      {appId
+        ? <ApplicationForm appId={appId} />
+        : isAdmin
+          ? <ManageApplications />
+          : <Dashboard />
+      }
     </DefaultPageLayout>
   );
 };

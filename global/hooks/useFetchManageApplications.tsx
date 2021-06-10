@@ -1,24 +1,24 @@
 import { useEffect, useState } from 'react';
 import { AxiosError, AxiosResponse } from 'axios';
 import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
+import fetchAPI from 'global/utils/fetchAPI';
 import { ManageApplicationsRequestData } from '../../components/pages/Applications/ManageApplications/types';
-import useAxiosFn from './useAxiosFn';
 
 const useFetchManageApplications = ({
   page,
   pageSize,
-  sortString,
+  sort,
 }: ManageApplicationsRequestData) => {
   const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<AxiosError | undefined>(undefined)
 
   useEffect(() => {
-    useAxiosFn({
+    fetchAPI({
       params: {
         page,
         pageSize,
-        sort: sortString,
+        sort,
       },
       url: APPLICATIONS_PATH
     })
@@ -31,7 +31,8 @@ const useFetchManageApplications = ({
       .finally(() => {
         setIsLoading(false)
       });
-  }, [page, pageSize, sortString]);
+  }, [page, pageSize, sort]);
+
 
   return { error, isLoading, response };
 };

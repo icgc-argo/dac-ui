@@ -7,9 +7,8 @@ const ApplicationPage = createPage({
     const { egoJwt, asPath, query } = ctx;
     return { egoJwt, query, asPath };
   },
-  isPublic: true,
+  isPublic: false,
 })(() => {
-  const { permissions } = useAuthContext();
   return <Applications />;
 });
 

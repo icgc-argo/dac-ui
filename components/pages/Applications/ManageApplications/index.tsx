@@ -1,7 +1,5 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Col, Container, Row } from 'react-grid-system';
-import { startCase } from 'lodash';
-import { format as formatDate } from 'date-fns';
 import { SortedChangeFunction } from 'react-table';
 import pluralize from 'pluralize';
 
@@ -11,111 +9,33 @@ import Icon from '@icgc-argo/uikit/Icon';
 import CardContainer from '@icgc-argo/uikit/Container';
 import Typography from '@icgc-argo/uikit/Typography';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
-import Table, { TableColumnConfig } from '@icgc-argo/uikit/Table';
+import Table from '@icgc-argo/uikit/Table';
 
 import {
   ManageApplicationsSort,
   ManageApplicationsSortingRule,
   ManageApplicationsSortOrder,
   ManageApplicationsField,
-  ApplicationRecord,
 } from './types';
+
+import {
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_PAGE,
+  DEFAULT_SORT,
+  formatTableData,
+  stringifySort,
+  tableColumns,
+} from './utils';
 
 import PageHeader from 'components/PageHeader';
 import { ContentError } from 'components/placeholders';
 import { instructionBoxButtonIconStyle, instructionBoxButtonContentStyle } from 'global/styles';
-import { DATE_RANGE_DISPLAY_FORMAT } from 'global/constants';
 import { useFetchManageApplications } from 'global/hooks';
 
-const stringifySort = (sortArr: ManageApplicationsSort[]) => sortArr.map(({ field, order }) => `${field}:${order}`).join(',')
-
-const fieldDisplayNames = {
-  appId: 'Application #',
-  'applicant.info.primaryAffiliation': 'Institution',
-  'applicant.info.displayName': 'Applicant',
-  'applicant.info.googleEmail': 'Applicant Google Email',
-  'expiresAtUtc': 'Access Expiry',
-  'updatedAtUtc': 'Last Updated',
-  'state': 'Status',
-  'ethics.declaredAsRequired': 'Ethics Letter',
-}
-
-const formatTableData = (data: any) => data.map((datum: any) => ({
-  appId: datum.appId,
-  institution: datum.applicant.info.primaryAffiliation,
-  applicant: datum.applicant.info.displayName,
-  googleEmail: datum.applicant.info.googleEmail,
-  ethicsLetter: datum.ethics.declaredAsRequired,
-  accessExpiry: datum.expiresAtUtc,
-  lastUpdated: datum.updatedAtUtc,
-  status: datum.state,
-}));
-
-const tableColumns: TableColumnConfig<ApplicationRecord> & { id: ManageApplicationsField } = [
-  {
-    Header: fieldDisplayNames['appId'],
-    id: ManageApplicationsField['appId'],
-    accessor: 'appId',
-    // TODO: link to application page
-    Cell: ({ original }: { original: ApplicationRecord }) => original.appId,
-  },
-  {
-    Header: fieldDisplayNames['applicant.info.primaryAffiliation'],
-    id: ManageApplicationsField['applicant.info.primaryAffiliation'],
-    accessor: 'institution',
-  },
-  {
-    Header: fieldDisplayNames['applicant.info.displayName'],
-    id: ManageApplicationsField['applicant.info.displayName'],
-    accessor: 'applicant',
-  },
-  {
-    Header: fieldDisplayNames['applicant.info.googleEmail'],
-    id: ManageApplicationsField['applicant.info.googleEmail'],
-    accessor: 'googleEmail',
-  },
-  {
-    Header: fieldDisplayNames['ethics.declaredAsRequired'],
-    id: ManageApplicationsField['ethics.declaredAsRequired'],
-    sortable: false,
-    Cell: ({ original }: { original: ApplicationRecord }) => original.ethicsLetter ? 'Yes' : 'No',
-  },
-  {
-    Header: fieldDisplayNames['expiresAtUtc'],
-    id: ManageApplicationsField['expiresAtUtc'],
-    accessor: 'accessExpiry',
-    Cell: ({ original }: { original: ApplicationRecord }) => original.accessExpiry
-      ? formatDate(new Date(original.accessExpiry), DATE_RANGE_DISPLAY_FORMAT)
-      : null,
-  },
-  {
-    Header: fieldDisplayNames['updatedAtUtc'],
-    id: ManageApplicationsField['updatedAtUtc'],
-    accessor: 'lastUpdated',
-    Cell: ({ original }: { original: ApplicationRecord }) => original.lastUpdated
-      ? formatDate(new Date(original.lastUpdated), DATE_RANGE_DISPLAY_FORMAT)
-      : null,
-  },
-  {
-    Header: fieldDisplayNames['state'],
-    id: ManageApplicationsField['state'],
-    accessor: 'status',
-    Cell: ({ original }: { original: ApplicationRecord }) => startCase(original.status.toLowerCase()),
-  },
-];
-
-const DEFAULT_PAGE: number = 0;
-const DEFAULT_PAGE_SIZE: number = 20;
-const DEFAULT_SORT: ManageApplicationsSort[] = [
-  { field: 'state', order: 'desc' } as ManageApplicationsSort
-];
-
-
-const ApplicationsDashboard = (): ReactElement => {
+const useManageApplicationsState = () => {
   const [page, setPage] = useState<number>(DEFAULT_PAGE);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
-  const [sort, setSort] = useState<ManageApplicationsSort[]>(DEFAULT_SORT);
-  const [sortString, setSortString] = useState<string>(stringifySort(DEFAULT_SORT));
+  const [sort, setSort] = useState<string>(stringifySort(DEFAULT_SORT));
 
   const onPageChange = (newPageNum: number) => {
     setPage(newPageNum);
@@ -136,29 +56,41 @@ const ApplicationsDashboard = (): ReactElement => {
       },
       [],
     );
-    setSort(newSort);
-    setSortString(stringifySort(newSort))
+    setSort(stringifySort(newSort))
   };
+
+  return {
+    onPageChange,
+    onPageSizeChange,
+    onSortedChange,
+    page,
+    pageSize,
+    sort,
+  };
+}
+
+const ManageApplications = (): ReactElement => {
+  const {
+    onPageChange,
+    onPageSizeChange,
+    onSortedChange,
+    page,
+    pageSize,
+    sort,
+  } = useManageApplicationsState();
 
   const theme = useTheme();
   const containerRef = React.createRef<HTMLDivElement>();
 
-  // TODO: search filter
-  // useEffect(() => {
-  //   resetCurrentPage();
-  // }, [searchFilters]})
-
   const { error, isLoading, response } = useFetchManageApplications({
     page,
     pageSize,
-    sortString
+    sort
   });
 
   const submissionsCount = response?.data?.pagingInfo?.totalCount;
   const tableData = response?.data.items || [];
   const tableDataFormatted = formatTableData(tableData);
-
-  console.log({ error, isLoading, response, submissionsCount, tableData, tableDataFormatted })
 
   return (
     <>
@@ -204,7 +136,7 @@ const ApplicationsDashboard = (): ReactElement => {
                        </Typography>
                       </Col>
                       <Col>
-                        {/* placeholder for status indicators */}
+                        {/* TODO status indicators */}
                       </Col>
                     </Row>
                   </Container>
@@ -239,6 +171,7 @@ const ApplicationsDashboard = (): ReactElement => {
                           align-items: center;
                           justify-content: flex-end;
                         `}>
+                        {/* TODO search */}
                         <Button
                           size="sm"
                           variant="secondary"
@@ -249,6 +182,7 @@ const ApplicationsDashboard = (): ReactElement => {
                               fill="accent2_dark"
                               height="12px"
                               css={instructionBoxButtonIconStyle}
+                            // TODO export to file
                             />
                             Export Table
                           </span>
@@ -278,4 +212,4 @@ const ApplicationsDashboard = (): ReactElement => {
   );
 };
 
-export default ApplicationsDashboard;
+export default ManageApplications;
