@@ -1,20 +1,37 @@
+import { useEffect, useState } from 'react';
+import { AxiosError, AxiosResponse } from 'axios';
 import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
 import { ManageApplicationsRequestData } from '../../components/pages/Applications/ManageApplications/types';
-import useAxios from './useAxios';
+import useAxiosFn from './useAxiosFn';
 
 const useFetchManageApplications = ({
   page,
   pageSize,
-  sort,
+  sortString,
 }: ManageApplicationsRequestData) => {
-  const { error, isLoading, response } = useAxios({
-    url: APPLICATIONS_PATH,
-    params: {
-      page,
-      pageSize,
-      sort: `${sort.map(({ field, order }) => `${field}:${order}`)}`,
-    }
-  });
+  const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [error, setError] = useState<AxiosError | undefined>(undefined)
+
+  useEffect(() => {
+    useAxiosFn({
+      params: {
+        page,
+        pageSize,
+        sort: sortString,
+      },
+      url: APPLICATIONS_PATH
+    })
+      .then((res: any) => {
+        setResponse(res);
+      })
+      .catch(err => {
+        setError(err);
+      })
+      .finally(() => {
+        setIsLoading(false)
+      });
+  }, [page, pageSize, sortString]);
 
   return { error, isLoading, response };
 };

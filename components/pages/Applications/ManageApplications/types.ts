@@ -22,7 +22,7 @@ export type SortedChangeFunction = (
 export type ManageApplicationsRequestData = {
   page: number;
   pageSize: number;
-  sort: ManageApplicationsSort[];
+  sortString: string;
 };
 
 export type ManageApplicationsSort = {

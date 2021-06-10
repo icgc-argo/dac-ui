@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { Col, Container, Row } from 'react-grid-system';
 import { startCase } from 'lodash';
 import { format as formatDate } from 'date-fns';
@@ -14,7 +14,6 @@ import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Table, { TableColumnConfig } from '@icgc-argo/uikit/Table';
 
 import {
-  ManageApplicationsRequestData,
   ManageApplicationsSort,
   ManageApplicationsSortingRule,
   ManageApplicationsSortOrder,
@@ -27,6 +26,8 @@ import { ContentError } from 'components/placeholders';
 import { instructionBoxButtonIconStyle, instructionBoxButtonContentStyle } from 'global/styles';
 import { DATE_RANGE_DISPLAY_FORMAT } from 'global/constants';
 import { useFetchManageApplications } from 'global/hooks';
+
+const stringifySort = (sortArr: ManageApplicationsSort[]) => sortArr.map(({ field, order }) => `${field}:${order}`).join(',')
 
 const fieldDisplayNames = {
   appId: 'Application #',
@@ -103,38 +104,29 @@ const tableColumns: TableColumnConfig<ApplicationRecord> & { id: ManageApplicati
   },
 ];
 
-const DEFAULT_PAGE = 1;
-const DEFAULT_PAGE_SIZE = 20;
-const DEFAULT_SORT = [{ field: 'state', order: 'desc' }];
+const DEFAULT_PAGE: number = 0;
+const DEFAULT_PAGE_SIZE: number = 20;
+const DEFAULT_SORT: ManageApplicationsSort[] = [
+  { field: 'state', order: 'desc' } as ManageApplicationsSort
+];
 
-const useManageApplicationsState = () => {
-  const [pagingState, setPagingState] = React.useState({
-    pageSize: DEFAULT_PAGE_SIZE,
-    page: DEFAULT_PAGE,
-    sort: DEFAULT_SORT,
-  });
 
-  React.useEffect(() => {
-    resetCurrentPage();
-  }, [pagingState.pageSize]);
-
-  const handlePagingStateChange = (state: typeof pagingState) => {
-    setPagingState(state);
-  };
+const ApplicationsDashboard = (): ReactElement => {
+  const [page, setPage] = useState<number>(DEFAULT_PAGE);
+  const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
+  const [sort, setSort] = useState<ManageApplicationsSort[]>(DEFAULT_SORT);
+  const [sortString, setSortString] = useState<string>(stringifySort(DEFAULT_SORT));
 
   const onPageChange = (newPageNum: number) => {
-    handlePagingStateChange({ ...pagingState, page: newPageNum });
+    setPage(newPageNum);
   };
 
   const onPageSizeChange = (newPageSize: number) => {
-    handlePagingStateChange({
-      ...pagingState,
-      pageSize: newPageSize,
-    });
+    setPageSize(newPageSize);
   };
 
   const onSortedChange: SortedChangeFunction = async (newSorted: ManageApplicationsSortingRule[]) => {
-    const sort = newSorted.reduce(
+    const newSort = newSorted.reduce(
       (accSort: Array<ManageApplicationsSort>, sortRule: ManageApplicationsSortingRule) => {
         const order = sortRule.desc ? 'desc' : 'asc';
         return accSort.concat({
@@ -144,46 +136,29 @@ const useManageApplicationsState = () => {
       },
       [],
     );
-    handlePagingStateChange({ ...pagingState, sort });
+    setSort(newSort);
+    setSortString(stringifySort(newSort))
   };
-  const resetCurrentPage = () => {
-    setPagingState({
-      ...pagingState,
-      page: 0,
-    });
-  };
-  return {
-    pagingState,
-    onPageChange,
-    onPageSizeChange,
-    onSortedChange,
-    resetCurrentPage,
-  };
-};
 
-const ApplicationsDashboard = (): ReactElement => {
   const theme = useTheme();
   const containerRef = React.createRef<HTMLDivElement>();
 
-  const {
-    pagingState,
-    onPageChange,
-    onPageSizeChange,
-    onSortedChange,
-    resetCurrentPage,
-  } = useManageApplicationsState();
+  // TODO: search filter
   // useEffect(() => {
   //   resetCurrentPage();
-  // }, []);
+  // }, [searchFilters]})
 
-  // if i put this in useEffect it STOPS WORKING
-  const { error, isLoading = true, response } = useFetchManageApplications(pagingState as ManageApplicationsRequestData);
+  const { error, isLoading, response } = useFetchManageApplications({
+    page,
+    pageSize,
+    sortString
+  });
 
   const submissionsCount = response?.data?.pagingInfo?.totalCount;
   const tableData = response?.data.items || [];
   const tableDataFormatted = formatTableData(tableData);
 
-  console.log(error, isLoading, response)
+  console.log({ error, isLoading, response, submissionsCount, tableData, tableDataFormatted })
 
   return (
     <>
