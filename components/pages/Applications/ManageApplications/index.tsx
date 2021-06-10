@@ -88,7 +88,7 @@ const ManageApplications = (): ReactElement => {
     sort
   });
 
-  const submissionsCount = response?.data?.pagingInfo?.totalCount;
+  const submissionsCount = response?.data?.pagingInfo?.totalCount || 0;
   const tableData = response?.data.items || [];
   const tableDataFormatted = formatTableData(tableData);
 
@@ -104,108 +104,106 @@ const ManageApplications = (): ReactElement => {
         <CardContainer
           loading={isLoading}
         >
-          {isLoading
-            ? <p>&nsbp;</p> // placeholder to make loader appear
-            : error
-              ? <ContentError />
-              : (
-                <>
-                  <Container
+          {error
+            ? <ContentError />
+            : (
+              <>
+                <Container
+                  css={css`
+                    margin-top: 24px;
+                    margin-bottom: 16px;
+                    width: 100%;
+                    border-bottom: 1px solid ${theme.colors.grey_2};
+                    padding: 0 24px !important;
+                  `}
+                >
+                  <Row
                     css={css`
-                      margin-top: 24px;
-                      margin-bottom: 16px;
-                      width: 100%;
-                      border-bottom: 1px solid ${theme.colors.grey_2};
-                      padding: 0 24px !important;
-                    `}
-                  >
-                    <Row
-                      css={css`
                       justify-content: space-between;
                     `}
-                    >
-                      <Col>
-                        <Typography
-                          as="h2"
-                          variant="subtitle2"
-                          css={css`
-                            line-height: 1.3;
-                          `}
-                        >
-                          Manage Applications
+                  >
+                    <Col>
+                      <Typography
+                        as="h2"
+                        variant="subtitle2"
+                        css={css`
+                          line-height: 1.3;
+                        `}
+                      >
+                        Manage Applications
                        </Typography>
-                      </Col>
-                      <Col>
-                        {/* TODO status indicators */}
-                      </Col>
-                    </Row>
-                  </Container>
-                  <Container
+                    </Col>
+                    <Col>
+                      {/* TODO status indicators */}
+                    </Col>
+                  </Row>
+                </Container>
+                <Container
+                  css={css`
+                    width: 100%;
+                    padding: 0 24px !important;
+                  `}
+                >
+                  <Row
                     css={css`
-                      width: 100%;
-                      padding: 0 24px !important;
+                      align-items: center !important;
+                      justify-content: space-between;
+                      margin-bottom: 10px;
                     `}
                   >
-                    <Row
-                      css={css`
-                        align-items: center !important;
-                        justify-content: space-between;
-                        margin-bottom: 10px;
-                      `}
-                    >
-                      <Col>
-                        <Typography
-                          as="p"
-                          color={theme.colors.grey}
-                          css={css`
-                            margin: 0 0 0 6px;
-                          `}
-                          variant="data"
-                        >
-                          {submissionsCount.toLocaleString()} {pluralize('submissions', submissionsCount)}
-                        </Typography>
-                      </Col>
-                      <Col
+                    <Col>
+                      <Typography
+                        as="p"
+                        color={theme.colors.grey}
                         css={css`
-                          display: flex;
-                          align-items: center;
-                          justify-content: flex-end;
-                        `}>
-                        {/* TODO search */}
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                        >
-                          <span css={instructionBoxButtonContentStyle}>
-                            <Icon
-                              name="download"
-                              fill="accent2_dark"
-                              height="12px"
-                              css={instructionBoxButtonIconStyle}
-                            // TODO export to file
-                            />
+                          margin: 0 0 0 6px;
+                        `}
+                        variant="data"
+                      >
+                        {submissionsCount.toLocaleString()} {pluralize('submissions', submissionsCount)}
+                      </Typography>
+                    </Col>
+                    <Col
+                      css={css`
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-end;
+                      `}>
+                      {/* TODO search */}
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                      >
+                        <span css={instructionBoxButtonContentStyle}>
+                          <Icon
+                            name="download"
+                            fill="accent2_dark"
+                            height="12px"
+                            css={instructionBoxButtonIconStyle}
+                          // TODO export to file
+                          />
                             Export Table
                           </span>
-                        </Button>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col>
-                        <Table
-                          columns={tableColumns}
-                          data={tableDataFormatted}
-                          onPageChange={onPageChange}
-                          onPageSizeChange={onPageSizeChange}
-                          onSortedChange={onSortedChange}
-                          parentRef={containerRef}
-                          stripped
-                          withOutsideBorder
-                        />
-                      </Col>
-                    </Row>
-                  </Container>
-                </>
-              )}
+                      </Button>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <Table
+                        columns={tableColumns}
+                        data={tableDataFormatted}
+                        onPageChange={onPageChange}
+                        onPageSizeChange={onPageSizeChange}
+                        onSortedChange={onSortedChange}
+                        parentRef={containerRef}
+                        stripped
+                        withOutsideBorder
+                      />
+                    </Col>
+                  </Row>
+                </Container>
+              </>
+            )}
         </CardContainer>
       </Container>
     </>
