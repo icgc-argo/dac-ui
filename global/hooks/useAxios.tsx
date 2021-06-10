@@ -22,7 +22,7 @@ const useAxios = ({
   url = '/',
 }: AxiosRequestConfig) => {
   const [error, setError] = useState<AxiosError | undefined>();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [response, setResponse] = useState<AxiosResponse | undefined>();
 
   // TODO PUT THIS BACK LATER
@@ -48,7 +48,7 @@ const useAxios = ({
       }).catch(err => {
         setError(err);
       }).finally(() => {
-        setLoading(false);
+        setIsLoading(false);
       });
   }
 
@@ -56,7 +56,7 @@ const useAxios = ({
     fetchAPI();
   }, []);
 
-  return { error, loading, response };
+  return { error, isLoading, response };
 };
 
 export default useAxios;

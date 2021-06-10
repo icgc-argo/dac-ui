@@ -1,5 +1,4 @@
 import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
-
 import { ManageApplicationsRequestData } from '../../components/pages/Applications/ManageApplications/types';
 import useAxios from './useAxios';
 
@@ -8,7 +7,7 @@ const useFetchManageApplications = ({
   pageSize,
   sort,
 }: ManageApplicationsRequestData) => {
-  const { error, loading, response } = useAxios({
+  const { error, isLoading, response } = useAxios({
     url: APPLICATIONS_PATH,
     params: {
       page,
@@ -17,7 +16,7 @@ const useFetchManageApplications = ({
     }
   });
 
-  return { error, loading, response };
+  return { error, isLoading, response };
 };
 
 export default useFetchManageApplications;

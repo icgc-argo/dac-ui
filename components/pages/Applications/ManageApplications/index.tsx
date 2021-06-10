@@ -177,13 +177,13 @@ const ApplicationsDashboard = (): ReactElement => {
   // }, []);
 
   // if i put this in useEffect it STOPS WORKING
-  const { error, loading = true, response } = useFetchManageApplications(pagingState as ManageApplicationsRequestData);
+  const { error, isLoading = true, response } = useFetchManageApplications(pagingState as ManageApplicationsRequestData);
 
   const submissionsCount = response?.data?.pagingInfo?.totalCount;
   const tableData = response?.data.items || [];
   const tableDataFormatted = formatTableData(tableData);
 
-  console.log(error, loading, response)
+  console.log(error, isLoading, response)
 
   return (
     <>
@@ -195,9 +195,9 @@ const ApplicationsDashboard = (): ReactElement => {
         `}
       >
         <CardContainer
-          loading={loading}
+          loading={isLoading}
         >
-          {loading
+          {isLoading
             ? <p>&nsbp;</p> // placeholder to make loader appear
             : error
               ? <ContentError />
