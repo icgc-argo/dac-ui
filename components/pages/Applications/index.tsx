@@ -22,20 +22,29 @@ const Application = (): ReactElement => {
   }: QueryType = useRouter();
   const { permissions } = useAuthContext();
 
-  const isAdmin = isDacoAdmin(permissions);
+  // OFFLINE CHANGE
+  // const isAdmin = isDacoAdmin(permissions);
+  const isAdmin = true;
 
   const pageTitle = appId.toUpperCase() || 'Application page';
 
   return (
     <DefaultPageLayout title={pageTitle}>
-      {appId
-        ? <ApplicationForm appId={appId} />
-        : isAdmin
-          ? <ManageApplications />
-          : <Dashboard />
-      }
+      <ApplicationForm appId={appId} isAdmin={isAdmin} />
     </DefaultPageLayout>
   );
+
+  // OFFLINE CHANGE
+  // return (
+  //   <DefaultPageLayout title={pageTitle}>
+  //     {appId
+  //       ? <ApplicationForm appId={appId} isAdmin={isAdmin} />
+  //       : isAdmin
+  //         ? <ManageApplications />
+  //         : <Dashboard />
+  //     }
+  //   </DefaultPageLayout>
+  // );
 };
 
 export default Application;
