@@ -6,8 +6,6 @@ import Applications from './Applications';
 import AccessBox from './AccessBox';
 
 const Dashboard = () => {
-  const [applications, setApplications] = React.useState([]);
- 
   return (
     <>
       <PageHeader>My Applications</PageHeader>
