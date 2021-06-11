@@ -1,4 +1,4 @@
-import { ApplicationState } from 'components/pages/ProgressBar';
+import { ApplicationState } from 'components/ApplicationProgressBar/progressStates';
 import { format as formatDate } from 'date-fns';
 import { SIMPLE_DATE_FORMAT } from './constants';
 

@@ -2,7 +2,7 @@ import { css } from '@emotion/core';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import Link from '@icgc-argo/uikit/Link';
-import { ApplicationState } from 'components/pages/ProgressBar';
+import { ApplicationState } from 'components/ApplicationProgressBar/progressStates';
 import React from 'react';
 
 const icons = {

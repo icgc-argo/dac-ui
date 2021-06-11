@@ -2,7 +2,7 @@ import React from 'react';
 import DashboardCard from '../../Card';
 import { css } from '@emotion/core';
 import Typography from '@icgc-argo/uikit/Typography';
-import ApplicationProgressBar, { ApplicationState } from 'components/pages/ProgressBar';
+import ProgressBar from '../../../../../ApplicationProgressBar';
 import { SIMPLE_DATE_FORMAT, TIME_AND_DATE_FORMAT } from './constants';
 import { getFormattedDate, getStatusText } from './helpers';
 import ButtonGroup from './ButtonGroup';
@@ -15,7 +15,7 @@ const InProgress = ({}) => {
     fetch('http://localhost:3004/applications')
       .then((data) => data.json())
       //.then((d) => console.log(d))
-      .then((d) => setApplication(d[0]))
+      .then((d) => setApplication(d[6]))
       .catch((e) => console.error(e));
   }, []);
 
@@ -30,7 +30,7 @@ const InProgress = ({}) => {
           padding: 24px;
         `}
       >
-        <ApplicationProgressBar state={state as ApplicationState} />
+        <ProgressBar state={state} />
 
         <Typography
           variant="data"
@@ -40,7 +40,7 @@ const InProgress = ({}) => {
           `}
         >
           <div>
-            <b>Status:</b> {getStatusText(ApplicationState.DRAFT, expiresAtUtc)}
+            <b>Status:</b> {getStatusText(state, expiresAtUtc)}
           </div>
           <div>
             <b>Last Updated:</b> {getFormattedDate(updatedAtUtc, TIME_AND_DATE_FORMAT)}
