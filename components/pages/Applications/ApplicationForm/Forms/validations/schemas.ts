@@ -24,17 +24,26 @@ yup.setLocale({
 });
 
 export const applicantSchema = yup.object().shape({
+  address_building: yup.string().default(''),
+  address_cityAndProvince: yup.string().default('').required(),
+  address_country: yup
+    .string()
+    .default('')
+    .oneOf(transformContriesToValidationOptions(countriesList))
+    .required(),
+  address_postalCode: yup.string().default('').required(),
+  address_street: yup.string().default('').required(),
   info_firstName: yup.string().default('').required(),
   info_googleEmail: yup
     .string()
-    .email('Please enter a valid email address.')
     .default('')
+    .email('Please enter a valid email address.')
     .required(),
-  info_institutionWebsite: yup.string().url('Please enter a valid url.').default('').required(),
+  info_institutionWebsite: yup.string().default('').url('Please enter a valid url.').required(),
   info_institutionEmail: yup
     .string()
-    .email('Please enter a valid email address.')
     .default('')
+    .email('Please enter a valid email address.')
     .required(),
   info_lastName: yup.string().default('').required(),
   info_middleName: yup.string().default(''),
@@ -42,27 +51,45 @@ export const applicantSchema = yup.object().shape({
   info_primaryAffiliation: yup.string().default('').required(),
   info_suffix: yup.string().default(''),
   info_title: yup.string().default(''),
-  address_building: yup.string().default(''),
-  address_cityAndProvince: yup.string().default('').required(),
-  address_country: yup
-    .string()
-    .oneOf(transformContriesToValidationOptions(countriesList))
-    .default('')
-    .required(),
-  address_street: yup.string().default('').required(),
-  address_postalCode: yup.string().default('').required(),
 });
 
 export const introductionSchema = yup.object().shape({
-  agreement_accepted: yup.boolean().default(false).oneOf([true]).required(),
+  agreement: yup.boolean().default(false).oneOf([true]).required(),
+});
+
+export const itAgreementsSchema = yup.object().shape({
+  agreements: yup.object().shape({
+    it_agreement_software_updates: yup.boolean().default(false).oneOf([true]).required(),
+    it_agreement_protect_data: yup.boolean().default(false).oneOf([true]).required(),
+    it_agreement_monitor_access: yup.boolean().default(false).oneOf([true]).required(),
+    it_agreement_destroy_copies: yup.boolean().default(false).oneOf([true]).required(),
+    it_agreement_onboard_training: yup.boolean().default(false).oneOf([true]).required(),
+    it_agreement_provide_institutional_policies: yup
+      .boolean()
+      .default(false)
+      .oneOf([true])
+      .required(),
+    it_agreement_contact_daco_fraud: yup.boolean().default(false).oneOf([true]).required(),
+    it_agreement_cloud_usage_risk: yup.boolean().default(false).oneOf([true]).required(),
+    it_agreement_read_cloud_appendix: yup.boolean().default(false).oneOf([true]).required(),
+  }),
 });
 
 export const representativeSchema = yup.object().shape({
+  address_building: yup.string().default(''),
+  address_cityAndProvince: yup.string().default('').required(),
+  address_country: yup
+    .string()
+    .default('')
+    .oneOf(transformContriesToValidationOptions(countriesList))
+    .required(),
+  address_postalCode: yup.string().default('').required(),
+  address_street: yup.string().default('').required(),
   info_firstName: yup.string().default('').required(),
   info_institutionEmail: yup
     .string()
-    .email('Please enter a valid email address.')
     .default('')
+    .email('Please enter a valid email address.')
     .required(),
   info_lastName: yup.string().default('').required(),
   info_middleName: yup.string().default(''),
@@ -70,15 +97,6 @@ export const representativeSchema = yup.object().shape({
   info_primaryAffiliation: yup.string().default('').required(),
   info_suffix: yup.string().default(''),
   info_title: yup.string().default(''),
-  address_building: yup.string().default(''),
-  address_cityAndProvince: yup.string().default('').required(),
-  address_country: yup
-    .string()
-    .oneOf(transformContriesToValidationOptions(countriesList))
-    .default('')
-    .required(),
-  address_street: yup.string().default('').required(),
-  address_postalCode: yup.string().default('').required(),
 });
 
 export const signatureSchema = yup.object().shape({});
@@ -86,6 +104,7 @@ export const signatureSchema = yup.object().shape({});
 export const combinedSchema = {
   applicant: applicantSchema,
   introduction: introductionSchema,
+  itAgreements: itAgreementsSchema,
   representative: representativeSchema,
   signature: signatureSchema,
 } as Record<FormSectionNames, any>;

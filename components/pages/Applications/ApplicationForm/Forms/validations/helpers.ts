@@ -1,5 +1,11 @@
+// locale-customised import
 import yup from './schemas';
-import { CountryNamesAndAbbreviations, EVENT_TARGET_TAGS, FormFieldDataFromEvent } from '../types';
+import {
+  CountryNamesAndAbbreviations,
+  EVENT_TARGET_TAGS,
+  FormFieldDataFromEvent,
+  FormFieldType,
+} from '../types';
 
 export const schemaValidator = (fieldSchema: any, value: any) =>
   fieldSchema.validate(value).catch((error: yup.ValidationError) => ({
@@ -8,7 +14,7 @@ export const schemaValidator = (fieldSchema: any, value: any) =>
 
 export const getFieldDataFromEvent: FormFieldDataFromEvent = (event) => {
   if (
-    [EVENT_TARGET_TAGS.INPUT, EVENT_TARGET_TAGS.MULTISELECT, EVENT_TARGET_TAGS.SELECT].includes(
+    Object.values(EVENT_TARGET_TAGS).includes(
       event?.target?.tagName as unknown as EVENT_TARGET_TAGS,
     )
   ) {
@@ -43,18 +49,21 @@ export const getFieldDataFromEvent: FormFieldDataFromEvent = (event) => {
   return {};
 };
 
+export const isRequired = (fieldData?: FormFieldType) =>
+  fieldData?.tests?.some((test) => test.name === 'required') || false;
+
 export const transformContriesToSelectOptions = (countriesList: CountryNamesAndAbbreviations[]) =>
   countriesList.map(({ name }: CountryNamesAndAbbreviations) => ({
     content: name,
     value: name,
   }));
 
+export const transformContriesToValidationOptions = (
+  countriesList: CountryNamesAndAbbreviations[],
+) => countriesList.map(({ name }: CountryNamesAndAbbreviations) => name);
+
 export const transformToSelectOptions = (list: Array<string | number>) =>
   list.map((value: string | number) => ({
     content: value,
     value: value,
   }));
-
-export const transformContriesToValidationOptions = (
-  countriesList: CountryNamesAndAbbreviations[],
-) => countriesList.map(({ name }: CountryNamesAndAbbreviations) => name);

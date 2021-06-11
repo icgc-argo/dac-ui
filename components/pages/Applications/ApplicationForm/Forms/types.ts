@@ -1,5 +1,9 @@
 import { ChangeEvent, Dispatch, ReactNode } from 'react';
-import { SchemaDescription, SchemaObjectDescription } from 'yup/lib/schema';
+import {
+  SchemaDescription,
+  SchemaInnerTypeDescription,
+  SchemaObjectDescription,
+} from 'yup/lib/schema';
 import { UikitIconNames } from '@icgc-argo/uikit/Icon/icons';
 import { TAG_VARIANTS } from '@icgc-argo/uikit/Tag';
 
@@ -35,14 +39,19 @@ export type ValidationConfigType = {
 
 export { TAG_VARIANTS };
 
-export type FormFieldType = {
-  error?: string[];
-  touched?: boolean;
-  value?: any;
-} & Partial<SchemaDescription>;
+export type FormFieldType = Partial<
+  SchemaInnerTypeDescription &
+    SchemaDescription & {
+      error: string[];
+      fields: any;
+      hidden: boolean; // added for array handling consistency (a.k.a "remove")
+      touched: boolean;
+      value: any;
+    }
+>;
 
 type FormSectionValidationState_SectionsGenericType<T extends Record<string, FormFieldType>> =
-  Record<string, T[keyof T] & FormFieldType>;
+  Record<string, Partial<T[keyof T] & FormFieldType>>;
 
 export type FormSectionValidationState_Appendices =
   FormSectionValidationState_SectionsGenericType<{}>;
@@ -69,9 +78,24 @@ export type FormSectionValidationState_Data = FormSectionValidationState_Section
 export type FormSectionValidationState_Ethics = FormSectionValidationState_SectionsGenericType<{}>;
 export type FormSectionValidationState_Introduction =
   FormSectionValidationState_SectionsGenericType<{
-    agreement_accepted: { value: boolean };
+    agreement: { value: boolean };
   }>;
-export type FormSectionValidationState_IT = FormSectionValidationState_SectionsGenericType<{}>;
+export type FormSectionValidationState_ITAgreements =
+  FormSectionValidationState_SectionsGenericType<{
+    agreements: {
+      fields: {
+        it_agreement_software_updates: FormFieldType;
+        it_agreement_protect_data: FormFieldType;
+        it_agreement_monitor_access: FormFieldType;
+        it_agreement_destroy_copies: FormFieldType;
+        it_agreement_onboard_training: FormFieldType;
+        it_agreement_provide_institutional_policies: FormFieldType;
+        it_agreement_contact_daco_fraud: FormFieldType;
+        it_agreement_cloud_usage_risk: FormFieldType;
+        it_agreement_read_cloud_appendix: FormFieldType;
+      };
+    };
+  }>;
 export type FormSectionValidationState_Project = FormSectionValidationState_SectionsGenericType<{}>;
 export type FormSectionValidationState_Representative =
   FormSectionValidationState_SectionsGenericType<{
@@ -99,8 +123,8 @@ export type FormSectionValidationState_Sections =
   | FormSectionValidationState_Data
   | FormSectionValidationState_Ethics
   | FormSectionValidationState_Introduction
-  | FormSectionValidationState_IT
   | FormSectionValidationState_Project
+  | FormSectionValidationState_ITAgreements
   | FormSectionValidationState_Representative
   | FormSectionValidationState_Signature;
 
@@ -110,7 +134,7 @@ export type FormSectionValidationState_SectionBase = {
   tooltips: Partial<Record<FormSectionOverallState, ReactNode>>;
 } & Partial<SchemaObjectDescription>;
 
-export type FormValidationActionTypes = 'boolean' | 'string' | 'overall';
+export type FormValidationActionTypes = 'array' | 'boolean' | 'string' | 'object' | 'overall';
 
 export type FormValidationAction = {
   error?: string[];
@@ -122,7 +146,18 @@ export type FormValidationAction = {
 };
 
 interface FormValidationState_Base {
+  approvedAtUtc?: string;
+  approvedBy?: string;
+  closedAtUtc?: string;
+  closedBy?: string;
+  createdAtUtc?: string;
+  denialReason?: string;
+  expiresAtUtc?: string;
   id: string;
+  state?: string;
+  submittedAtUtc?: string;
+  submitterId?: string;
+  updatedAtUtc?: string;
   version: number;
 }
 
