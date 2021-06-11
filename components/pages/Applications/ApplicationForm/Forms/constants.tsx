@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic';
 const Applicant = dynamic(() => import('./Applicant'));
 const Introduction = dynamic(() => import('./Introduction'));
+const ITAgreements = dynamic(() => import('./ITAgreements'));
 const Representative = dynamic(() => import('./Representative'));
 
 export const sectionsData = {
@@ -10,8 +11,8 @@ export const sectionsData = {
   data: { description: 'G. Data Access Agreement' },
   ethics: { description: 'E. Ethics' },
   introduction: { component: Introduction, description: 'Introduction' },
-  it: { description: 'F. IT Agreements' },
   project: { description: 'D. Project Information' },
+  itAgreements: { component: ITAgreements, description: 'F. IT Agreements' },
   representative: { component: Representative, description: 'B. Institutional Representative' },
   signature: {
     description: 'Sign & Submit',
@@ -28,7 +29,7 @@ export const sectionsOrder = [
   'collaborators',
   'project',
   'ethics',
-  'it',
+  'itAgreements',
   'data',
   'appendices',
   'signature',

@@ -1,4 +1,5 @@
 import { Dispatch, useCallback, useEffect, useReducer, useState } from 'react';
+import { isEqual, merge } from 'lodash';
 
 import { getFieldDataFromEvent, schemaValidator } from './helpers';
 import yup, { combinedSchema } from './schemas';
@@ -12,13 +13,42 @@ import {
   FORM_STATES,
 } from '../types';
 
+export { isRequired } from './helpers';
+
 export const validationReducer = (
   state: FormValidationStateParameters,
   action: FormValidationAction,
 ): FormValidationStateParameters => {
   switch (action.type) {
+    case 'array':
     case 'boolean':
+    case 'object':
     case 'string': {
+      const [error, ...errorValue] = action.error?.[0]?.split('|') || [];
+      const [fieldName, fieldIndex] = action.field.split('--');
+
+      const value =
+        action.type === 'array'
+          ? errorValue
+            ? Object.entries({
+                ...state[action.section]?.fields?.[fieldName]?.value,
+                ...action.value,
+              }).map(([, item]: [any, any]) =>
+                errorValue.includes(item.value)
+                  ? {
+                      ...item,
+                      error: item.error?.includes(error)
+                        ? item.error
+                        : [error, ...(item.error || [])],
+                    }
+                  : item,
+              )
+            : {
+                ...state[action.section]?.fields?.[fieldName]?.value,
+                ...action.value,
+              }
+          : action.value;
+
       return {
         ...state,
         [action.section]: {
@@ -29,10 +59,23 @@ export const validationReducer = (
             }),
           fields: {
             ...state[action.section]?.fields,
-            [action.field]: {
-              ...state[action.section]?.fields?.[action.field],
-              error: action.error || undefined,
-              value: action.value,
+            [fieldName]: {
+              ...state[action.section]?.fields?.[fieldName],
+              ...(action.type === 'object'
+                ? {
+                    fields: {
+                      ...state[action.section]?.fields?.[fieldName]?.fields,
+                      [fieldIndex]: {
+                        ...state[action.section]?.fields?.[fieldName]?.fields?.[fieldIndex],
+                        error: action.error || undefined,
+                        value,
+                      },
+                    },
+                  }
+                : {
+                    error: action.error || undefined,
+                    value,
+                  }),
             },
           },
         },
@@ -50,6 +93,7 @@ export const validationReducer = (
     }
 
     default:
+      console.info('unhandled action type', action.type);
       return state;
   }
 };
@@ -86,15 +130,36 @@ export const validator: FormSectionValidatorFunction_Main =
 
       return results;
     } else if (field) {
-      const { error } = await schemaValidator(yup.reach(combinedSchema[origin], field), value);
+      const [fieldName, fieldIndex, fieldOverride] = field.split('--');
+      const fieldIsArray = !Number.isNaN(Number(fieldIndex));
+
+      const { error } = await schemaValidator(
+        yup.reach(
+          combinedSchema[origin],
+          fieldIndex && fieldOverride !== 'overall' ? `${fieldName}[${fieldIndex}]` : fieldName,
+        ),
+        fieldOverride === 'overall'
+          ? Object.values<FormFieldType>(validationState[origin]?.fields[fieldName]?.value).map(
+              ({ value }) => value,
+            )
+          : value,
+      );
+
+      const nextValue = { ...(error && { error }), value };
 
       const results = {
-        ...(error && { error }),
         field,
         ...(shouldPersistResults && { overall: FORM_STATES.TOUCHED }),
         section: origin,
-        type: validationState[origin]?.fields?.[field]?.type,
-        value,
+        type: validationState[origin]?.fields?.[fieldName]?.type,
+        ...(fieldIsArray
+          ? {
+              error,
+              value: {
+                [fieldIndex]: nextValue,
+              },
+            }
+          : nextValue),
       } as FormValidationAction;
 
       shouldPersistResults && dispatch(results);
@@ -134,9 +199,6 @@ export const useFormValidation = (appId: string) => {
   };
 };
 
-export const isRequired = (fieldData?: FormFieldType) =>
-  fieldData?.tests?.some((test) => test.name === 'required');
-
 export const useLocalValidation = (
   storedFields: FormSectionValidationState_Sections,
   fieldValidator: FormFieldValidatorFunction,
@@ -152,21 +214,54 @@ export const useLocalValidation = (
   );
 
   useEffect(() => {
-    setLocalState(storedFields);
+    if (!isEqual(storedFields, localState)) {
+      setLocalState((prev) => merge(prev, storedFields));
+    }
   }, [storedFields]);
 
   const updateLocalState = useCallback(
-    ({ error, field, value }: FormValidationAction) => {
+    ({ error, field, value, type }: FormValidationAction) => {
       fieldsTouched.has(field) || setFieldTouched((prev) => new Set(prev.add(field)));
+      const [fieldName, fieldIndex, fieldOverride] = field.split('--');
 
-      setLocalState((prev) => ({
-        ...prev,
-        [field]: {
-          ...prev[field],
-          ...(error && { error }),
-          value,
+      const oldValue = localState[fieldName]?.value;
+
+      const newState = {
+        ...localState,
+        [fieldName]: {
+          ...localState[fieldName],
+          ...(type === 'object'
+            ? {
+                fields: {
+                  ...localState[fieldName].fields,
+                  [fieldIndex]: {
+                    ...localState[fieldName].fields[fieldIndex],
+                    error,
+                    value,
+                  },
+                },
+              }
+            : {
+                error,
+                value:
+                  typeof oldValue === 'object'
+                    ? {
+                        ...oldValue,
+                        ...([fieldOverride, type].includes('remove')
+                          ? {
+                              [fieldIndex]: {
+                                hidden: true,
+                              },
+                            }
+                          : value),
+                      }
+                    : value,
+              }),
         },
-      }));
+      } as FormSectionValidationState_Sections;
+
+      setLocalState(newState);
+      return newState;
     },
     [localState],
   );
@@ -175,12 +270,14 @@ export const useLocalValidation = (
     const { eventType, field, fieldType, value } = getFieldDataFromEvent(event);
 
     if (eventType && field && fieldType) {
+      const [fieldName, fieldIndex] = field.split('--');
+
       switch (eventType) {
         case 'blur': {
           const canBlur = !(
             ['text'].includes(fieldType) &&
-            ['address_country'].includes(field) &&
-            localState[field]?.value
+            ['address_country'].includes(fieldName) &&
+            localState[fieldName]?.value
           );
 
           if (canBlur) {
@@ -188,7 +285,10 @@ export const useLocalValidation = (
               !!fieldType &&
               ['text'].includes(fieldType) &&
               fieldsTouched.has(field) &&
-              storedFields[field]?.value !== value;
+              value !==
+                (fieldIndex
+                  ? storedFields[fieldName]?.value?.[fieldIndex]
+                  : storedFields[fieldName]?.value);
 
             const changes = await fieldValidator(field, value, shouldPersistData);
 
@@ -197,21 +297,29 @@ export const useLocalValidation = (
           break;
         }
 
-        case 'mousedown':
-        case 'change': {
+        case 'change':
+        case 'mousedown': {
           if ('text' === fieldType) {
             setFieldTouched((prev) => new Set(prev.add(field)));
 
-            setLocalState(
-              (prev) =>
-                ({
-                  ...prev,
-                  [field]: {
-                    ...((prev[field as keyof FormSectionValidationState_Sections] || {}) as object),
-                    value,
-                  },
-                } as FormSectionValidationState_Sections),
-            );
+            updateLocalState({
+              field,
+              value: fieldIndex
+                ? {
+                    [fieldIndex]: { value },
+                  }
+                : value,
+            } as FormValidationAction);
+          } else if ('remove' === fieldType) {
+            fieldIndex &&
+              setFieldTouched((prev) => {
+                prev.delete(field.replace('--remove', ''));
+                return new Set(prev);
+              });
+
+            const changes = await fieldValidator(field);
+
+            changes && updateLocalState(changes);
           } else {
             const shouldPersistData = ['checkbox', 'select-one'].includes(fieldType);
             const checkMultiSelectValue =
@@ -221,6 +329,11 @@ export const useLocalValidation = (
 
             changes && updateLocalState(changes);
           }
+          break;
+        }
+
+        default: {
+          console.info('unhandled Field event', event);
           break;
         }
       }

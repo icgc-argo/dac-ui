@@ -11,7 +11,7 @@ import { countriesList, honorificsList } from './constants';
 import DoubleFieldRow from './DoubleFieldRow';
 import RequiredFieldsMessage from './RequiredFieldsMessage';
 import { FormSectionValidationState_Applicant, FormSectionValidatorFunction_Origin } from './types';
-import { useLocalValidation } from './validations';
+import { isRequired, useLocalValidation } from './validations';
 import { transformToSelectOptions } from './validations/helpers';
 
 const Applicant = ({
@@ -61,7 +61,10 @@ const Applicant = ({
         </Typography>
 
         <DoubleFieldRow>
-          <FormControl error={!!localState.info_title?.error}>
+          <FormControl
+            error={!!localState.info_title?.error}
+            required={isRequired(localState.info_title)}
+          >
             <InputLabel htmlFor="info_title">Title</InputLabel>
 
             <Select
@@ -80,7 +83,10 @@ const Applicant = ({
         </DoubleFieldRow>
 
         <DoubleFieldRow>
-          <FormControl error={!!localState.info_firstName?.error} required>
+          <FormControl
+            error={!!localState.info_firstName?.error}
+            required={isRequired(localState.info_firstName)}
+          >
             <InputLabel htmlFor="info_firstName">First Name</InputLabel>
 
             <Input
@@ -95,7 +101,10 @@ const Applicant = ({
             <FormHelperText onErrorOnly>{localState.info_firstName?.error?.[0]}</FormHelperText>
           </FormControl>
 
-          <FormControl error={!!localState.info_middleName?.error}>
+          <FormControl
+            error={!!localState.info_middleName?.error}
+            required={isRequired(localState.info_middleName)}
+          >
             <InputLabel htmlFor="info_middleName">Middle Name</InputLabel>
 
             <Input
@@ -112,7 +121,10 @@ const Applicant = ({
         </DoubleFieldRow>
 
         <DoubleFieldRow>
-          <FormControl error={!!localState.info_lastName?.error} required>
+          <FormControl
+            error={!!localState.info_lastName?.error}
+            required={isRequired(localState.info_lastName)}
+          >
             <InputLabel htmlFor="info_lastName">Last Name</InputLabel>
 
             <Input
@@ -127,7 +139,10 @@ const Applicant = ({
             <FormHelperText onErrorOnly>{localState.info_lastName?.error?.[0]}</FormHelperText>
           </FormControl>
 
-          <FormControl error={!!localState.info_suffix?.error}>
+          <FormControl
+            error={!!localState.info_suffix?.error}
+            required={isRequired(localState.info_suffix)}
+          >
             <InputLabel htmlFor="info_suffix">Suffix</InputLabel>
 
             <Input
@@ -145,7 +160,10 @@ const Applicant = ({
         </DoubleFieldRow>
 
         <DoubleFieldRow helpText="The legal entity responsible for this application.">
-          <FormControl error={!!localState.info_primaryAffiliation?.error} required>
+          <FormControl
+            error={!!localState.info_primaryAffiliation?.error}
+            required={isRequired(localState.info_primaryAffiliation)}
+          >
             <InputLabel htmlFor="info_primaryAffiliation">Primary Affiliation</InputLabel>
 
             <Input
@@ -164,7 +182,10 @@ const Applicant = ({
         </DoubleFieldRow>
 
         <DoubleFieldRow helpText="Must be the institutional email address of the Principal Investigator.">
-          <FormControl error={!!localState.info_institutionEmail?.error} required>
+          <FormControl
+            error={!!localState.info_institutionEmail?.error}
+            required={isRequired(localState.info_institutionEmail)}
+          >
             <InputLabel htmlFor="info_institutionEmail">Institutional Email</InputLabel>
 
             <Input
@@ -183,7 +204,10 @@ const Applicant = ({
         </DoubleFieldRow>
 
         <DoubleFieldRow helpText="Must be the Gmail or G Suite email address of the Principal Investigator.">
-          <FormControl error={!!localState.info_googleEmail?.error} required>
+          <FormControl
+            error={!!localState.info_googleEmail?.error}
+            required={isRequired(localState.info_googleEmail)}
+          >
             <InputLabel htmlFor="info_googleEmail">Google Email</InputLabel>
 
             <Input
@@ -200,7 +224,10 @@ const Applicant = ({
         </DoubleFieldRow>
 
         <DoubleFieldRow helpText="Please provide a link to your profile on your institution/company website.">
-          <FormControl error={!!localState.info_institutionWebsite?.error} required>
+          <FormControl
+            error={!!localState.info_institutionWebsite?.error}
+            required={isRequired(localState.info_institutionWebsite)}
+          >
             <InputLabel htmlFor="info_institutionWebsite">Researcher Profile URL</InputLabel>
 
             <Input
@@ -218,7 +245,10 @@ const Applicant = ({
           </FormControl>
         </DoubleFieldRow>
 
-        <FormControl error={!!localState.info_positionTitle?.error} required>
+        <FormControl
+          error={!!localState.info_positionTitle?.error}
+          required={isRequired(localState.info_positionTitle)}
+        >
           <InputLabel htmlFor="info_positionTitle">Position Title</InputLabel>
 
           <Input
@@ -239,7 +269,10 @@ const Applicant = ({
           INSTITUTION/COMPANY MAILING ADDRESS
         </Typography>
 
-        <FormControl error={!!localState.address_country?.error} required>
+        <FormControl
+          error={!!localState.address_country?.error}
+          required={isRequired(localState.address_country)}
+        >
           <InputLabel htmlFor="address_country">Country</InputLabel>
 
           <MultiSelect
@@ -268,7 +301,10 @@ const Applicant = ({
           <FormHelperText onErrorOnly>{localState.address_country?.error?.[0]}</FormHelperText>
         </FormControl>
 
-        <FormControl error={!!localState.address_building?.error}>
+        <FormControl
+          error={!!localState.address_building?.error}
+          required={isRequired(localState.address_building)}
+        >
           <InputLabel htmlFor="address_building">Building</InputLabel>
 
           <Input
@@ -284,7 +320,10 @@ const Applicant = ({
           <FormHelperText onErrorOnly>{localState.address_building?.error?.[0]}</FormHelperText>
         </FormControl>
 
-        <FormControl error={!!localState.address_street?.error} required>
+        <FormControl
+          error={!!localState.address_street?.error}
+          required={isRequired(localState.address_street)}
+        >
           <InputLabel htmlFor="address_street">Street Address</InputLabel>
 
           <Input
@@ -300,7 +339,10 @@ const Applicant = ({
           <FormHelperText onErrorOnly>{localState.address_street?.error?.[0]}</FormHelperText>
         </FormControl>
 
-        <FormControl error={!!localState.address_cityAndProvince?.error} required>
+        <FormControl
+          error={!!localState.address_cityAndProvince?.error}
+          required={isRequired(localState.address_cityAndProvince)}
+        >
           <InputLabel htmlFor="address_cityAndProvince">City and Province/State</InputLabel>
 
           <Input
@@ -318,7 +360,10 @@ const Applicant = ({
           </FormHelperText>
         </FormControl>
 
-        <FormControl error={!!localState.address_postalCode?.error} required>
+        <FormControl
+          error={!!localState.address_postalCode?.error}
+          required={isRequired(localState.address_postalCode)}
+        >
           <InputLabel htmlFor="address_postalCode">Postal/Zip Code</InputLabel>
 
           <Input

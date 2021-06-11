@@ -43,7 +43,7 @@ const Introduction = ({
           agree to its terms by signing Section G of this application. All sections, as well as
           Appendices I through VIII, are integral components of this application. Your Research
           Project will be checked for conformity with the{' '}
-          <Link href="http://www.google.com" rel="noopener noreferrer" target="_blank">
+          <Link href="#" rel="noopener noreferrer" target="_blank">
             goals and policies of ICGC
           </Link>{' '}
           (see Appendix I) including, but not limited to, policies concerning the purpose and
@@ -53,7 +53,7 @@ const Introduction = ({
 
         <Typography>
           The terms You accept in this application, form an agreement between You and the{' '}
-          <Link href="http://www.google.com" rel="noopener noreferrer" target="_blank">
+          <Link href="#" rel="noopener noreferrer" target="_blank">
             Ontario Institute for Cancer Research (“OICR”)
           </Link>{' '}
           which is the legal entity that administrates the ICGC Controlled Data on behalf of ICGC
@@ -74,7 +74,7 @@ const Introduction = ({
           included in a registry containing the applicants’ names, institutions and lay summaries of
           the scientific abstracts of all applicants having been granted access to ICGC Controlled
           Data. The ICGC DACO Approved Projects are posted on the{' '}
-          <Link href="http://www.google.com" rel="noopener noreferrer" target="_blank">
+          <Link href="#" rel="noopener noreferrer" target="_blank">
             ICGC ARGO website
           </Link>
           .
@@ -88,16 +88,16 @@ const Introduction = ({
         </Typography>
 
         <FormControl
-          error={!!localState.agreement_accepted?.error}
-          required={isRequired(localState.agreement_accepted)}
+          error={!!localState.agreement?.error}
+          required={isRequired(localState.agreement)}
         >
           <FormCheckbox
             aria-label="I acknowledge that I have read and understand the above terms."
             disabled={isSectionDisabled}
-            checked={localState.agreement_accepted?.value}
+            checked={localState.agreement?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
-            value="agreement_accepted"
+            value="agreement"
           >
             <Typography bold component="span">
               I acknowledge
@@ -105,7 +105,7 @@ const Introduction = ({
             that I have read and understand the above terms.
           </FormCheckbox>
 
-          <FormHelperText onErrorOnly>{localState.agreement_accepted?.error?.[0]}</FormHelperText>
+          <FormHelperText onErrorOnly>{localState.agreement?.error?.[0]}</FormHelperText>
         </FormControl>
       </section>
     </article>
