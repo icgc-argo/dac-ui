@@ -1,4 +1,4 @@
-import { ApplicationState } from 'components/ApplicationProgressBar/progressStates';
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { format as formatDate } from 'date-fns';
 import { SIMPLE_DATE_FORMAT } from './constants';
 
@@ -19,7 +19,7 @@ export const getStatusText = (state: ApplicationState, date: string | number | D
       return `Rejected on ${formattedDate}. This application cannot be reopened, reasons were sent via email.`;
     case ApplicationState.CLOSED:
       return `Closed on ${formattedDate}. You can reopen this application at anytime.`;
-    case ApplicationState.CLOSED:
+    case ApplicationState.RENEWING:
       return `Closed on ${formattedDate}.`;
     default:
       return '';

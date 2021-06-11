@@ -42,7 +42,7 @@ const Dashboard = () => {
           </div>
         </Row>
         <Row nogutter>
-          <Applications inProgressApplications={[]} />
+          <Applications />
         </Row>
       </Container>
     </>

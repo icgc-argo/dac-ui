@@ -1,4 +1,4 @@
-import { ApplicationState } from 'components/ApplicationProgressBar/progressStates';
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
 export interface InProgressProps {
   applicationNumber: string;

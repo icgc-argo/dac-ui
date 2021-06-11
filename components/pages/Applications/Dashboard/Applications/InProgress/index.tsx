@@ -10,21 +10,16 @@ import ButtonGroup from './ButtonGroup';
 const initState = { appId: '', state: '', submitterId: '', expiresAtUtc: '', updatedAtUtc: '' };
 
 const InProgress = ({}) => {
-  const [application, setApplication] = React.useState(initState);
-  React.useEffect(() => {
-    fetch('http://localhost:3004/applications')
-      .then((data) => data.json())
-      //.then((d) => console.log(d))
-      .then((d) => setApplication(d[6]))
-      .catch((e) => console.error(e));
-  }, []);
-
-  const { appId, submitterId, state, expiresAtUtc, updatedAtUtc } = application;
+  const { appId, submitterId: primaryAffliation, state, expiresAtUtc, updatedAtUtc } = application;
 
   const expiryDate = `Access Expiry: ${getFormattedDate(expiresAtUtc, SIMPLE_DATE_FORMAT)}`;
 
   return (
-    <DashboardCard title={`Application: DACO-${appId}`} subtitle={submitterId} info={expiryDate}>
+    <DashboardCard
+      title={`Application: DACO-${appId}`}
+      subtitle={primaryAffliation}
+      info={expiryDate}
+    >
       <div
         css={css`
           padding: 24px;

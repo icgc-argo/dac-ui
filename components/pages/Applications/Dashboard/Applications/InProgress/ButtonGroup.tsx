@@ -2,7 +2,7 @@ import { css } from '@emotion/core';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import Link from '@icgc-argo/uikit/Link';
-import { ApplicationState } from 'components/ApplicationProgressBar/progressStates';
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import React from 'react';
 
 const icons = {
@@ -78,7 +78,7 @@ const getButtonConfig = (state = ''): { content: string; link: string; icon: any
   return [];
 };
 
-const ButtonGroup = ({ state }) => (
+const ButtonGroup = ({ state }: { state: ApplicationState }) => (
   <div
     css={css`
       margin-top: 18px;

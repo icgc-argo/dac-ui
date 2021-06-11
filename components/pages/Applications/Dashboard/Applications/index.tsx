@@ -7,10 +7,12 @@ import StartApplication from './Start';
 import { css } from '@emotion/core';
 
 type ApplicationsProps = {
-  inProgressApplications: any;
+  inProgressApplication: any;
 };
 
-const Applications = ({ inProgressApplications = true }: ApplicationsProps) => {
+const Applications = ({ inProgressApplication = null }: ApplicationsProps) => {
+  const theme: UikitTheme = useTheme();
+
   return (
     <div
       css={css`
