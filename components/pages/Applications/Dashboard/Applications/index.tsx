@@ -7,10 +7,14 @@ import StartApplication from './Start';
 import { css } from '@emotion/core';
 
 type ApplicationsProps = {
-  inProgressApplications: any;
+  inProgressApplication?: any;
 };
 
-const Applications = ({ inProgressApplications = true }: ApplicationsProps) => {
+const application = { appId: '', state: '', submitterId: '', expiresAtUtc: '', updatedAtUtc: '' };
+
+const Applications = ({ inProgressApplication = null }: ApplicationsProps) => {
+  const theme: UikitTheme = useTheme();
+
   return (
     <div
       css={css`
@@ -24,7 +28,7 @@ const Applications = ({ inProgressApplications = true }: ApplicationsProps) => {
           grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         `}
       >
-        <InProgress />
+        <InProgress application={application} />
         <StartApplication />
       </div>
     </div>
