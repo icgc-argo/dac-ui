@@ -2,13 +2,16 @@ import { useEffect, useState } from 'react';
 import { AxiosError, AxiosResponse } from 'axios';
 import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
 import fetchAPI from 'global/utils/fetchAPI';
-import { ManageApplicationsRequestData } from '../../components/pages/Applications/ManageApplications/types';
+import { ApplicationsRequestData } from '../../components/pages/Applications/types';
 
-const useFetchManageApplications = ({
+const useApplicationsAPI = ({
   page,
   pageSize,
   sort,
-}: ManageApplicationsRequestData) => {
+  // method
+  // id
+  // ...etc
+}: ApplicationsRequestData) => {
   const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<AxiosError | undefined>(undefined)
@@ -37,4 +40,4 @@ const useFetchManageApplications = ({
   return { error, isLoading, response };
 };
 
-export default useFetchManageApplications;
+export default useApplicationsAPI;

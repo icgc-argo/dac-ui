@@ -12,11 +12,11 @@ import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Table from '@icgc-argo/uikit/Table';
 
 import {
-  ManageApplicationsSort,
-  ManageApplicationsSortingRule,
-  ManageApplicationsSortOrder,
-  ManageApplicationsField,
-} from './types';
+  ApplicationsSort,
+  ApplicationsSortingRule,
+  ApplicationsSortOrder,
+  ApplicationsField,
+} from '../types';
 
 import {
   DEFAULT_PAGE_SIZE,
@@ -30,7 +30,7 @@ import {
 import PageHeader from 'components/PageHeader';
 import { ContentError } from 'components/placeholders';
 import { instructionBoxButtonIconStyle, instructionBoxButtonContentStyle } from 'global/styles';
-import { useFetchManageApplications } from 'global/hooks';
+import { useApplicationsAPI } from 'global/hooks';
 
 const useManageApplicationsState = () => {
   const [page, setPage] = useState<number>(DEFAULT_PAGE);
@@ -45,14 +45,14 @@ const useManageApplicationsState = () => {
     setPageSize(newPageSize);
   };
 
-  const onSortedChange: SortedChangeFunction = async (newSorted: ManageApplicationsSortingRule[]) => {
+  const onSortedChange: SortedChangeFunction = async (newSorted: ApplicationsSortingRule[]) => {
     const newSort = newSorted.reduce(
-      (accSort: Array<ManageApplicationsSort>, sortRule: ManageApplicationsSortingRule) => {
+      (accSort: Array<ApplicationsSort>, sortRule: ApplicationsSortingRule) => {
         const order = sortRule.desc ? 'desc' : 'asc';
         return accSort.concat({
-          field: sortRule.id as ManageApplicationsField,
-          order: order as ManageApplicationsSortOrder,
-        }) as ManageApplicationsSort[];
+          field: sortRule.id as ApplicationsField,
+          order: order as ApplicationsSortOrder,
+        }) as ApplicationsSort[];
       },
       [],
     );
@@ -82,7 +82,7 @@ const ManageApplications = (): ReactElement => {
   const theme = useTheme();
   const containerRef = React.createRef<HTMLDivElement>();
 
-  const { error, isLoading, response } = useFetchManageApplications({
+  const { error, isLoading, response } = useApplicationsAPI({
     page,
     pageSize,
     sort
@@ -131,7 +131,7 @@ const ManageApplications = (): ReactElement => {
                         `}
                       >
                         Manage Applications
-                       </Typography>
+                      </Typography>
                     </Col>
                     <Col>
                       {/* TODO status indicators */}
@@ -182,8 +182,8 @@ const ManageApplications = (): ReactElement => {
                             css={instructionBoxButtonIconStyle}
                           // TODO export to file
                           />
-                            Export Table
-                          </span>
+                          Export Table
+                        </span>
                       </Button>
                     </Col>
                   </Row>

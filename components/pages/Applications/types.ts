@@ -11,32 +11,30 @@ export type ApplicationRecord = {
   status: string;
 };
 
-export type Accessors = keyof ApplicationRecord;
-
 export type SortedChangeFunction = (
   newSorted: SortingRule[],
   column: any,
   additive: boolean,
 ) => void;
 
-export type ManageApplicationsRequestData = {
+export type ApplicationsRequestData = {
   page: number;
   pageSize: number;
   sort: string;
 };
 
-export type ManageApplicationsSort = {
-  field: ManageApplicationsField;
-  order: ManageApplicationsSortOrder;
+export type ApplicationsSort = {
+  field: ApplicationsField;
+  order: ApplicationsSortOrder;
 };
 
-export type ManageApplicationsSortOrder = 'asc' | 'desc';
+export type ApplicationsSortOrder = 'asc' | 'desc';
 
-export type ManageApplicationsSortingRule = SortingRule & {
-  id: ManageApplicationsField | string;
+export type ApplicationsSortingRule = SortingRule & {
+  id: ApplicationsField | string;
 };
 
-export type ManageApplicationsResponseItem = {
+export type ApplicationsResponseItem = {
   appId: string;
   applicant: {
     info: {
@@ -53,16 +51,16 @@ export type ManageApplicationsResponseItem = {
   state: string;
 };
 
-export type ManageApplicationsResponseData = {
+export type ApplicationsResponseData = {
   pagingInfo: {
     totalCount: number;
     pagesCount: number;
     index: number;
   };
-  items: ManageApplicationsResponseItem[];
+  items: ApplicationsResponseItem[];
 };
 
-export enum ManageApplicationsField {
+export enum ApplicationsField {
   'applicant.info.displayName' = 'applicant.info.displayName',
   'applicant.info.googleEmail' = 'applicant.info.googleEmail',
   'applicant.info.primaryAffiliation' = 'applicant.info.primaryAffiliation',
