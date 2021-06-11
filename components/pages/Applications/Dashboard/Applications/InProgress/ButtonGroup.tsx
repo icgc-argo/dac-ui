@@ -59,7 +59,6 @@ const getButtonConfig = (state = ''): { content: string; link: string; icon: any
           icon: icons.user,
         },
       ];
-    // closed befoer approval
     case ApplicationState.CLOSED:
       [
         {

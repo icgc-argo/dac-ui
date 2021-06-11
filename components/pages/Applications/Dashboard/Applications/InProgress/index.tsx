@@ -9,7 +9,7 @@ import ButtonGroup from './ButtonGroup';
 
 const initState = { appId: '', state: '', submitterId: '', expiresAtUtc: '', updatedAtUtc: '' };
 
-const InProgress = ({}) => {
+const InProgress = ({ application }: { application: any }) => {
   const { appId, submitterId: primaryAffliation, state, expiresAtUtc, updatedAtUtc } = application;
 
   const expiryDate = `Access Expiry: ${getFormattedDate(expiresAtUtc, SIMPLE_DATE_FORMAT)}`;

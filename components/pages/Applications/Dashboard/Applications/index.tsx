@@ -7,8 +7,10 @@ import StartApplication from './Start';
 import { css } from '@emotion/core';
 
 type ApplicationsProps = {
-  inProgressApplication: any;
+  inProgressApplication?: any;
 };
+
+const application = { appId: '', state: '', submitterId: '', expiresAtUtc: '', updatedAtUtc: '' };
 
 const Applications = ({ inProgressApplication = null }: ApplicationsProps) => {
   const theme: UikitTheme = useTheme();
@@ -26,7 +28,7 @@ const Applications = ({ inProgressApplication = null }: ApplicationsProps) => {
           grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         `}
       >
-        <InProgress />
+        <InProgress application={application} />
         <StartApplication />
       </div>
     </div>

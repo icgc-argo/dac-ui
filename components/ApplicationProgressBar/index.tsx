@@ -53,7 +53,6 @@ const progressStates: ProgressStates = {
     { label: 'Sign & Submit', state: 'closed', completed: true },
     { label: 'Closed', state: 'closed', completed: true },
   ],
-
   [ApplicationState.RENEWING]: [
     { label: 'Draft', state: 'closed', completed: true },
     { label: 'Sign & Submit', state: 'closed', completed: true },
