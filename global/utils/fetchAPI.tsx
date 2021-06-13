@@ -3,7 +3,6 @@ import urlJoin from 'url-join';
 
 import { DAC_API } from 'global/constants/externalPaths';
 import { getConfig } from 'global/config';
-import useAuthContext from 'global/hooks/useAuthContext';
 
 const { USE_DAC_API_PROXY } = getConfig();
 
@@ -16,8 +15,8 @@ const fetchAPI = ({
   headers = {},
   method = 'GET' as Method,
   url = '/',
-}: AxiosRequestConfig) => {
-  const { token } = useAuthContext();
+  token,
+}: AxiosRequestConfig & { token: any }) => {
   const config: AxiosRequestConfig = {
     params,
     headers: {
