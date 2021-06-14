@@ -24,7 +24,7 @@ import {
 } from 'global/constants/externalPaths';
 import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
 import { getConfig } from 'global/config';
-import useAuthContext from 'global/hooks/useAuthContext';
+import { useAuthContext } from 'global/hooks';
 import { UserWithId } from 'global/types';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
 import { ADMIN_APPLICATIONS_LABEL, APPLICANT_APPLICATIONS_LABEL } from 'global/constants';

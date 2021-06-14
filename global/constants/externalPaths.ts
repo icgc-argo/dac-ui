@@ -5,6 +5,7 @@ const {
   NEXT_PUBLIC_ARGO_DOCS_ROOT,
   NEXT_PUBLIC_ARGO_ROOT,
   NEXT_PUBLIC_ARGO_PLATFORM_ROOT,
+  NEXT_PUBLIC_DAC_API_ROOT,
 } = getConfig();
 
 export const ARGO_ROOT = NEXT_PUBLIC_ARGO_PLATFORM_ROOT;
@@ -13,6 +14,7 @@ export const CONTACT_PAGE = urlJoin(NEXT_PUBLIC_ARGO_PLATFORM_ROOT, 'contact');
 export const POLICIES_PAGE = NEXT_PUBLIC_ARGO_ROOT; // tbd
 export const HELP_PAGE = NEXT_PUBLIC_ARGO_DOCS_ROOT; // tbd
 export const CONTROLLED_DATA_USERS_PAGE = NEXT_PUBLIC_ARGO_ROOT; // tbd
+export const DAC_API = NEXT_PUBLIC_DAC_API_ROOT;
 
 export const PRIVACY_POLICY_PAGE = urlJoin(ARGO_POLICIES, '2/privacy');
 export const TERMS_PAGE = urlJoin(ARGO_POLICIES, '1/terms-and-conditions');
