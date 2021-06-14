@@ -74,8 +74,12 @@ export const AuthProvider = ({
     params = {},
     headers = {},
     method = 'GET' as Method,
-    url = '/',
+    url,
   }: AxiosRequestConfig) => {
+    if (!url) {
+      return Promise.resolve(undefined);
+    }
+
     const config: AxiosRequestConfig = {
       params,
       headers: {
