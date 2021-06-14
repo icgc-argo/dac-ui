@@ -13,10 +13,10 @@ const RequestRevisionsBar = ({ appId }: { appId: string }) => {
   return (
     <ContentHeader css={css`
       border: 0 none;
-      line-height: 1;
       height: auto;
-      margin-top: 16px;
+      line-height: 1;
       margin-bottom: -16px;
+      margin-top: 16px;
     `}>
       <div
         css={css`
@@ -25,14 +25,13 @@ const RequestRevisionsBar = ({ appId }: { appId: string }) => {
           border-radius: 8px;
           box-sizing: border-box;
           display: flex;
+          height: auto;
           justify-content: space-between;
+          margin: 0 auto;
           max-width: 1200px;
           min-width: 665px;
           padding: 8px 10px 8px 16px;
           width: 100%;
-          margin: 0 auto;
-          line-height: 1;
-          height: auto;
         `}
       >
         <div>
@@ -50,13 +49,13 @@ const RequestRevisionsBar = ({ appId }: { appId: string }) => {
           <Button size="sm">
             <span css={instructionBoxButtonContentStyle}>
               <Icon
-                fill={theme.colors.white}
-                height="12px"
-                name="checkmark"
                 css={css`
                   margin-right: 1px;
                   margin-left: -4px;
                 `}
+                fill={theme.colors.white}
+                height="12px"
+                name="checkmark"
               />
               Approve
             </span>
@@ -64,10 +63,10 @@ const RequestRevisionsBar = ({ appId }: { appId: string }) => {
           <Button size="sm">
             <span css={instructionBoxButtonContentStyle}>
               <Icon
+                css={instructionBoxButtonIconStyle}
                 fill={theme.colors.white}
                 height="9px"
                 name="edit"
-                css={instructionBoxButtonIconStyle}
               />
               Request Revisions
             </span>
@@ -75,10 +74,10 @@ const RequestRevisionsBar = ({ appId }: { appId: string }) => {
           <Button size="sm">
             <span css={instructionBoxButtonContentStyle}>
               <Icon
+                css={instructionBoxButtonIconStyle}
                 fill={theme.colors.white}
                 height="10px"
                 name="times"
-                css={instructionBoxButtonIconStyle}
               />
               Reject
             </span>
