@@ -116,6 +116,10 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
                 p {
                   margin: 0;
 
+                  & + [class$='-FormControl'] {
+                    margin-top: 10px;
+                  }
+
                   &:not(:last-of-type) {
                     margin-bottom: 23px;
                   }

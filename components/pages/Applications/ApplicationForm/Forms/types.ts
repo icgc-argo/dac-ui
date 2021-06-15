@@ -74,7 +74,15 @@ export type FormSectionValidationState_Applicant = FormSectionValidationState_Se
 }>;
 export type FormSectionValidationState_Collaborators =
   FormSectionValidationState_SectionsGenericType<{}>;
-export type FormSectionValidationState_Data = FormSectionValidationState_SectionsGenericType<{}>;
+export type FormSectionValidationState_DataAccessAgreements =
+  FormSectionValidationState_SectionsGenericType<{
+    agreements: {
+      fields: {
+        daa_correct_application_content: FormFieldType;
+        daa_agree_to_terms: FormFieldType;
+      };
+    };
+  }>;
 export type FormSectionValidationState_Ethics = FormSectionValidationState_SectionsGenericType<{}>;
 export type FormSectionValidationState_Introduction =
   FormSectionValidationState_SectionsGenericType<{
@@ -120,7 +128,7 @@ export type FormSectionValidationState_Sections =
   | FormSectionValidationState_Appendices
   | FormSectionValidationState_Applicant
   | FormSectionValidationState_Collaborators
-  | FormSectionValidationState_Data
+  | FormSectionValidationState_DataAccessAgreements
   | FormSectionValidationState_Ethics
   | FormSectionValidationState_Introduction
   | FormSectionValidationState_Project
