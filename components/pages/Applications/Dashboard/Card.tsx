@@ -1,6 +1,5 @@
 import { css } from '@icgc-argo/uikit';
 import Icon from '@icgc-argo/uikit/Icon';
-import { ContentBody, ContentBox } from '@icgc-argo/uikit/PageLayout';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
 import React from 'react';
@@ -28,30 +27,58 @@ const DashboardCard = ({ title, subtitle, info, children }: DashboardCardProps) 
     >
       <header
         css={css`
+          min-height: 60px;
           align-items: center;
+          box-sizing: border-box;
           border-bottom: 1px solid ${theme.colors.grey_2};
-          height: 60px;
           display: flex;
-          padding: 0 40px;
+          padding: 8px 22px;
         `}
       >
-        <Typography
-          component="h1"
+        <Icon
           css={css`
-            margin: 0;
+            margin-right: 8px;
           `}
-          variant="subtitle"
-        >
-          <Icon
+          width="30px"
+          height="30px"
+          fill={theme.colors.secondary}
+          name="form"
+        />
+        <div>
+          <Typography
+            component="h1"
             css={css`
-              margin-bottom: -5px;
-              margin-right: 8px;
+              margin: 0;
             `}
-            fill={theme.colors.secondary}
-            name="form"
-          />
-          {title}
-        </Typography>
+            variant="subtitle"
+          >
+            {title}
+          </Typography>
+          <Typography
+            css={css`
+              padding: 0;
+              margin: 0;
+              font-size: 13px;
+              font-weight: bold;
+            `}
+          >
+            {subtitle}
+          </Typography>
+        </div>
+        {info && (
+          <Typography
+            css={css`
+              align-self: flex-start;
+              margin: 0;
+              margin-left: auto;
+              color: #0774d3;
+              font-size: 11px;
+              font-weight: bold;
+            `}
+          >
+            {info}
+          </Typography>
+        )}
       </header>
 
       {children}

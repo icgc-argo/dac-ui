@@ -4,28 +4,34 @@ import { styled, UikitTheme } from '@icgc-argo/uikit/index';
 import React from 'react';
 import InProgress from './InProgress';
 import StartApplication from './Start';
+import { css } from '@emotion/core';
 
 type ApplicationsProps = {
-  inProgressApplications: any;
+  inProgressApplication?: any;
 };
 
-const TwoColGrid = styled('div')`
-  display: grid;
-  grid-gap: 24px;
-  grid-auto-columns: 1fr;
-  grid-auto-flow: column;
-`;
+const application = { appId: '', state: '', submitterId: '', expiresAtUtc: '', updatedAtUtc: '' };
 
-const Applications = ({ inProgressApplications = true }: ApplicationsProps) => {
+const Applications = ({ inProgressApplication = null }: ApplicationsProps) => {
   const theme: UikitTheme = useTheme();
 
   return (
-    <ContentBody>
-      <TwoColGrid>
-        <InProgress />
+    <div
+      css={css`
+        flex: 1 0 auto;
+      `}
+    >
+      <div
+        css={css`
+          display: grid;
+          grid-gap: 24px;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        `}
+      >
+        <InProgress application={application} />
         <StartApplication />
-      </TwoColGrid>
-    </ContentBody>
+      </div>
+    </div>
   );
 };
 

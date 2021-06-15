@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Typography from '@icgc-argo/uikit/Typography';
 
 const IconWithText = styled('div')`
+  min-width: 120px;
   font-size: 11px;
   display: flex;
   flex: 1;
@@ -40,7 +41,7 @@ const AccessBox = ({ hasAccess = false }: { hasAccess?: boolean }) => {
         border-radius: 8px;
         display: flex;
         align-items: center;
-        flex: 0 0 379px;
+        flex: 0 0 412px;
       `}
     >
       <IconWithText hasAccess={hasAccess}>
