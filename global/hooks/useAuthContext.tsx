@@ -23,7 +23,7 @@ type T_AuthContext = {
 
 const AuthContext = createContext<T_AuthContext>({
   token: undefined,
-  logout: () => {},
+  logout: () => { },
   user: undefined,
   fetchWithAuth: null,
   permissions: [],
@@ -77,6 +77,7 @@ export const AuthProvider = ({
     url,
   }: AxiosRequestConfig) => {
     if (!url) {
+      console.warn('no URL provided to fetchWithAuth');
       return Promise.resolve(undefined);
     }
 
