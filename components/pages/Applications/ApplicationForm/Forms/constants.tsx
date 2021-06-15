@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic';
 const Applicant = dynamic(() => import('./Applicant'));
+const DataAccessAgreements = dynamic(() => import('./DataAccessAgreements'));
 const Introduction = dynamic(() => import('./Introduction'));
 const ITAgreements = dynamic(() => import('./ITAgreements'));
 const Representative = dynamic(() => import('./Representative'));
@@ -8,7 +9,10 @@ export const sectionsData = {
   appendices: { description: 'H. Appendices' },
   applicant: { component: Applicant, description: 'A. Applicant Information' },
   collaborators: { description: 'C. Collaborators' },
-  data: { description: 'G. Data Access Agreement' },
+  dataAccessAgreements: {
+    component: DataAccessAgreements,
+    description: 'G. Data Access Agreement',
+  },
   ethics: { description: 'E. Ethics' },
   introduction: { component: Introduction, description: 'Introduction' },
   project: { description: 'D. Project Information' },
@@ -30,7 +34,7 @@ export const sectionsOrder = [
   'project',
   'ethics',
   'itAgreements',
-  'data',
+  'dataAccessAgreements',
   'appendices',
   'signature',
 ] as const; // to infer these as union rather than string[]
