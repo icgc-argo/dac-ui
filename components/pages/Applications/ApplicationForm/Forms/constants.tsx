@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic';
+const Appendices = dynamic(() => import('./Appendices'));
 const Applicant = dynamic(() => import('./Applicant'));
 const DataAccessAgreements = dynamic(() => import('./DataAccessAgreements'));
 const Introduction = dynamic(() => import('./Introduction'));
@@ -6,7 +7,7 @@ const ITAgreements = dynamic(() => import('./ITAgreements'));
 const Representative = dynamic(() => import('./Representative'));
 
 export const sectionsData = {
-  appendices: { description: 'H. Appendices' },
+  appendices: { component: Appendices, description: 'H. Appendices' },
   applicant: { component: Applicant, description: 'A. Applicant Information' },
   collaborators: { description: 'C. Collaborators' },
   dataAccessAgreements: {

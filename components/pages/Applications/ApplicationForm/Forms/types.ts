@@ -53,8 +53,20 @@ export type FormFieldType = Partial<
 type FormSectionValidationState_SectionsGenericType<T extends Record<string, FormFieldType>> =
   Record<string, Partial<T[keyof T] & FormFieldType>>;
 
-export type FormSectionValidationState_Appendices =
-  FormSectionValidationState_SectionsGenericType<{}>;
+export type FormSectionValidationState_Appendices = FormSectionValidationState_SectionsGenericType<{
+  agreements: {
+    fields: {
+      appendix_icgc_goals_policies: FormFieldType;
+      appendix_large_scale_data_sharing: FormFieldType;
+      appendix_prepublication_policy: FormFieldType;
+      appendix_publication_policy: FormFieldType;
+      appendix_nih_genomic_inventions: FormFieldType;
+      appendix_oecd_genetic_inventions: FormFieldType;
+      appendix_cloud_security: FormFieldType;
+      appendix_ga4gh_framework: FormFieldType;
+    };
+  };
+}>;
 export type FormSectionValidationState_Applicant = FormSectionValidationState_SectionsGenericType<{
   info_firstName: { value: string };
   info_googleEmail: { value: string };
