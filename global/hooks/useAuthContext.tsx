@@ -66,7 +66,7 @@ export const AuthProvider = ({
 
   const { USE_DAC_API_PROXY } = getConfig();
 
-  axios.defaults.baseURL = USE_DAC_API_PROXY ? '' : DAC_API;
+  // TODO: decide if we want these for all types of requests or only POST
   axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
   axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 
@@ -81,6 +81,7 @@ export const AuthProvider = ({
     }
 
     const config: AxiosRequestConfig = {
+      baseURL: USE_DAC_API_PROXY ? '' : DAC_API,
       params,
       headers: {
         accept: '*/*',
