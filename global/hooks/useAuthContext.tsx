@@ -25,7 +25,7 @@ const AuthContext = createContext<T_AuthContext>({
   token: undefined,
   logout: () => { },
   user: undefined,
-  fetchWithAuth: null,
+  fetchWithAuth: () => { },
   permissions: [],
 });
 
