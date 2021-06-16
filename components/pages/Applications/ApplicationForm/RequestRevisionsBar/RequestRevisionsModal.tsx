@@ -12,7 +12,7 @@ import {
 
 import useRequestRevisionsReducer,
 {
-  MINIMUM_DETAILS_LENGTH, SECONDARY_SECTIONS
+  MINIMUM_DETAILS_LENGTH, SECONDARY_FIELDS
 } from './useRequestRevisionsReducer';
 
 const ModalSection = ({
@@ -126,7 +126,7 @@ const RequestRevisionsModal = ({
             details={fields[fieldName].details}
             dispatch={dispatch}
             key={fieldName}
-            fieldDisabled={SECONDARY_SECTIONS.includes(fieldName)
+            fieldDisabled={SECONDARY_FIELDS.includes(fieldName)
               && !isSecondaryFieldsEnabled}
             fieldName={fieldName}
             title={RequestRevisionsFieldTitles[fieldName]}

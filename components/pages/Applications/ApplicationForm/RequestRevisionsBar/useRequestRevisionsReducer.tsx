@@ -9,14 +9,16 @@ import {
 } from './types';
 
 export const MINIMUM_DETAILS_LENGTH = 10;
-export const SECONDARY_SECTIONS: RequestRevisionsFieldNames[] = ['general'];
+export const SECONDARY_FIELDS: RequestRevisionsFieldNames[] = ['general'];
+
+const initialFieldState = {
+  details: '',
+  requested: false,
+};
 
 const initialStateFields = Object.keys(RequestRevisionsFieldTitles).reduce((acc, curr) => ({
   ...acc,
-  [curr]: {
-    details: '',
-    requested: false,
-  }
+  [curr]: initialFieldState
 }), {}) as RequestRevisionsFieldsState;
 
 const initialState: RequestRevisionsState = {
@@ -26,7 +28,7 @@ const initialState: RequestRevisionsState = {
 };
 
 const getOnlyPrimaryFieldsState = (fields: any) => Object.keys(RequestRevisionsFieldTitles)
-  .filter(title => !SECONDARY_SECTIONS.includes(title as RequestRevisionsFieldNames))
+  .filter(title => !SECONDARY_FIELDS.includes(title as RequestRevisionsFieldNames))
   .reduce((acc, curr) => ({
     ...acc,
     [curr]: { ...fields[curr as RequestRevisionsFieldNames] },
@@ -68,14 +70,20 @@ const requestRevisionsReducer = (state: RequestRevisionsState, action: any) => {
   };
 
   const primaryFields = getOnlyPrimaryFieldsState(nextState.fields);
-
-  console.log(primaryFields)
-
-  console.log('isSecondaryFieldsEnabled', !!findCompleteFields(primaryFields))
+  const isSecondaryFieldsEnabled: boolean = !!findCompleteFields(primaryFields);
 
   return {
     ...nextState,
-    isSecondaryFieldsEnabled: !!findCompleteFields(primaryFields),
+    fields: {
+      ...nextState.fields,
+      ...isSecondaryFieldsEnabled
+        ? {}
+        : SECONDARY_FIELDS.reduce((acc, curr) => ({
+          ...acc,
+          [curr]: initialFieldState
+        }), {})
+    },
+    isSecondaryFieldsEnabled,
     isSendEnabled: checkSendEnabled(nextState.fields),
   }
 };
