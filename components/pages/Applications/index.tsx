@@ -21,18 +21,19 @@ const Application = (): ReactElement => {
   }: QueryType = useRouter();
   const { permissions } = useAuthContext();
 
-  const isAdmin = isDacoAdmin(permissions);
+  const isAdmin = false; //isDacoAdmin(permissions);
 
   const pageTitle = appId.toUpperCase() || 'Application page';
 
   return (
     <DefaultPageLayout title={pageTitle}>
-      {appId
-        ? <ApplicationForm appId={appId} />
-        : isAdmin
-          ? <ManageApplications />
-          : <Dashboard />
-      }
+      {appId ? (
+        <ApplicationForm appId={appId} />
+      ) : isAdmin ? (
+        <ManageApplications />
+      ) : (
+        <Dashboard isAdmin={isAdmin} />
+      )}
     </DefaultPageLayout>
   );
 };
