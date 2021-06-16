@@ -1,19 +1,15 @@
-import { ContentBody } from '@icgc-argo/uikit/PageLayout';
-import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
-import { styled, UikitTheme } from '@icgc-argo/uikit/index';
 import React from 'react';
 import InProgress from './InProgress';
 import StartApplication from './Start';
 import { css } from '@emotion/core';
+import useApplicationsAPI from 'global/hooks/useApplicationsAPI';
+import { isEmpty } from 'lodash';
 
-type ApplicationsProps = {
-  inProgressApplication?: any;
-};
+const Applications = () => {
+  const { error, isLoading, response } = useApplicationsAPI({});
+  console.log('r', response);
 
-const application = { appId: '', state: '', submitterId: '', expiresAtUtc: '', updatedAtUtc: '' };
-
-const Applications = ({ inProgressApplication = null }: ApplicationsProps) => {
-  const theme: UikitTheme = useTheme();
+  const inProgressApplications: any = []; //response?.data;
 
   return (
     <div
@@ -28,7 +24,7 @@ const Applications = ({ inProgressApplication = null }: ApplicationsProps) => {
           grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         `}
       >
-        <InProgress application={application} />
+        {!isEmpty(inProgressApplications) && <InProgress application={inProgressApplications[0]} />}
         <StartApplication />
       </div>
     </div>
