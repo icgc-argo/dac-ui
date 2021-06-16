@@ -11,14 +11,14 @@ import { ApplicationState } from 'components/ApplicationProgressBar/types';
 const initState = { appId: '', state: '', submitterId: '', expiresAtUtc: '', updatedAtUtc: '' };
 
 const InProgress = ({ application }: { application: any }) => {
-  const { appId, submitterId: primaryAffliation, state, expiresAtUtc, updatedAtUtc } = initState;
+  const { appId, submitterId: primaryAffiliation, state, expiresAtUtc, updatedAtUtc } = initState;
 
   const expiryDate = `Access Expiry: ${getFormattedDate(expiresAtUtc, SIMPLE_DATE_FORMAT)}`;
 
   return (
     <DashboardCard
       title={`Application: DACO-${appId}`}
-      subtitle={primaryAffliation}
+      subtitle={primaryAffiliation}
       info={expiryDate}
     >
       <div

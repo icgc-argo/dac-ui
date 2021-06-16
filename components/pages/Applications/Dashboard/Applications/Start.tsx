@@ -8,6 +8,8 @@ import { useAuthContext } from 'global/hooks';
 import React from 'react';
 import DashboardCard from '../Card';
 import { useRouter } from 'next/router';
+import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
+import { API } from 'global/constants/externalPaths';
 
 const StartApplication = () => {
   const theme = useTheme();
@@ -16,11 +18,11 @@ const StartApplication = () => {
 
   const createNewApplication = () => {
     fetchWithAuth({
-      url: '/applications',
+      url: API.APPLICATIONS,
       method: 'POST',
     })
       .then(({ data }) => {
-        router.push(`/applications/${data.appId}`);
+        router.push(`${APPLICATIONS_PATH}/${data.appId}`);
       })
       .catch((e) => console.error('Failed to create new application.', e));
   };
