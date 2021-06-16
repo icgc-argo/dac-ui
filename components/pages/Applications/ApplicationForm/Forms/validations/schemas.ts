@@ -90,8 +90,6 @@ export const itAgreementsSchema = yup.object().shape({
       .oneOf([true])
       .required(),
     it_agreement_contact_daco_fraud: yup.boolean().default(false).oneOf([true]).required(),
-    it_agreement_cloud_usage_risk: yup.boolean().default(false).oneOf([true]).required(),
-    it_agreement_read_cloud_appendix: yup.boolean().default(false).oneOf([true]).required(),
   }),
 });
 

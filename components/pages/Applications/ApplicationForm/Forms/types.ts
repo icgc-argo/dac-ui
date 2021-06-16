@@ -115,8 +115,6 @@ export type FormSectionValidationState_ITAgreements =
         it_agreement_onboard_training: FormFieldType;
         it_agreement_provide_institutional_policies: FormFieldType;
         it_agreement_contact_daco_fraud: FormFieldType;
-        it_agreement_cloud_usage_risk: FormFieldType;
-        it_agreement_read_cloud_appendix: FormFieldType;
       };
     };
   }>;
