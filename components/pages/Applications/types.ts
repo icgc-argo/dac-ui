@@ -18,9 +18,9 @@ export type SortedChangeFunction = (
 ) => void;
 
 export type ApplicationsRequestData = {
-  page: number;
-  pageSize: number;
-  sort: string;
+  page?: number;
+  pageSize?: number;
+  sort?: string;
 };
 
 export type ApplicationsSort = {
