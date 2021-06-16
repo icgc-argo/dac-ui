@@ -95,7 +95,11 @@ export type FormSectionValidationState_DataAccessAgreements =
       };
     };
   }>;
-export type FormSectionValidationState_Ethics = FormSectionValidationState_SectionsGenericType<{}>;
+export type FormSectionValidationState_EthicsLetter =
+  FormSectionValidationState_SectionsGenericType<{
+    declaredAsRequired: { value: boolean };
+    approvalLetterDocs: { value: [] };
+  }>;
 export type FormSectionValidationState_Introduction =
   FormSectionValidationState_SectionsGenericType<{
     agreement: { value: boolean };
@@ -141,7 +145,7 @@ export type FormSectionValidationState_Sections =
   | FormSectionValidationState_Applicant
   | FormSectionValidationState_Collaborators
   | FormSectionValidationState_DataAccessAgreements
-  | FormSectionValidationState_Ethics
+  | FormSectionValidationState_EthicsLetter
   | FormSectionValidationState_Introduction
   | FormSectionValidationState_Project
   | FormSectionValidationState_ITAgreements

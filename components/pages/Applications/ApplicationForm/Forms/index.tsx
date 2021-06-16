@@ -116,7 +116,7 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
                 p {
                   margin: 0;
 
-                  & + [class$='-FormControl'] {
+                  & + [class*='FormControl'] {
                     margin-top: 10px;
 
                     &.closer {
@@ -127,40 +127,54 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
                   &:not(:last-of-type) {
                     margin-bottom: 23px;
 
-                    & + [class$='-FormControl'].closer {
+                    & + [class*='FormControl'].closer {
                       margin-top: -10px;
                     }
                   }
                 }
 
                 // for the horizontal design in this app
-                [class$='-FormControl'] {
-                  align-items: center;
-                  display: flex;
-                  flex-wrap: wrap;
+                [class*='FormControl'] {
                   width: 100%;
 
                   > label {
                     line-height: 1rem;
-                    margin: 0 5px 0 0;
-                    flex-shrink: 0;
-                    width: 140px;
 
                     & ~ p {
-                      margin: 5px 0 0 150px;
+                      margin-top: 5px 0 0;
                     }
                   }
 
-                  > div {
-                    flex-grow: 1;
+                  &.vertical {
+                    margin-bottom: 20px;
                   }
 
-                  > p {
-                    flex-basis: 100%;
-                  }
+                  &:not(.vertical) {
+                    align-items: center;
+                    display: flex;
+                    flex-wrap: wrap;
 
-                  + p {
-                    margin-top: 30px;
+                    > label {
+                      margin: 0 5px 0 0;
+                      flex-shrink: 0;
+                      width: 140px;
+
+                      & ~ p {
+                        margin-left: 150px;
+                      }
+                    }
+
+                    > div {
+                      flex-grow: 1;
+                    }
+
+                    > p {
+                      flex-basis: 100%;
+                    }
+
+                    + p {
+                      margin-top: 30px;
+                    }
                   }
                 }
               }
