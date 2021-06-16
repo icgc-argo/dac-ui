@@ -1,6 +1,6 @@
 import React, { createContext, useState } from 'react';
 import { useRouter } from 'next/router';
-
+import urlJoin from 'url-join';
 import { EGO_JWT_KEY } from '../constants';
 import {
   decodeToken,
@@ -9,20 +9,23 @@ import {
   isValidJwt,
 } from '../utils/egoTokenUtils';
 import { UserWithId } from '../types';
+import axios, { AxiosRequestConfig, Method } from 'axios';
+import { getConfig } from 'global/config';
+import { DAC_API } from 'global/constants/externalPaths';
 
 type T_AuthContext = {
   token?: string;
   logout: () => void;
   user?: UserWithId;
-  fetchWithAuth: typeof fetch;
+  fetchWithAuth: any;
   permissions: string[];
 };
 
 const AuthContext = createContext<T_AuthContext>({
   token: undefined,
-  logout: () => {},
+  logout: () => { },
   user: undefined,
-  fetchWithAuth: fetch,
+  fetchWithAuth: () => { },
   permissions: [],
 });
 
@@ -61,12 +64,42 @@ export const AuthProvider = ({
     }
   }
 
-  const fetchWithAuth: T_AuthContext['fetchWithAuth'] = (url, options) => {
-    return fetch(url, {
-      ...options,
-      headers: { ...options?.headers, accept: '*/*', Authorization: `Bearer ${token || ''}` },
-      body: null,
-    });
+  const { USE_DAC_API_PROXY } = getConfig();
+
+  // TODO: decide if we want these for all types of requests or only POST
+  axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
+  axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+
+  const fetchWithAuth = ({
+    params = {},
+    headers = {},
+    method = 'GET' as Method,
+    url,
+  }: AxiosRequestConfig) => {
+    if (!url) {
+      console.warn('no URL provided to fetchWithAuth');
+      return Promise.resolve(undefined);
+    }
+
+    const config: AxiosRequestConfig = {
+      baseURL: USE_DAC_API_PROXY ? '' : DAC_API,
+      params,
+      headers: {
+        accept: '*/*',
+        ...headers,
+        Authorization: `Bearer ${token || ''}`,
+      },
+      method,
+      url: USE_DAC_API_PROXY ? urlJoin('/api', url) : url,
+    };
+
+    return (
+      axios(config)
+        // TODO log errors somewhere?
+        .catch((error) => {
+          console.error({ error });
+        })
+    );
   };
 
   const userInfo = token ? decodeToken(token) : null;

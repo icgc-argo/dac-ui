@@ -65,8 +65,8 @@ const ApplicationProgressBar = ({ state }: { state: ApplicationState }) => {
   return (
     <div>
       <Progress>
-        {progressItems.map(({ label, state, completed }) => (
-          <ProgressItem text={label} state={state} completed={completed} />
+        {progressItems.map(({ label, state, completed }, i) => (
+          <ProgressItem key={i} text={label} state={state} completed={completed} />
         ))}
       </Progress>
     </div>
