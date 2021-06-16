@@ -82,7 +82,13 @@ const DashboardCard = ({ title, subtitle, info, children }: DashboardCardProps) 
         )}
       </header>
 
-      {children}
+      <div
+        css={css`
+          padding: 24px;
+        `}
+      >
+        {children}
+      </div>
     </div>
   );
 };

@@ -8,12 +8,19 @@ import { getFormattedDate, getStatusText } from './helpers';
 import ButtonGroup from './ButtonGroup';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
-const initState = { appId: '', state: '', submitterId: '', expiresAtUtc: '', updatedAtUtc: '' };
+const initState = {
+  appId: '1',
+  state: ApplicationState.DRAFT,
+  submitterId: 'Ontario Institute for Cancer Research',
+  expiresAtUtc: '2021-06-16T18:10:13.760Z',
+  updatedAtUtc: '2021-06-16T18:10:13.760Z',
+};
 
 const InProgress = ({ application }: { application: any }) => {
   const { appId, submitterId: primaryAffiliation, state, expiresAtUtc, updatedAtUtc } = initState;
 
-  const expiryDate = `Access Expiry: ${getFormattedDate(expiresAtUtc, SIMPLE_DATE_FORMAT)}`;
+  const expiryDate =
+    expiresAtUtc && `Access Expiry: ${getFormattedDate(expiresAtUtc, SIMPLE_DATE_FORMAT)}`;
 
   return (
     <DashboardCard
@@ -21,30 +28,24 @@ const InProgress = ({ application }: { application: any }) => {
       subtitle={primaryAffiliation}
       info={expiryDate}
     >
-      <div
+      <ProgressBar state={state as ApplicationState} />
+
+      <Typography
+        variant="data"
+        as="div"
         css={css`
-          padding: 24px;
+          margin-top: 18px;
         `}
       >
-        <ProgressBar state={state as ApplicationState} />
+        <div>
+          <b>Status:</b> {getStatusText(state as ApplicationState, expiresAtUtc)}
+        </div>
+        <div>
+          <b>Last Updated:</b> {getFormattedDate(updatedAtUtc, TIME_AND_DATE_FORMAT)}
+        </div>
+      </Typography>
 
-        <Typography
-          variant="data"
-          as="div"
-          css={css`
-            margin-top: 18px;
-          `}
-        >
-          <div>
-            <b>Status:</b> {getStatusText(state as ApplicationState, expiresAtUtc)}
-          </div>
-          <div>
-            <b>Last Updated:</b> {getFormattedDate(updatedAtUtc, TIME_AND_DATE_FORMAT)}
-          </div>
-        </Typography>
-
-        <ButtonGroup state={state as ApplicationState} />
-      </div>
+      <ButtonGroup state={state as ApplicationState} />
     </DashboardCard>
   );
 };
