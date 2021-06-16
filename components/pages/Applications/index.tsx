@@ -21,7 +21,7 @@ const Application = (): ReactElement => {
   }: QueryType = useRouter();
   const { permissions } = useAuthContext();
 
-  const isAdmin = false; //isDacoAdmin(permissions);
+  const isAdmin = isDacoAdmin(permissions);
 
   const pageTitle = appId.toUpperCase() || 'Application page';
 
