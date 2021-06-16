@@ -23,6 +23,19 @@ yup.setLocale({
   },
 });
 
+export const appendicesSchema = yup.object().shape({
+  agreements: yup.object().shape({
+    appendix_icgc_goals_policies: yup.boolean().default(false).oneOf([true]).required(),
+    appendix_large_scale_data_sharing: yup.boolean().default(false).oneOf([true]).required(),
+    appendix_prepublication_policy: yup.boolean().default(false).oneOf([true]).required(),
+    appendix_publication_policy: yup.boolean().default(false).oneOf([true]).required(),
+    appendix_nih_genomic_inventions: yup.boolean().default(false).oneOf([true]).required(),
+    appendix_oecd_genetic_inventions: yup.boolean().default(false).oneOf([true]).required(),
+    appendix_cloud_security: yup.boolean().default(false).oneOf([true]).required(),
+    appendix_ga4gh_framework: yup.boolean().default(false).oneOf([true]).required(),
+  }),
+});
+
 export const applicantSchema = yup.object().shape({
   address_building: yup.string().default(''),
   address_cityAndProvince: yup.string().default('').required(),
@@ -109,6 +122,7 @@ export const representativeSchema = yup.object().shape({
 export const signatureSchema = yup.object().shape({});
 
 export const combinedSchema = {
+  appendices: appendicesSchema,
   applicant: applicantSchema,
   dataAccessAgreements: dataAccessAgreementsSchema,
   introduction: introductionSchema,

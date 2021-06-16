@@ -118,10 +118,18 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
 
                   & + [class$='-FormControl'] {
                     margin-top: 10px;
+
+                    &.closer {
+                      margin-top: 13px;
+                    }
                   }
 
                   &:not(:last-of-type) {
                     margin-bottom: 23px;
+
+                    & + [class$='-FormControl'].closer {
+                      margin-top: -10px;
+                    }
                   }
                 }
 
@@ -149,6 +157,10 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
 
                   > p {
                     flex-basis: 100%;
+                  }
+
+                  + p {
+                    margin-top: 30px;
                   }
                 }
               }
