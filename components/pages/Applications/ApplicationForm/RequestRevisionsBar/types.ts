@@ -1,4 +1,4 @@
-export enum RequestRevisionsSectionTitles {
+export enum RequestRevisionsFieldTitles {
   applicant = 'A. Applicant Information',
   representative = 'B. Institutional Representative',
   collaborators = 'C. Collaborators',
@@ -8,13 +8,19 @@ export enum RequestRevisionsSectionTitles {
   general = 'Include general comments in email',
 }
 
-export type RequestRevisionsSectionKeys = keyof typeof RequestRevisionsSectionTitles;
+export type RequestRevisionsFieldNames = keyof typeof RequestRevisionsFieldTitles;
 
 export type RequestRevisionProperties = {
   details: string;
   requested: boolean;
 };
 
-export type RequestRevisionsSectionState = {
-  [key in RequestRevisionsSectionKeys]: RequestRevisionProperties;
+export type RequestRevisionsFieldsState = {
+  [key in RequestRevisionsFieldNames]: RequestRevisionProperties;
+};
+
+export type RequestRevisionsState = {
+  isSecondaryFieldsEnabled: boolean;
+  isSendEnabled: boolean;
+  fields: RequestRevisionsFieldsState;
 };
