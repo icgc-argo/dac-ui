@@ -7,14 +7,24 @@ import useTheme from '@icgc-argo/uikit/utils/useTheme';
 import Typography from '@icgc-argo/uikit/Typography';
 import Textarea from '@icgc-argo/uikit/form/Textarea';
 
-import { RequestRevisionsSectionTitles, RequestRevisionsSectionState, RequestRevisionsSectionKeys, RequestRevisionProperties } from './types';
+import {
+  RequestRevisionsSectionTitles,
+  RequestRevisionsSectionState,
+  RequestRevisionsSectionKeys,
+} from './types';
 
 const MINIMUM_DETAILS_LENGTH = 10;
 
 const SECONDARY_SECTIONS: RequestRevisionsSectionKeys[] = ['general'];
 
 const ModalSection = ({ requested, details, sectionDisabled, sectionKey, title }:
-  { requested: boolean; details: string; sectionDisabled: boolean; sectionKey: string; title: string; }
+  {
+    requested: boolean;
+    details: string;
+    sectionDisabled: boolean;
+    sectionKey: string;
+    title: string;
+  }
 ) => {
   const theme = useTheme();
   return (
