@@ -1,9 +1,13 @@
 import { css } from '@emotion/core';
 
+import FormControl from '@icgc-argo/uikit/form/FormControl';
+import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
+import Input from '@icgc-argo/uikit/form/Input';
+import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import Modal from '@icgc-argo/uikit/Modal';
-import useTheme from '@icgc-argo/uikit/utils/useTheme';
-import Typography from '@icgc-argo/uikit/Typography';
 import Textarea from '@icgc-argo/uikit/form/Textarea';
+import Typography from '@icgc-argo/uikit/Typography';
+import useTheme from '@icgc-argo/uikit/utils/useTheme';
 
 import {
   RequestRevisionsFieldTitles,
@@ -44,12 +48,12 @@ const ModalSection = ({
         background: ${requested
           ? theme.colors.secondary_4
           : fieldDisabled
-            ? theme.colors.grey_2
+            ? theme.colors.grey_3
             : theme.colors.white};
         border: 1px solid ${theme.colors.grey_2};
         display: flex;
         margin-bottom: 5px;
-        padding: 6px;
+        padding: 6px 6px 0;
         justify-content: space-between;
       `}
     >
@@ -73,21 +77,26 @@ const ModalSection = ({
       >
         {title}
       </Typography>
-      <Textarea
-        aria-label={`${title} textarea`}
+      <FormControl
         disabled={fieldDisabled || !requested}
-        id={`${title}-textarea`}
-        css={css`
+        error={requested && details.length < MINIMUM_DETAILS_LENGTH}
+      >
+        <Textarea
+          aria-label={`${title} textarea`}
+          id={`${title}-textarea`}
+          css={css`
           height: 69px;
           margin-bottom: 0;
           width: 550px;
         `}
-        value={details}
-        onChange={(e) => dispatch({ payload: e.target.value, type: 'details', ...dispatchArgs })}
-        onBlur={() => {
-          console.log(`onBlur ${title} textarea`);
-        }}
-      />
+          value={details}
+          onChange={(e) => dispatch({ payload: e.target.value, type: 'details', ...dispatchArgs })}
+          onBlur={() => {
+            console.log(`onBlur ${title} textarea`);
+          }}
+        />
+        <FormHelperText onErrorOnly>Message must be at least {MINIMUM_DETAILS_LENGTH} characters.</FormHelperText>
+      </FormControl>
     </div>
   );
 };
