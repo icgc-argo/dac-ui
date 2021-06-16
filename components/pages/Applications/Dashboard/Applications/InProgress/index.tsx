@@ -28,24 +28,30 @@ const InProgress = ({ application }: { application: any }) => {
       subtitle={primaryAffiliation}
       info={expiryDate}
     >
-      <ProgressBar state={state as ApplicationState} />
-
-      <Typography
-        variant="data"
-        as="div"
+      <div
         css={css`
-          margin-top: 18px;
+          margin-top: 5px;
         `}
       >
-        <div>
-          <b>Status:</b> {getStatusText(state as ApplicationState, expiresAtUtc)}
-        </div>
-        <div>
-          <b>Last Updated:</b> {getFormattedDate(updatedAtUtc, TIME_AND_DATE_FORMAT)}
-        </div>
-      </Typography>
+        <ProgressBar state={state as ApplicationState} />
 
-      <ButtonGroup state={state as ApplicationState} />
+        <Typography
+          variant="data"
+          as="div"
+          css={css`
+            margin-top: 18px;
+          `}
+        >
+          <div>
+            <b>Status:</b> {getStatusText(state as ApplicationState, expiresAtUtc)}
+          </div>
+          <div>
+            <b>Last Updated:</b> {getFormattedDate(updatedAtUtc, TIME_AND_DATE_FORMAT)}
+          </div>
+        </Typography>
+
+        <ButtonGroup state={state as ApplicationState} />
+      </div>
     </DashboardCard>
   );
 };

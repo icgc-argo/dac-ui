@@ -35,7 +35,7 @@ const StartApplication = () => {
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          padding: 65px 0;
+          padding: 40px 0;
         `}
       >
         <Typography
