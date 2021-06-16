@@ -3,11 +3,17 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
 import { ApplicationsRequestData } from '../../components/pages/Applications/types';
 import useAuthContext from './useAuthContext';
+import {
+  DEFAULT_PAGE,
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_SORT,
+  stringifySort,
+} from 'components/pages/Applications/ManageApplications/utils';
 
 const useApplicationsAPI = ({
-  page,
-  pageSize,
-  sort,
+  page = DEFAULT_PAGE,
+  pageSize = DEFAULT_PAGE_SIZE,
+  sort = stringifySort(DEFAULT_SORT),
 }: // method
 // id
 // ...etc
