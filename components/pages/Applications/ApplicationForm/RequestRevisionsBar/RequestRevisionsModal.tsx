@@ -1,17 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { css } from '@emotion/core';
+import { find } from 'lodash';
 
 import Modal from '@icgc-argo/uikit/Modal';
 import useTheme from '@icgc-argo/uikit/utils/useTheme';
 import Typography from '@icgc-argo/uikit/Typography';
 import Textarea from '@icgc-argo/uikit/form/Textarea';
 
-const ModalSection = ({ active = false, title = "short" }: { active?: boolean; title?: string; }) => {
+import { RequestRevisionsSectionTitles, RequestRevisionsSectionState, RequestRevisionsSectionKeys, RequestRevisionProperties } from './types';
+
+const MINIMUM_DETAILS_LENGTH = 10;
+
+const SECONDARY_SECTIONS: RequestRevisionsSectionKeys[] = ['general'];
+
+const ModalSection = ({ requested, details, sectionDisabled, sectionKey, title }:
+  { requested: boolean; details: string; sectionDisabled: boolean; sectionKey: string; title: string; }
+) => {
   const theme = useTheme();
   return (
     <div
       css={css`
-        background: ${active ? theme.colors.secondary_4 : theme.colors.white};
+        background: ${requested ? theme.colors.secondary_4 : theme.colors.white};
         border: 1px solid ${theme.colors.grey_2};
         display: flex;
         margin-bottom: 5px;
@@ -20,7 +29,7 @@ const ModalSection = ({ active = false, title = "short" }: { active?: boolean; t
       `}
     >
       <input
-        checked={false}
+        checked={requested}
         css={css`
           margin-top: 13px;
         `}
@@ -38,7 +47,7 @@ const ModalSection = ({ active = false, title = "short" }: { active?: boolean; t
           padding: 0 11px 0 8px;
         `}
       >
-        {title}
+        {title} {sectionDisabled ? 'disabled' : 'enabled'}
       </Typography>
       <Textarea
         aria-label={`${title} textarea`}
@@ -49,7 +58,7 @@ const ModalSection = ({ active = false, title = "short" }: { active?: boolean; t
           margin-bottom: 0;
           width: 550px;
         `}
-        value={title}
+        value={details}
         onChange={() => {
           console.log(`onChange ${title} textarea`);
         }}
@@ -61,22 +70,68 @@ const ModalSection = ({ active = false, title = "short" }: { active?: boolean; t
   );
 };
 
+const defaultState = Object.keys(RequestRevisionsSectionTitles).reduce((acc, curr) => ({
+  ...acc,
+  [curr]: {
+    details: '',
+    requested: false,
+  }
+}), {}) as RequestRevisionsSectionState;
+
+const useRequestRevisionsModalState = () => {
+  const [modalState, setModalState] = useState<RequestRevisionsSectionState>(defaultState);
+
+  // handle checkboxes
+  // handle textboxes
+
+  return {
+    modalState
+  }
+}
+
 const RequestRevisionsModal = ({
   dismissModal
 }: {
   dismissModal: () => any | void;
 }) => {
   const theme = useTheme();
+  const { modalState } = useRequestRevisionsModalState();
+
+  const modalStatePrimarySections = Object.keys(RequestRevisionsSectionTitles)
+    .filter(title => SECONDARY_SECTIONS.includes(title as RequestRevisionsSectionKeys))
+    .reduce((acc, curr) => ({
+      ...acc,
+      [curr]: { ...modalState[curr as RequestRevisionsSectionKeys] },
+    }), {}) as RequestRevisionsSectionState;
+
+  // enable secondary sections when at least one primary section
+  // is checked off and has enough characters in its details field
+  const isSecondarySectionsEnabled = !!find(
+    Object.values(modalStatePrimarySections),
+    item => item.requested && item.details && item.details.length >= MINIMUM_DETAILS_LENGTH
+  );
+
+  // enable send if at least one section is checked off and has enough characters in its details field
+  // AND no sections are checked off with insufficient characters
+  const isSendEnabled = !!find(
+    Object.values(modalState), item => item.requested &&
+      item.details &&
+      item.details.length >= MINIMUM_DETAILS_LENGTH
+  ) &&
+    !find(
+      Object.values(modalState), item => item.requested &&
+        (!item.details || item.details.length < MINIMUM_DETAILS_LENGTH)
+    );
 
   return (
     <Modal
-      title="Request Revisions"
-      actionVisible={true}
       actionButtonText="Send Request"
+      actionDisabled={!isSendEnabled}
       buttonSize="sm"
       cancelText="Cancel"
       onCancelClick={dismissModal}
       onCloseClick={dismissModal}
+      title="Request Revisions"
     >
       <Typography
         bold
@@ -86,7 +141,16 @@ const RequestRevisionsModal = ({
       >
         Check off the sections that have issues and provide the revisions details that will be emailed to the applicant.
       </Typography>
-      <ModalSection />
+      {Object.keys(modalState).map((sectionKey) => (
+        <ModalSection
+          requested={modalState[sectionKey as RequestRevisionsSectionKeys].requested}
+          details={modalState[sectionKey as RequestRevisionsSectionKeys].details}
+          key={sectionKey}
+          sectionDisabled={SECONDARY_SECTIONS.includes(sectionKey as RequestRevisionsSectionKeys) && !isSecondarySectionsEnabled}
+          sectionKey={sectionKey}
+          title={RequestRevisionsSectionTitles[sectionKey as RequestRevisionsSectionKeys]}
+        />
+      ))}
     </Modal>
   );
 };
