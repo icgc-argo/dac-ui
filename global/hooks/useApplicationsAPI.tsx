@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { AxiosError, AxiosResponse } from 'axios';
-import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
 import { ApplicationsRequestData } from '../../components/pages/Applications/types';
 import useAuthContext from './useAuthContext';
 import {
@@ -9,6 +8,7 @@ import {
   DEFAULT_SORT,
   stringifySort,
 } from 'components/pages/Applications/ManageApplications/utils';
+import { API } from 'global/constants/externalPaths';
 
 const useApplicationsAPI = ({
   page = DEFAULT_PAGE,
@@ -31,7 +31,7 @@ ApplicationsRequestData) => {
         pageSize,
         sort,
       },
-      url: APPLICATIONS_PATH,
+      url: API.APPLICATIONS,
     })
       .then((res: any) => {
         setResponse(res);
