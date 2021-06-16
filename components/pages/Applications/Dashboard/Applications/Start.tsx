@@ -28,7 +28,7 @@ const StartApplication = () => {
   };
 
   return (
-    <DashboardCard title="Start a new application">
+    <DashboardCard title="Start a New Application">
       <div
         css={css`
           display: flex;
