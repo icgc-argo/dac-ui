@@ -1,8 +1,9 @@
 const withImages = require('next-images');
+const withFonts = require('next-fonts');
 const withPlugins = require('next-compose-plugins');
 const withTranspileModules = require('next-transpile-modules')(['@icgc-argo/uikit']);
 
-module.exports = withPlugins([withTranspileModules, [withImages]], {
+module.exports = withPlugins([withTranspileModules, [withImages], [withFonts]], {
   publicRuntimeConfig: {
     NEXT_PUBLIC_EGO_API_ROOT: process.env.NEXT_PUBLIC_EGO_API_ROOT,
     NEXT_PUBLIC_EGO_CLIENT_ID: process.env.NEXT_PUBLIC_EGO_CLIENT_ID,

@@ -3,6 +3,7 @@ import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 import Link from '@icgc-argo/uikit/Link';
 import Typography from '@icgc-argo/uikit/Typography';
+import Wat from 'components/test';
 
 import RequiredFieldsMessage from './RequiredFieldsMessage';
 import {
@@ -35,7 +36,8 @@ const Introduction = ({
       </Typography>
 
       <section>
-        <Typography>
+        <Wat />
+        {/* <Typography>
           This application form must be completed by you and the legal entity with which you are
           affiliated (“You”) prior to being granted access to International Cancer Genome Consortium
           (“ICGC”) controlled data (the “ICGC Controlled Data” as further defined in Section G of
@@ -78,7 +80,7 @@ const Introduction = ({
             ICGC ARGO website
           </Link>
           .
-        </Typography>
+        </Typography> */}
         <RequiredFieldsMessage />
       </section>
 
