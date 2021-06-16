@@ -19,8 +19,9 @@ const initState = {
 const InProgress = ({ application }: { application: any }) => {
   const { appId, submitterId: primaryAffiliation, state, expiresAtUtc, updatedAtUtc } = initState;
 
-  const expiryDate =
-    expiresAtUtc && `Access Expiry: ${getFormattedDate(expiresAtUtc, SIMPLE_DATE_FORMAT)}`;
+  const expiryDate = expiresAtUtc
+    ? `Access Expiry: ${getFormattedDate(expiresAtUtc, SIMPLE_DATE_FORMAT)}`
+    : '';
 
   return (
     <DashboardCard
