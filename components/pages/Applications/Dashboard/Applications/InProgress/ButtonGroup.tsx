@@ -80,7 +80,7 @@ const getButtonConfig = (state = ''): { content: string; link: string; icon: any
 const ButtonGroup = ({ state }: { state: ApplicationState }) => (
   <div
     css={css`
-      margin-top: 18px;
+      margin-top: 35px;
       display: flex;
 
       & .action-btns::not(::first-child) {

@@ -8,12 +8,20 @@ import { getFormattedDate, getStatusText } from './helpers';
 import ButtonGroup from './ButtonGroup';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
-const initState = { appId: '', state: '', submitterId: '', expiresAtUtc: '', updatedAtUtc: '' };
+const initState = {
+  appId: '1',
+  state: ApplicationState.DRAFT,
+  submitterId: 'Ontario Institute for Cancer Research',
+  expiresAtUtc: '2021-06-16T18:10:13.760Z',
+  updatedAtUtc: '2021-06-16T18:10:13.760Z',
+};
 
 const InProgress = ({ application }: { application: any }) => {
   const { appId, submitterId: primaryAffiliation, state, expiresAtUtc, updatedAtUtc } = initState;
 
-  const expiryDate = `Access Expiry: ${getFormattedDate(expiresAtUtc, SIMPLE_DATE_FORMAT)}`;
+  const expiryDate = expiresAtUtc
+    ? `Access Expiry: ${getFormattedDate(expiresAtUtc, SIMPLE_DATE_FORMAT)}`
+    : '';
 
   return (
     <DashboardCard
@@ -23,7 +31,7 @@ const InProgress = ({ application }: { application: any }) => {
     >
       <div
         css={css`
-          padding: 24px;
+          margin-top: 5px;
         `}
       >
         <ProgressBar state={state as ApplicationState} />
