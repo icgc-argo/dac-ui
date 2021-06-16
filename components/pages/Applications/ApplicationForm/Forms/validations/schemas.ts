@@ -1,9 +1,10 @@
 import * as yup from 'yup';
 import { countriesList } from '../constants';
 import { FormSectionNames } from '../types';
-import { transformContriesToValidationOptions } from './helpers';
+import { transformContriesToValidationOptions, maxWords, uniquePublicationURLs } from './helpers';
 
 export const requiredMsg = 'Please fill out the required field.';
+export const textareaLimit = 200;
 
 yup.setLocale({
   mixed: {
@@ -21,6 +22,19 @@ yup.setLocale({
     min: '${label} may be at least ${min}',
     max: '${label} may be at most ${max}',
   },
+});
+
+export const appendicesSchema = yup.object().shape({
+  agreements: yup.object().shape({
+    appendix_icgc_goals_policies: yup.boolean().default(false).oneOf([true]).required(),
+    appendix_large_scale_data_sharing: yup.boolean().default(false).oneOf([true]).required(),
+    appendix_prepublication_policy: yup.boolean().default(false).oneOf([true]).required(),
+    appendix_publication_policy: yup.boolean().default(false).oneOf([true]).required(),
+    appendix_nih_genomic_inventions: yup.boolean().default(false).oneOf([true]).required(),
+    appendix_oecd_genetic_inventions: yup.boolean().default(false).oneOf([true]).required(),
+    appendix_cloud_security: yup.boolean().default(false).oneOf([true]).required(),
+    appendix_ga4gh_framework: yup.boolean().default(false).oneOf([true]).required(),
+  }),
 });
 
 export const applicantSchema = yup.object().shape({
@@ -77,9 +91,20 @@ export const itAgreementsSchema = yup.object().shape({
       .oneOf([true])
       .required(),
     it_agreement_contact_daco_fraud: yup.boolean().default(false).oneOf([true]).required(),
-    it_agreement_cloud_usage_risk: yup.boolean().default(false).oneOf([true]).required(),
-    it_agreement_read_cloud_appendix: yup.boolean().default(false).oneOf([true]).required(),
   }),
+});
+
+export const projectInfoSchema = yup.object().shape({
+  aims: yup.string().default('').test(maxWords(200)).required(),
+  background: yup.string().default('').test(maxWords(200)).required(),
+  methodology: yup.string().default('').test(maxWords(200)).required(),
+  publicationURLs: yup
+    .array(yup.string().default('').url('Please enter a valid url.').required())
+    .test(uniquePublicationURLs)
+    .min(3),
+  summary: yup.string().default('').test(maxWords(200)).required(),
+  title: yup.string().default('').required(),
+  website: yup.string().default('').url('Please enter a valid url.').required(),
 });
 
 export const representativeSchema = yup.object().shape({
@@ -109,10 +134,12 @@ export const representativeSchema = yup.object().shape({
 export const signatureSchema = yup.object().shape({});
 
 export const combinedSchema = {
+  appendices: appendicesSchema,
   applicant: applicantSchema,
   dataAccessAgreements: dataAccessAgreementsSchema,
   introduction: introductionSchema,
   itAgreements: itAgreementsSchema,
+  projectInfo: projectInfoSchema,
   representative: representativeSchema,
   signature: signatureSchema,
 } as Record<FormSectionNames, any>;

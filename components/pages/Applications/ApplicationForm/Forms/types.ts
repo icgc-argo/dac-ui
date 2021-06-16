@@ -16,7 +16,9 @@ export type HonorificsListTypes = typeof honorificsList[number];
 export enum EVENT_TARGET_TAGS {
   INPUT = 'INPUT',
   MULTISELECT = 'MULTISELECT',
+  REMOVE = 'REMOVE',
   SELECT = 'SELECT',
+  TEXTAREA = 'TEXTAREA',
 }
 
 export enum FORM_STATES {
@@ -53,8 +55,20 @@ export type FormFieldType = Partial<
 type FormSectionValidationState_SectionsGenericType<T extends Record<string, FormFieldType>> =
   Record<string, Partial<T[keyof T] & FormFieldType>>;
 
-export type FormSectionValidationState_Appendices =
-  FormSectionValidationState_SectionsGenericType<{}>;
+export type FormSectionValidationState_Appendices = FormSectionValidationState_SectionsGenericType<{
+  agreements: {
+    fields: {
+      appendix_icgc_goals_policies: FormFieldType;
+      appendix_large_scale_data_sharing: FormFieldType;
+      appendix_prepublication_policy: FormFieldType;
+      appendix_publication_policy: FormFieldType;
+      appendix_nih_genomic_inventions: FormFieldType;
+      appendix_oecd_genetic_inventions: FormFieldType;
+      appendix_cloud_security: FormFieldType;
+      appendix_ga4gh_framework: FormFieldType;
+    };
+  };
+}>;
 export type FormSectionValidationState_Applicant = FormSectionValidationState_SectionsGenericType<{
   info_firstName: { value: string };
   info_googleEmail: { value: string };
@@ -83,7 +97,11 @@ export type FormSectionValidationState_DataAccessAgreements =
       };
     };
   }>;
-export type FormSectionValidationState_Ethics = FormSectionValidationState_SectionsGenericType<{}>;
+export type FormSectionValidationState_EthicsLetter =
+  FormSectionValidationState_SectionsGenericType<{
+    declaredAsRequired: { value: boolean };
+    approvalLetterDocs: { value: [] };
+  }>;
 export type FormSectionValidationState_Introduction =
   FormSectionValidationState_SectionsGenericType<{
     agreement: { value: boolean };
@@ -99,12 +117,22 @@ export type FormSectionValidationState_ITAgreements =
         it_agreement_onboard_training: FormFieldType;
         it_agreement_provide_institutional_policies: FormFieldType;
         it_agreement_contact_daco_fraud: FormFieldType;
-        it_agreement_cloud_usage_risk: FormFieldType;
-        it_agreement_read_cloud_appendix: FormFieldType;
       };
     };
   }>;
-export type FormSectionValidationState_Project = FormSectionValidationState_SectionsGenericType<{}>;
+export type FormSectionValidationState_ProjectInfo =
+  FormSectionValidationState_SectionsGenericType<{
+    aims: { value: string };
+    background: { value: string };
+    methodology: { value: string };
+    publicationURLs: {
+      hasThreeValidURLs: boolean;
+      value: Record<number, FormFieldType>;
+    };
+    summary: { value: string };
+    title: { value: string };
+    website: { value: string };
+  }>;
 export type FormSectionValidationState_Representative =
   FormSectionValidationState_SectionsGenericType<{
     info_firstName: { value: string };
@@ -129,10 +157,10 @@ export type FormSectionValidationState_Sections =
   | FormSectionValidationState_Applicant
   | FormSectionValidationState_Collaborators
   | FormSectionValidationState_DataAccessAgreements
-  | FormSectionValidationState_Ethics
+  | FormSectionValidationState_EthicsLetter
   | FormSectionValidationState_Introduction
-  | FormSectionValidationState_Project
   | FormSectionValidationState_ITAgreements
+  | FormSectionValidationState_ProjectInfo
   | FormSectionValidationState_Representative
   | FormSectionValidationState_Signature;
 
@@ -142,7 +170,13 @@ export type FormSectionValidationState_SectionBase = {
   tooltips: Partial<Record<FormSectionOverallState, ReactNode>>;
 } & Partial<SchemaObjectDescription>;
 
-export type FormValidationActionTypes = 'array' | 'boolean' | 'string' | 'object' | 'overall';
+export type FormValidationActionTypes =
+  | 'array'
+  | 'boolean'
+  | 'string'
+  | 'object'
+  | 'overall'
+  | 'remove';
 
 export type FormValidationAction = {
   error?: string[];
