@@ -21,10 +21,10 @@ const StartApplication = () => {
       url: API.APPLICATIONS,
       method: 'POST',
     })
-      .then(({ data }) => {
+      .then(({ data }: { data: any }) => {
         router.push(`${APPLICATIONS_PATH}/${data.appId}`);
       })
-      .catch((e) => console.error('Failed to create new application.', e));
+      .catch((e: any) => console.error('Failed to create new application.', e));
   };
 
   return (
