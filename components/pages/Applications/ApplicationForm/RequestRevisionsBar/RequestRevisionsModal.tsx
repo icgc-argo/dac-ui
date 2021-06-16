@@ -17,10 +17,18 @@ const MINIMUM_DETAILS_LENGTH = 10;
 
 const SECONDARY_SECTIONS: RequestRevisionsSectionKeys[] = ['general'];
 
-const ModalSection = ({ requested, details, sectionDisabled, sectionKey, title }:
+const ModalSection = ({
+  requested,
+  details,
+  handleRequest,
+  sectionDisabled,
+  sectionKey,
+  title
+}:
   {
     requested: boolean;
     details: string;
+    handleRequest: (string: RequestRevisionsSectionKeys) => void;
     sectionDisabled: boolean;
     sectionKey: string;
     title: string;
@@ -43,9 +51,7 @@ const ModalSection = ({ requested, details, sectionDisabled, sectionKey, title }
         css={css`
           margin-top: 13px;
         `}
-        onChange={() => {
-          console.log(`onChange ${title} checkbox`)
-        }}
+        onChange={() => handleRequest(sectionKey as RequestRevisionsSectionKeys)}
         type="checkbox"
         value={title}
       />
@@ -94,7 +100,18 @@ const useRequestRevisionsModalState = () => {
   // handle checkboxes
   // handle textboxes
 
+  const handleRequest = (sectionKey: RequestRevisionsSectionKeys) => {
+    setModalState({
+      ...modalState,
+      [sectionKey]: {
+        ...modalState[sectionKey as RequestRevisionsSectionKeys],
+        requested: !modalState[sectionKey as RequestRevisionsSectionKeys].requested,
+      }
+    })
+  }
+
   return {
+    handleRequest,
     modalState
   }
 }
@@ -105,7 +122,10 @@ const RequestRevisionsModal = ({
   dismissModal: () => any | void;
 }) => {
   const theme = useTheme();
-  const { modalState } = useRequestRevisionsModalState();
+  const {
+    handleRequest,
+    modalState
+  } = useRequestRevisionsModalState();
 
   const modalStatePrimarySections = Object.keys(RequestRevisionsSectionTitles)
     .filter(title => SECONDARY_SECTIONS.includes(title as RequestRevisionsSectionKeys))
@@ -155,6 +175,7 @@ const RequestRevisionsModal = ({
         <ModalSection
           requested={modalState[sectionKey as RequestRevisionsSectionKeys].requested}
           details={modalState[sectionKey as RequestRevisionsSectionKeys].details}
+          handleRequest={handleRequest}
           key={sectionKey}
           sectionDisabled={SECONDARY_SECTIONS.includes(sectionKey as RequestRevisionsSectionKeys) && !isSecondarySectionsEnabled}
           sectionKey={sectionKey}
