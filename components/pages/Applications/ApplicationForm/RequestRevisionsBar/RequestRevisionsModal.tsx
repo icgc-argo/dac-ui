@@ -14,7 +14,6 @@ import {
 } from './types';
 
 const MINIMUM_DETAILS_LENGTH = 10;
-
 const SECONDARY_SECTIONS: RequestRevisionsSectionKeys[] = ['general'];
 
 const ModalSection = ({
@@ -51,6 +50,7 @@ const ModalSection = ({
         css={css`
           margin-top: 13px;
         `}
+        disabled={sectionDisabled}
         onChange={() => handleRequest(sectionKey as RequestRevisionsSectionKeys)}
         type="checkbox"
         value={title}
@@ -67,6 +67,7 @@ const ModalSection = ({
       </Typography>
       <Textarea
         aria-label={`${title} textarea`}
+        disabled={sectionDisabled || !requested}
         id={`${title}-textarea`}
         css={css`
           align-self: flex-end;
