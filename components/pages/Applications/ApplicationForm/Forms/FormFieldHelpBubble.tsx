@@ -1,9 +1,18 @@
-import { ReactElement } from 'react';
-import { css, UikitTheme } from '@icgc-argo/uikit/index';
+import { ReactElement, ReactNode } from 'react';
+import { css } from '@emotion/core';
+import { UikitTheme } from '@icgc-argo/uikit/index';
 import Typography from '@icgc-argo/uikit/Typography';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 
-const HelpBubble = ({ tail, text }: { tail?: 'left' | 'right'; text: string }): ReactElement => {
+const HelpBubble = ({
+  tail,
+  text,
+  width = '100%',
+}: {
+  tail?: 'left' | 'right';
+  text: ReactNode | ReactElement;
+  width?: string;
+}): ReactElement => {
   const theme: UikitTheme = useTheme();
 
   const opposite = tail === 'left' ? 'right' : 'left';
@@ -11,17 +20,16 @@ const HelpBubble = ({ tail, text }: { tail?: 'left' | 'right'; text: string }): 
   return (
     <Typography
       as="figure"
-      className="helpText"
       css={css`
         background: ${theme.colors.secondary_4};
         border-radius: 2px;
         box-sizing: border-box;
         font-size: 11px;
         line-height: 14px;
-        margin: 0 0 10px 10px;
-        padding: 5px 8px;
+        margin: ${tail ? '0' : '10px'} 0 ${tail ? '10px 10px' : ''};
+        padding: 6px 8px;
         position: relative;
-        width: 320px;
+        width: ${width};
 
         &::before {
           border: 5px solid transparent;
@@ -36,6 +44,19 @@ const HelpBubble = ({ tail, text }: { tail?: 'left' | 'right'; text: string }): 
           ${opposite}: 100%;
           top: 5px;
           width: 0;
+        }
+
+        ul {
+          margin: 3px 0 0;
+          padding-left: 15px;
+        }
+
+        li:not(:last-of-type) {
+          margin: 1px 0;
+        }
+
+        span {
+          font-size: 11px;
         }
       `}
     >

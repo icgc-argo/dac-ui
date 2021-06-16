@@ -16,7 +16,9 @@ export type HonorificsListTypes = typeof honorificsList[number];
 export enum EVENT_TARGET_TAGS {
   INPUT = 'INPUT',
   MULTISELECT = 'MULTISELECT',
+  REMOVE = 'REMOVE',
   SELECT = 'SELECT',
+  TEXTAREA = 'TEXTAREA',
 }
 
 export enum FORM_STATES {
@@ -118,7 +120,19 @@ export type FormSectionValidationState_ITAgreements =
       };
     };
   }>;
-export type FormSectionValidationState_Project = FormSectionValidationState_SectionsGenericType<{}>;
+export type FormSectionValidationState_ProjectInfo =
+  FormSectionValidationState_SectionsGenericType<{
+    aims: { value: string };
+    background: { value: string };
+    methodology: { value: string };
+    publicationURLs: {
+      hasThreeValidURLs: boolean;
+      value: Record<number, FormFieldType>;
+    };
+    summary: { value: string };
+    title: { value: string };
+    website: { value: string };
+  }>;
 export type FormSectionValidationState_Representative =
   FormSectionValidationState_SectionsGenericType<{
     info_firstName: { value: string };
@@ -145,8 +159,8 @@ export type FormSectionValidationState_Sections =
   | FormSectionValidationState_DataAccessAgreements
   | FormSectionValidationState_EthicsLetter
   | FormSectionValidationState_Introduction
-  | FormSectionValidationState_Project
   | FormSectionValidationState_ITAgreements
+  | FormSectionValidationState_ProjectInfo
   | FormSectionValidationState_Representative
   | FormSectionValidationState_Signature;
 
@@ -156,7 +170,13 @@ export type FormSectionValidationState_SectionBase = {
   tooltips: Partial<Record<FormSectionOverallState, ReactNode>>;
 } & Partial<SchemaObjectDescription>;
 
-export type FormValidationActionTypes = 'array' | 'boolean' | 'string' | 'object' | 'overall';
+export type FormValidationActionTypes =
+  | 'array'
+  | 'boolean'
+  | 'string'
+  | 'object'
+  | 'overall'
+  | 'remove';
 
 export type FormValidationAction = {
   error?: string[];
