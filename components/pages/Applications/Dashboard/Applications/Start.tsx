@@ -4,11 +4,27 @@ import Icon from '@icgc-argo/uikit/Icon';
 import Link from '@icgc-argo/uikit/Link';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
+import { useAuthContext } from 'global/hooks';
 import React from 'react';
 import DashboardCard from '../Card';
+import { useRouter } from 'next/router';
 
 const StartApplication = () => {
   const theme = useTheme();
+  const { fetchWithAuth } = useAuthContext();
+  const router = useRouter();
+
+  const createNewApplication = () => {
+    fetchWithAuth({
+      url: '/applications',
+      method: 'POST',
+    })
+      .then(({ data }) => {
+        router.push(`/applications/${data.appId}`);
+      })
+      .catch((e) => console.error('Failed to create new application.', e));
+  };
+
   return (
     <DashboardCard title="Start a new application">
       <div
@@ -33,7 +49,7 @@ const StartApplication = () => {
           <Link>eligible project teams.</Link>
         </Typography>
 
-        <Button onClick={function noRefCheck() {}} size="sm">
+        <Button onClick={createNewApplication} size="sm">
           <Icon
             css={css`
               margin-bottom: -2px;

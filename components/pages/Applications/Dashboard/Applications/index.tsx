@@ -7,8 +7,6 @@ import { isEmpty } from 'lodash';
 
 const Applications = () => {
   const { error, isLoading, response } = useApplicationsAPI({});
-  console.log('r', response);
-
   const inProgressApplications: any = []; //response?.data;
 
   return (
