@@ -138,11 +138,10 @@ const DataAccessAgreements = ({
           css={css`
             font-size: 13px;
             margin-left: -10px;
-            padding: 0;
+            padding-left: 25px;
 
             li {
               padding: 10px;
-              list-style-position: inside;
 
               &:nth-of-type(even) {
                 background: ${theme.colors.grey_4};
