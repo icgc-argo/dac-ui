@@ -1,18 +1,25 @@
 import dynamic from 'next/dynamic';
+const Appendices = dynamic(() => import('./Appendices'));
 const Applicant = dynamic(() => import('./Applicant'));
+const DataAccessAgreements = dynamic(() => import('./DataAccessAgreements'));
+const EthicsLetter = dynamic(() => import('./EthicsLetter'));
 const Introduction = dynamic(() => import('./Introduction'));
 const ITAgreements = dynamic(() => import('./ITAgreements'));
 const Representative = dynamic(() => import('./Representative'));
+const ProjectInfo = dynamic(() => import('./ProjectInfo'));
 
 export const sectionsData = {
-  appendices: { description: 'H. Appendices' },
+  appendices: { component: Appendices, description: 'H. Appendices' },
   applicant: { component: Applicant, description: 'A. Applicant Information' },
   collaborators: { description: 'C. Collaborators' },
-  data: { description: 'G. Data Access Agreement' },
-  ethics: { description: 'E. Ethics' },
+  dataAccessAgreements: {
+    component: DataAccessAgreements,
+    description: 'G. Data Access Agreement',
+  },
+  ethicsLetter: { component: EthicsLetter, description: 'E. Ethics' },
   introduction: { component: Introduction, description: 'Introduction' },
-  project: { description: 'D. Project Information' },
   itAgreements: { component: ITAgreements, description: 'F. IT Agreements' },
+  projectInfo: { component: ProjectInfo, description: 'D. Project Information' },
   representative: { component: Representative, description: 'B. Institutional Representative' },
   signature: {
     description: 'Sign & Submit',
@@ -27,10 +34,10 @@ export const sectionsOrder = [
   'applicant',
   'representative',
   'collaborators',
-  'project',
-  'ethics',
+  'projectInfo',
+  'ethicsLetter',
   'itAgreements',
-  'data',
+  'dataAccessAgreements',
   'appendices',
   'signature',
 ] as const; // to infer these as union rather than string[]

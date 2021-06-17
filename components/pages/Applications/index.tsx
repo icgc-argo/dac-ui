@@ -27,12 +27,13 @@ const Application = (): ReactElement => {
 
   return (
     <DefaultPageLayout title={pageTitle}>
-      {appId
-        ? <ApplicationForm appId={appId} />
-        : isAdmin
-          ? <ManageApplications />
-          : <Dashboard />
-      }
+      {appId ? (
+        <ApplicationForm appId={appId} />
+      ) : isAdmin ? (
+        <ManageApplications />
+      ) : (
+        <Dashboard isAdmin={isAdmin} />
+      )}
     </DefaultPageLayout>
   );
 };
