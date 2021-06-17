@@ -1,5 +1,6 @@
 import ContentPlaceholder from '@icgc-argo/uikit/ContentPlaceholder';
-import Icon from '@icgc-argo/uikit/Icon';
+
+import DNALoader from './DNALoader';
 
 const ContentLoader = ({
   title = '',
@@ -13,7 +14,7 @@ const ContentLoader = ({
       title={title}
       subtitle={subtitle}
     >
-      <DnaLoader />
+      <DNALoader />
     </ContentPlaceholder>
   );
 };

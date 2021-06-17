@@ -63,7 +63,7 @@ const LoaderContainer = styled<'div', { dotsCount: number }>('div')`
   }
 `;
 
-const DnaLoader = ({ dotsCount = 5, ...rest }) => (
+const DNALoader = ({ dotsCount = 5, ...rest }) => (
   <LoaderContainer className="dna-loader" dotsCount={dotsCount} {...rest}>
     <div>
       {range(0, dotsCount).map(i => (
@@ -78,4 +78,4 @@ const DnaLoader = ({ dotsCount = 5, ...rest }) => (
   </LoaderContainer>
 );
 
-export default DnaLoader;
+export default DNALoader;
