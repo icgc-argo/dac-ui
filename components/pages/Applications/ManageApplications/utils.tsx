@@ -27,16 +27,18 @@ export const fieldDisplayNames = {
 };
 
 export const formatTableData = (data: ApplicationsResponseItem[]) =>
-  data.map<ApplicationRecord>((datum: ApplicationsResponseItem) => ({
-    appId: datum.appId,
-    institution: datum.applicant.info.primaryAffiliation,
-    applicant: datum.applicant.info.displayName,
-    googleEmail: datum.applicant.info.googleEmail,
-    ethicsLetter: datum.ethics.declaredAsRequired,
-    accessExpiry: datum.expiresAtUtc,
-    lastUpdated: datum.updatedAtUtc,
-    status: datum.state,
-  }));
+  data
+    .filter((datum: ApplicationsResponseItem) => !['DRAFT'].includes(datum.state))
+    .map<ApplicationRecord>((datum: ApplicationsResponseItem) => ({
+      appId: datum.appId,
+      institution: datum.applicant.info.primaryAffiliation,
+      applicant: datum.applicant.info.displayName,
+      googleEmail: datum.applicant.info.googleEmail,
+      ethicsLetter: datum.ethics.declaredAsRequired,
+      accessExpiry: datum.expiresAtUtc,
+      lastUpdated: datum.updatedAtUtc,
+      status: datum.state,
+    }));
 
 export const tableColumns: TableColumnConfig<ApplicationRecord> & {
   id: ApplicationsField;
