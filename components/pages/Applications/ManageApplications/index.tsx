@@ -28,7 +28,7 @@ import {
 } from './utils';
 
 import PageHeader from 'components/PageHeader';
-import { ContentError } from 'components/placeholders';
+import { ContentError, ContentLoader } from 'components/placeholders';
 import { instructionBoxButtonIconStyle, instructionBoxButtonContentStyle } from 'global/styles';
 import { useApplicationsAPI } from 'global/hooks';
 
@@ -104,6 +104,9 @@ const ManageApplications = (): ReactElement => {
         <CardContainer
           loading={isLoading}
         >
+          {!isLoading && tableDataFormatted.length === 0 && (
+            <ContentLoader />
+          )}
           {error
             ? <ContentError />
             : (
