@@ -1,3 +1,7 @@
+import packageJson from 'package.json';
+
+export const APP_VERSION = packageJson.version;
+
 export const EGO_JWT_KEY = 'egoJwt';
 
 export const ADMIN_APPLICATIONS_LABEL = 'Manage Applications';
