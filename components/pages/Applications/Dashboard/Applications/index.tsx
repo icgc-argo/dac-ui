@@ -3,12 +3,11 @@ import InProgress from './InProgress';
 import StartApplication from './Start';
 import { css } from '@emotion/core';
 import useApplicationsAPI from 'global/hooks/useApplicationsAPI';
-import { isEmpty } from 'lodash';
 
 const Applications = () => {
   const { error, isLoading, response } = useApplicationsAPI({});
-  const inProgressApplications: any = [true]; //response?.data;
 
+  const inProgressApplications: any = response?.data?.items || [];
   return (
     <div
       css={css`
@@ -19,10 +18,12 @@ const Applications = () => {
         css={css`
           display: grid;
           grid-gap: 24px;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
         `}
       >
-        {!isEmpty(inProgressApplications) && <InProgress application={inProgressApplications[0]} />}
+        {inProgressApplications.map((application) => (
+          <InProgress application={application} />
+        ))}
         <StartApplication />
       </div>
     </div>
