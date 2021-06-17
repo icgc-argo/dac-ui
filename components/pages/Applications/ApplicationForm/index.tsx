@@ -4,7 +4,7 @@ import ApplicationHeader from './Header';
 import ApplicationFormsBase from './Forms';
 import RequestRevisionsBar from './RequestRevisionsBar';
 
-const ApplicationForm = ({ appId = 'none', isAdmin = true }): ReactElement => {
+const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
   return (
     <>
       <ApplicationHeader appId={appId} />

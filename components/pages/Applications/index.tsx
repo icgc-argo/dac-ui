@@ -28,7 +28,7 @@ const Application = (): ReactElement => {
   return (
     <DefaultPageLayout title={pageTitle}>
       {appId ? (
-        <ApplicationForm appId={appId} />
+        <ApplicationForm appId={appId} isAdmin={isAdmin} />
       ) : isAdmin ? (
         <ManageApplications />
       ) : (

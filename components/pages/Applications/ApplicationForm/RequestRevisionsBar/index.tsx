@@ -13,7 +13,7 @@ import RequestRevisionsModal from "./RequestRevisionsModal";
 
 const RequestRevisionsBar = ({ appId }: { appId: string }) => {
   const theme = useTheme();
-  const [isRequestRevisionsModalVisible, setRequestRevisionsModalVisible] = useState(true);
+  const [isRequestRevisionsModalVisible, setRequestRevisionsModalVisible] = useState(false);
 
   return (
     <>
