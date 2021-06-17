@@ -11,7 +11,6 @@ import {
 import { UserWithId } from '../types';
 import axios, { AxiosRequestConfig, Method } from 'axios';
 import { getConfig } from 'global/config';
-import { DAC_API } from 'global/constants/externalPaths';
 
 type T_AuthContext = {
   token?: string;
@@ -23,9 +22,9 @@ type T_AuthContext = {
 
 const AuthContext = createContext<T_AuthContext>({
   token: undefined,
-  logout: () => { },
+  logout: () => {},
   user: undefined,
-  fetchWithAuth: () => { },
+  fetchWithAuth: () => {},
   permissions: [],
 });
 
@@ -36,6 +35,7 @@ export const AuthProvider = ({
   egoJwt?: string;
   children: React.ReactElement;
 }) => {
+  const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const router = useRouter();
   // TODO: typing this state as `string` causes a compiler error. the same setup exists in argo but does not cause
   // a type issue. using `any` for now
@@ -64,8 +64,6 @@ export const AuthProvider = ({
     }
   }
 
-  const { USE_DAC_API_PROXY } = getConfig();
-
   // TODO: decide if we want these for all types of requests or only POST
   axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
   axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
@@ -82,7 +80,7 @@ export const AuthProvider = ({
     }
 
     const config: AxiosRequestConfig = {
-      baseURL: USE_DAC_API_PROXY ? '' : DAC_API,
+      baseURL: NEXT_PUBLIC_DAC_API_ROOT,
       params,
       headers: {
         accept: '*/*',
@@ -90,7 +88,7 @@ export const AuthProvider = ({
         Authorization: `Bearer ${token || ''}`,
       },
       method,
-      url: USE_DAC_API_PROXY ? urlJoin('/api', url) : url,
+      url,
     };
 
     return (
