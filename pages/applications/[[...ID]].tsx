@@ -6,8 +6,7 @@ const ApplicationPage = createPage({
     const { egoJwt, asPath, query } = ctx;
     return { egoJwt, query, asPath };
   },
-  // OFFLINE CHANGE
-  isPublic: true,
+  isPublic: false,
 })(() => {
   return <Applications />;
 });

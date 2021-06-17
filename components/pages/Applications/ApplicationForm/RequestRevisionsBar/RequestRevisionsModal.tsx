@@ -91,9 +91,6 @@ const ModalSection = ({
         `}
           value={details}
           onChange={(e) => dispatch({ payload: e.target.value, type: 'details', ...dispatchArgs })}
-          onBlur={() => {
-            console.log(`onBlur ${title} textarea`);
-          }}
         />
         <FormHelperText onErrorOnly>Message must be at least {MINIMUM_DETAILS_LENGTH} characters.</FormHelperText>
       </FormControl>
@@ -104,6 +101,7 @@ const ModalSection = ({
 const RequestRevisionsModal = ({
   dismissModal
 }: {
+  // TODO improve in data hookup ticket
   dismissModal: () => any | void;
 }) => {
   const { state, dispatch } = useRequestRevisionsReducer();
