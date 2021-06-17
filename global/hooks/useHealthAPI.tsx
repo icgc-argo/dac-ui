@@ -12,7 +12,6 @@ const useHealthAPI = () => {
 
   useEffect(() => {
     fetchWithAuth({
-      method: 'GET',
       url: API.HEALTH,
     })
       .then((res: any) => {
