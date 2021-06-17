@@ -15,6 +15,7 @@ import {
 } from 'global/constants/externalPaths';
 import { LinkProps } from './NavBar';
 import { getConfig } from 'global/config';
+import { useHealthAPI } from 'global/hooks';
 
 const { NEXT_PUBLIC_ARGO_ROOT, NEXT_PUBLIC_ARGO_PLATFORM_ROOT } = getConfig();
 
@@ -92,6 +93,10 @@ const showBreak = (i: number, total: number) => {
 };
 
 const LinksSection = () => {
+  const { NEXT_PUBLIC_APP_VERSION } = getConfig();
+  const { error, isLoading, response } = useHealthAPI();
+  const apiVersion = !error && !isLoading && response && response.data.version;
+
   return (
     <div
       css={css`
@@ -138,6 +143,13 @@ const LinksSection = () => {
               {showBreak(i, policyLinks.length)}
             </span>
           ))}
+        </div>
+        <div
+          css={(theme: UikitTheme) => css`
+            ${theme.typography.caption};
+          `}
+        >
+          UI v{NEXT_PUBLIC_APP_VERSION}{apiVersion && ` - API v${apiVersion}`}
         </div>
       </div>
     </div>

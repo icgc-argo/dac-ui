@@ -13,6 +13,7 @@ module.exports = withPlugins([withTranspileModules, [withImages]], {
     NEXT_PUBLIC_ARGO_ROOT: process.env.NEXT_PUBLIC_ARGO_ROOT,
     NEXT_PUBLIC_ARGO_DOCS_ROOT: process.env.NEXT_PUBLIC_ARGO_DOCS_ROOT,
     NEXT_PUBLIC_ARGO_PLATFORM_ROOT: process.env.NEXT_PUBLIC_ARGO_PLATFORM_ROOT,
+    NEXT_PUBLIC_APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION,
   },
   ...(USE_DAC_API_PROXY
     ? {
