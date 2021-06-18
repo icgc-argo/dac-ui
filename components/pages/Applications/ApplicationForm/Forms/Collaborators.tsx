@@ -1,6 +1,21 @@
 import Typography from '@icgc-argo/uikit/Typography';
+import Banner, { BANNER_VARIANTS } from '@icgc-argo/uikit/notifications/Banner';
+import FormControl from '@icgc-argo/uikit/form/FormControl';
+import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
+import FormRadio from '@icgc-argo/uikit/form/FormRadio';
+import InputLabel from '@icgc-argo/uikit/form/InputLabel';
+import Link from '@icgc-argo/uikit/Link';
+import RadioCheckboxGroup from '@icgc-argo/uikit/form/RadioCheckboxGroup';
+
+import RequiredFieldsMessage from './RequiredFieldsMessage';
+import {
+  FormSectionValidationState_EthicsLetter,
+  FormSectionValidatorFunction_Origin,
+} from './types';
+import { isRequired, useLocalValidation } from './validations';
 import { css } from '@emotion/core';
-import React, { useState } from 'react';
+import { instructionBoxButtonContentStyle, instructionBoxButtonIconStyle } from 'global/styles';
+import React from 'react';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import Table from '@icgc-argo/uikit/Table';
