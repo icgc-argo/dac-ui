@@ -1,9 +1,9 @@
+import { Fragment } from 'react';
 import { css } from '@emotion/core';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import Link from '@icgc-argo/uikit/Link';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
-import React from 'react';
 
 const icons = {
   file: <Icon fill="white" height="12px" width="9px" name="file" />,
@@ -89,18 +89,20 @@ const ButtonGroup = ({ state }: { state: ApplicationState }) => (
     `}
   >
     {getButtonConfig(state).map(({ content, link, icon }) => (
-      <Link href={link} key={link}>
-        <Button className="action-btns" size="sm">
-          <span
-            css={css`
-              margin-right: 3px;
-            `}
-          >
-            {icon}
-          </span>
-          {content}
-        </Button>
-      </Link>
+      <Fragment key={link}>
+        <Link href={link}>
+          <Button className="action-btns" size="sm">
+            <span
+              css={css`
+                margin-right: 3px;
+              `}
+            >
+              {icon}
+            </span>
+            {content}
+          </Button>
+        </Link>
+      </Fragment>
     ))}
   </div>
 );
