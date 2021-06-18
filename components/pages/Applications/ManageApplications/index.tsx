@@ -104,9 +104,6 @@ const ManageApplications = (): ReactElement => {
         <CardContainer
           loading={isLoading}
         >
-          {!isLoading && tableDataFormatted.length === 0 && (
-            <ContentLoader />
-          )}
           {error
             ? <ContentError />
             : (
