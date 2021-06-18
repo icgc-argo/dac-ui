@@ -168,7 +168,7 @@ const Representative = ({
           </FormControl>
         </DoubleFieldRow>
 
-        <DoubleFieldRow helpText="The legal entity responsible for this application.">
+        <DoubleFieldRow helpText="Must match the applicant’s primary affiliation exactly.">
           <FormControl
             error={!!localState.info_primaryAffiliation?.error}
             required={isRequired(localState.info_primaryAffiliation)}

@@ -76,10 +76,7 @@ const Appendices = ({
             onChange={validateFieldTouched}
             value="agreements--appendix_icgc_goals_policies"
           >
-            You have read{' '}
-            <Link href="#" rel="noopener noreferrer" target="_blank">
-              APPENDIX I
-            </Link>
+            You have read APPENDIX I
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -117,10 +114,7 @@ const Appendices = ({
             onChange={validateFieldTouched}
             value="agreements--appendix_large_scale_data_sharing"
           >
-            You have read{' '}
-            <Link href="#" rel="noopener noreferrer" target="_blank">
-              APPENDIX II
-            </Link>
+            You have read APPENDIX II
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -158,10 +152,7 @@ const Appendices = ({
             onChange={validateFieldTouched}
             value="agreements--appendix_prepublication_policy"
           >
-            You have read{' '}
-            <Link href="#" rel="noopener noreferrer" target="_blank">
-              APPENDIX III
-            </Link>
+            You have read APPENDIX III
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -199,10 +190,7 @@ const Appendices = ({
             onChange={validateFieldTouched}
             value="agreements--appendix_publication_policy"
           >
-            You have read{' '}
-            <Link href="#" rel="noopener noreferrer" target="_blank">
-              APPENDIX IV
-            </Link>
+            You have read APPENDIX IV
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -240,10 +228,7 @@ const Appendices = ({
             onChange={validateFieldTouched}
             value="agreements--appendix_nih_genomic_inventions"
           >
-            You have read{' '}
-            <Link href="#" rel="noopener noreferrer" target="_blank">
-              APPENDIX V
-            </Link>
+            You have read APPENDIX V
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -280,10 +265,7 @@ const Appendices = ({
             onChange={validateFieldTouched}
             value="agreements--appendix_oecd_genetic_inventions"
           >
-            You have read{' '}
-            <Link href="#" rel="noopener noreferrer" target="_blank">
-              APPENDIX VI
-            </Link>
+            You have read APPENDIX VI
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -320,10 +302,7 @@ const Appendices = ({
             onChange={validateFieldTouched}
             value="agreements--appendix_cloud_security"
           >
-            You have read{' '}
-            <Link href="#" rel="noopener noreferrer" target="_blank">
-              APPENDIX VII
-            </Link>
+            You have read APPENDIX VII
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -361,10 +340,7 @@ const Appendices = ({
             onChange={validateFieldTouched}
             value="agreements--appendix_ga4gh_framework"
           >
-            You have read{' '}
-            <Link href="#" rel="noopener noreferrer" target="_blank">
-              APPENDIX VIII
-            </Link>
+            You have read APPENDIX VIII
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
