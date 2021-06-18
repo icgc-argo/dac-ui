@@ -71,7 +71,6 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
     {
       Header: fieldDisplayNames['ethics.declaredAsRequired'],
       id: ApplicationsField['ethics.declaredAsRequired'],
-      sortable: false,
       Cell: ({ original }: { original: ApplicationRecord }) => (original.ethicsLetter ? 'Yes' : 'No'),
     },
     {
