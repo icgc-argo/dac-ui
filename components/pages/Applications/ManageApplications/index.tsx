@@ -99,6 +99,10 @@ const ManageApplications = (): ReactElement => {
     totalCount = 0
   } = response?.data?.pagingInfo || {};
 
+  const test = formatTableData(items);
+
+  console.log({ test })
+
   return (
     <>
       <PageHeader>ICGC DACO Dashboard</PageHeader>
@@ -196,6 +200,13 @@ const ManageApplications = (): ReactElement => {
                   </Row>
                   <Row>
                     <Col>
+                      appIds: {items.map((row: any) => (row.appId)).join(', ')}
+                      <br />
+                      page: {page}
+                      <br />
+                      pageSize: {pageSize}
+                      <br />
+                      pagesCount: {pagesCount}
                       <Table
                         columns={tableColumns}
                         data={formatTableData(items)}
