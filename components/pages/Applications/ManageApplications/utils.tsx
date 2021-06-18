@@ -12,8 +12,12 @@ import {
   ApplicationsSort,
 } from '../types';
 
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
+
 export const stringifySort = (sortArr: ApplicationsSort[]) =>
   sortArr.map(({ field, order }) => `${field}:${order}`).join(',');
+
+export const stringifyStates = (statesArr: ApplicationState[]) => statesArr.join(',');
 
 export const fieldDisplayNames = {
   appId: 'Application #',
@@ -105,3 +109,13 @@ export const DEFAULT_PAGE_SIZE: number = 20;
 export const DEFAULT_SORT: ApplicationsSort[] = [
   { field: 'state', order: 'desc' } as ApplicationsSort,
 ];
+
+export const statesAllowList = [
+  'APPROVED',
+  'CLOSED',
+  'EXPIRED',
+  'REJECTED',
+  'RENEWING',
+  'REVIEW',
+  'REVISIONS REQUESTED',
+] as ApplicationState[];

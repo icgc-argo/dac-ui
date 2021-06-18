@@ -25,6 +25,7 @@ import {
   formatTableData,
   stringifySort,
   tableColumns,
+  statesAllowList,
 } from './utils';
 
 import PageHeader from 'components/PageHeader';
@@ -85,7 +86,8 @@ const ManageApplications = (): ReactElement => {
   const { error, isLoading, response } = useApplicationsAPI({
     page,
     pageSize,
-    sort
+    sort,
+    states: statesAllowList,
   });
 
   const submissionsCount = response?.data?.pagingInfo?.totalCount || 0;

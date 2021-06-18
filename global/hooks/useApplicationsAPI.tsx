@@ -7,13 +7,14 @@ import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_SORT,
   stringifySort,
+  stringifyStates,
 } from 'components/pages/Applications/ManageApplications/utils';
 import { API } from 'global/constants/externalPaths';
 
 const useApplicationsAPI = ({
   page = DEFAULT_PAGE,
   pageSize = DEFAULT_PAGE_SIZE,
-  sort = stringifySort(DEFAULT_SORT),
+  states = [],
 }: // method
 // id
 // ...etc
@@ -29,7 +30,7 @@ ApplicationsRequestData) => {
       params: {
         page,
         pageSize,
-        sort,
+        states: stringifyStates(states),
       },
       url: API.APPLICATIONS,
     })
