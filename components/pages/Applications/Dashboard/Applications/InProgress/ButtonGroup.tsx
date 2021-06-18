@@ -89,7 +89,7 @@ const ButtonGroup = ({ state }: { state: ApplicationState }) => (
     `}
   >
     {getButtonConfig(state).map(({ content, link, icon }) => (
-      <Link href={link}>
+      <Link href={link} key={link}>
         <Button className="action-btns" size="sm">
           <span
             css={css`
