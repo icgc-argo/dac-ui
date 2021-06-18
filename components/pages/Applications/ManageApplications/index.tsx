@@ -97,7 +97,7 @@ const ManageApplications = (): ReactElement => {
       <PageHeader>ICGC DACO Dashboard</PageHeader>
       <Container
         css={css`
-          margin-top: 24px;
+          margin: 24px auto;
           width: 100%;
         `}
       >
