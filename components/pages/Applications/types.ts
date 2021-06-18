@@ -1,4 +1,5 @@
 import { SortingRule } from 'react-table';
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
 export type ApplicationRecord = {
   appId: string;
@@ -20,7 +21,8 @@ export type SortedChangeFunction = (
 export type ApplicationsRequestData = {
   page?: number;
   pageSize?: number;
-  sort?: string;
+  sort?: ApplicationsSort[];
+  states?: ApplicationState[];
 };
 
 export type ApplicationsSort = {

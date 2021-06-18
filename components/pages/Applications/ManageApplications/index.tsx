@@ -33,10 +33,13 @@ import { ContentError, ContentLoader } from 'components/placeholders';
 import { instructionBoxButtonIconStyle, instructionBoxButtonContentStyle } from 'global/styles';
 import { useApplicationsAPI } from 'global/hooks';
 
+const getDefaultSort = (applicationSorts: ApplicationsSort[]) =>
+  applicationSorts.map(({ field, order }) => ({ id: field, desc: order === 'desc' }));
+
 const useManageApplicationsState = () => {
   const [page, setPage] = useState<number>(DEFAULT_PAGE);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
-  const [sort, setSort] = useState<string>(stringifySort(DEFAULT_SORT));
+  const [sort, setSort] = useState<ApplicationsSort[]>(DEFAULT_SORT);
 
   const onPageChange = (newPageNum: number) => {
     setPage(newPageNum);
@@ -57,7 +60,7 @@ const useManageApplicationsState = () => {
       },
       [],
     );
-    setSort(stringifySort(newSort))
+    setSort(newSort)
   };
 
   return {
@@ -193,7 +196,7 @@ const ManageApplications = (): ReactElement => {
                     <Col>
                       <Table
                         columns={tableColumns}
-                        data={tableDataFormatted}
+                        defaultSorted={getDefaultSort(DEFAULT_SORT)}
                         onPageChange={onPageChange}
                         onPageSizeChange={onPageSizeChange}
                         onSortedChange={onSortedChange}

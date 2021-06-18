@@ -14,11 +14,12 @@ import { API } from 'global/constants/externalPaths';
 const useApplicationsAPI = ({
   page = DEFAULT_PAGE,
   pageSize = DEFAULT_PAGE_SIZE,
+  sort = DEFAULT_SORT,
   states = [],
 }: // method
-// id
-// ...etc
-ApplicationsRequestData) => {
+  // id
+  // ...etc
+  ApplicationsRequestData) => {
   const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<AxiosError | undefined>(undefined);
@@ -30,6 +31,7 @@ ApplicationsRequestData) => {
       params: {
         page,
         pageSize,
+        sort: stringifySort(sort),
         states: stringifyStates(states),
       },
       url: API.APPLICATIONS,
@@ -43,7 +45,7 @@ ApplicationsRequestData) => {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [page, pageSize, sort]);
+  }, [page, pageSize, stringifySort(sort)]);
 
   return { error, isLoading, response };
 };
