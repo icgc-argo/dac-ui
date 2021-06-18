@@ -23,13 +23,12 @@ import {
   DEFAULT_PAGE,
   DEFAULT_SORT,
   formatTableData,
-  stringifySort,
   tableColumns,
   statesAllowList,
 } from './utils';
 
 import PageHeader from 'components/PageHeader';
-import { ContentError, ContentLoader } from 'components/placeholders';
+import { ContentError } from 'components/placeholders';
 import { instructionBoxButtonIconStyle, instructionBoxButtonContentStyle } from 'global/styles';
 import { useApplicationsAPI } from 'global/hooks';
 
@@ -46,6 +45,7 @@ const useManageApplicationsState = () => {
   };
 
   const onPageSizeChange = (newPageSize: number) => {
+    setPage(0);
     setPageSize(newPageSize);
   };
 
@@ -93,9 +93,11 @@ const ManageApplications = (): ReactElement => {
     states: statesAllowList,
   });
 
-  const submissionsCount = response?.data?.pagingInfo?.totalCount || 0;
-  const tableData = response?.data.items || [];
-  const tableDataFormatted = formatTableData(tableData);
+  const { items = [] } = response?.data || {};
+  const {
+    pagesCount = 0,
+    totalCount = 0
+  } = response?.data?.pagingInfo || {};
 
   return (
     <>
@@ -165,7 +167,7 @@ const ManageApplications = (): ReactElement => {
                         `}
                         variant="data"
                       >
-                        {submissionsCount.toLocaleString()} {pluralize('submissions', submissionsCount)}
+                        {totalCount.toLocaleString()} {pluralize('submissions', totalCount)}
                       </Typography>
                     </Col>
                     <Col
@@ -196,10 +198,15 @@ const ManageApplications = (): ReactElement => {
                     <Col>
                       <Table
                         columns={tableColumns}
+                        data={formatTableData(items)}
+                        NoDataComponent={() => null}
                         defaultSorted={getDefaultSort(DEFAULT_SORT)}
                         onPageChange={onPageChange}
                         onPageSizeChange={onPageSizeChange}
                         onSortedChange={onSortedChange}
+                        page={page}
+                        pages={pagesCount}
+                        pageSize={pageSize}
                         parentRef={containerRef}
                         stripped
                         withOutsideBorder
