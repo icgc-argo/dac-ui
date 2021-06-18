@@ -36,7 +36,7 @@ export const formatTableData = (data: ApplicationsResponseItem[]) =>
       googleEmail: datum.applicant.info.googleEmail,
       ethicsLetter: datum.ethics.declaredAsRequired,
       accessExpiry: datum.expiresAtUtc,
-      lastUpdated: datum.updatedAtUtc,
+      lastUpdated: datum.lastUpdatedAtUtc,
       status: datum.state,
     }));
 

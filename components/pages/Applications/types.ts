@@ -47,7 +47,7 @@ export type ApplicationsResponseItem = {
     declaredAsRequired: string;
   };
   expiresAtUtc: string;
-  updatedAtUtc: string;
+  lastUpdatedAtUtc: string;
   state: string;
 };
 
