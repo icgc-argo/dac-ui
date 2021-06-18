@@ -102,7 +102,8 @@ const PublicationURLs = ({
                   <Button
                     css={css`
                       label: action_remove;
-                      margin: 7px -5px 0 5px;
+                      height: 30px;
+                      margin: 0 -5px 0 5px;
                       width: 30px;
                     `}
                     disabled={isSectionDisabled}
@@ -110,7 +111,13 @@ const PublicationURLs = ({
                     size="sm"
                     variant="text"
                   >
-                    <Icon fill={isSectionDisabled ? 'grey_1' : 'accent2'} name="trash" />
+                    <Icon
+                      css={css`
+                        margin-bottom: -3px;
+                      `}
+                      fill={isSectionDisabled ? 'grey_1' : 'accent2'}
+                      name="trash"
+                    />
                   </Button>
                 ) : (
                   <div

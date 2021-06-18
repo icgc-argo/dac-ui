@@ -22,6 +22,10 @@ const DoubleFieldRow = ({
       display: flex;
 
       @media (max-width: 1119px) {
+        & [class*='FormControl']:not(:first-of-type) {
+          margin-top: 10px !important;
+        }
+
         ${actions
           ? ``
           : `
@@ -31,6 +35,7 @@ const DoubleFieldRow = ({
             helpText &&
             `
             > figure {
+              margin-top: 5px;
               margin-left: 150px;
               width: 100%;
 
