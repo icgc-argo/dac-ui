@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Col, Container, Row } from 'react-grid-system';
 import { SortedChangeFunction } from 'react-table';
 import pluralize from 'pluralize';
