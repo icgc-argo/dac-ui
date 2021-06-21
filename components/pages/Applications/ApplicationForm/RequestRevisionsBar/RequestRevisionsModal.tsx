@@ -78,19 +78,19 @@ const ModalSection = ({
         {title}
       </Typography>
       <FormControl
-        disabled={fieldDisabled || !requested}
         error={requested && details.length < MINIMUM_DETAILS_LENGTH}
       >
         <Textarea
           aria-label={`${title} textarea`}
           id={`${title}-textarea`}
           css={css`
-          height: 69px;
-          margin-bottom: 0;
-          width: 550px;
-        `}
+            height: 69px;
+            margin-bottom: 0;
+            width: 550px;
+          `}
           value={details}
           onChange={(e) => dispatch({ payload: e.target.value, type: 'details', ...dispatchArgs })}
+          onClick={() => dispatch({ payload: true, type: 'requested', ...dispatchArgs })}
         />
         <FormHelperText onErrorOnly>Message must be at least {MINIMUM_DETAILS_LENGTH} characters.</FormHelperText>
       </FormControl>

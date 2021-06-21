@@ -58,7 +58,9 @@ const requestRevisionsReducer = (state: RequestRevisionsState, action: any) => {
       [action.fieldName]: {
         ...state.fields[fieldName],
         requested: action.type === 'requested'
-          ? !state.fields[fieldName].requested
+          ? action.payload !== undefined
+            ? action.payload
+            : !state.fields[fieldName].requested
           : state.fields[fieldName].requested,
         details: action.type === 'details'
           ? action.payload
