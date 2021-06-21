@@ -83,7 +83,7 @@ const ButtonGroup = ({ state }: { state: ApplicationState }) => (
       margin-top: 35px;
       display: flex;
 
-      & .action-btns::not(::first-of-type) {
+      & .action-btns::not(::first-child) {
         margin-right: 8px;
       }
     `}
