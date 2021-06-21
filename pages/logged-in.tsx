@@ -19,16 +19,18 @@
  *
  */
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
+import { css } from '@emotion/core';
 import urlJoin from 'url-join';
 import Router from 'next/router';
 
-import { getConfig } from '../global/config';
-import { EGO_JWT_KEY } from 'global/constants';
-import { isValidJwt } from '../global/utils/egoTokenUtils';
-import { createPage } from 'global/utils/pages/createPage';
+import DnaLoader from '@icgc-argo/uikit/DnaLoader';
+
 import DefaultPageLayout from 'components/DefaultPageLayout';
-import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
+import { getConfig } from 'global/config';
+import { APPLICATIONS_PATH, EGO_JWT_KEY } from 'global/constants';
+import { isValidJwt } from 'global/utils/egoTokenUtils';
+import { createPage } from 'global/utils/pages/createPage';
 
 const fetchEgoToken = () => {
   const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
@@ -50,13 +52,10 @@ const fetchEgoToken = () => {
       return res.text();
     })
     .then((jwt) => {
-      if (isValidJwt(jwt)) {
-        localStorage.setItem(EGO_JWT_KEY, jwt);
-        setTimeout(() => Router.push(APPLICATIONS_PATH), 2000);
-      } else {
-        throw new Error('Invalid jwt, cannot login.');
-      }
+      if (isValidJwt(jwt)) return localStorage.setItem(EGO_JWT_KEY, jwt);
+      throw new Error('Invalid jwt, cannot login.');
     })
+    .then(() => Router.push(APPLICATIONS_PATH))
     .catch((err) => {
       console.warn(err);
       localStorage.removeItem(EGO_JWT_KEY);
@@ -72,12 +71,20 @@ const LoginLoaderPage = createPage({
   isPublic: true,
 })(() => {
   useEffect(() => {
+    Router.prefetch(APPLICATIONS_PATH);
     fetchEgoToken();
-  });
+  }, []);
 
   return (
-    <DefaultPageLayout>
-      <div></div>
+    <DefaultPageLayout
+      css={css`
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      `}
+    >
+      <DnaLoader />
     </DefaultPageLayout>
   );
 });

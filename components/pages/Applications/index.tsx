@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import { useRouter } from 'next/router';
+import DnaLoader from '@icgc-argo/uikit/DnaLoader';
 
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
 import { useAuthContext } from 'global/hooks';
@@ -19,7 +20,7 @@ const Application = (): ReactElement => {
   const {
     query: { ID: [appId = ''] = [] },
   }: QueryType = useRouter();
-  const { permissions } = useAuthContext();
+  const { loadingAuth, permissions } = useAuthContext();
 
   const isAdmin = isDacoAdmin(permissions);
 
@@ -27,7 +28,9 @@ const Application = (): ReactElement => {
 
   return (
     <DefaultPageLayout title={pageTitle}>
-      {appId ? (
+      {loadingAuth ? (
+        <DnaLoader />
+      ) : appId ? (
         <ApplicationForm appId={appId} isAdmin={isAdmin} />
       ) : isAdmin ? (
         <ManageApplications />

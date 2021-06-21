@@ -13,15 +13,17 @@ import axios, { AxiosRequestConfig, Method } from 'axios';
 import { getConfig } from 'global/config';
 
 type T_AuthContext = {
-  token?: string;
+  loadingAuth: boolean;
+  token: string;
   logout: () => void;
-  user?: UserWithId;
+  user: UserWithId | undefined;
   fetchWithAuth: any;
   permissions: string[];
 };
 
 const AuthContext = createContext<T_AuthContext>({
-  token: undefined,
+  loadingAuth: true,
+  token: '',
   logout: () => {},
   user: undefined,
   fetchWithAuth: () => {},
@@ -29,17 +31,19 @@ const AuthContext = createContext<T_AuthContext>({
 });
 
 export const AuthProvider = ({
-  egoJwt,
+  egoJwt = '',
   children,
 }: {
   egoJwt?: string;
   children: React.ReactElement;
 }) => {
-  const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
-  const router = useRouter();
   // TODO: typing this state as `string` causes a compiler error. the same setup exists in argo but does not cause
   // a type issue. using `any` for now
   const [token, setTokenState] = useState<any>(egoJwt);
+  const [loadingAuth, setLoadingAuth] = useState<boolean>(true);
+  const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
+  const router = useRouter();
+
   const removeToken = () => {
     localStorage.removeItem(EGO_JWT_KEY);
     setTokenState(null);
@@ -50,11 +54,7 @@ export const AuthProvider = ({
     router.push('/');
   };
 
-  if (!token) {
-    if (isValidJwt(egoJwt)) {
-      setTokenState(egoJwt);
-    }
-  } else {
+  if (token) {
     if (!isValidJwt(token)) {
       if (egoJwt && token === egoJwt) {
         removeToken();
@@ -62,6 +62,8 @@ export const AuthProvider = ({
     } else if (!egoJwt) {
       setTokenState(null);
     }
+  } else if (isValidJwt(egoJwt)) {
+    setTokenState(egoJwt);
   }
 
   // TODO: decide if we want these for all types of requests or only POST
@@ -91,20 +93,20 @@ export const AuthProvider = ({
       url,
     };
 
-    return (
-      axios(config)
-        // TODO log errors somewhere?
-        .catch((error) => {
-          console.error({ error });
-        })
-    );
+    return axios(config).catch((error) => {
+      // TODO log errors somewhere?
+      console.error({ error });
+    });
   };
 
   const userInfo = token ? decodeToken(token) : null;
   const user = userInfo ? extractUser(userInfo) : undefined;
   const permissions = getPermissionsFromToken(token);
 
+  loadingAuth && token && user && setLoadingAuth(false);
+
   const authData = {
+    loadingAuth,
     token,
     logout,
     user,

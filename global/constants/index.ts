@@ -4,3 +4,6 @@ export const ADMIN_APPLICATIONS_LABEL = 'Manage Applications';
 export const APPLICANT_APPLICATIONS_LABEL = 'My Applications';
 
 export const DATE_RANGE_DISPLAY_FORMAT = 'Y-MM-dd';
+
+export * from './externalPaths';
+export * from './internalPaths';

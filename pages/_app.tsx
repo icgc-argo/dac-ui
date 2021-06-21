@@ -17,13 +17,13 @@ const App = ({
   pageProps: PageConfigProps;
   ctx: NextPageContext;
 }) => {
-  const [initialJwt, setInitialJwt] = useState<string | undefined>();
+  const [initialJwt, setInitialJwt] = useState<string>('');
   useEffect(() => {
-    const egoJwt = localStorage.getItem(EGO_JWT_KEY) || undefined;
+    const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
     if (isValidJwt(egoJwt)) {
       setInitialJwt(egoJwt);
     } else {
-      setInitialJwt(undefined);
+      setInitialJwt('');
       localStorage.removeItem(EGO_JWT_KEY);
       // redirect to logout when token is expired/missing only if user is on a non-public page
       if (!Component.isPublic) {
