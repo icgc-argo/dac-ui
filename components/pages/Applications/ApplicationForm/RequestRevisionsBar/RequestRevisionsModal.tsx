@@ -63,6 +63,7 @@ const ModalSection = ({
           margin-top: 13px;
         `}
         disabled={fieldDisabled}
+        id={`${title}-checkbox`}
         onChange={() => dispatch({ type: 'requested', ...dispatchArgs })}
         type="checkbox"
         value={title}
@@ -75,7 +76,7 @@ const ModalSection = ({
           padding: 0 11px 0 8px;
         `}
       >
-        <label htmlFor={`${title}-textarea`}>{title}</label>
+        <label htmlFor={`${title}-${requested ? 'checkbox' : 'textarea'}`}>{title}</label>
       </Typography>
       <FormControl
         error={requested && details.length < MINIMUM_DETAILS_LENGTH}
