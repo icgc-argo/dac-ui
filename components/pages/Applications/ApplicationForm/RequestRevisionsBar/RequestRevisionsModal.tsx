@@ -75,7 +75,7 @@ const ModalSection = ({
           padding: 0 11px 0 8px;
         `}
       >
-        {title}
+        <label htmlFor={`${title}-textarea`}>{title}</label>
       </Typography>
       <FormControl
         error={requested && details.length < MINIMUM_DETAILS_LENGTH}
