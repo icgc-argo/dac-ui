@@ -32,7 +32,6 @@ export const fieldDisplayNames = {
 
 export const formatTableData = (data: ApplicationsResponseItem[]) =>
   data
-    .filter((datum: ApplicationsResponseItem) => !['DRAFT'].includes(datum.state))
     .map<ApplicationRecord>((datum: ApplicationsResponseItem) => ({
       appId: datum.appId,
       institution: datum.applicant.info.primaryAffiliation,
