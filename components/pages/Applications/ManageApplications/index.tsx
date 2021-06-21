@@ -60,7 +60,7 @@ const useManageApplicationsState = () => {
       },
       [],
     );
-    setSort(newSort)
+    setSort(newSort);
   };
 
   return {

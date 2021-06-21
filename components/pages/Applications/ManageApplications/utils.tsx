@@ -15,7 +15,7 @@ import {
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
 export const stringifySort = (sortArr: ApplicationsSort[]) =>
-  sortArr.map(({ field, order }) => `${field}:${order}`).join(',');
+  sortArr.map(({ field, order }) => `${field}:${order}`).join(', ');
 
 export const stringifyStates = (statesArr: ApplicationState[]) => statesArr.join(',');
 
@@ -25,7 +25,7 @@ export const fieldDisplayNames = {
   'applicant.info.displayName': 'Applicant',
   'applicant.info.googleEmail': 'Applicant Google Email',
   expiresAtUtc: 'Access Expiry',
-  updatedAtUtc: 'Last Updated',
+  lastUpdatedAtUtc: 'Last Updated',
   state: 'Status',
   'ethics.declaredAsRequired': 'Ethics Letter',
 };
@@ -87,8 +87,8 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
           : null,
     },
     {
-      Header: fieldDisplayNames.updatedAtUtc,
-      id: ApplicationsField.updatedAtUtc,
+      Header: fieldDisplayNames.lastUpdatedAtUtc,
+      id: ApplicationsField.lastUpdatedAtUtc,
       accessor: 'lastUpdated',
       Cell: ({ original }: { original: ApplicationRecord }) =>
         original.lastUpdated
