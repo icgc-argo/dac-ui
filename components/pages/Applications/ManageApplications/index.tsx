@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { Col, Container, Row } from 'react-grid-system';
 import { SortedChangeFunction } from 'react-table';
 import pluralize from 'pluralize';
@@ -23,8 +23,8 @@ import {
   DEFAULT_PAGE,
   DEFAULT_SORT,
   formatTableData,
-  tableColumns,
   statesAllowList,
+  tableColumns,
 } from './utils';
 
 import PageHeader from 'components/PageHeader';
@@ -98,10 +98,6 @@ const ManageApplications = (): ReactElement => {
     pagesCount = 0,
     totalCount = 0
   } = response?.data?.pagingInfo || {};
-
-  const test = formatTableData(items);
-
-  console.log({ test })
 
   return (
     <>
@@ -200,18 +196,12 @@ const ManageApplications = (): ReactElement => {
                   </Row>
                   <Row>
                     <Col>
-                      appIds: {items.map((row: any) => (row.appId)).join(', ')}
-                      <br />
-                      page: {page}
-                      <br />
-                      pageSize: {pageSize}
-                      <br />
-                      pagesCount: {pagesCount}
                       <Table
                         columns={tableColumns}
                         data={formatTableData(items)}
                         NoDataComponent={() => null}
                         defaultSorted={getDefaultSort(DEFAULT_SORT)}
+                        manual
                         onPageChange={onPageChange}
                         onPageSizeChange={onPageSizeChange}
                         onSortedChange={onSortedChange}
