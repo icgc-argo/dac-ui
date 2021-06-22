@@ -24,10 +24,11 @@ const useApplicationsAPI = ({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<AxiosError | undefined>(undefined);
 
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth, loadingAuth, token } = useAuthContext();
 
   useEffect(() => {
-    fetchWithAuth({
+    token &&
+      fetchWithAuth({
       params: {
         page,
         pageSize,
@@ -47,7 +48,7 @@ const useApplicationsAPI = ({
       });
   }, [page, pageSize, stringifySort(sort)]);
 
-  return { error, isLoading, response };
+  return { error, isLoading: loadingAuth || isLoading, response };
 };
 
 export default useApplicationsAPI;
