@@ -10,7 +10,7 @@ import Progress from './Progress';
 
 const DATE_FORMAT = 'MMM. dd, yyyy';
 
-const ApplicationHeader = ({ data }): ReactElement => {
+const ApplicationHeader = ({ data }: { data: any }): ReactElement => {
   const {
     appId,
     createdAtUtc,
