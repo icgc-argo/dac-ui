@@ -63,7 +63,7 @@ const columns = [
 
 const mock = [
   {
-    positionTitle: 'Authorized Personannel',
+    positionTitle: 'Authorized Personnel',
     firstName: 'Taylor',
     lastName: 'Data',
     googleEmail: 't@gmail.com',
