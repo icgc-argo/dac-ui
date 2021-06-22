@@ -1,16 +1,25 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
+import { format } from 'date-fns';
 import { css } from '@icgc-argo/uikit';
 
 import PageHeader from 'components/PageHeader';
+
 import Actions from './Actions';
 import Details from './Details';
 import Progress from './Progress';
 
-const ApplicationHeader = ({ appId = 'none' }): ReactElement => {
-  const [applicationDetails, setApplicationDetails] = useState({
-    createdAt: 'May. 22, 2021',
-    lastUpdated: 'May. 24, 2021  1:57 p.m.',
-  });
+const DATE_FORMAT = 'MMM. dd, yyyy';
+
+const ApplicationHeader = ({ data }): ReactElement => {
+  const {
+    appId,
+    createdAtUtc,
+    lastUpdatedAtUtc,
+    sections: { applicant: { info: { displayName = '', primaryAffiliation = '' } = {} } = {} } = {},
+    state,
+  } = data;
+
+  const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
 
   return (
     <PageHeader>
@@ -24,7 +33,12 @@ const ApplicationHeader = ({ appId = 'none' }): ReactElement => {
           width: 100%;
         `}
       >
-        <Details appId={appId} {...applicationDetails} />
+        <Details
+          appId={appId}
+          applicant={applicant}
+          createdAt={format(new Date(createdAtUtc), DATE_FORMAT)}
+          lastUpdated={format(new Date(lastUpdatedAtUtc), DATE_FORMAT + ' h:m aaaa')}
+        />
 
         <Progress />
 

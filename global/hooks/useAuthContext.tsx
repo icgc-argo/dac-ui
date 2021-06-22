@@ -1,6 +1,5 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { useRouter } from 'next/router';
-import urlJoin from 'url-join';
 import { EGO_JWT_KEY } from '../constants';
 import {
   decodeToken,
@@ -9,21 +8,23 @@ import {
   isValidJwt,
 } from '../utils/egoTokenUtils';
 import { UserWithId } from '../types';
-import axios, { AxiosRequestConfig, Method } from 'axios';
+import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
 
 type T_AuthContext = {
-  loadingAuth: boolean;
-  token: string;
-  logout: () => void;
-  user: UserWithId | undefined;
+  cancelFetchWithAuth: Canceler;
   fetchWithAuth: any;
+  isLoading: boolean;
+  logout: () => void;
   permissions: string[];
+  token?: string;
+  user?: UserWithId | void;
 };
 
 const AuthContext = createContext<T_AuthContext>({
-  loadingAuth: true,
+  cancelFetchWithAuth: () => {},
   token: '',
+  isLoading: false,
   logout: () => {},
   user: undefined,
   fetchWithAuth: () => {},
@@ -31,22 +32,22 @@ const AuthContext = createContext<T_AuthContext>({
 });
 
 export const AuthProvider = ({
-  egoJwt = '',
   children,
+  egoJwt = '',
 }: {
-  egoJwt?: string;
   children: React.ReactElement;
+  egoJwt: string;
 }) => {
   // TODO: typing this state as `string` causes a compiler error. the same setup exists in argo but does not cause
   // a type issue. using `any` for now
-  const [token, setTokenState] = useState<any>(egoJwt);
-  const [loadingAuth, setLoadingAuth] = useState<boolean>(true);
+  const [isLoading, setLoading] = useState<boolean>(true);
+  const [token, setTokenState] = useState<string>(egoJwt);
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const router = useRouter();
 
   const removeToken = () => {
     localStorage.removeItem(EGO_JWT_KEY);
-    setTokenState(null);
+    setTokenState('');
   };
 
   const logout = () => {
@@ -60,7 +61,7 @@ export const AuthProvider = ({
         removeToken();
       }
     } else if (!egoJwt) {
-      setTokenState(null);
+      setTokenState('');
     }
   } else if (isValidJwt(egoJwt)) {
     setTokenState(egoJwt);
@@ -70,53 +71,67 @@ export const AuthProvider = ({
   axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
   axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 
+  const cancelTokenSource = axios.CancelToken.source();
+  const cancelFetchWithAuth = cancelTokenSource.cancel;
   const fetchWithAuth = ({
     params = {},
     headers = {},
     method = 'GET' as Method,
     url,
   }: AxiosRequestConfig) => {
+    setLoading(true);
     if (!url) {
-      console.warn('no URL provided to fetchWithAuth');
-      return Promise.resolve(undefined);
+      setLoading(false);
+      return Promise.reject(undefined);
+    }
+
+    if (!token) {
+      setLoading(false);
+      return Promise.reject(undefined);
     }
 
     const config: AxiosRequestConfig = {
       baseURL: NEXT_PUBLIC_DAC_API_ROOT,
-      params,
+      cancelToken: cancelTokenSource.token,
       headers: {
         accept: '*/*',
         ...headers,
         Authorization: `Bearer ${token || ''}`,
       },
       method,
+      params,
       url,
     };
 
-    return axios(config).catch((error) => {
-      // TODO log errors somewhere?
-      console.error({ error });
-    });
+    return axios(config)
+      .catch((error) => {
+        // TODO log errors somewhere?
+        console.error({ error });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const userInfo = token ? decodeToken(token) : null;
   const user = userInfo ? extractUser(userInfo) : undefined;
   const permissions = getPermissionsFromToken(token);
 
-  loadingAuth && token && user && setLoadingAuth(false);
+  isLoading && token && user && setLoading(false);
 
   const authData = {
-    loadingAuth,
-    token,
-    logout,
-    user,
+    cancelFetchWithAuth,
     fetchWithAuth,
+    isLoading,
+    logout,
     permissions,
+    token,
+    user,
   };
 
   return <AuthContext.Provider value={authData}>{children}</AuthContext.Provider>;
 };
 
 export default function useAuthContext() {
-  return React.useContext(AuthContext);
+  return useContext(AuthContext);
 }
