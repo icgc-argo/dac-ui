@@ -7,11 +7,12 @@ const Introduction = dynamic(() => import('./Introduction'));
 const ITAgreements = dynamic(() => import('./ITAgreements'));
 const Representative = dynamic(() => import('./Representative'));
 const ProjectInfo = dynamic(() => import('./ProjectInfo'));
+const Collaborators = dynamic(() => import('./Collaborators'));
 
 export const sectionsData = {
   appendices: { component: Appendices, description: 'H. Appendices' },
   applicant: { component: Applicant, description: 'A. Applicant Information' },
-  collaborators: { description: 'C. Collaborators' },
+  collaborators: { component: Collaborators, description: 'C. Collaborators' },
   dataAccessAgreements: {
     component: DataAccessAgreements,
     description: 'G. Data Access Agreement',
