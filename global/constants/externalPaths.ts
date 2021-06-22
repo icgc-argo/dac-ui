@@ -27,4 +27,5 @@ export const ICGC_PCAWG_LINK = urlJoin(ICGC_DCC_LINK, 'pcawg');
 // API
 export const API = {
   APPLICATIONS: '/applications',
+  HEALTH: '/health',
 };
