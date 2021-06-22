@@ -17,38 +17,35 @@ const useApplicationsAPI = ({
   sort = DEFAULT_SORT,
   states = [],
 }: // method
-  // id
-  // ...etc
-  ApplicationsRequestData) => {
+// id
+// ...etc
+ApplicationsRequestData) => {
   const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<AxiosError | undefined>(undefined);
 
-  const { fetchWithAuth, loadingAuth, token } = useAuthContext();
+  const { fetchWithAuth, isLoading, token } = useAuthContext();
 
   useEffect(() => {
-    token &&
+    if (token && !isLoading) {
       fetchWithAuth({
-      params: {
-        page,
-        pageSize,
-        sort: stringifySort(sort),
-        states: stringifyStates(states),
-      },
-      url: API.APPLICATIONS,
-    })
-      .then((res: any) => {
-        setResponse(res);
+        params: {
+          page,
+          pageSize,
+          sort: stringifySort(sort),
+          states: stringifyStates(states),
+        },
+        url: API.APPLICATIONS,
       })
-      .catch((err: any) => {
-        setError(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+        .then((res: any) => {
+          setResponse(res);
+        })
+        .catch((err: any) => {
+          setError(err);
+        });
+    }
   }, [page, pageSize, stringifySort(sort)]);
 
-  return { error, isLoading: loadingAuth || isLoading, response };
+  return { error, isLoading, response };
 };
 
 export default useApplicationsAPI;

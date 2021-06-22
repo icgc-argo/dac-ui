@@ -1,6 +1,6 @@
 import Typography from '@icgc-argo/uikit/Typography';
 import { css } from '@emotion/core';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import Table from '@icgc-argo/uikit/Table';
@@ -9,8 +9,6 @@ import pluralize from 'pluralize';
 import { isEmpty } from 'lodash';
 import ContentPlaceholder from '@icgc-argo/uikit/ContentPlaceholder';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
-import { API } from 'global/constants/externalPaths';
-import { useAuthContext } from 'global/hooks';
 
 const Actions = () => {
   const theme = useTheme();
@@ -80,19 +78,6 @@ const mock = [
 
 const Collaborators = ({ appId }: { appId: string }) => {
   const [collaborators, setCollaborators] = useState(mock);
-
-  // TODO: data hookup
-  /*   const { fetchWithAuth } = useAuthContext();
-
-  useEffect(
-    () =>
-      fetchWithAuth({
-        url: `${API.APPLICATIONS}/${appId}`,
-      })
-        .then((d) => console.log(d))
-        .catch((e) => console.error(e)),
-    [],
-  ); */
 
   const containerRef = React.createRef<HTMLDivElement>();
   const theme = useTheme();
