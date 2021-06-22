@@ -2,6 +2,7 @@ import { useReducer } from 'react';
 import { find } from 'lodash';
 
 import {
+  RequestRevisionProperties,
   RequestRevisionsFieldNames,
   RequestRevisionsFieldsState,
   RequestRevisionsFieldTitles,
@@ -11,8 +12,11 @@ import {
 export const MINIMUM_DETAILS_LENGTH = 10;
 export const SECONDARY_FIELDS: RequestRevisionsFieldNames[] = ['general'];
 
-const initialFieldState = {
+const ERROR_TEXT = `Message must be at least ${MINIMUM_DETAILS_LENGTH} characters.`;
+
+const initialFieldState: RequestRevisionProperties = {
   details: '',
+  error: '',
   requested: false,
 };
 
@@ -48,25 +52,53 @@ const findPartiallyCompleteFields = (fields: any) => find(
 const checkSendEnabled = (fields: any) => !!findCompleteFields(fields) &&
   !findPartiallyCompleteFields(fields);
 
+const makeFieldState = (fieldState: RequestRevisionProperties, action: any) => {
+  switch (action.type) {
+    case 'detailsBlur': {
+      return ({
+        error: action.payload.length < MINIMUM_DETAILS_LENGTH
+          ? ERROR_TEXT
+          : fieldState.error
+      });
+    }
+    case 'detailsChange': {
+      return ({
+        details: action.payload,
+        error: action.payload.length >= MINIMUM_DETAILS_LENGTH
+          ? initialFieldState.error
+          : fieldState.error
+      });
+    }
+    case 'detailsClick': {
+      return ({
+        requested: true,
+      });
+    }
+    case 'requestedClick': {
+      return ({
+        details: initialFieldState.details,
+        error: initialFieldState.error,
+        requested: !fieldState.requested,
+      });
+    }
+    default: {
+      return fieldState;
+    }
+  }
+};
+
 const requestRevisionsReducer = (state: RequestRevisionsState, action: any) => {
   // TODO revisit action type in data hookup ticket
   const { fieldName }: { fieldName: RequestRevisionsFieldNames } = action;
+  const newFieldState = makeFieldState(state.fields[fieldName], action);
+
   const nextState = {
     ...state,
     fields: {
       ...state.fields,
       [action.fieldName]: {
         ...state.fields[fieldName],
-        requested: action.type === 'requested'
-          ? action.payload !== undefined
-            ? action.payload
-            : !state.fields[fieldName].requested
-          : state.fields[fieldName].requested,
-        details: action.type === 'details'
-          ? action.payload
-          : action.type === 'requested'
-            ? ''
-            : state.fields[fieldName].details
+        ...newFieldState,
       }
     }
   };
@@ -93,6 +125,6 @@ const requestRevisionsReducer = (state: RequestRevisionsState, action: any) => {
 const useRequestRevisionsReducer = () => {
   const [state, dispatch] = useReducer(requestRevisionsReducer, initialState);
   return { state, dispatch };
-}
+};
 
 export default useRequestRevisionsReducer;
