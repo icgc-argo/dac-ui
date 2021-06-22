@@ -14,8 +14,7 @@ import {
 } from './types';
 import { isRequired, useLocalValidation } from './validations';
 import { css } from '@emotion/core';
-import { instructionBoxButtonContentStyle, instructionBoxButtonIconStyle } from 'global/styles';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import Table from '@icgc-argo/uikit/Table';
@@ -24,6 +23,25 @@ import pluralize from 'pluralize';
 import { isEmpty } from 'lodash';
 import ContentPlaceholder from '@icgc-argo/uikit/ContentPlaceholder';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import { API } from 'global/constants/externalPaths';
+import { useAuthContext } from 'global/hooks';
+
+const Actions = () => {
+  const theme = useTheme();
+  return (
+    <div
+      css={css`
+        width: 100%;
+        padding: 0 10px;
+        display: flex;
+        justify-content: space-between;
+      `}
+    >
+      <Icon name="edit" width="20px" height="20px" fill={theme.colors.accent2} />
+      <Icon name="trash" width="19px" height="20px" />
+    </div>
+  );
+};
 
 const Actions = () => {
   const theme = useTheme();
