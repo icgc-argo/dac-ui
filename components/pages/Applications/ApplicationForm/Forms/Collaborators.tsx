@@ -1,21 +1,6 @@
-import Banner, { BANNER_VARIANTS } from '@icgc-argo/uikit/notifications/Banner';
-import FormControl from '@icgc-argo/uikit/form/FormControl';
-import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
-import FormRadio from '@icgc-argo/uikit/form/FormRadio';
-import InputLabel from '@icgc-argo/uikit/form/InputLabel';
-import Link from '@icgc-argo/uikit/Link';
-import RadioCheckboxGroup from '@icgc-argo/uikit/form/RadioCheckboxGroup';
 import Typography from '@icgc-argo/uikit/Typography';
-
-import RequiredFieldsMessage from './RequiredFieldsMessage';
-import {
-  FormSectionValidationState_EthicsLetter,
-  FormSectionValidatorFunction_Origin,
-} from './types';
-import { isRequired, useLocalValidation } from './validations';
 import { css } from '@emotion/core';
-import { instructionBoxButtonContentStyle, instructionBoxButtonIconStyle } from 'global/styles';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import Table from '@icgc-argo/uikit/Table';
@@ -24,17 +9,92 @@ import pluralize from 'pluralize';
 import { isEmpty } from 'lodash';
 import ContentPlaceholder from '@icgc-argo/uikit/ContentPlaceholder';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import { API } from 'global/constants/externalPaths';
+import { useAuthContext } from 'global/hooks';
+
+const Actions = () => {
+  const theme = useTheme();
+  return (
+    <div
+      css={css`
+        width: 100%;
+        padding: 0 10px;
+        display: flex;
+        justify-content: space-between;
+      `}
+    >
+      <Icon name="edit" width="20px" height="20px" fill={theme.colors.accent2} />
+      <Icon name="trash" width="19px" height="20px" />
+    </div>
+  );
+};
 
 const columns = [
   {
     Header: 'Collaborator Type',
+    accessor: 'positionTitle',
+    id: 'positionTitle',
+    width: 180,
+  },
+  {
+    Header: 'First Name',
+    accessor: 'firstName',
+  },
+  {
+    Header: 'Last Name',
+    accessor: 'lastName',
+  },
+  {
+    Header: 'Institutional Email',
+    accessor: 'institutionEmail',
+    width: 170,
+  },
+  {
+    Header: 'Google Email',
+    accessor: 'googleEmail',
+    width: 170,
+  },
+  {
+    Header: 'Actions',
+    width: 90,
+    Cell: () => <Actions />,
   },
 ];
 
-const Collaborators = ({}) => {
-  const containerRef = React.createRef<HTMLDivElement>();
+const mock = [
+  {
+    positionTitle: 'Authorized Personannel',
+    firstName: 'Taylor',
+    lastName: 'Data',
+    googleEmail: 't@gmail.com',
+    institutionEmail: 't@example.com',
+  },
+  {
+    positionTitle: 'Authorized Student',
+    firstName: 'Lindsey',
+    lastName: 'Smith',
+    googleEmail: 'l@gmail.com',
+    institutionEmail: 'l@example.com',
+  },
+];
 
-  const collaborators = [];
+const Collaborators = ({ appId }: { appId: string }) => {
+  const [collaborators, setCollaborators] = useState(mock);
+
+  // TODO: data hookup
+  /*   const { fetchWithAuth } = useAuthContext();
+
+  useEffect(
+    () =>
+      fetchWithAuth({
+        url: `${API.APPLICATIONS}/${appId}`,
+      })
+        .then((d) => console.log(d))
+        .catch((e) => console.error(e)),
+    [],
+  ); */
+
+  const containerRef = React.createRef<HTMLDivElement>();
   const theme = useTheme();
 
   return (
@@ -80,7 +140,6 @@ const Collaborators = ({}) => {
           </Typography>
           <Button
             size="sm"
-            variant="primary"
             css={css`
               display: flex;
               align-items: center;
@@ -121,7 +180,18 @@ const Collaborators = ({}) => {
                 <img src="/collaborators.webp" />
               </ContentPlaceholder>
             ) : (
-              <Table columns={[]} parentRef={containerRef} stripped />
+              <Table
+                css={css`
+                  margin-top: 9px;
+                `}
+                showPagination={false}
+                defaultSorted={[{ id: 'positionTitle', desc: false }]}
+                columns={columns}
+                data={collaborators}
+                parentRef={containerRef}
+                stripped
+                withOutsideBorder
+              />
             )}
           </Col>
         </Row>
