@@ -12,8 +12,12 @@ import {
   ApplicationsSort,
 } from '../types';
 
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
+
 export const stringifySort = (sortArr: ApplicationsSort[]) =>
-  sortArr.map(({ field, order }) => `${field}:${order}`).join(',');
+  sortArr.map(({ field, order }) => `${field}:${order}`).join(', ');
+
+export const stringifyStates = (statesArr: ApplicationState[]) => statesArr.join(',');
 
 export const fieldDisplayNames = {
   appId: 'Application #',
@@ -21,22 +25,23 @@ export const fieldDisplayNames = {
   'applicant.info.displayName': 'Applicant',
   'applicant.info.googleEmail': 'Applicant Google Email',
   expiresAtUtc: 'Access Expiry',
-  updatedAtUtc: 'Last Updated',
+  lastUpdatedAtUtc: 'Last Updated',
   state: 'Status',
   'ethics.declaredAsRequired': 'Ethics Letter',
 };
 
 export const formatTableData = (data: ApplicationsResponseItem[]) =>
-  data.map<ApplicationRecord>((datum: ApplicationsResponseItem) => ({
-    appId: datum.appId,
-    institution: datum.applicant.info.primaryAffiliation,
-    applicant: datum.applicant.info.displayName,
-    googleEmail: datum.applicant.info.googleEmail,
-    ethicsLetter: datum.ethics.declaredAsRequired,
-    accessExpiry: datum.expiresAtUtc,
-    lastUpdated: datum.updatedAtUtc,
-    status: datum.state,
-  }));
+  data
+    .map<ApplicationRecord>((datum: ApplicationsResponseItem) => ({
+      appId: datum.appId,
+      institution: datum.applicant.info.primaryAffiliation,
+      applicant: datum.applicant.info.displayName,
+      googleEmail: datum.applicant.info.googleEmail,
+      ethicsLetter: datum.ethics.declaredAsRequired,
+      accessExpiry: datum.expiresAtUtc,
+      lastUpdated: datum.lastUpdatedAtUtc,
+      status: datum.state,
+    }));
 
 export const tableColumns: TableColumnConfig<ApplicationRecord> & {
   id: ApplicationsField;
@@ -69,7 +74,6 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
     {
       Header: fieldDisplayNames['ethics.declaredAsRequired'],
       id: ApplicationsField['ethics.declaredAsRequired'],
-      sortable: false,
       Cell: ({ original }: { original: ApplicationRecord }) => (original.ethicsLetter ? 'Yes' : 'No'),
     },
     {
@@ -82,8 +86,8 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
           : null,
     },
     {
-      Header: fieldDisplayNames.updatedAtUtc,
-      id: ApplicationsField.updatedAtUtc,
+      Header: fieldDisplayNames.lastUpdatedAtUtc,
+      id: ApplicationsField.lastUpdatedAtUtc,
       accessor: 'lastUpdated',
       Cell: ({ original }: { original: ApplicationRecord }) =>
         original.lastUpdated
@@ -100,7 +104,17 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
   ];
 
 export const DEFAULT_PAGE: number = 0;
-export const DEFAULT_PAGE_SIZE: number = 20;
+export const DEFAULT_PAGE_SIZE: number = 5;
 export const DEFAULT_SORT: ApplicationsSort[] = [
   { field: 'state', order: 'desc' } as ApplicationsSort,
 ];
+
+export const statesAllowList = [
+  'APPROVED',
+  'CLOSED',
+  'EXPIRED',
+  'REJECTED',
+  'RENEWING',
+  'REVIEW',
+  'REVISIONS REQUESTED',
+] as ApplicationState[];

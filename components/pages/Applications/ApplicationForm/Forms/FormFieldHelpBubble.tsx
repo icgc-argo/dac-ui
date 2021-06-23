@@ -24,8 +24,8 @@ const HelpBubble = ({
         background: ${theme.colors.secondary_4};
         border-radius: 2px;
         box-sizing: border-box;
-        font-size: 11px;
-        line-height: 14px;
+        font-size: ${tail ? '11' : '12'}px;
+        line-height: ${tail ? '14' : '18'}px;
         margin: ${tail ? '0' : '10px'} 0 ${tail ? '10px 10px' : ''};
         padding: 6px 8px;
         position: relative;
@@ -56,7 +56,7 @@ const HelpBubble = ({
         }
 
         span {
-          font-size: 11px;
+          font-size: ${tail ? '11' : '12'}px;
         }
       `}
     >

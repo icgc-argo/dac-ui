@@ -67,7 +67,7 @@ export const ModalPortal = ({ children }: { children: React.ReactElement }) => {
 const Root = ({
   children,
   pageContext,
-  egoJwt,
+  egoJwt = '',
 }: {
   children: any;
   pageContext: any;

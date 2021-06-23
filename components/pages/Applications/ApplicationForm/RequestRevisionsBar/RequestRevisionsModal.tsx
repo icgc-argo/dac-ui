@@ -14,15 +14,43 @@ import {
   RequestRevisionsFieldNames,
 } from './types';
 
-import useRequestRevisionsReducer,
-{
-  MINIMUM_DETAILS_LENGTH, SECONDARY_FIELDS
-} from './useRequestRevisionsReducer';
+import useRequestRevisionsReducer, { SECONDARY_FIELDS } from './useRequestRevisionsReducer';
+
+const textareaStyle = css`
+/* copied UIKIT textarea styles because textarea wasn't programatically updating.
+the value got "stuck" in an emotion component prop inside the textarea. */
+  background: #fff;
+  border: 1px solid #babcc2;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-family: Work Sans, sans-serif;
+  font-size: 14px;
+  height: 69px;
+  line-height: 1.57;
+  margin-bottom: 0;
+  padding: 8px 10px;
+  resize: vertical;
+  width: 550px;
+  &:focus:not(.disabled):not(.error) {
+    box-shadow: 0 0 4px 0 #4596de;
+    outline: 0;
+  }
+  &:hover:not(.disabled):not(.error) {
+    border-color: #4596de !important;
+  }
+  &.disabled:not(.disabled):not(.error) {
+    background-color: #f6f6f7;
+  }
+  &.error {
+    border-color: #df1b42 !important;
+  }
+`;
 
 const ModalSection = ({
   requested,
   details,
   dispatch,
+  error,
   fieldDisabled,
   fieldName,
   title
@@ -32,6 +60,7 @@ const ModalSection = ({
     details: string;
     dispatch: any;
     // TODO revisit dispatch type in data hookup ticket
+    error: string;
     fieldDisabled: boolean;
     fieldName: string;
     title: string;
@@ -63,7 +92,8 @@ const ModalSection = ({
           margin-top: 13px;
         `}
         disabled={fieldDisabled}
-        onChange={() => dispatch({ type: 'requested', ...dispatchArgs })}
+        id={`${title}-checkbox`}
+        onChange={() => dispatch({ type: 'requestedClick', ...dispatchArgs })}
         type="checkbox"
         value={title}
       />
@@ -75,24 +105,34 @@ const ModalSection = ({
           padding: 0 11px 0 8px;
         `}
       >
-        {title}
+        <label htmlFor={`${title}-${requested ? 'checkbox' : 'textarea'}`}>{title}</label>
       </Typography>
       <FormControl
-        disabled={fieldDisabled || !requested}
-        error={requested && details.length < MINIMUM_DETAILS_LENGTH}
+        css={css`
+          margin-bottom: 0;
+        `}
+        disabled={fieldDisabled}
+        error={error}
       >
-        <Textarea
+        <textarea
           aria-label={`${title} textarea`}
           id={`${title}-textarea`}
-          css={css`
-          height: 69px;
-          margin-bottom: 0;
-          width: 550px;
-        `}
+          className={`${error ? 'error' : ''} ${fieldDisabled ? 'disabled' : ''}`}
+          css={textareaStyle}
+          onBlur={(e) => dispatch({ payload: e.target.value, type: 'detailsBlur', ...dispatchArgs })}
+          onChange={(e) => dispatch({ payload: e.target.value, type: 'detailsChange', ...dispatchArgs })}
+          onClick={() => dispatch({ type: 'detailsClick', ...dispatchArgs })}
+          readOnly={fieldDisabled} // making the field disabled will block click events
           value={details}
-          onChange={(e) => dispatch({ payload: e.target.value, type: 'details', ...dispatchArgs })}
         />
-        <FormHelperText onErrorOnly>Message must be at least {MINIMUM_DETAILS_LENGTH} characters.</FormHelperText>
+        <FormHelperText
+          css={css`
+            margin-bottom: 7px;
+          `}
+          onErrorOnly
+        >
+          {error}
+        </FormHelperText>
       </FormControl>
     </div>
   );
@@ -132,10 +172,11 @@ const RequestRevisionsModal = ({
             requested={fields[fieldName].requested}
             details={fields[fieldName].details}
             dispatch={dispatch}
-            key={fieldName}
+            error={fields[fieldName].error}
             fieldDisabled={SECONDARY_FIELDS.includes(fieldName)
               && !isSecondaryFieldsEnabled}
             fieldName={fieldName}
+            key={fieldName}
             title={RequestRevisionsFieldTitles[fieldName]}
           />
         )

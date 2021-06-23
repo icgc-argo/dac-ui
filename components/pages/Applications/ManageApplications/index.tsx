@@ -23,7 +23,7 @@ import {
   DEFAULT_PAGE,
   DEFAULT_SORT,
   formatTableData,
-  stringifySort,
+  statesAllowList,
   tableColumns,
 } from './utils';
 
@@ -32,16 +32,20 @@ import { ContentError } from 'components/placeholders';
 import { instructionBoxButtonIconStyle, instructionBoxButtonContentStyle } from 'global/styles';
 import { useApplicationsAPI } from 'global/hooks';
 
+const getDefaultSort = (applicationSorts: ApplicationsSort[]) =>
+  applicationSorts.map(({ field, order }) => ({ id: field, desc: order === 'desc' }));
+
 const useManageApplicationsState = () => {
   const [page, setPage] = useState<number>(DEFAULT_PAGE);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
-  const [sort, setSort] = useState<string>(stringifySort(DEFAULT_SORT));
+  const [sort, setSort] = useState<ApplicationsSort[]>(DEFAULT_SORT);
 
   const onPageChange = (newPageNum: number) => {
     setPage(newPageNum);
   };
 
   const onPageSizeChange = (newPageSize: number) => {
+    setPage(0);
     setPageSize(newPageSize);
   };
 
@@ -56,7 +60,7 @@ const useManageApplicationsState = () => {
       },
       [],
     );
-    setSort(stringifySort(newSort))
+    setSort(newSort);
   };
 
   return {
@@ -85,19 +89,22 @@ const ManageApplications = (): ReactElement => {
   const { error, isLoading, response } = useApplicationsAPI({
     page,
     pageSize,
-    sort
+    sort,
+    states: statesAllowList,
   });
 
-  const submissionsCount = response?.data?.pagingInfo?.totalCount || 0;
-  const tableData = response?.data.items || [];
-  const tableDataFormatted = formatTableData(tableData);
+  const { items = [] } = response?.data || {};
+  const {
+    pagesCount = 0,
+    totalCount = 0
+  } = response?.data?.pagingInfo || {};
 
   return (
     <>
       <PageHeader>ICGC DACO Dashboard</PageHeader>
       <Container
         css={css`
-          margin-top: 24px;
+          margin: 24px auto;
           width: 100%;
         `}
       >
@@ -160,7 +167,7 @@ const ManageApplications = (): ReactElement => {
                         `}
                         variant="data"
                       >
-                        {submissionsCount.toLocaleString()} {pluralize('submissions', submissionsCount)}
+                        {totalCount.toLocaleString()} {pluralize('submissions', totalCount)}
                       </Typography>
                     </Col>
                     <Col
@@ -191,10 +198,16 @@ const ManageApplications = (): ReactElement => {
                     <Col>
                       <Table
                         columns={tableColumns}
-                        data={tableDataFormatted}
+                        data={formatTableData(items)}
+                        NoDataComponent={() => null}
+                        defaultSorted={getDefaultSort(DEFAULT_SORT)}
+                        manual
                         onPageChange={onPageChange}
                         onPageSizeChange={onPageSizeChange}
                         onSortedChange={onSortedChange}
+                        page={page}
+                        pages={pagesCount}
+                        pageSize={pageSize}
                         parentRef={containerRef}
                         stripped
                         withOutsideBorder
