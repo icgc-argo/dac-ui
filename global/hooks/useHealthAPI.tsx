@@ -1,23 +1,21 @@
 import { useEffect, useState } from 'react';
-import { AxiosError, AxiosResponse } from 'axios';
-import useAuthContext from './useAuthContext';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { API } from 'global/constants/externalPaths';
+import { getConfig } from 'global/config';
+
+const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
 
 const useHealthAPI = () => {
   const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<AxiosError | undefined>(undefined);
 
-  const { fetchWithAuth } = useAuthContext();
-
   useEffect(() => {
-    fetchWithAuth({
-      url: API.HEALTH,
-    })
-      .then((res: any) => {
+    axios.get(API.HEALTH, { baseURL: NEXT_PUBLIC_DAC_API_ROOT })
+      .then((res: AxiosResponse | undefined) => {
         setResponse(res);
       })
-      .catch((err: any) => {
+      .catch((err: AxiosError | undefined) => {
         setError(err);
       })
       .finally(() => {
