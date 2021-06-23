@@ -6,7 +6,7 @@ import { getConfig } from 'global/config';
 const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
 
 const axiosInstance = axios.create({
-  validateStatus: (status: number) => status == 200
+  validateStatus: (status: number) => status === 200
 });
 
 const useHealthAPI = () => {
