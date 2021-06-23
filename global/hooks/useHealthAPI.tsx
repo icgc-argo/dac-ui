@@ -5,13 +5,17 @@ import { getConfig } from 'global/config';
 
 const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
 
+const axiosInstance = axios.create({
+  validateStatus: (status: number) => status == 200
+});
+
 const useHealthAPI = () => {
   const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<AxiosError | undefined>(undefined);
 
   useEffect(() => {
-    axios.get(API.HEALTH, { baseURL: NEXT_PUBLIC_DAC_API_ROOT })
+    axiosInstance.get(API.HEALTH, { baseURL: NEXT_PUBLIC_DAC_API_ROOT })
       .then((res: AxiosResponse | undefined) => {
         setResponse(res);
       })
