@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse, Method } from 'axios';
 import { ApplicationsRequestData } from '../../components/pages/Applications/types';
 import useAuthContext from './useAuthContext';
 import {
@@ -12,14 +12,14 @@ import {
 import { API } from 'global/constants/externalPaths';
 
 const useApplicationsAPI = ({
+  appId = '',
+  data,
+  method,
   page = DEFAULT_PAGE,
   pageSize = DEFAULT_PAGE_SIZE,
   sort = DEFAULT_SORT,
   states = [],
-}: // method
-// id
-// ...etc
-ApplicationsRequestData) => {
+}: ApplicationsRequestData = {}) => {
   const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
   const [error, setError] = useState<AxiosError | undefined>(undefined);
 
@@ -28,13 +28,15 @@ ApplicationsRequestData) => {
   useEffect(() => {
     if (token && !isLoading) {
       fetchWithAuth({
+        data,
+        method,
         params: {
           page,
           pageSize,
           sort: stringifySort(sort),
           states: stringifyStates(states),
         },
-        url: API.APPLICATIONS,
+        url: `${API.APPLICATIONS}/${appId}`,
       })
         .then((res: any) => {
           setResponse(res);
