@@ -5,12 +5,10 @@ import { OICR_LINK, POLICIES_PAGE } from 'global/constants/externalPaths';
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
 import { PDFLink, getStaticComponents, Checkbox, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
-import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 
 const StaticIntroduction = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?: any }) => {
   const { NEXT_PUBLIC_ARGO_ROOT } = getConfig();
-  const theme = useTheme();
   const {
     TextComponent,
     TitleComponent,

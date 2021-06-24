@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
     fontFamily: 'WorkSans',
     fontSize: '48px',
     fontWeight: 900,
-    top: '47%', // better way to align this?
-    left: '37%', // better way to align this?
+    top: '47%',
+    left: '37%',
     color: defaultTheme.colors.accent2,
     opacity: 0.2,
     textTransform: 'uppercase',
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
 const Watermark = () => <Text style={styles.watermark}>draft</Text>;
 
 const PDFLayout = ({
-  applicant, // need to get this from the application data, not the logged in user!
+  applicant,
   appId = '',
   state = 'draft',
   children,
