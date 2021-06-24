@@ -1,22 +1,16 @@
+import React from 'react';
+
 import { getConfig } from 'global/config';
 import { OICR_LINK, POLICIES_PAGE } from 'global/constants/externalPaths';
-import React from 'react';
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
-import { PDFLink, getStaticComponents, Checkbox } from './common';
+import { PDFLink, getStaticComponents, Checkbox, SectionTitle } from './common';
+import FORM_TEXT from './textConstants';
+import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 
-// is there a nicer way to do this component setup?
-// const ContainerComponent = isPdf ? PDFLayout : React.Fragment;
-// const SectionComponent = isPdf ? View : Section;
-// const TextComponent = isPdf ? PDFParagraph : Typography;
-// const LinkComponent = isPdf ? PDFLink : Link;
-// const HeaderComponent = isPdf ? PDFTitle : UITitle;
-// section for the forms, per section
-// this text is not dependent on the application state
-// if the static form sections use mostly the same components, setup one function that gets the needed elements,
-// then generate the appropriate StaticComponent. i.e. get the components ONCE, then generate whatever section you're in
 const StaticIntroduction = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?: any }) => {
   const { NEXT_PUBLIC_ARGO_ROOT } = getConfig();
-
+  const theme = useTheme();
   const {
     TextComponent,
     TitleComponent,
@@ -24,9 +18,13 @@ const StaticIntroduction = ({ isPdf = false, data = {} }: { isPdf?: boolean; dat
     ContainerComponent,
     LinkComponent,
   } = getStaticComponents(isPdf);
-  console.log('in static intro: ', data);
+
   return (
-    <ContainerComponent>
+    <ContainerComponent
+      appId={data.appId}
+      state={data.state}
+      applicant={data?.sections?.applicant.info}
+    >
       <TitleComponent>Introduction</TitleComponent>
       <SectionComponent>
         <TextComponent>
@@ -77,12 +75,17 @@ const StaticIntroduction = ({ isPdf = false, data = {} }: { isPdf?: boolean; dat
 
         {!isPdf && <RequiredFieldsMessage />}
       </SectionComponent>
-      {/* is the dynamic rendering needed for this? */}
       {isPdf && (
-        <SectionComponent>
+        <SectionComponent style={{ borderTop: `1px solid ${defaultTheme.colors.grey_1}` }}>
+          <SectionTitle>{FORM_TEXT.introduction.title}</SectionTitle>
           <Checkbox
             checked={data?.sections?.terms.agreement.accepted}
-            TextComponent={<TextComponent>I acknowledge</TextComponent>}
+            TextComponent={
+              <TextComponent>
+                <TextComponent style={{ fontWeight: 600 }}>I acknowledge</TextComponent> that I have
+                read and understand the above terms.
+              </TextComponent>
+            }
           />
         </SectionComponent>
       )}

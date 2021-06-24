@@ -1,16 +1,13 @@
+import React, { ReactNode } from 'react';
 import { Text, View, Font, StyleSheet, Svg } from '@react-pdf/renderer';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import Typography from '@icgc-argo/uikit/Typography';
-
-import { ReactNode } from 'react';
-import React from 'react';
-import PDFLayout from './PdfLayout';
 import Link from '@icgc-argo/uikit/Link';
-import PDFIcgcDaco from './icons/PDFIcgcDaco';
+
+import PDFLayout from './PdfLayout';
 import EmptyCheckbox from './icons/EmptyCheckbox';
 import FilledCheckbox from './icons/FilledCheckbox';
 
-// for some reason the fonts do not display properly on a hard reload, but the pdf download is fine. which in the end is good enough
 const WorkSansBold = require('public/fonts/WorkSans-Bold.ttf').default;
 const WorkSansLight = require('public/fonts/WorkSans-Light.ttf').default;
 const WorkSansRegular = require('public/fonts/WorkSans-Regular.ttf').default;
@@ -43,7 +40,7 @@ export const styles = StyleSheet.create({
     fontFamily: 'WorkSans',
     fontWeight: 'semibold',
     fontSize: '24px',
-    lineHeight: 1.7,
+    lineHeight: 1.4,
   },
   text: {
     fontFamily: 'WorkSans',
@@ -56,6 +53,14 @@ export const styles = StyleSheet.create({
   },
   link: {
     color: defaultTheme.colors.accent2_dark,
+  },
+  sectionTitle: {
+    fontFamily: 'WorkSans',
+    color: defaultTheme.colors.secondary,
+    fontSize: '14px',
+    fontWeight: 'semibold',
+    lineHeight: 1.4,
+    margin: '10px 0',
   },
 });
 
@@ -80,6 +85,10 @@ export const PDFLink = ({ children, style }: { children: ReactNode; style?: any 
   return <Text style={{ ...styles.paragraph, ...styles.link, ...style }}>{children}</Text>;
 };
 
+export const SectionTitle = ({ children, style }: { children: ReactNode; style?: any }) => {
+  return <Text style={styles.sectionTitle}>{children}</Text>;
+};
+
 export const Checkbox = ({ TextComponent, checked }: { TextComponent: any; checked: boolean }) => {
   return (
     <View style={{ display: 'flex', flexDirection: 'row' }}>
@@ -91,6 +100,9 @@ export const Checkbox = ({ TextComponent, checked }: { TextComponent: any; check
 
 // ui components
 export const Section = ({ children }: { children: ReactNode }) => <section>{children}</section>;
+
+// need to use element other than React.Fragment so props can be passed
+export const ContainerDiv = ({ children }: { children: ReactNode }) => <div>{children}</div>;
 
 export const UITitle = ({ children }: { children: ReactNode }) => (
   <Typography bold component="h2">
@@ -112,6 +124,6 @@ export const getStaticComponents = (isPdf: boolean) => {
         TitleComponent: UITitle,
         LinkComponent: Link,
         SectionComponent: Section,
-        ContainerComponent: React.Fragment,
+        ContainerComponent: ContainerDiv,
       };
 };

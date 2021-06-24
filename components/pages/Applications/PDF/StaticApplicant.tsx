@@ -1,8 +1,11 @@
 import React from 'react';
-import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
-import { getStaticComponents, styles } from './common';
+import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 
-const StaticApplicant = ({ isPdf = false, data = {} }: { isPdf?: boolean; data: any }) => {
+import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
+import { getStaticComponents, SectionTitle } from './common';
+import FORM_TEXT from './textConstants';
+
+const StaticApplicant = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?: any }) => {
   const {
     TextComponent,
     TitleComponent,
@@ -11,7 +14,11 @@ const StaticApplicant = ({ isPdf = false, data = {} }: { isPdf?: boolean; data: 
   } = getStaticComponents(isPdf);
 
   return (
-    <ContainerComponent>
+    <ContainerComponent
+      appId={data.appId}
+      state={data.state}
+      applicant={data?.sections?.applicant.info}
+    >
       <TitleComponent>A. Applicant Information (Principal Investigator)</TitleComponent>
       <SectionComponent>
         <TextComponent>
@@ -29,6 +36,11 @@ const StaticApplicant = ({ isPdf = false, data = {} }: { isPdf?: boolean; data: 
         </TextComponent>
         {!isPdf && <RequiredFieldsMessage />}
       </SectionComponent>
+      {isPdf && (
+        <SectionComponent style={{ borderTop: `1px solid ${defaultTheme.colors.grey_1}` }}>
+          <SectionTitle>{FORM_TEXT.applicant.title}</SectionTitle>
+        </SectionComponent>
+      )}
     </ContainerComponent>
   );
 };

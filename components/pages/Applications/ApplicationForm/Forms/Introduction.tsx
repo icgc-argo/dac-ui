@@ -12,6 +12,7 @@ import {
 import { isRequired, useLocalValidation } from './validations';
 import { css } from '@icgc-argo/uikit';
 import StaticApplicant from '../../PDF/StaticApplicant';
+import FORM_TEXT from '../../PDF/textConstants';
 
 const Introduction = ({
   isSectionDisabled,
@@ -30,11 +31,13 @@ const Introduction = ({
     validateFieldTouched: (event: any) => void;
   } = useLocalValidation(storedFields, validateSection('introduction'));
 
+  // for local testing, will be removed when pdf feature complete
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     // cannot render PDFDownloadLink on server side, dynamically importing did not resolve the issue
     setIsClient(true);
   }, []);
+
   return (
     <article>
       <div
@@ -45,70 +48,21 @@ const Introduction = ({
           align-items: center;
         `}
       >
-        {isClient && (
+        {/* PDFViewer is for testing locally, so commenting out in pr. Will be removed when pdf feature completed */}
+        {/* {isClient && (
           <PDFViewer height="800" width="500">
             <Document>
               <StaticIntroduction isPdf />
               <StaticApplicant isPdf />
             </Document>
           </PDFViewer>
-        )}
+        )} */}
       </div>
 
-      {/* <Typography bold component="h2">
-        Introduction
-      </Typography> */}
-
-      {/* <section> */}
       <StaticIntroduction />
-      {/* <Typography>
-          This application form must be completed by you and the legal entity with which you are
-          affiliated (“You”) prior to being granted access to International Cancer Genome Consortium
-          (“ICGC”) controlled data (the “ICGC Controlled Data” as further defined in Section G of
-          this application). To receive access, you must complete this entire application form and
-          agree to its terms by signing Section G of this application. All sections, as well as
-          Appendices I through VIII, are integral components of this application. Your Research
-          Project will be checked for conformity with the{' '}
-          <Link href="#" rel="noopener noreferrer" target="_blank">
-            goals and policies of ICGC
-          </Link>{' '}
-          (see Appendix I) including, but not limited to, policies concerning the purpose and
-          relevance of the research, the protection of the participants and the security of the
-          participants’ data.
-        </Typography>
-
-        <Typography>
-          The terms You accept in this application, form an agreement between You and the{' '}
-          <Link href="#" rel="noopener noreferrer" target="_blank">
-            Ontario Institute for Cancer Research (“OICR”)
-          </Link>{' '}
-          which is the legal entity that administrates the ICGC Controlled Data on behalf of ICGC
-          member institutions. OICR includes its employees, officers, directors, contractors,
-          subcontractors and agents (including the DACO, as defined immediately below).
-        </Typography>
-
-        <Typography>
-          If the Data Access Compliance Office of the ICGC (the “DACO”), approves your application,
-          access to the ICGC Controlled Data will be granted for a one year period (starting from
-          the date You are approved for access). An Annual Renewal Application must be completed by
-          You in order to access/use controlled data beyond that one-year time period and thereafter
-          as applicable.
-        </Typography>
-
-        <Typography>
-          If your application is approved, You agree that Your application information will be
-          included in a registry containing the applicants’ names, institutions and lay summaries of
-          the scientific abstracts of all applicants having been granted access to ICGC Controlled
-          Data. The ICGC DACO Approved Projects are posted on the{' '}
-          <Link href="#" rel="noopener noreferrer" target="_blank">
-            ICGC ARGO website
-          </Link>
-          .
-        </Typography> */}
-      {/* </section> */}
       <section>
         <Typography bold component="h3" color="secondary">
-          ACKNOWLEDGEMENT
+          {FORM_TEXT.introduction.title}
         </Typography>
 
         <FormControl
