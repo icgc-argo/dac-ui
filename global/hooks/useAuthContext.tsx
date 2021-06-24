@@ -74,6 +74,7 @@ export const AuthProvider = ({
   const cancelTokenSource = axios.CancelToken.source();
   const cancelFetchWithAuth = cancelTokenSource.cancel;
   const fetchWithAuth = ({
+    data,
     params = {},
     headers = {},
     method = 'GET' as Method,
@@ -91,6 +92,7 @@ export const AuthProvider = ({
     }
 
     const config: AxiosRequestConfig = {
+      ...(!['DELETE', 'GET'].includes(method) && { data }),
       baseURL: NEXT_PUBLIC_DAC_API_ROOT,
       cancelToken: cancelTokenSource.token,
       headers: {

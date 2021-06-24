@@ -1,3 +1,4 @@
+import { Method } from 'axios';
 import { SortingRule } from 'react-table';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
@@ -19,6 +20,9 @@ export type SortedChangeFunction = (
 ) => void;
 
 export type ApplicationsRequestData = {
+  appId?: string;
+  data?: any;
+  method?: Method;
   page?: number;
   pageSize?: number;
   sort?: ApplicationsSort[];
