@@ -6,19 +6,21 @@ const EthicsLetter = dynamic(() => import('./EthicsLetter'));
 const Introduction = dynamic(() => import('./Introduction'));
 const ITAgreements = dynamic(() => import('./ITAgreements'));
 const Representative = dynamic(() => import('./Representative'));
+const ProjectInfo = dynamic(() => import('./ProjectInfo'));
+const Collaborators = dynamic(() => import('./Collaborators'));
 
 export const sectionsData = {
   appendices: { component: Appendices, description: 'H. Appendices' },
   applicant: { component: Applicant, description: 'A. Applicant Information' },
-  collaborators: { description: 'C. Collaborators' },
+  collaborators: { component: Collaborators, description: 'C. Collaborators' },
   dataAccessAgreements: {
     component: DataAccessAgreements,
     description: 'G. Data Access Agreement',
   },
   ethicsLetter: { component: EthicsLetter, description: 'E. Ethics' },
   introduction: { component: Introduction, description: 'Introduction' },
-  project: { description: 'D. Project Information' },
   itAgreements: { component: ITAgreements, description: 'F. IT Agreements' },
+  projectInfo: { component: ProjectInfo, description: 'D. Project Information' },
   representative: { component: Representative, description: 'B. Institutional Representative' },
   signature: {
     description: 'Sign & Submit',
@@ -33,7 +35,7 @@ export const sectionsOrder = [
   'applicant',
   'representative',
   'collaborators',
-  'project',
+  'projectInfo',
   'ethicsLetter',
   'itAgreements',
   'dataAccessAgreements',

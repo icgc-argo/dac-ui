@@ -46,9 +46,10 @@ const DashboardCard = ({ title, subtitle, info, children }: DashboardCardProps) 
         />
         <div>
           <Typography
-            component="h1"
+            as="h2"
             css={css`
               margin: 0;
+              font-size: 18px;
             `}
             variant="subtitle"
           >
@@ -81,7 +82,13 @@ const DashboardCard = ({ title, subtitle, info, children }: DashboardCardProps) 
         )}
       </header>
 
-      {children}
+      <div
+        css={css`
+          padding: 24px;
+        `}
+      >
+        {children}
+      </div>
     </div>
   );
 };

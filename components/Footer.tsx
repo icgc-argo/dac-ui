@@ -15,6 +15,8 @@ import {
 } from 'global/constants/externalPaths';
 import { LinkProps } from './NavBar';
 import { getConfig } from 'global/config';
+import { useHealthAPI } from 'global/hooks';
+import { APP_VERSION } from 'global/constants';
 
 const { NEXT_PUBLIC_ARGO_ROOT, NEXT_PUBLIC_ARGO_PLATFORM_ROOT } = getConfig();
 
@@ -92,6 +94,9 @@ const showBreak = (i: number, total: number) => {
 };
 
 const LinksSection = () => {
+  const { error, isLoading, response } = useHealthAPI();
+  const apiVersion = !error && !isLoading && response && response.data.version;
+
   return (
     <div
       css={css`
@@ -123,6 +128,7 @@ const LinksSection = () => {
           `}
         >
           © 2021 ICGC Data Access Compliance Office. All rights reserved.
+          UI v{APP_VERSION}{apiVersion && ` - API v${apiVersion}`}
         </div>
         <div
           css={css`

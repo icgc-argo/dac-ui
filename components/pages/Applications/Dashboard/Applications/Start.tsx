@@ -4,20 +4,38 @@ import Icon from '@icgc-argo/uikit/Icon';
 import Link from '@icgc-argo/uikit/Link';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
+import { useAuthContext } from 'global/hooks';
 import React from 'react';
 import DashboardCard from '../Card';
+import { useRouter } from 'next/router';
+import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
+import { API } from 'global/constants/externalPaths';
 
 const StartApplication = () => {
   const theme = useTheme();
+  const { fetchWithAuth } = useAuthContext();
+  const router = useRouter();
+
+  const createNewApplication = () => {
+    fetchWithAuth({
+      url: API.APPLICATIONS,
+      method: 'POST',
+    })
+      .then(({ data }: { data: any }) => {
+        router.push(`${APPLICATIONS_PATH}/${data.appId}`);
+      })
+      .catch((e: any) => console.error('Failed to create new application.', e));
+  };
+
   return (
-    <DashboardCard title="Start a new application">
+    <DashboardCard title="Start a New Application">
       <div
         css={css`
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          padding: 65px 0;
+          padding: 40px 0;
         `}
       >
         <Typography
@@ -33,7 +51,7 @@ const StartApplication = () => {
           <Link>eligible project teams.</Link>
         </Typography>
 
-        <Button onClick={function noRefCheck() {}} size="sm">
+        <Button onClick={createNewApplication} size="sm">
           <Icon
             css={css`
               margin-bottom: -2px;

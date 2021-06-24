@@ -13,7 +13,7 @@ import {
   FORM_STATES,
 } from '../types';
 
-export { isRequired } from './helpers';
+export { getMin, isRequired } from './helpers';
 
 export const validationReducer = (
   state: FormValidationStateParameters,
@@ -33,16 +33,24 @@ export const validationReducer = (
             ? Object.entries({
                 ...state[action.section]?.fields?.[fieldName]?.value,
                 ...action.value,
-              }).map(([, item]: [any, any]) =>
-                errorValue.includes(item.value)
-                  ? {
-                      ...item,
-                      error: item.error?.includes(error)
-                        ? item.error
-                        : [error, ...(item.error || [])],
-                    }
-                  : item,
-              )
+              })
+                .map(([, item]: [any, any]) =>
+                  errorValue.includes(item.value)
+                    ? {
+                        ...item,
+                        error: item.error?.includes(error)
+                          ? item.error
+                          : [error, ...(item.error || [])],
+                      }
+                    : item,
+                )
+                .reduce(
+                  (acc, item, index) => ({
+                    ...acc,
+                    [index]: item,
+                  }),
+                  {},
+                )
             : {
                 ...state[action.section]?.fields?.[fieldName]?.value,
                 ...action.value,
@@ -92,6 +100,27 @@ export const validationReducer = (
       };
     }
 
+    case 'remove': {
+      return {
+        ...state,
+        [action.section]: {
+          ...state[action.section],
+          fields: {
+            ...state[action.section]?.fields,
+            [action.field]: {
+              ...state[action.section]?.fields?.[action.field],
+              value: {
+                ...state[action.section]?.fields?.[action.field]?.value,
+                [action.value]: {
+                  hidden: true,
+                },
+              },
+            },
+          },
+        },
+      };
+    }
+
     default:
       console.info('unhandled action type', action.type);
       return state;
@@ -133,15 +162,28 @@ export const validator: FormSectionValidatorFunction_Main =
       const [fieldName, fieldIndex, fieldOverride] = field.split('--');
       const fieldIsArray = !Number.isNaN(Number(fieldIndex));
 
+      if (fieldOverride) {
+        const results = {
+          field: fieldName,
+          section: origin,
+          type: fieldOverride,
+          value: fieldIndex,
+        } as FormValidationAction;
+
+        dispatch(results);
+
+        return results;
+      }
+
       const { error } = await schemaValidator(
         yup.reach(
           combinedSchema[origin],
           fieldIndex && fieldOverride !== 'overall' ? `${fieldName}[${fieldIndex}]` : fieldName,
         ),
         fieldOverride === 'overall'
-          ? Object.values<FormFieldType>(validationState[origin]?.fields[fieldName]?.value).map(
-              ({ value }) => value,
-            )
+          ? Object.values<FormFieldType>(validationState[origin]?.fields[fieldName]?.value)
+              .filter(({ hidden }) => !hidden)
+              .map(({ value }) => value)
           : value,
       );
 

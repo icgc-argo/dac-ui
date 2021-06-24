@@ -1,13 +1,14 @@
 {
   "name": "dac-ui",
-  "version": "0.6.1",
+  "version": "0.8.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "mock-server": "npx json-server --watch mock/db.json --port 3001"
   },
   "dependencies": {
     "@emotion/babel-plugin": "^11.3.0",
