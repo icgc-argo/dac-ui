@@ -23,9 +23,6 @@ const ApproveModal = ({
   const startDate = format(new Date(), DATE_FORMAT);
   const endDate = format(add(new Date(startDate), { years: 1 }), DATE_FORMAT);
 
-  const submitApproval = () => {
-    const { error, response, isLoading } = useApplicationsAPI({ appId, data: { state: 'REVIEW' }, method: 'PATCH' });
-  };
 
   return (
     <Modal

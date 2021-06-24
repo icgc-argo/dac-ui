@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AxiosError, AxiosResponse, Method } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import { ApplicationsRequestData } from '../../components/pages/Applications/types';
 import useAuthContext from './useAuthContext';
 import {
@@ -11,7 +11,7 @@ import {
 } from 'components/pages/Applications/ManageApplications/utils';
 import { API } from 'global/constants/externalPaths';
 
-const useApplicationsAPI = ({
+export const useApplicationsAPI = ({
   appId = '',
   data,
   method,
@@ -22,6 +22,7 @@ const useApplicationsAPI = ({
 }: ApplicationsRequestData = {}) => {
   const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
   const [error, setError] = useState<AxiosError | undefined>(undefined);
+  const [isLoadingApplications, setIsLoadingApplications] = useState<boolean>(true)
 
   const { fetchWithAuth, isLoading, token } = useAuthContext();
 
@@ -43,11 +44,45 @@ const useApplicationsAPI = ({
         })
         .catch((err: any) => {
           setError(err);
-        });
+        })
+        .finally(() => {
+          setIsLoadingApplications(false);
+        })
     }
   }, [page, pageSize, stringifySort(sort)]);
 
-  return { error, isLoading, response };
+  return { error, isLoadingApplications, response };
 };
 
-export default useApplicationsAPI;
+export const useSubmitApplication = ({
+  appId = '',
+  data,
+  method,
+  params,
+}: ApplicationsRequestData = {}) => {
+  const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
+  const [error, setError] = useState<AxiosError | undefined>(undefined);
+  const [isLoadingApplications, setIsLoadingApplications] = useState<boolean>(true)
+
+  const { fetchWithAuth } = useAuthContext();
+
+  const onSubmit = () => {
+    fetchWithAuth({
+      data,
+      method,
+      params,
+      url: `${API.APPLICATIONS}/${appId}`,
+    })
+      .then((res: any) => {
+        setResponse(res);
+      })
+      .catch((err: any) => {
+        setError(err);
+      })
+      .finally(() => {
+        setIsLoadingApplications(false);
+      })
+  };
+
+  return { error, isLoadingApplications, onSubmit, response };
+};
