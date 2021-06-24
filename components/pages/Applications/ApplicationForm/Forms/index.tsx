@@ -27,7 +27,7 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
   const [selectedSection, setSelectedSection] = useState(
     sectionFromQuery || (sectionsOrder[0] as FormSectionNames),
   );
-  const { validationState, validateSection } = useFormValidation(appId);
+  const { isLoading, validationState, validateSection } = useFormValidation(appId);
   const theme: UikitTheme = useTheme();
 
   useEffect(() => {
@@ -49,7 +49,7 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
   const handleSectionChange = useCallback(
     (section: FormSectionNames) => {
       ['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
-        validationState[selectedSection]?.overall || '',
+        validationState.sections[selectedSection]?.overall || '',
       ) || validateSection(selectedSection, !!'validateSelectedSection')();
 
       setSelectedSection(section);

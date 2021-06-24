@@ -46,7 +46,7 @@ const Outline = ({
       </Typography>
 
       {sections.map((name) => {
-        const status = validationState[name]?.overall || 'pristine';
+        const status = validationState.sections[name]?.overall || 'pristine';
 
         return (
           <FormSection

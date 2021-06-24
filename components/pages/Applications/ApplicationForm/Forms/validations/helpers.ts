@@ -10,11 +10,6 @@ import {
   FormFieldType,
 } from '../types';
 
-export const schemaValidator = (fieldSchema: any, value: any) =>
-  fieldSchema.validate(value).catch((error: yup.ValidationError) => ({
-    error: error?.errors?.length > 0 ? error.errors : error.message,
-  }));
-
 // the one same letter, in norwegian AND in swedish: i.e. highly unlikely used together
 export const LINE_JUMP_PLACEHOLDER = ' øö ';
 
@@ -83,6 +78,11 @@ export const maxWords = (max: number) => ({
   },
   test: (value: string) => countWordsInString(value) <= max,
 });
+
+export const schemaValidator = (fieldSchema: any, value: any) =>
+  fieldSchema.validate(value).catch((error: yup.ValidationError) => ({
+    error: error?.errors?.length > 0 ? error.errors : error.message,
+  }));
 
 export const transformContriesToSelectOptions = (countriesList: CountryNamesAndAbbreviations[]) =>
   countriesList.map(({ name }: CountryNamesAndAbbreviations) => ({

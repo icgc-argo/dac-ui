@@ -176,7 +176,8 @@ export type FormValidationActionTypes =
   | 'string'
   | 'object'
   | 'overall'
-  | 'remove';
+  | 'remove'
+  | 'seeding';
 
 export type FormValidationAction = {
   error?: string[];
@@ -188,6 +189,7 @@ export type FormValidationAction = {
 };
 
 interface FormValidationState_Base {
+  appId: string;
   approvedAtUtc?: string;
   approvedBy?: string;
   closedAtUtc?: string;
@@ -195,16 +197,17 @@ interface FormValidationState_Base {
   createdAtUtc?: string;
   denialReason?: string;
   expiresAtUtc?: string;
-  id: string;
-  state?: string;
+  lastUpdatedAtUtc?: string;
+  revisionRequest: any; // temporary state
+  state?: string; // called `state` in BE, but that complicates things in FE
   submittedAtUtc?: string;
   submitterId?: string;
-  updatedAtUtc?: string;
-  version: number;
+  __v: number;
 }
 
-export type FormValidationStateParameters = FormValidationState_Base &
-  Record<FormSectionNames, FormSectionValidationState_SectionBase>;
+export type FormValidationStateParameters = FormValidationState_Base & {
+  sections: Record<FormSectionNames, FormSectionValidationState_SectionBase>;
+};
 
 export type FormSectionUpdateLocalStateFunction = (fieldData: FormValidationAction) => void;
 
