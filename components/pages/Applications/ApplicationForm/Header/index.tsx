@@ -28,7 +28,7 @@ const ApplicationHeader = ({ appId = 'none' }): ReactElement => {
 
         <Progress />
 
-        <Actions />
+        <Actions appId={appId} />
       </div>
     </PageHeader>
   );

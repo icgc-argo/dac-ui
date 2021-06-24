@@ -1,16 +1,17 @@
 import FormCheckbox from '@icgc-argo/uikit/form/FormCheckbox';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
-import Link from '@icgc-argo/uikit/Link';
 import Typography from '@icgc-argo/uikit/Typography';
-import Wat from 'components/test';
-
-import RequiredFieldsMessage from './RequiredFieldsMessage';
+import StaticIntroduction from 'components/pages/Applications/PDF/StaticIntroduction';
+import { useState, useEffect } from 'react';
+import { PDFViewer, Document } from '@react-pdf/renderer';
 import {
   FormSectionValidationState_Introduction,
   FormSectionValidatorFunction_Origin,
 } from './types';
 import { isRequired, useLocalValidation } from './validations';
+import { css } from '@icgc-argo/uikit';
+import StaticApplicant from '../../PDF/StaticApplicant';
 
 const Introduction = ({
   isSectionDisabled,
@@ -29,15 +30,38 @@ const Introduction = ({
     validateFieldTouched: (event: any) => void;
   } = useLocalValidation(storedFields, validateSection('introduction'));
 
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    // cannot render PDFDownloadLink on server side, dynamically importing did not resolve the issue
+    setIsClient(true);
+  }, []);
   return (
     <article>
-      <Typography bold component="h2">
-        Introduction
-      </Typography>
+      <div
+        css={css`
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        `}
+      >
+        {isClient && (
+          <PDFViewer height="800" width="500">
+            <Document>
+              <StaticIntroduction isPdf />
+              <StaticApplicant isPdf />
+            </Document>
+          </PDFViewer>
+        )}
+      </div>
 
-      <section>
-        <Wat />
-        {/* <Typography>
+      {/* <Typography bold component="h2">
+        Introduction
+      </Typography> */}
+
+      {/* <section> */}
+      <StaticIntroduction />
+      {/* <Typography>
           This application form must be completed by you and the legal entity with which you are
           affiliated (“You”) prior to being granted access to International Cancer Genome Consortium
           (“ICGC”) controlled data (the “ICGC Controlled Data” as further defined in Section G of
@@ -81,9 +105,7 @@ const Introduction = ({
           </Link>
           .
         </Typography> */}
-        <RequiredFieldsMessage />
-      </section>
-
+      {/* </section> */}
       <section>
         <Typography bold component="h3" color="secondary">
           ACKNOWLEDGEMENT

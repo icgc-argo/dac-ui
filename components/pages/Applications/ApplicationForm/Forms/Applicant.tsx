@@ -6,6 +6,7 @@ import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import MultiSelect, { Option } from '@icgc-argo/uikit/form/MultiSelect';
 import Select from '@icgc-argo/uikit/form/Select';
 import Typography from '@icgc-argo/uikit/Typography';
+import StaticApplicant from '../../PDF/StaticApplicant';
 
 import { countriesList, honorificsList } from './constants';
 import DoubleFieldRow from './DoubleFieldRow';
@@ -33,12 +34,13 @@ const Applicant = ({
 
   return (
     <article>
-      <Typography bold component="h2">
+      {/* <Typography bold component="h2">
         A. Applicant Information (Principal Investigator)
-      </Typography>
+      </Typography> */}
 
-      <section>
-        <Typography>
+      <StaticApplicant />
+      {/* <section> */}
+      {/* <Typography>
           Qualified applicants for access to the ICGC Controlled Data{' '}
           <Typography as="span" bold>
             must be independent researchers who are affiliated with a legal entity
@@ -50,10 +52,9 @@ const Applicant = ({
         <Typography>
           Please include a valid Google email address that will be used to log in to ICGC ARGO and
           ICGC 25K and will be the email address associated with ICGC Controlled Data access.
-        </Typography>
+        </Typography> */}
 
-        <RequiredFieldsMessage />
-      </section>
+      {/* </section> */}
 
       <section>
         <Typography bold component="h3" color="secondary">
