@@ -1,3 +1,67 @@
 {
-  "applications": [{ "id": 1, "state": "pending" }]
+  "applications": [
+    {
+      "appId": 0,
+      "state": "DRAFT",
+      "submitterId": "OICR",
+      "updatedAtUtc": "2021-06-08T20:47:32.686Z",
+      "expiresAtUtc": "2021-06-08T20:47:32.686Z"
+    },
+    {
+      "appId": 1,
+      "state": "SIGN AND SUBMIT",
+      "submitterId": "OICR",
+      "updatedAtUtc": "2012-04-23T18:25:43.511Z",
+      "expiresAtUtc": "2012-04-23T18:25:43.511Z"
+    },
+    {
+      "appId": 2,
+      "state": "REVIEW",
+      "submitterId": "OICR",
+      "updatedAtUtc": "2012-04-23T18:25:43.511Z",
+      "expiresAtUtc": "2012-04-23T18:25:43.511Z"
+    },
+    {
+      "appId": 3,
+      "state": "REVISIONS REQUESTED",
+      "submitterId": "OICR",
+      "updatedAtUtc": "2012-04-23T18:25:43.511Z",
+      "expiresAtUtc": "2012-04-23T18:25:43.511Z"
+    },
+    {
+      "appId": 4,
+      "state": "REJECTED",
+      "submitterId": "OICR",
+      "updatedAtUtc": "2012-04-23T18:25:43.511Z",
+      "expiresAtUtc": "2012-04-23T18:25:43.511Z"
+    },
+    {
+      "appId": 5,
+      "state": "APPROVED",
+      "submitterId": "OICR",
+      "updatedAtUtc": "2012-04-23T18:25:43.511Z",
+      "expiresAtUtc": "2012-04-23T18:25:43.511Z"
+    },
+    {
+      "appId": 6,
+      "state": "RENEWING",
+      "submitterId": "OICR",
+      "updatedAtUtc": "2012-04-23T18:25:43.511Z",
+      "expiresAtUtc": "2012-04-23T18:25:43.511Z"
+    },
+    {
+      "appId": 7,
+      "state": "CLOSED",
+      "submitterId": "OICR",
+      "updatedAtUtc": "2012-04-23T18:25:43.511Z",
+      "expiresAtUtc": "2012-04-23T18:25:43.511Z"
+    },
+    {
+      "appId": 8,
+      "state": "EXPIRED",
+      "submitterId": "OICR",
+      "updatedAtUtc": "2012-04-23T18:25:43.511Z",
+      "expiresAtUtc": "2012-04-23T18:25:43.511Z"
+    }
+  ]
 }

@@ -1,9 +1,10 @@
 import * as yup from 'yup';
 import { countriesList } from '../constants';
 import { FormSectionNames } from '../types';
-import { transformContriesToValidationOptions } from './helpers';
+import { transformContriesToValidationOptions, maxWords, uniquePublicationURLs } from './helpers';
 
 export const requiredMsg = 'Please fill out the required field.';
+export const textareaLimit = 200;
 
 yup.setLocale({
   mixed: {
@@ -12,7 +13,7 @@ yup.setLocale({
   },
   string: {
     email: 'Please enter a valid email address.',
-    url: 'Please enter a valid url.',
+    url: 'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
     min: '${label} must be at least ${min} characters.',
   },
   number: {
@@ -52,7 +53,13 @@ export const applicantSchema = yup.object().shape({
     .default('')
     .email('Please enter a valid email address.')
     .required(),
-  info_institutionWebsite: yup.string().default('').url('Please enter a valid url.').required(),
+  info_institutionWebsite: yup
+    .string()
+    .default('')
+    .url(
+      'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
+    )
+    .required(),
   info_institutionEmail: yup
     .string()
     .default('')
@@ -93,6 +100,32 @@ export const itAgreementsSchema = yup.object().shape({
   }),
 });
 
+export const projectInfoSchema = yup.object().shape({
+  aims: yup.string().default('').test(maxWords(200)).required(),
+  background: yup.string().default('').test(maxWords(200)).required(),
+  methodology: yup.string().default('').test(maxWords(200)).required(),
+  publicationURLs: yup
+    .array(
+      yup
+        .string()
+        .default('')
+        .url(
+          'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
+        )
+        .required(),
+    )
+    .test(uniquePublicationURLs)
+    .min(3),
+  summary: yup.string().default('').test(maxWords(200)).required(),
+  title: yup.string().default('').required(),
+  website: yup
+    .string()
+    .default('')
+    .url(
+      'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
+    ),
+});
+
 export const representativeSchema = yup.object().shape({
   address_building: yup.string().default(''),
   address_cityAndProvince: yup.string().default('').required(),
@@ -125,6 +158,7 @@ export const combinedSchema = {
   dataAccessAgreements: dataAccessAgreementsSchema,
   introduction: introductionSchema,
   itAgreements: itAgreementsSchema,
+  projectInfo: projectInfoSchema,
   representative: representativeSchema,
   signature: signatureSchema,
 } as Record<FormSectionNames, any>;

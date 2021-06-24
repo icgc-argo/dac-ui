@@ -1,4 +1,5 @@
 import { SortingRule } from 'react-table';
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
 export type ApplicationRecord = {
   appId: string;
@@ -18,9 +19,10 @@ export type SortedChangeFunction = (
 ) => void;
 
 export type ApplicationsRequestData = {
-  page: number;
-  pageSize: number;
-  sort: string;
+  page?: number;
+  pageSize?: number;
+  sort?: ApplicationsSort[];
+  states?: ApplicationState[];
 };
 
 export type ApplicationsSort = {
@@ -47,7 +49,7 @@ export type ApplicationsResponseItem = {
     declaredAsRequired: string;
   };
   expiresAtUtc: string;
-  updatedAtUtc: string;
+  lastUpdatedAtUtc: string;
   state: string;
 };
 
@@ -61,12 +63,13 @@ export type ApplicationsResponseData = {
 };
 
 export enum ApplicationsField {
-  'applicant.info.displayName' = 'applicant.info.displayName',
-  'applicant.info.googleEmail' = 'applicant.info.googleEmail',
-  'applicant.info.primaryAffiliation' = 'applicant.info.primaryAffiliation',
-  'ethics.declaredAsRequired' = 'ethics.declaredAsRequired',
+  // TODO: nested properties currently can't sort. waiting for backend
+  'applicant.info.displayName' = 'displayName',
+  'applicant.info.googleEmail' = 'googleEmail',
+  'applicant.info.primaryAffiliation' = 'primaryAffiliation',
+  'ethics.declaredAsRequired' = 'ethicsRequired',
   appId = 'appId',
   expiresAtUtc = 'expiresAtUtc',
+  lastUpdatedAtUtc = 'lastUpdatedAtUtc',
   state = 'state',
-  updatedAtUtc = 'updatedAtUtc',
 }

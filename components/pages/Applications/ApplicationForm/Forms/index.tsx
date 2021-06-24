@@ -131,6 +131,11 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
                       margin-top: -10px;
                     }
                   }
+
+                  + [class*='DoubleFieldRow'],
+                  + [class*='FormControl'] {
+                    margin-top: 20px;
+                  }
                 }
 
                 // for the horizontal design in this app
@@ -175,6 +180,19 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
                     + p {
                       margin-top: 30px;
                     }
+                  }
+
+                  textarea {
+                    font-size: 12px;
+                    line-height: 13px;
+                  }
+                }
+
+                [class*='DoubleFieldRow'] {
+                  margin-bottom: 10px;
+
+                  [class*='FormControl'] {
+                    margin-bottom: 0;
                   }
                 }
               }

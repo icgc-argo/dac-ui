@@ -69,11 +69,10 @@ const ITAgreements = ({
           css={css`
             font-size: 13px;
             margin-left: -10px;
-            padding: 0;
+            padding-left: 25px;
 
             li {
               padding: 10px;
-              list-style-position: inside;
 
               &:nth-of-type(even) {
                 background: ${theme.colors.grey_4};
@@ -164,8 +163,7 @@ const ITAgreements = ({
           component="ul"
           css={css`
             font-size: 13px;
-            list-style-position: inside;
-            padding-left: 0;
+            padding-left: 15px;
           `}
         >
           <li>Logging and auditing of access to data and to computer network</li>

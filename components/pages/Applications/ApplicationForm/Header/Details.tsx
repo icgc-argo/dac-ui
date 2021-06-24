@@ -3,6 +3,8 @@ import { css } from '@icgc-argo/uikit';
 import Link from '@icgc-argo/uikit/Link';
 import Typography from '@icgc-argo/uikit/Typography';
 
+import { APPLICATIONS_PATH } from 'global/constants';
+
 const HeaderDetails = ({
   applicant,
   createdAt,
@@ -26,7 +28,7 @@ const HeaderDetails = ({
         margin: 0 0 5px;
       `}
     >
-      <Link>My Applications</Link>: {appId.toUpperCase()}
+      <Link href={APPLICATIONS_PATH}>My Applications</Link>: {appId.toUpperCase()}
     </Typography>
 
     {(createdAt || lastUpdated) && (
