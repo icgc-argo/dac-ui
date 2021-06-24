@@ -26,7 +26,7 @@ const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
       </Document>,
     ).toBlob();
 
-    saveAs(blob, 'testPage');
+    saveAs(blob, `${data.appId}-${data.state}`);
   };
 
   return (
