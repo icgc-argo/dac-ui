@@ -23,7 +23,7 @@ import {
   DEFAULT_PAGE,
   DEFAULT_SORT,
   formatTableData,
-  statesAllowList,
+  adminStatesAllowList,
   tableColumns,
 } from './utils';
 
@@ -90,7 +90,7 @@ const ManageApplications = (): ReactElement => {
     page,
     pageSize,
     sort,
-    states: statesAllowList,
+    states: adminStatesAllowList,
   });
 
   const { items = [] } = response?.data || {};

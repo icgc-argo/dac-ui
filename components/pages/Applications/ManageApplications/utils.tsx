@@ -109,7 +109,7 @@ export const DEFAULT_SORT: ApplicationsSort[] = [
   { field: 'state', order: 'desc' } as ApplicationsSort,
 ];
 
-export const statesAllowList = [
+export const adminStatesAllowList = [
   'APPROVED',
   'CLOSED',
   'EXPIRED',
