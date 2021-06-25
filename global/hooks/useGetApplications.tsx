@@ -41,17 +41,17 @@ const useGetApplications = ({
         },
         url: urlJoin(API.APPLICATIONS, appId),
       })
-        .then((res: any) => {
+        .then((res: AxiosResponse) => {
           setResponse(res);
         })
-        .catch((err: any) => {
+        .catch((err: AxiosError) => {
           setError(err);
         })
         .finally(() => {
           setIsLoading(false);
         })
     }
-  }, [appId, page, pageSize, stringifySort(sort)]);
+  }, [page, pageSize, stringifySort(sort)]);
 
   return { error, isLoading, response };
 };
