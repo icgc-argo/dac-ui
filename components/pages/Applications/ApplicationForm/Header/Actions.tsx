@@ -12,6 +12,7 @@ import StaticIntroduction from 'components/pages/Applications/PDF/StaticIntroduc
 import StaticApplicant from '../../PDF/StaticApplicant';
 import { useAuthContext } from 'global/hooks';
 import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
+import { AxiosError } from 'axios';
 
 const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
   const theme: UikitTheme = useTheme();
@@ -48,13 +49,15 @@ const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
         size="sm"
         onClick={async () => {
           const data = await fetchWithAuth({ url: urlJoin(APPLICATIONS_PATH, appId) })
-            .then((res: any) => {
-              if (res.status === 200) {
-                return res.data;
-              }
-            })
-            .catch((err: any) => console.log('ERROR! ', err));
-          generatePDFDocument(data);
+            .then((res: any) => res.data)
+            .catch((err: AxiosError) => {
+              console.error('Application fetch failed, pdf not generated.', err);
+              return null;
+            });
+          // if data fetch fails, do not proceed to pdf generation
+          if (data) {
+            generatePDFDocument(data);
+          }
         }}
       >
         <Icon
