@@ -103,6 +103,7 @@ export const AuthProvider = ({
       method,
       params,
       url,
+      validateStatus: (status) => status === 200,
     };
 
     return axios(config)
