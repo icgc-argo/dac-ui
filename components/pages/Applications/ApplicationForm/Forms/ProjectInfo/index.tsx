@@ -45,12 +45,15 @@ const ProjectInfo = ({
           BASIC INFORMATION
         </Typography>
 
-        <FormControl error={!!localState.title?.error} required={isRequired(localState.title)}>
+        <FormControl
+          disabled={isSectionDisabled}
+          error={!!localState.title?.error}
+          required={isRequired(localState.title)}
+        >
           <InputLabel htmlFor="title">Project Title</InputLabel>
 
           <Input
             aria-label="Project Title"
-            disabled={isSectionDisabled}
             id="title"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -60,12 +63,15 @@ const ProjectInfo = ({
           <FormHelperText onErrorOnly>{localState.title?.error?.[0]}</FormHelperText>
         </FormControl>
 
-        <FormControl error={!!localState.website?.error} required={isRequired(localState.website)}>
+        <FormControl
+          disabled={isSectionDisabled}
+          error={!!localState.website?.error}
+          required={isRequired(localState.website)}
+        >
           <InputLabel htmlFor="website">Project Website</InputLabel>
 
           <Input
             aria-label="Project Website"
-            disabled={isSectionDisabled}
             id="website"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -94,6 +100,7 @@ const ProjectInfo = ({
 
         <FormControl
           className="vertical"
+          disabled={isSectionDisabled}
           error={!!localState.background?.error}
           required={isRequired(localState.background)}
         >
@@ -131,6 +138,7 @@ const ProjectInfo = ({
 
         <FormControl
           className="vertical"
+          disabled={isSectionDisabled}
           error={!!localState.aims?.error}
           required={isRequired(localState.aims)}
         >
@@ -168,6 +176,7 @@ const ProjectInfo = ({
 
         <FormControl
           className="vertical"
+          disabled={isSectionDisabled}
           error={!!localState.methodology?.error}
           required={isRequired(localState.methodology)}
         >
@@ -237,6 +246,7 @@ const ProjectInfo = ({
 
         <FormControl
           className="vertical"
+          disabled={isSectionDisabled}
           error={!!localState.summary?.error}
           required={isRequired(localState.summary)}
         >

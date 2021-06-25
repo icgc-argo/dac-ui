@@ -2,7 +2,7 @@ import dynamic from 'next/dynamic';
 
 import Loader from 'components/Loader';
 
-import { FormSectionNames } from './types';
+import { FormSectionNames, SectionStatusMapping } from './types';
 
 const Appendices = dynamic(() => import('./Appendices'), { loading: Loader });
 const Applicant = dynamic(() => import('./Applicant'), { loading: Loader });
@@ -298,3 +298,14 @@ export const countriesList = [
 ];
 
 export const honorificsList = ['Dr.', 'Miss', 'Mr.', 'Mrs.', 'Ms.', 'Prof.'];
+
+export const sectionStatusMapping: SectionStatusMapping = {
+  COMPLETE: 'complete',
+  DISABLED: 'disabled',
+  INCOMPLETE: 'incomplete',
+  LOCKED: 'locked',
+  PRISTINE: 'pristine',
+  'REVISIONS MADE': 'complete',
+  'REVISIONS REQUESTED': 'mustEdit',
+  'REVISIONS REQUESTED DISABLED': 'locked',
+};

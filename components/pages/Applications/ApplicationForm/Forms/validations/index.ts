@@ -4,7 +4,7 @@ import { isEqual, merge, omit } from 'lodash';
 import { API } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
 
-import { sectionsOrder } from '../constants';
+import { sectionsOrder, sectionStatusMapping } from '../constants';
 import {
   FormFieldType,
   FormSectionValidationState_Sections,
@@ -16,6 +16,7 @@ import {
   FORM_STATES,
   FormSectionNames,
   FormSectionValidationState_SectionBase,
+  SECTION_STATUS,
 } from '../types';
 import { getFieldDataFromEvent, schemaValidator, sectionFieldsSeeder } from './helpers';
 import yup, { combinedSchema } from './schemas';
@@ -161,6 +162,7 @@ export const validationReducer = (
                   ...validationData,
                   fields: sectionFieldsSeeder(validationData.fields, omit(seedData, 'meta')),
                   meta: seedData?.meta,
+                  overall: sectionStatusMapping[seedData?.meta?.status as SECTION_STATUS],
                 },
               }
             : seededSectionsData;
@@ -276,10 +278,6 @@ export const useFormValidation = (appId: string) => {
           }),
           {},
         ),
-        signature: {
-          ...combinedSchema.signature.describe(),
-          overall: FORM_STATES.DISABLED,
-        },
       },
       __seeded: false,
       __v: 0,

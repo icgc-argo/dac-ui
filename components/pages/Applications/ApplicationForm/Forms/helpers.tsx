@@ -34,7 +34,7 @@ export const sectionSelector = ({
   const SectionComponent = sectionsData[selectedSection]?.component;
   const { fields: storedFields = {}, overall } = formState.sections[selectedSection] || {};
 
-  const isSectionDisabled = [FORM_STATES.DISABLED || FORM_STATES.LOCKED].includes(overall);
+  const isSectionDisabled = [FORM_STATES.DISABLED, FORM_STATES.LOCKED].includes(overall);
 
   const {
     localState,

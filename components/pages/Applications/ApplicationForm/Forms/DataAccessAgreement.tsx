@@ -241,12 +241,12 @@ const DataAccessAgreement = ({
         <Typography bold>In signing this Agreement:</Typography>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.daa_correct_application_content?.error}
           required={isRequired(localState.agreements?.fields?.daa_correct_application_content)}
         >
           <FormCheckbox
             aria-label="You certify that the contents in the application are true and correct to the best of your knowledge and belief."
-            disabled={isSectionDisabled}
             checked={localState.agreements?.fields?.daa_correct_application_content?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -265,12 +265,12 @@ const DataAccessAgreement = ({
         </FormControl>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.daa_agree_to_terms?.error}
           required={isRequired(localState.agreements?.fields?.daa_agree_to_terms)}
         >
           <FormCheckbox
             aria-label="You have read and agree to abide by the terms and conditions outlined in the Data Access Agreement."
-            disabled={isSectionDisabled}
             checked={localState.agreements?.fields?.daa_agree_to_terms?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}

@@ -138,12 +138,15 @@ const PublicationURLs = ({
               `}
               key={`publicationsURLs--${index}`}
             >
-              <FormControl error={!!item.error} required={isRequired(innerType)}>
+              <FormControl
+                disabled={isSectionDisabled}
+                error={!!item.error}
+                required={isRequired(innerType)}
+              >
                 <InputLabel htmlFor="title">Publication URL</InputLabel>
 
                 <Input
                   aria-label="Project Title"
-                  disabled={isSectionDisabled}
                   id={`publicationsURLs--${index}`}
                   onBlur={validateFieldTouched}
                   onChange={validateFieldTouched}

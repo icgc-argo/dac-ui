@@ -53,10 +53,6 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
 
   const handleSectionChange = useCallback(
     (section: FormSectionNames) => {
-      ['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
-        formState.sections[selectedSection]?.overall || '',
-      ) || validateSection(selectedSection, !!'validateSelectedSection')();
-
       setSelectedSection(section);
     },
     [selectedSection, formState],

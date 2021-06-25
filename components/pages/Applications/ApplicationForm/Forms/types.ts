@@ -21,6 +21,17 @@ export enum EVENT_TARGET_TAGS {
   TEXTAREA = 'TEXTAREA',
 }
 
+export enum SECTION_STATUS {
+  COMPLETE = 'COMPLETE',
+  DISABLED = 'DISABLED',
+  INCOMPLETE = 'INCOMPLETE',
+  LOCKED = 'LOCKED',
+  PRISTINE = 'PRISTINE',
+  REVISIONS_MADE = 'REVISIONS MADE',
+  REVISIONS_REQUESTED = 'REVISIONS REQUESTED',
+  REVISIONS_REQUESTED_DISABLED = 'REVISIONS REQUESTED DISABLED',
+}
+
 export enum FORM_STATES {
   CAN_EDIT = 'canEdit',
   COMPLETE = 'complete',
@@ -31,6 +42,8 @@ export enum FORM_STATES {
   TOUCHED = 'touched',
   PRISTINE = 'pristine',
 }
+
+export type SectionStatusMapping = Record<SECTION_STATUS, FormSectionOverallState>;
 
 export type FormSectionOverallState = `${FORM_STATES}`;
 

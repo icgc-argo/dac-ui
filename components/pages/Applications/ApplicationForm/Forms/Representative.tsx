@@ -64,6 +64,7 @@ const Representative = ({
 
         <DoubleFieldRow>
           <FormControl
+            disabled={isSectionDisabled}
             error={!!localState.info_title?.error}
             required={isRequired(localState.info_title)}
           >
@@ -71,7 +72,6 @@ const Representative = ({
 
             <Select
               aria-label="Title"
-              disabled={isSectionDisabled}
               id="info_title"
               onBlur={validateFieldTouched}
               eventOnChange={validateFieldTouched}
@@ -86,6 +86,7 @@ const Representative = ({
 
         <DoubleFieldRow>
           <FormControl
+            disabled={isSectionDisabled}
             error={!!localState.info_firstName?.error}
             required={isRequired(localState.info_firstName)}
           >
@@ -93,7 +94,6 @@ const Representative = ({
 
             <Input
               aria-label="First Name"
-              disabled={isSectionDisabled}
               id="info_firstName"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
@@ -104,6 +104,7 @@ const Representative = ({
           </FormControl>
 
           <FormControl
+            disabled={isSectionDisabled}
             error={!!localState.info_middleName?.error}
             required={isRequired(localState.info_middleName)}
           >
@@ -111,7 +112,6 @@ const Representative = ({
 
             <Input
               aria-label="Middle Name"
-              disabled={isSectionDisabled}
               id="info_middleName"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
@@ -124,6 +124,7 @@ const Representative = ({
 
         <DoubleFieldRow>
           <FormControl
+            disabled={isSectionDisabled}
             error={!!localState.info_lastName?.error}
             required={isRequired(localState.info_lastName)}
           >
@@ -131,7 +132,6 @@ const Representative = ({
 
             <Input
               aria-label="Last Name"
-              disabled={isSectionDisabled}
               id="info_lastName"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
@@ -142,6 +142,7 @@ const Representative = ({
           </FormControl>
 
           <FormControl
+            disabled={isSectionDisabled}
             error={!!localState.info_suffix?.error}
             required={isRequired(localState.info_suffix)}
           >
@@ -149,7 +150,6 @@ const Representative = ({
 
             <Input
               aria-label="Suffix, e.g. Jr., Sr., MD."
-              disabled={isSectionDisabled}
               id="info_suffix"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
@@ -163,6 +163,7 @@ const Representative = ({
 
         <DoubleFieldRow helpText="Must match the applicant’s primary affiliation exactly.">
           <FormControl
+            disabled={isSectionDisabled}
             error={!!localState.info_primaryAffiliation?.error}
             required={isRequired(localState.info_primaryAffiliation)}
           >
@@ -170,7 +171,6 @@ const Representative = ({
 
             <Input
               aria-label="Primary Affiliation"
-              disabled={isSectionDisabled}
               id="info_primaryAffiliation"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
@@ -185,6 +185,7 @@ const Representative = ({
 
         <DoubleFieldRow helpText="Must be the institutional email address of the Principal Investigator.">
           <FormControl
+            disabled={isSectionDisabled}
             error={!!localState.info_institutionEmail?.error}
             required={isRequired(localState.info_institutionEmail)}
           >
@@ -192,7 +193,6 @@ const Representative = ({
 
             <Input
               aria-label="Institutional Email"
-              disabled={isSectionDisabled}
               id="info_institutionEmail"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
@@ -206,6 +206,7 @@ const Representative = ({
         </DoubleFieldRow>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.info_positionTitle?.error}
           required={isRequired(localState.info_positionTitle)}
         >
@@ -213,7 +214,6 @@ const Representative = ({
 
           <Input
             aria-label="Position Title"
-            disabled={isSectionDisabled}
             id="info_positionTitle"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -229,10 +229,9 @@ const Representative = ({
           INSTITUTION/COMPANY MAILING ADDRESS
         </Typography>
 
-        <FormControl>
+        <FormControl disabled={isSectionDisabled}>
           <FormCheckbox
             aria-label="Address is the same as the Applicant."
-            disabled={isSectionDisabled}
             checked={localState.addressSameAsApplicant?.value}
             onChange={() => {}}
             value="copyApplicantMailing"
@@ -244,6 +243,7 @@ const Representative = ({
         </FormControl>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.address_country?.error}
           required={isRequired(localState.address_country)}
         >
@@ -257,7 +257,6 @@ const Representative = ({
                 overflow: auto;
               }
             `}
-            disabled={isSectionDisabled}
             id="address_country"
             name="address_country"
             onChange={validateFieldTouched}
@@ -276,6 +275,7 @@ const Representative = ({
         </FormControl>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.address_building?.error}
           required={isRequired(localState.address_building)}
         >
@@ -283,7 +283,6 @@ const Representative = ({
 
           <Input
             aria-label="Building, e.g. MaRS Centre, South Tower"
-            disabled={isSectionDisabled}
             id="address_building"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -295,6 +294,7 @@ const Representative = ({
         </FormControl>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.address_street?.error}
           required={isRequired(localState.address_street)}
         >
@@ -302,7 +302,6 @@ const Representative = ({
 
           <Input
             aria-label="Street Address, e.g. 101 College Street, Suite 800"
-            disabled={isSectionDisabled}
             id="address_street"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -314,6 +313,7 @@ const Representative = ({
         </FormControl>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.address_cityAndProvince?.error}
           required={isRequired(localState.address_cityAndProvince)}
         >
@@ -321,7 +321,6 @@ const Representative = ({
 
           <Input
             aria-label="City and Province/State"
-            disabled={isSectionDisabled}
             id="address_cityAndProvince"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -335,6 +334,7 @@ const Representative = ({
         </FormControl>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.address_postalCode?.error}
           required={isRequired(localState.address_postalCode)}
         >
@@ -342,7 +342,6 @@ const Representative = ({
 
           <Input
             aria-label="Postal/Zip Code"
-            disabled={isSectionDisabled}
             id="address_postalCode"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}

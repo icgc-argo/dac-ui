@@ -69,6 +69,7 @@ const EthicsLetter = ({
 
         <FormControl
           className="vertical"
+          disabled={isSectionDisabled}
           error={!!localState.declaredAsRequired?.error}
           required={true}
           // required={isRequired(localState.declaredAsRequired)}
@@ -81,11 +82,10 @@ const EthicsLetter = ({
             css={css`
               margin-top: 15px;
             `}
-            // disabled={isSectionDisabled}
             isChecked={localState.declaredAsRequired?.value}
             onChange={validateFieldTouched}
           >
-            <FormRadio value="false" checked>
+            <FormRadio disabled={isSectionDisabled} value="false" checked>
               You represent and warrant that your country/region does not require your Research
               Project to undergo ethics review.
             </FormRadio>

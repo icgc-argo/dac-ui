@@ -7,8 +7,8 @@ import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 import Typography from '@icgc-argo/uikit/Typography';
 
 import StaticIntroduction from 'components/pages/Applications/PDF/StaticIntroduction';
+import FORM_TEXT from 'components/pages/Applications/PDF/textConstants';
 
-import FORM_TEXT from '../../PDF/textConstants';
 import {
   FormFieldValidationTriggerFunction,
   FormSectionValidationState_Introduction,
@@ -59,12 +59,12 @@ const Introduction = ({
         </Typography>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.agreement?.error}
           required={isRequired(localState.agreement)}
         >
           <FormCheckbox
             aria-label="I acknowledge that I have read and understand the above terms."
-            disabled={isSectionDisabled}
             checked={localState.agreement?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
