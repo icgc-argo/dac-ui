@@ -2,7 +2,7 @@ import { Svg, G, Rect, Path } from '@react-pdf/renderer';
 
 const FilledCheckbox = () => {
   return (
-    <Svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+    <Svg width="16" height="16" viewBox="0 0 16 16">
       <G fill="none" fill-rule="evenodd">
         <G>
           <G>
