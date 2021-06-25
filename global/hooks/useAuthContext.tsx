@@ -22,12 +22,12 @@ type T_AuthContext = {
 };
 
 const AuthContext = createContext<T_AuthContext>({
-  cancelFetchWithAuth: () => {},
+  cancelFetchWithAuth: () => { },
   token: '',
   isLoading: false,
-  logout: () => {},
+  logout: () => { },
   user: undefined,
-  fetchWithAuth: () => {},
+  fetchWithAuth: () => { },
   permissions: [],
 });
 
@@ -52,7 +52,7 @@ export const AuthProvider = ({
 
   const logout = () => {
     removeToken();
-    router.push('/');
+    router.push('/?session_expired=true');
   };
 
   if (token) {
