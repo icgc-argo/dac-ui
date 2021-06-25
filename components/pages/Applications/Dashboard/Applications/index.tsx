@@ -2,11 +2,11 @@ import React from 'react';
 import InProgress from './InProgress';
 import StartApplication from './Start';
 import { css } from '@emotion/core';
-import useApplicationsAPI from 'global/hooks/useApplicationsAPI';
+import useGetApplications from 'global/hooks/useGetApplications';
 import { isEmpty } from 'lodash';
 
 const Applications = () => {
-  const { error, isLoading, response } = useApplicationsAPI({});
+  const { error, isLoading, response } = useGetApplications({});
   const inProgressApplications: any = [true]; //response?.data;
 
   return (
