@@ -1,5 +1,7 @@
 import { isValidElement } from 'react';
 
+import Loader from 'components/Loader';
+
 import { sectionsData } from './constants';
 import {
   FORM_STATES,
@@ -18,15 +20,19 @@ export const enabledSections = (
     (sectionName) => !(state.sections[sectionName]?.overall === FORM_STATES.DISABLED),
   );
 
-export const sectionSelector = (
-  sectionName: FormSectionNames,
-  {
-    formState,
-    validator,
-  }: { formState: FormValidationStateParameters; validator: FormSectionValidatorFunction_Origin },
-) => {
-  const SectionComponent = sectionsData[sectionName]?.component;
-  const { fields: storedFields = {}, overall } = formState.sections[sectionName] || {};
+export const sectionSelector = ({
+  formState,
+  isLoading,
+  selectedSection,
+  validator,
+}: {
+  formState: FormValidationStateParameters;
+  isLoading: boolean;
+  selectedSection: FormSectionNames;
+  validator: FormSectionValidatorFunction_Origin;
+}) => {
+  const SectionComponent = sectionsData[selectedSection]?.component;
+  const { fields: storedFields = {}, overall } = formState.sections[selectedSection] || {};
 
   const isSectionDisabled = [FORM_STATES.DISABLED || FORM_STATES.LOCKED].includes(overall);
 
@@ -36,15 +42,17 @@ export const sectionSelector = (
   }: {
     localState: FormSectionValidationState_Sections;
     validateFieldTouched: (event: any) => void;
-  } = useLocalValidation(storedFields, validator(sectionName));
+  } = useLocalValidation(storedFields, validator(selectedSection));
 
-  return SectionComponent && isValidElement(<SectionComponent />) ? (
+  return isLoading || !formState.__seeded ? (
+    <Loader />
+  ) : SectionComponent && isValidElement(<SectionComponent />) ? (
     <SectionComponent
       isSectionDisabled={isSectionDisabled}
       localState={localState}
       validateFieldTouched={validateFieldTouched}
     />
   ) : (
-    `Section not implemented: "${sectionName}"`
+    `Section not implemented: "${selectedSection}"`
   );
 };

@@ -1,4 +1,5 @@
 import { ReactElement, useCallback, useEffect, useState } from 'react';
+import router, { useRouter } from 'next/router';
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
@@ -12,7 +13,6 @@ import { enabledSections, sectionSelector } from './helpers';
 import Outline from './Outline';
 import { FormSectionNames, FORM_STATES } from './types';
 import { useFormValidation } from './validations';
-import router, { useRouter } from 'next/router';
 
 type QueryType = {
   query: {
@@ -232,8 +232,10 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
             </Typography>
           </header>
 
-          {sectionSelector(selectedSection, {
+          {sectionSelector({
             formState,
+            isLoading,
+            selectedSection,
             validator: validateSection,
           })}
 

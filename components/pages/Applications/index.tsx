@@ -7,9 +7,9 @@ import Loader from 'components/Loader';
 import { useAuthContext } from 'global/hooks';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
 
-const ApplicationForm = dynamic(() => import('./ApplicationForm'));
-const ManageApplications = dynamic(() => import('./ManageApplications'));
-const Dashboard = dynamic(() => import('./Dashboard'));
+const ApplicationForm = dynamic(() => import('./ApplicationForm'), { loading: Loader });
+const ManageApplications = dynamic(() => import('./ManageApplications'), { loading: Loader });
+const Dashboard = dynamic(() => import('./Dashboard'), { loading: Loader });
 
 type QueryType = {
   query: {

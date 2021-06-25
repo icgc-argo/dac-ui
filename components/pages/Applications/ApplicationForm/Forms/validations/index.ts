@@ -164,6 +164,7 @@ export const validationReducer = (
             : seededSectionsData;
         }, {} as Record<FormSectionNames, FormSectionValidationState_SectionBase>),
         state,
+        __seeded: true,
         __v,
       };
     }
@@ -278,6 +279,7 @@ export const useFormValidation = (appId: string) => {
           overall: FORM_STATES.DISABLED,
         },
       },
+      __seeded: false,
       __v: 0,
     } as FormValidationStateParameters);
 

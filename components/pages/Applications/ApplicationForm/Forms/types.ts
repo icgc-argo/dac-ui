@@ -202,6 +202,7 @@ interface FormValidationState_Base {
   state?: string; // called `state` in BE, but that complicates things in FE
   submittedAtUtc?: string;
   submitterId?: string;
+  __seeded: boolean;
   __v: number;
 }
 

@@ -1,16 +1,18 @@
 import dynamic from 'next/dynamic';
 
+import Loader from 'components/Loader';
+
 import { FormSectionNames } from './types';
 
-const Appendices = dynamic(() => import('./Appendices'));
-const Applicant = dynamic(() => import('./Applicant'));
-const DataAccessAgreement = dynamic(() => import('./DataAccessAgreement'));
-const EthicsLetter = dynamic(() => import('./EthicsLetter'));
-const Introduction = dynamic(() => import('./Introduction'));
-const ITAgreements = dynamic(() => import('./ITAgreements'));
-const Representative = dynamic(() => import('./Representative'));
-const ProjectInfo = dynamic(() => import('./ProjectInfo'));
-const Collaborators = dynamic(() => import('./Collaborators'));
+const Appendices = dynamic(() => import('./Appendices'), { loading: Loader });
+const Applicant = dynamic(() => import('./Applicant'), { loading: Loader });
+const DataAccessAgreement = dynamic(() => import('./DataAccessAgreement'), { loading: Loader });
+const EthicsLetter = dynamic(() => import('./EthicsLetter'), { loading: Loader });
+const Introduction = dynamic(() => import('./Introduction'), { loading: Loader });
+const ITAgreements = dynamic(() => import('./ITAgreements'), { loading: Loader });
+const Representative = dynamic(() => import('./Representative'), { loading: Loader });
+const ProjectInfo = dynamic(() => import('./ProjectInfo'), { loading: Loader });
+const Collaborators = dynamic(() => import('./Collaborators'), { loading: Loader });
 
 export const sectionsData = {
   appendices: { component: Appendices, description: 'H. Appendices' },
