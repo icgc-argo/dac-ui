@@ -58,7 +58,7 @@ export const AuthProvider = ({
   if (token) {
     if (!isValidJwt(token)) {
       if (egoJwt && token === egoJwt) {
-        removeToken();
+        logout();
       }
     } else if (!egoJwt) {
       setTokenState('');
