@@ -4,6 +4,7 @@ const FORM_TEXT = {
   },
   applicant: {
     title: 'PRINCIPAL INVESTIGATOR INFORMATION',
+    address: 'INSTITUTION/COMPANY MAILING ADDRESS',
   },
 };
 

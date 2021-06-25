@@ -4,6 +4,17 @@ import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
 import { getStaticComponents, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
+import { View } from '@react-pdf/renderer';
+import VerticalTable from './VerticalTable';
+
+const applicantFields: { fieldName: string; fieldKey: string }[] = [
+  { fieldName: 'Name', fieldKey: 'displayName' },
+  { fieldName: 'Primary Affiliation', fieldKey: 'primaryAffiliation' },
+  { fieldName: 'Institutional Email', fieldKey: 'institutionEmail' },
+  { fieldName: 'Google Email', fieldKey: 'googleEmail' },
+  { fieldName: 'Researcher Profile URL', fieldKey: 'institutionWebsite' },
+  { fieldName: 'Position Title', fieldKey: 'positionTitle' },
+];
 
 const StaticApplicant = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?: any }) => {
   const {
@@ -12,6 +23,25 @@ const StaticApplicant = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?:
     SectionComponent,
     ContainerComponent,
   } = getStaticComponents(isPdf);
+
+  const applicantData = applicantFields.map(({ fieldName, fieldKey }) => {
+    return { fieldName, fieldValue: data.sections.applicant.info[fieldKey] };
+  });
+
+  const address = data.sections.applicant.address;
+  const addressData = [
+    {
+      fieldName: 'Mailing Address',
+      fieldValue: `${address.streetAddress}, ${address.building}`,
+    },
+    {
+      fieldValue: address.cityAndProvince,
+    },
+    {
+      fieldValue: address.country,
+    },
+    { fieldValue: address.postalCode },
+  ];
 
   return (
     <ContainerComponent
@@ -37,9 +67,22 @@ const StaticApplicant = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?:
         {!isPdf && <RequiredFieldsMessage />}
       </SectionComponent>
       {isPdf && (
-        <SectionComponent style={{ borderTop: `1px solid ${defaultTheme.colors.grey_1}` }}>
-          <SectionTitle>{FORM_TEXT.applicant.title}</SectionTitle>
-        </SectionComponent>
+        <View>
+          <View style={{ borderTop: `1px solid ${defaultTheme.colors.grey_1}`, paddingTop: '5px' }}>
+            <SectionTitle>{FORM_TEXT.applicant.title}</SectionTitle>
+            <VerticalTable data={applicantData} />
+          </View>
+          <View
+            style={{
+              borderTop: `1px solid ${defaultTheme.colors.grey_1}`,
+              marginTop: '25px',
+              paddingTop: '5px',
+            }}
+          >
+            <SectionTitle>{FORM_TEXT.applicant.address}</SectionTitle>
+            <VerticalTable data={addressData} useBorderStyle={false} />
+          </View>
+        </View>
       )}
     </ContainerComponent>
   );

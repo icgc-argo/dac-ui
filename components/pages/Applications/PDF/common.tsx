@@ -86,7 +86,7 @@ export const PDFLink = ({ children, style }: { children: ReactNode; style?: any 
 };
 
 export const SectionTitle = ({ children, style }: { children: ReactNode; style?: any }) => {
-  return <Text style={styles.sectionTitle}>{children}</Text>;
+  return <Text style={{ ...styles.sectionTitle, ...style }}>{children}</Text>;
 };
 
 export const Checkbox = ({ TextComponent, checked }: { TextComponent: any; checked: boolean }) => {
