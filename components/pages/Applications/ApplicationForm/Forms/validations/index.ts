@@ -150,9 +150,11 @@ export const validationReducer = (
         revisionRequest,
         sections: sectionsOrder.reduce((seededSectionsData, sectionName) => {
           const seedData = sections[sectionName] || {};
-          const validationData = formState.sections[sectionName] || {};
+          const validationData =
+            formState.sections[sectionName] ||
+            (console.error(`Seeding for "${sectionName}" hasn't been implemented yet`), {});
 
-          return Object.keys(seedData)
+          return Object.keys(seedData).length
             ? {
                 ...seededSectionsData,
                 [sectionName]: {
@@ -287,11 +289,13 @@ export const useFormValidation = (appId: string) => {
     fetchWithAuth({
       url: `${API.APPLICATIONS}/${appId}`,
     })
-      .then(({ data }: { data: Record<string, any> }) =>
-        validationDispatch({
-          type: 'seeding',
-          value: data,
-        }),
+      .then(({ data, ...response }: { data?: Record<string, any> } = {}) =>
+        data
+          ? validationDispatch({
+              type: 'seeding',
+              value: data,
+            })
+          : console.error('Something went wrong seeding the application form', response),
       )
       .catch((error: Error) => {
         // TODO dev logging, errors should not be shown to user

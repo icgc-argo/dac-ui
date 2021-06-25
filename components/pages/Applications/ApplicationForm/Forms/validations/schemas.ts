@@ -104,7 +104,7 @@ export const projectInfoSchema = yup.object().shape({
   aims: yup.string().default('').test(maxWords(200)).required(),
   background: yup.string().default('').test(maxWords(200)).required(),
   methodology: yup.string().default('').test(maxWords(200)).required(),
-  publicationURLs: yup
+  publicationsURLs: yup
     .array(
       yup
         .string()
@@ -136,6 +136,7 @@ export const representativeSchema = yup.object().shape({
     .required(),
   address_postalCode: yup.string().default('').required(),
   address_street: yup.string().default('').required(),
+  addressSameAsApplicant: yup.boolean().default(false),
   info_firstName: yup.string().default('').required(),
   info_institutionEmail: yup
     .string()

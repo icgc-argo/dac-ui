@@ -287,7 +287,7 @@ const ProjectInfo = ({
       </section>
 
       <PublicationURLs
-        {...localState.publicationURLs}
+        {...localState.publicationsURLs}
         isSectionDisabled={isSectionDisabled}
         validateFieldTouched={validateFieldTouched}
       />

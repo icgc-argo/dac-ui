@@ -81,14 +81,15 @@ const EthicsLetter = ({
             css={css`
               margin-top: 15px;
             `}
-            isChecked={false}
-            onChange={function noRefCheck() {}}
+            // disabled={isSectionDisabled}
+            isChecked={localState.declaredAsRequired?.value}
+            onChange={validateFieldTouched}
           >
-            <FormRadio value="one" checked>
+            <FormRadio value="false" checked>
               You represent and warrant that your country/region does not require your Research
               Project to undergo ethics review.
             </FormRadio>
-            <FormRadio disabled value="two">
+            <FormRadio disabled value="true">
               Your country/region requires your Research Project to undergo ethics review, and
               therefore, this Research Project has been approved by an IRB/REC formally designated
               to approve and/or monitor research involving humans.{' '}

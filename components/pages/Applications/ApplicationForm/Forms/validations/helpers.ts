@@ -8,6 +8,7 @@ import {
   EVENT_TARGET_TAGS,
   FormFieldDataFromEvent,
   FormFieldType,
+  FormValidationStateParameters,
 } from '../types';
 
 // the one same letter, in norwegian AND in swedish: i.e. highly unlikely used together
@@ -84,17 +85,54 @@ export const schemaValidator = (fieldSchema: any, value: any) =>
     error: error?.errors?.length > 0 ? error.errors : error.message,
   }));
 
-export const sectionFieldsSeeder = (validationData: any, seedData: any) => {
-  if (validationData) {
-    Object.keys(validationData).map((fieldName) => {
-      console.log('fieldName', fieldName);
-      const names = fieldName.split('_');
-      if (names.length > 1) {
-        console.log('split', names[0], names[1]);
-      } else {
-        console.log('not split', names[0]);
-      }
-    });
+const getSeedValueByFieldType = (fieldType: string, fieldBase: any, seedValue: any) => {
+  switch (fieldType) {
+    case 'array':
+      return { value: seedValue.map((value: unknown) => ({ value })) };
+
+    case 'boolean': {
+      return {
+        value: seedValue && (typeof seedValue === 'boolean' ? seedValue : seedValue.accepted),
+      };
+    }
+
+    case 'string':
+      return { value: seedValue };
+
+    default:
+      console.log('nope', fieldType);
+  }
+};
+
+export const sectionFieldsSeeder = (
+  validationData: any,
+  seedData: any,
+  nested?: boolean,
+): FormValidationStateParameters => {
+  if (validationData && seedData) {
+    const seededValidationData = Object.keys(validationData).reduce((seeded, fieldName) => {
+      const fieldBase = validationData[fieldName];
+      const fieldType = fieldBase?.type;
+      const names = nested ? fieldName : fieldName.split('_');
+
+      const seedValue = nested
+        ? seedData.find((datum: any) => datum.name === fieldName)
+        : names.length > 1
+        ? seedData[names[0]]?.[names[1]]
+        : seedData[names[0]];
+
+      return {
+        ...seeded,
+        [fieldName]: {
+          ...fieldBase,
+          ...(fieldType === 'object'
+            ? { fields: sectionFieldsSeeder(fieldBase.fields, seedValue, !!'nested') }
+            : getSeedValueByFieldType(fieldType, fieldBase, seedValue)),
+        },
+      };
+    }, {} as FormValidationStateParameters);
+
+    return seededValidationData;
   }
 
   return validationData;

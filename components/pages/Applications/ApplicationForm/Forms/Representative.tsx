@@ -233,7 +233,7 @@ const Representative = ({
           <FormCheckbox
             aria-label="Address is the same as the Applicant."
             disabled={isSectionDisabled}
-            // checked={false}
+            checked={localState.addressSameAsApplicant?.value}
             onChange={() => {}}
             value="copyApplicantMailing"
           >

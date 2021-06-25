@@ -125,7 +125,7 @@ export type FormSectionValidationState_ProjectInfo =
     aims: { value: string };
     background: { value: string };
     methodology: { value: string };
-    publicationURLs: {
+    publicationsURLs: {
       hasThreeValidURLs: boolean;
       value: Record<number, FormFieldType>;
     };
