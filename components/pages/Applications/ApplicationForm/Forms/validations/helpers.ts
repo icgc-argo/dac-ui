@@ -85,6 +85,18 @@ export const schemaValidator = (fieldSchema: any, value: any) =>
   }));
 
 export const sectionFieldsSeeder = (validationData: any, seedData: any) => {
+  if (validationData) {
+    Object.keys(validationData).map((fieldName) => {
+      console.log('fieldName', fieldName);
+      const names = fieldName.split('_');
+      if (names.length > 1) {
+        console.log('split', names[0], names[1]);
+      } else {
+        console.log('not split', names[0]);
+      }
+    });
+  }
+
   return validationData;
 };
 

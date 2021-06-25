@@ -1,36 +1,29 @@
+import { ReactElement } from 'react';
 import { css } from '@emotion/core';
 import { UikitTheme } from '@icgc-argo/uikit/index';
 import FormCheckbox from '@icgc-argo/uikit/form/FormCheckbox';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
-import Link from '@icgc-argo/uikit/Link';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
 
 import RequiredFieldsMessage from './RequiredFieldsMessage';
 import {
+  FormFieldValidationTriggerFunction,
   FormSectionValidationState_ITAgreements,
-  FormSectionValidatorFunction_Origin,
 } from './types';
-import { isRequired, useLocalValidation } from './validations';
+import { isRequired } from './validations';
 
 const ITAgreements = ({
   isSectionDisabled,
-  storedFields,
-  validateSection,
+  localState,
+  validateFieldTouched,
 }: {
   isSectionDisabled: boolean;
-  storedFields: FormSectionValidationState_ITAgreements;
-  validateSection: FormSectionValidatorFunction_Origin;
-}) => {
+  localState: FormSectionValidationState_ITAgreements;
+  validateFieldTouched: FormFieldValidationTriggerFunction;
+}): ReactElement => {
   const theme: UikitTheme = useTheme();
-  const {
-    localState,
-    validateFieldTouched,
-  }: {
-    localState: FormSectionValidationState_ITAgreements;
-    validateFieldTouched: (event: any) => void;
-  } = useLocalValidation(storedFields, validateSection('itAgreements'));
 
   return (
     <article>

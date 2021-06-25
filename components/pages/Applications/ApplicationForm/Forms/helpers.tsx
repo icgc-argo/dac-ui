@@ -1,8 +1,14 @@
 import { isValidElement } from 'react';
 
 import { sectionsData } from './constants';
-import { FormSectionNames, FormSectionValidatorFunction_Origin } from './types';
-import { FORM_STATES, FormValidationStateParameters } from './types';
+import {
+  FORM_STATES,
+  FormSectionNames,
+  FormSectionValidationState_Sections,
+  FormSectionValidatorFunction_Origin,
+  FormValidationStateParameters,
+} from './types';
+import { useLocalValidation } from './validations';
 
 export const enabledSections = (
   sections: FormSectionNames[],
@@ -24,12 +30,19 @@ export const sectionSelector = (
 
   const isSectionDisabled = [FORM_STATES.DISABLED || FORM_STATES.LOCKED].includes(overall);
 
+  const {
+    localState,
+    validateFieldTouched,
+  }: {
+    localState: FormSectionValidationState_Sections;
+    validateFieldTouched: (event: any) => void;
+  } = useLocalValidation(storedFields, validator(sectionName));
+
   return SectionComponent && isValidElement(<SectionComponent />) ? (
     <SectionComponent
       isSectionDisabled={isSectionDisabled}
-      overall={overall}
-      storedFields={storedFields}
-      validateSection={validator}
+      localState={localState}
+      validateFieldTouched={validateFieldTouched}
     />
   ) : (
     `Section not implemented: "${sectionName}"`

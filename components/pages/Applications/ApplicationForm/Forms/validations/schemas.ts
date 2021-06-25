@@ -73,7 +73,7 @@ export const applicantSchema = yup.object().shape({
   info_title: yup.string().default(''),
 });
 
-export const dataAccessAgreementsSchema = yup.object().shape({
+export const dataAccessAgreementSchema = yup.object().shape({
   agreements: yup.object().shape({
     daa_correct_application_content: yup.boolean().default(false).oneOf([true]).required(),
     daa_agree_to_terms: yup.boolean().default(false).oneOf([true]).required(),
@@ -155,12 +155,12 @@ export const signatureSchema = yup.object().shape({});
 export const combinedSchema = {
   appendices: appendicesSchema,
   applicant: applicantSchema,
-  dataAccessAgreements: dataAccessAgreementsSchema,
-  introduction: introductionSchema,
-  itAgreements: itAgreementsSchema,
+  dataAccessAgreement: dataAccessAgreementSchema,
+  ITAgreements: itAgreementsSchema,
   projectInfo: projectInfoSchema,
   representative: representativeSchema,
   signature: signatureSchema,
+  terms: introductionSchema,
 } as Record<FormSectionNames, any>;
 
 export default yup;

@@ -1,3 +1,4 @@
+import { ReactElement } from 'react';
 import Banner, { BANNER_VARIANTS } from '@icgc-argo/uikit/notifications/Banner';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
@@ -9,29 +10,21 @@ import Typography from '@icgc-argo/uikit/Typography';
 
 import RequiredFieldsMessage from './RequiredFieldsMessage';
 import {
+  FormFieldValidationTriggerFunction,
   FormSectionValidationState_EthicsLetter,
-  FormSectionValidatorFunction_Origin,
 } from './types';
-import { isRequired, useLocalValidation } from './validations';
+import { isRequired } from './validations';
 import { css } from '@emotion/core';
 
 const EthicsLetter = ({
   isSectionDisabled,
-  storedFields,
-  validateSection,
+  localState,
+  validateFieldTouched,
 }: {
   isSectionDisabled: boolean;
-  storedFields: FormSectionValidationState_EthicsLetter;
-  validateSection: FormSectionValidatorFunction_Origin;
-}) => {
-  const {
-    localState,
-    validateFieldTouched,
-  }: {
-    localState: FormSectionValidationState_EthicsLetter;
-    validateFieldTouched: (event: any) => void;
-  } = useLocalValidation(storedFields, validateSection('introduction'));
-
+  localState: FormSectionValidationState_EthicsLetter;
+  validateFieldTouched: FormFieldValidationTriggerFunction;
+}): ReactElement => {
   return (
     <article>
       <Typography bold component="h2">

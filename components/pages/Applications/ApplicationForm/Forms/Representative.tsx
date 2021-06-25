@@ -1,3 +1,4 @@
+import { ReactElement } from 'react';
 import { css } from '@icgc-argo/uikit';
 import FormCheckbox from '@icgc-argo/uikit/form/FormCheckbox';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
@@ -13,29 +14,21 @@ import { countriesList, honorificsList } from './constants';
 import DoubleFieldRow from './DoubleFieldRow';
 import RequiredFieldsMessage from './RequiredFieldsMessage';
 import {
+  FormFieldValidationTriggerFunction,
   FormSectionValidationState_Representative,
-  FormSectionValidatorFunction_Origin,
 } from './types';
-import { isRequired, useLocalValidation } from './validations';
+import { isRequired } from './validations';
 import { transformToSelectOptions } from './validations/helpers';
 
 const Representative = ({
   isSectionDisabled,
-  storedFields,
-  validateSection,
+  localState,
+  validateFieldTouched,
 }: {
   isSectionDisabled: boolean;
-  storedFields: FormSectionValidationState_Representative;
-  validateSection: FormSectionValidatorFunction_Origin;
-}) => {
-  const {
-    localState,
-    validateFieldTouched,
-  }: {
-    localState: FormSectionValidationState_Representative;
-    validateFieldTouched: (event: any) => void;
-  } = useLocalValidation(storedFields, validateSection('representative'));
-
+  localState: FormSectionValidationState_Representative;
+  validateFieldTouched: FormFieldValidationTriggerFunction;
+}): ReactElement => {
   return (
     <article>
       <Typography bold component="h2">

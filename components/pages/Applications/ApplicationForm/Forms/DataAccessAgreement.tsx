@@ -1,3 +1,4 @@
+import { ReactElement } from 'react';
 import { css } from '@emotion/core';
 import { UikitTheme } from '@icgc-argo/uikit/index';
 import FormCheckbox from '@icgc-argo/uikit/form/FormCheckbox';
@@ -9,28 +10,21 @@ import Typography from '@icgc-argo/uikit/Typography';
 
 import RequiredFieldsMessage from './RequiredFieldsMessage';
 import {
+  FormFieldValidationTriggerFunction,
   FormSectionValidationState_DataAccessAgreements,
-  FormSectionValidatorFunction_Origin,
 } from './types';
-import { isRequired, useLocalValidation } from './validations';
+import { isRequired } from './validations';
 
-const DataAccessAgreements = ({
+const DataAccessAgreement = ({
   isSectionDisabled,
-  storedFields,
-  validateSection,
+  localState,
+  validateFieldTouched,
 }: {
   isSectionDisabled: boolean;
-  storedFields: FormSectionValidationState_DataAccessAgreements;
-  validateSection: FormSectionValidatorFunction_Origin;
-}) => {
+  localState: FormSectionValidationState_DataAccessAgreements;
+  validateFieldTouched: FormFieldValidationTriggerFunction;
+}): ReactElement => {
   const theme: UikitTheme = useTheme();
-  const {
-    localState,
-    validateFieldTouched,
-  }: {
-    localState: FormSectionValidationState_DataAccessAgreements;
-    validateFieldTouched: (event: any) => void;
-  } = useLocalValidation(storedFields, validateSection('dataAccessAgreements'));
 
   return (
     <article>
@@ -298,4 +292,4 @@ const DataAccessAgreements = ({
   );
 };
 
-export default DataAccessAgreements;
+export default DataAccessAgreement;

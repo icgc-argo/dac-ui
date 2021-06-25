@@ -1,36 +1,29 @@
+import { ReactElement, useState, useEffect } from 'react';
+import { PDFViewer, Document } from '@react-pdf/renderer';
+import { css } from '@emotion/core';
 import FormCheckbox from '@icgc-argo/uikit/form/FormCheckbox';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 import Typography from '@icgc-argo/uikit/Typography';
+
 import StaticIntroduction from 'components/pages/Applications/PDF/StaticIntroduction';
-import { useState, useEffect } from 'react';
-import { PDFViewer, Document } from '@react-pdf/renderer';
-import {
-  FormSectionValidationState_Introduction,
-  FormSectionValidatorFunction_Origin,
-} from './types';
-import { isRequired, useLocalValidation } from './validations';
-import { css } from '@icgc-argo/uikit';
-import StaticApplicant from '../../PDF/StaticApplicant';
+
 import FORM_TEXT from '../../PDF/textConstants';
+import {
+  FormFieldValidationTriggerFunction,
+  FormSectionValidationState_Introduction,
+} from './types';
+import { isRequired } from './validations';
 
 const Introduction = ({
   isSectionDisabled,
-  storedFields,
-  validateSection,
+  localState,
+  validateFieldTouched,
 }: {
   isSectionDisabled: boolean;
-  storedFields: FormSectionValidationState_Introduction;
-  validateSection: FormSectionValidatorFunction_Origin;
-}) => {
-  const {
-    localState,
-    validateFieldTouched,
-  }: {
-    localState: FormSectionValidationState_Introduction;
-    validateFieldTouched: (event: any) => void;
-  } = useLocalValidation(storedFields, validateSection('introduction'));
-
+  localState: FormSectionValidationState_Introduction;
+  validateFieldTouched: FormFieldValidationTriggerFunction;
+}): ReactElement => {
   // for local testing, will be removed when pdf feature complete
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {

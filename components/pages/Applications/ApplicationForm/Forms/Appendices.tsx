@@ -1,3 +1,4 @@
+import { ReactElement } from 'react';
 import { css } from '@emotion/core';
 import FormCheckbox from '@icgc-argo/uikit/form/FormCheckbox';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
@@ -6,29 +7,18 @@ import Link from '@icgc-argo/uikit/Link';
 import Typography from '@icgc-argo/uikit/Typography';
 
 import RequiredFieldsMessage from './RequiredFieldsMessage';
-import {
-  FormSectionValidationState_Appendices,
-  FormSectionValidatorFunction_Origin,
-} from './types';
-import { isRequired, useLocalValidation } from './validations';
+import { FormFieldValidationTriggerFunction, FormSectionValidationState_Appendices } from './types';
+import { isRequired } from './validations';
 
 const Appendices = ({
   isSectionDisabled,
-  storedFields,
-  validateSection,
+  localState,
+  validateFieldTouched,
 }: {
   isSectionDisabled: boolean;
-  storedFields: FormSectionValidationState_Appendices;
-  validateSection: FormSectionValidatorFunction_Origin;
-}) => {
-  const {
-    localState,
-    validateFieldTouched,
-  }: {
-    localState: FormSectionValidationState_Appendices;
-    validateFieldTouched: (event: any) => void;
-  } = useLocalValidation(storedFields, validateSection('appendices'));
-
+  localState: FormSectionValidationState_Appendices;
+  validateFieldTouched: FormFieldValidationTriggerFunction;
+}): ReactElement => {
   return (
     <article>
       <Typography bold component="h2">

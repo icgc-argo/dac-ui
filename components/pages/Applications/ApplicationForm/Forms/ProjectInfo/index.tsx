@@ -10,29 +10,21 @@ import Typography from '@icgc-argo/uikit/Typography';
 import FormFieldHelpBubble from '../FormFieldHelpBubble';
 import RequiredFieldsMessage from '../RequiredFieldsMessage';
 import {
+  FormFieldValidationTriggerFunction,
   FormSectionValidationState_ProjectInfo,
-  FormSectionValidatorFunction_Origin,
 } from '../types';
-import { isRequired, useLocalValidation } from '../validations';
+import { isRequired } from '../validations';
 import PublicationURLs from './PublicationURLs';
 
 const ProjectInfo = ({
   isSectionDisabled,
-  storedFields,
-  validateSection,
+  localState,
+  validateFieldTouched,
 }: {
   isSectionDisabled: boolean;
-  storedFields: FormSectionValidationState_ProjectInfo;
-  validateSection: FormSectionValidatorFunction_Origin;
+  localState: FormSectionValidationState_ProjectInfo;
+  validateFieldTouched: FormFieldValidationTriggerFunction;
 }): ReactElement => {
-  const {
-    localState,
-    validateFieldTouched,
-  }: {
-    localState: FormSectionValidationState_ProjectInfo;
-    validateFieldTouched: (event: any) => void;
-  } = useLocalValidation(storedFields, validateSection('projectInfo'));
-
   return (
     <article>
       <Typography bold component="h2">

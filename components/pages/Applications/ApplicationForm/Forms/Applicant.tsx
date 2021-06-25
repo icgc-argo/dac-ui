@@ -1,4 +1,5 @@
-import { css } from '@icgc-argo/uikit';
+import { ReactElement } from 'react';
+import { css } from '@emotion/core';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 import Input from '@icgc-argo/uikit/form/Input';
@@ -6,32 +7,25 @@ import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import MultiSelect, { Option } from '@icgc-argo/uikit/form/MultiSelect';
 import Select from '@icgc-argo/uikit/form/Select';
 import Typography from '@icgc-argo/uikit/Typography';
-import StaticApplicant from '../../PDF/StaticApplicant';
-import FORM_TEXT from '../../PDF/textConstants';
+
+import StaticApplicant from 'components/pages/Applications/PDF/StaticApplicant';
+import FORM_TEXT from 'components/pages/Applications/PDF/textConstants';
 
 import { countriesList, honorificsList } from './constants';
 import DoubleFieldRow from './DoubleFieldRow';
-import { FormSectionValidationState_Applicant, FormSectionValidatorFunction_Origin } from './types';
-import { isRequired, useLocalValidation } from './validations';
+import { FormFieldValidationTriggerFunction, FormSectionValidationState_Applicant } from './types';
+import { isRequired } from './validations';
 import { transformToSelectOptions } from './validations/helpers';
 
 const Applicant = ({
   isSectionDisabled,
-  storedFields,
-  validateSection,
+  localState,
+  validateFieldTouched,
 }: {
   isSectionDisabled: boolean;
-  storedFields: FormSectionValidationState_Applicant;
-  validateSection: FormSectionValidatorFunction_Origin;
-}) => {
-  const {
-    localState,
-    validateFieldTouched,
-  }: {
-    localState: FormSectionValidationState_Applicant;
-    validateFieldTouched: (event: any) => void;
-  } = useLocalValidation(storedFields, validateSection('applicant'));
-
+  localState: FormSectionValidationState_Applicant;
+  validateFieldTouched: FormFieldValidationTriggerFunction;
+}): ReactElement => {
   return (
     <article>
       <StaticApplicant />

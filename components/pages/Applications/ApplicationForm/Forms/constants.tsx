@@ -1,7 +1,10 @@
 import dynamic from 'next/dynamic';
+
+import { FormSectionNames } from './types';
+
 const Appendices = dynamic(() => import('./Appendices'));
 const Applicant = dynamic(() => import('./Applicant'));
-const DataAccessAgreements = dynamic(() => import('./DataAccessAgreements'));
+const DataAccessAgreement = dynamic(() => import('./DataAccessAgreement'));
 const EthicsLetter = dynamic(() => import('./EthicsLetter'));
 const Introduction = dynamic(() => import('./Introduction'));
 const ITAgreements = dynamic(() => import('./ITAgreements'));
@@ -13,13 +16,12 @@ export const sectionsData = {
   appendices: { component: Appendices, description: 'H. Appendices' },
   applicant: { component: Applicant, description: 'A. Applicant Information' },
   collaborators: { component: Collaborators, description: 'C. Collaborators' },
-  dataAccessAgreements: {
-    component: DataAccessAgreements,
+  dataAccessAgreement: {
+    component: DataAccessAgreement,
     description: 'G. Data Access Agreement',
   },
   ethicsLetter: { component: EthicsLetter, description: 'E. Ethics' },
-  introduction: { component: Introduction, description: 'Introduction' },
-  itAgreements: { component: ITAgreements, description: 'F. IT Agreements' },
+  ITAgreements: { component: ITAgreements, description: 'F. IT Agreements' },
   projectInfo: { component: ProjectInfo, description: 'D. Project Information' },
   representative: { component: Representative, description: 'B. Institutional Representative' },
   signature: {
@@ -28,17 +30,18 @@ export const sectionsData = {
       disabled: 'All required fields must be filled out before submitting the application.',
     },
   },
-} as Record<string, Record<string, any>>;
+  terms: { component: Introduction, description: 'Introduction' },
+} as Record<FormSectionNames, Record<string, any>>;
 
 export const sectionsOrder = [
-  'introduction',
+  'terms',
   'applicant',
   'representative',
   'collaborators',
   'projectInfo',
   'ethicsLetter',
-  'itAgreements',
-  'dataAccessAgreements',
+  'ITAgreements',
+  'dataAccessAgreement',
   'appendices',
   'signature',
 ] as const; // to infer these as union rather than string[]
