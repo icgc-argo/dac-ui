@@ -22,12 +22,17 @@ type QueryType = {
 
 const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
   const {
-    query: { section: sectionFromQuery },
+    query: { section: sectionFromQuery = '' as FormSectionNames },
   }: QueryType = useRouter();
+  const isValidSectionFromQuery = sectionsOrder.includes(sectionFromQuery);
   const [selectedSection, setSelectedSection] = useState(
-    sectionFromQuery || (sectionsOrder[0] as FormSectionNames),
+    isValidSectionFromQuery
+      ? sectionFromQuery
+      : (sectionFromQuery &&
+          console.info('Section initially queried was not found', sectionFromQuery),
+        sectionsOrder[0] as FormSectionNames),
   );
-  const { isLoading, validationState, validateSection } = useFormValidation(appId);
+  const { isLoading, formState, validateSection } = useFormValidation(appId);
   const theme: UikitTheme = useTheme();
 
   useEffect(() => {
@@ -43,18 +48,18 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
   }, [selectedSection]);
 
   const sectionIndex = sectionsOrder.indexOf(selectedSection);
-  const sectionsAfter = enabledSections(sectionsOrder.slice(sectionIndex + 1), validationState);
-  const sectionsBefore = enabledSections(sectionsOrder.slice(0, sectionIndex), validationState);
+  const sectionsAfter = enabledSections(sectionsOrder.slice(sectionIndex + 1), formState);
+  const sectionsBefore = enabledSections(sectionsOrder.slice(0, sectionIndex), formState);
 
   const handleSectionChange = useCallback(
     (section: FormSectionNames) => {
       ['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
-        validationState.sections[selectedSection]?.overall || '',
+        formState.sections[selectedSection]?.overall || '',
       ) || validateSection(selectedSection, !!'validateSelectedSection')();
 
       setSelectedSection(section);
     },
-    [selectedSection, validationState],
+    [selectedSection, formState],
   );
 
   const handlePreviousNextSectionClick = (direction: 'next' | 'previous') => () => {
@@ -81,7 +86,7 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
           sections={sectionsOrder}
           selectedSection={selectedSection}
           setSelectedSection={handleSectionChange}
-          validationState={validationState}
+          formState={formState}
         />
 
         <div
@@ -228,7 +233,7 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
           </header>
 
           {sectionSelector(selectedSection, {
-            state: validationState,
+            formState,
             validator: validateSection,
           })}
 

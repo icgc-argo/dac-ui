@@ -13,12 +13,12 @@ const Outline = ({
   sections,
   selectedSection,
   setSelectedSection,
-  validationState,
+  formState,
 }: {
   sections: readonly FormSectionNames[];
   selectedSection: FormSectionNames;
   setSelectedSection: (section: FormSectionNames) => void;
-  validationState: FormValidationStateParameters;
+  formState: FormValidationStateParameters;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();
 
@@ -46,7 +46,7 @@ const Outline = ({
       </Typography>
 
       {sections.map((name) => {
-        const status = validationState.sections[name]?.overall || 'pristine';
+        const status = formState.sections[name]?.overall || 'pristine';
 
         return (
           <FormSection

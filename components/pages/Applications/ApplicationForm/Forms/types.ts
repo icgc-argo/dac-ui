@@ -231,6 +231,7 @@ export type FormFieldDataFromEvent = (event: ChangeEvent<HTMLInputElement>) =>
       value?: string;
     };
 
+export type FormFieldValidationTriggerFunction = (event: any) => Promise<void>;
 export type FormFieldValidatorFunction = (
   field?: string,
   value?: any,

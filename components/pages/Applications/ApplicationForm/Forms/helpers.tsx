@@ -15,12 +15,12 @@ export const enabledSections = (
 export const sectionSelector = (
   sectionName: FormSectionNames,
   {
-    state,
+    formState,
     validator,
-  }: { state: FormValidationStateParameters; validator: FormSectionValidatorFunction_Origin },
+  }: { formState: FormValidationStateParameters; validator: FormSectionValidatorFunction_Origin },
 ) => {
   const SectionComponent = sectionsData[sectionName]?.component;
-  const { fields: storedFields = {}, overall } = state.sections[sectionName] || {};
+  const { fields: storedFields = {}, overall } = formState.sections[sectionName] || {};
 
   const isSectionDisabled = [FORM_STATES.DISABLED || FORM_STATES.LOCKED].includes(overall);
 

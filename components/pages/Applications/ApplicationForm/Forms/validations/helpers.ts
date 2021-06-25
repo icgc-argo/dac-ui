@@ -84,6 +84,10 @@ export const schemaValidator = (fieldSchema: any, value: any) =>
     error: error?.errors?.length > 0 ? error.errors : error.message,
   }));
 
+export const sectionFieldsSeeder = (validationData: any, seedData: any) => {
+  return validationData;
+};
+
 export const transformContriesToSelectOptions = (countriesList: CountryNamesAndAbbreviations[]) =>
   countriesList.map(({ name }: CountryNamesAndAbbreviations) => ({
     content: name,
