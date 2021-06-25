@@ -12,7 +12,7 @@ import {
 } from 'components/pages/Applications/ManageApplications/utils';
 import { API } from 'global/constants/externalPaths';
 
-// use this for simple "get application(s) on render" fetch requests.
+// use this for design"get application(s) on mount/render" fetch requests.
 
 const useGetApplications = ({
   appId = '',
