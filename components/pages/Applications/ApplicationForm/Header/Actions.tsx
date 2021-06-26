@@ -13,6 +13,7 @@ import StaticApplicant from '../../PDF/StaticApplicant';
 import { useAuthContext } from 'global/hooks';
 import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
 import { AxiosError } from 'axios';
+import StaticRepresentative from '../../PDF/StaticRepresentative';
 
 const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
   const theme: UikitTheme = useTheme();
@@ -24,6 +25,7 @@ const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
       <Document>
         <StaticIntroduction isPdf data={data} />
         <StaticApplicant isPdf data={data} />
+        <StaticRepresentative isPdf data={data} />
       </Document>,
     ).toBlob();
 

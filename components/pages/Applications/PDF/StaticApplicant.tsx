@@ -6,6 +6,7 @@ import { getStaticComponents, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
 import { View } from '@react-pdf/renderer';
 import VerticalTable from './VerticalTable';
+import { getStreetAddress } from './StaticRepresentative';
 
 const applicantFields: { fieldName: string; fieldKey: string }[] = [
   { fieldName: 'Name', fieldKey: 'displayName' },
@@ -24,24 +25,33 @@ const StaticApplicant = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?:
     ContainerComponent,
   } = getStaticComponents(isPdf);
 
-  const applicantData = applicantFields.map(({ fieldName, fieldKey }) => {
-    return { fieldName, fieldValue: data.sections.applicant.info[fieldKey] };
-  });
+  // is there a more generalized way of parsing the data? not sure, as each section is different
+  // and the pdf is different from the ui
+  // perhaps at least making a list/enum of all the fields to be parsed from the api data
+  // parse it out in the Actions api request, or better to parse it here?
+  let applicantData: any[] = [];
+  let address;
+  let addressData: any[] = [];
+  if (isPdf) {
+    applicantData = applicantFields.map(({ fieldName, fieldKey }) => {
+      return { fieldName, fieldValue: data.sections.applicant.info[fieldKey] };
+    });
 
-  const address = data.sections.applicant.address;
-  const addressData = [
-    {
-      fieldName: 'Mailing Address',
-      fieldValue: `${address.streetAddress}, ${address.building}`,
-    },
-    {
-      fieldValue: address.cityAndProvince,
-    },
-    {
-      fieldValue: address.country,
-    },
-    { fieldValue: address.postalCode },
-  ];
+    address = data.sections.applicant.address;
+    addressData = [
+      {
+        fieldName: 'Mailing Address',
+        fieldValue: getStreetAddress(address.streetAddress, address.building),
+      },
+      {
+        fieldValue: address.cityAndProvince,
+      },
+      {
+        fieldValue: address.country,
+      },
+      { fieldValue: address.postalCode },
+    ];
+  }
 
   return (
     <ContainerComponent

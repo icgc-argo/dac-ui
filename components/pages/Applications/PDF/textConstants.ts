@@ -6,6 +6,10 @@ const FORM_TEXT = {
     title: 'PRINCIPAL INVESTIGATOR INFORMATION',
     address: 'INSTITUTION/COMPANY MAILING ADDRESS',
   },
+  representative: {
+    title: 'INSTITUTIONAL REPRESENTATIVE INFORMATION',
+    address: 'INSTITUTION/COMPANY MAILING ADDRESS',
+  },
 };
 
 export default FORM_TEXT;

@@ -4,20 +4,20 @@ import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 import Input from '@icgc-argo/uikit/form/Input';
 import InputLabel from '@icgc-argo/uikit/form/InputLabel';
-import Link from '@icgc-argo/uikit/Link';
 import MultiSelect, { Option } from '@icgc-argo/uikit/form/MultiSelect';
 import Select from '@icgc-argo/uikit/form/Select';
 import Typography from '@icgc-argo/uikit/Typography';
 
 import { countriesList, honorificsList } from './constants';
 import DoubleFieldRow from './DoubleFieldRow';
-import RequiredFieldsMessage from './RequiredFieldsMessage';
 import {
   FormSectionValidationState_Representative,
   FormSectionValidatorFunction_Origin,
 } from './types';
 import { isRequired, useLocalValidation } from './validations';
 import { transformToSelectOptions } from './validations/helpers';
+import StaticRepresentative from '../../PDF/StaticRepresentative';
+import FORM_TEXT from '../../PDF/textConstants';
 
 const Representative = ({
   isSectionDisabled,
@@ -38,35 +38,11 @@ const Representative = ({
 
   return (
     <article>
-      <Typography bold component="h2">
-        B. Institutional Representative
-      </Typography>
-
-      <section>
-        <Typography>
-          An Institutional Representative is a qualified representative of a legal entity{' '}
-          <Typography as="span" bold>
-            who has the administrative power to legally commit that entity to the terms and
-            conditions of the{' '}
-            <Link href="#" target="_blank">
-              Data Access Agreement
-            </Link>
-          </Typography>{' '}
-          (e.g. Vice-President Research, a Research Director, or a Contracts Officer for the
-          entity).
-        </Typography>
-
-        <Typography>
-          The Institutional Representative’s signature will be required at the end of this
-          application before being reviewed by ICGC DACO.
-        </Typography>
-
-        <RequiredFieldsMessage />
-      </section>
+      <StaticRepresentative />
 
       <section>
         <Typography bold component="h3" color="secondary">
-          INSTITUTIONAL REPRESENTATIVE INFORMATION
+          {FORM_TEXT.representative.title}
         </Typography>
 
         <DoubleFieldRow>
@@ -233,7 +209,7 @@ const Representative = ({
 
       <section>
         <Typography bold component="h3" color="secondary">
-          INSTITUTION/COMPANY MAILING ADDRESS
+          {FORM_TEXT.representative.address}
         </Typography>
 
         <FormControl>
