@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { Text, View, StyleSheet } from '@react-pdf/renderer';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 
@@ -32,7 +32,7 @@ const TableRow = ({
   headerCellWidth: number;
   valueCellWidth: number;
   hasBottomBorder: boolean;
-}) => {
+}): ReactElement => {
   return (
     <View style={styles.tableRowStyle} fixed>
       <View

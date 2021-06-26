@@ -9,6 +9,7 @@ import pluralize from 'pluralize';
 import { isEmpty } from 'lodash';
 import ContentPlaceholder from '@icgc-argo/uikit/ContentPlaceholder';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import StaticCollaborators from '../../PDF/StaticCollaborators';
 
 const Actions = () => {
   const theme = useTheme();
@@ -84,29 +85,8 @@ const Collaborators = ({ appId }: { appId: string }) => {
 
   return (
     <article>
-      <Typography bold component="h2">
-        C. Collaborators
-      </Typography>
+      <StaticCollaborators />
 
-      <section>
-        <Typography
-          css={css`
-            margin-bottom: 43px;
-          `}
-        >
-          Please include the names of all{' '}
-          <b>
-            investigators, collaborators, research staff (including post-docs) and students
-            (including graduate students),
-          </b>{' '}
-          who will have access to the ICGC Controlled Data in order to work on the project (see
-          "Research Project" under Section D).
-          <br />
-          <br />* Please note: Co-investigators, collaborators or students at other institutions
-          should not be included in this list. They will have to submit a separate Application for
-          Controlled Data Access.
-        </Typography>
-      </section>
       <section
         css={css`
           margin-top: 43px;

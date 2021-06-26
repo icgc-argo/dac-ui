@@ -1,21 +1,60 @@
 import React from 'react';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
+import { View } from '@react-pdf/renderer';
 
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
-import { getStaticComponents, SectionTitle } from './common';
+import { getStaticComponents, PdfFormFields, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
-import { View } from '@react-pdf/renderer';
 import VerticalTable from './VerticalTable';
-import { getStreetAddress } from './StaticRepresentative';
+import { getStreetAddress } from './common';
 
-const applicantFields: { fieldName: string; fieldKey: string }[] = [
-  { fieldName: 'Name', fieldKey: 'displayName' },
-  { fieldName: 'Primary Affiliation', fieldKey: 'primaryAffiliation' },
-  { fieldName: 'Institutional Email', fieldKey: 'institutionEmail' },
-  { fieldName: 'Google Email', fieldKey: 'googleEmail' },
-  { fieldName: 'Researcher Profile URL', fieldKey: 'institutionWebsite' },
-  { fieldName: 'Position Title', fieldKey: 'positionTitle' },
-];
+const PdfApplicantFormData = ({ data }: { data: any }) => {
+  const applicantFields = [
+    PdfFormFields.NAME,
+    PdfFormFields.PRIMARY_AFFILIATION,
+    PdfFormFields.INSTITUTIONAL_EMAIL,
+    PdfFormFields.GOOGLE_EMAIL,
+    PdfFormFields.RESEARCHER_PROFILE_URL,
+    PdfFormFields.POSITION_TITLE,
+  ];
+  const applicantData = applicantFields.map(({ fieldName, fieldKey }) => {
+    return { fieldName, fieldValue: data.sections.applicant.info[fieldKey] };
+  });
+
+  const address = data.sections.applicant.address;
+  const addressData = [
+    {
+      fieldName: 'Mailing Address',
+      fieldValue: getStreetAddress(address.streetAddress, address.building),
+    },
+    {
+      fieldValue: address.cityAndProvince,
+    },
+    {
+      fieldValue: address.country,
+    },
+    { fieldValue: address.postalCode },
+  ];
+
+  return (
+    <View>
+      <View style={{ borderTop: `1px solid ${defaultTheme.colors.grey_1}`, paddingTop: '5px' }}>
+        <SectionTitle>{FORM_TEXT.applicant.title}</SectionTitle>
+        <VerticalTable data={applicantData} />
+      </View>
+      <View
+        style={{
+          borderTop: `1px solid ${defaultTheme.colors.grey_1}`,
+          marginTop: '25px',
+          paddingTop: '5px',
+        }}
+      >
+        <SectionTitle>{FORM_TEXT.applicant.address}</SectionTitle>
+        <VerticalTable data={addressData} useBorderStyle={false} />
+      </View>
+    </View>
+  );
+};
 
 const StaticApplicant = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?: any }) => {
   const {
@@ -24,34 +63,6 @@ const StaticApplicant = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?:
     SectionComponent,
     ContainerComponent,
   } = getStaticComponents(isPdf);
-
-  // is there a more generalized way of parsing the data? not sure, as each section is different
-  // and the pdf is different from the ui
-  // perhaps at least making a list/enum of all the fields to be parsed from the api data
-  // parse it out in the Actions api request, or better to parse it here?
-  let applicantData: any[] = [];
-  let address;
-  let addressData: any[] = [];
-  if (isPdf) {
-    applicantData = applicantFields.map(({ fieldName, fieldKey }) => {
-      return { fieldName, fieldValue: data.sections.applicant.info[fieldKey] };
-    });
-
-    address = data.sections.applicant.address;
-    addressData = [
-      {
-        fieldName: 'Mailing Address',
-        fieldValue: getStreetAddress(address.streetAddress, address.building),
-      },
-      {
-        fieldValue: address.cityAndProvince,
-      },
-      {
-        fieldValue: address.country,
-      },
-      { fieldValue: address.postalCode },
-    ];
-  }
 
   return (
     <ContainerComponent
@@ -76,24 +87,7 @@ const StaticApplicant = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?:
         </TextComponent>
         {!isPdf && <RequiredFieldsMessage />}
       </SectionComponent>
-      {isPdf && (
-        <View>
-          <View style={{ borderTop: `1px solid ${defaultTheme.colors.grey_1}`, paddingTop: '5px' }}>
-            <SectionTitle>{FORM_TEXT.applicant.title}</SectionTitle>
-            <VerticalTable data={applicantData} />
-          </View>
-          <View
-            style={{
-              borderTop: `1px solid ${defaultTheme.colors.grey_1}`,
-              marginTop: '25px',
-              paddingTop: '5px',
-            }}
-          >
-            <SectionTitle>{FORM_TEXT.applicant.address}</SectionTitle>
-            <VerticalTable data={addressData} useBorderStyle={false} />
-          </View>
-        </View>
-      )}
+      {isPdf && <PdfApplicantFormData data={data} />}
     </ContainerComponent>
   );
 };

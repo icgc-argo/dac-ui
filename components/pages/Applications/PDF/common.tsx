@@ -7,6 +7,7 @@ import Link from '@icgc-argo/uikit/Link';
 import PDFLayout from './PdfLayout';
 import EmptyCheckbox from './icons/EmptyCheckbox';
 import FilledCheckbox from './icons/FilledCheckbox';
+import { FieldAccessor, PdfFieldName, PdfFormField } from './types';
 
 const WorkSansBold = require('public/fonts/WorkSans-Bold.ttf').default;
 const WorkSansLight = require('public/fonts/WorkSans-Light.ttf').default;
@@ -126,4 +127,37 @@ export const getStaticComponents = (isPdf: boolean) => {
         SectionComponent: Section,
         ContainerComponent: ContainerDiv,
       };
+};
+
+export const PdfFormFields: PdfFormField = {
+  [PdfFieldName.NAME]: { fieldName: 'Name', fieldKey: FieldAccessor.DISPLAY_NAME },
+  [PdfFieldName.PRIMARY_AFFILIATION]: {
+    fieldName: 'Primary Affiliation',
+    fieldKey: FieldAccessor.PRIMARY_AFFILIATION,
+  },
+  [PdfFieldName.INSTITUTIONAL_EMAIL]: {
+    fieldName: 'Institutional Email',
+    fieldKey: FieldAccessor.INSTITUTIONAL_EMAIL,
+  },
+  [PdfFieldName.GOOGLE_EMAIL]: { fieldName: 'Google Email', fieldKey: FieldAccessor.GOOGLE_EMAIL },
+  [PdfFieldName.RESEARCHER_PROFILE_URL]: {
+    fieldName: 'Researcher Profile URL',
+    fieldKey: FieldAccessor.RESEARCHER_PROFILE_URL,
+  },
+  [PdfFieldName.POSITION_TITLE]: {
+    fieldName: 'Position Title',
+    fieldKey: FieldAccessor.POSITION_TITLE,
+  },
+  [PdfFieldName.PURSUING_DEGREE]: {
+    fieldName: 'Pursuing Degree',
+    fieldKey: FieldAccessor.POSITION_TITLE,
+  },
+};
+
+// make this better, and reuse for applicant address
+export const getStreetAddress = (street: string, building: string) => {
+  let streetAddress = [];
+  street?.length && streetAddress.push(street);
+  building?.length && streetAddress.push(building);
+  return streetAddress.join(', ');
 };

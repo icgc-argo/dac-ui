@@ -14,6 +14,12 @@ import { useAuthContext } from 'global/hooks';
 import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
 import { AxiosError } from 'axios';
 import StaticRepresentative from '../../PDF/StaticRepresentative';
+import StaticCollaborators from '../../PDF/StaticCollaborators';
+import StaticProjectInfo from '../../PDF/StaticProjectInfo';
+import StaticEthics from '../../PDF/StaticEthics';
+import StaticITAgreements from '../../PDF/StaticITAgreements';
+import StaticDataAccessAgreement from '../../PDF/StaticDataAccessAgreement';
+import StaticAppendices from '../../PDF/StaticAppendices';
 
 const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
   const theme: UikitTheme = useTheme();
@@ -26,6 +32,12 @@ const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
         <StaticIntroduction isPdf data={data} />
         <StaticApplicant isPdf data={data} />
         <StaticRepresentative isPdf data={data} />
+        <StaticCollaborators isPdf data={data} />
+        {/* <StaticProjectInfo isPdf data={data} /> */}
+        {/* <StaticEthics isPdf data={data} /> */}
+        {/* <StaticITAgreements isPdf data={data} /> */}
+        {/* <StaticDataAccessAgreement isPdf data={data} /> */}
+        {/* <StaticAppendices isPdf data={data} /> */}
       </Document>,
     ).toBlob();
 
