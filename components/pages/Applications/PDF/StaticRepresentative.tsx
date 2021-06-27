@@ -59,7 +59,7 @@ const PdfRepFormData = ({ data }: { data: any }) => {
 
   return (
     <View>
-      <View style={{ borderTop: `1px solid ${defaultTheme.colors.grey_1}`, paddingTop: '5px' }}>
+      <View style={{ borderTop: `1pt solid ${defaultTheme.colors.grey_1}`, paddingTop: '5pt' }}>
         <SectionTitle>{FORM_TEXT.representative.title}</SectionTitle>
         <VerticalTable
           data={repFields.map((field) => ({
@@ -70,13 +70,13 @@ const PdfRepFormData = ({ data }: { data: any }) => {
       </View>
       <View
         style={{
-          borderTop: `1px solid ${defaultTheme.colors.grey_1}`,
-          marginTop: '25px',
-          paddingTop: '5px',
+          borderTop: `1pt solid ${defaultTheme.colors.grey_1}`,
+          marginTop: '25pt',
+          paddingTop: '5pt',
         }}
       >
         <SectionTitle>{FORM_TEXT.representative.address}</SectionTitle>
-        <VerticalTable data={addressData} useBorderStyle={false} />
+        <VerticalTable data={addressData} useInternalBorders={false} />
       </View>
     </View>
   );

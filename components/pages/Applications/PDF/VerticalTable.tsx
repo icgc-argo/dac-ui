@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     width: 'auto',
     fontFamily: 'WorkSans',
-    fontSize: '11px',
+    fontSize: 11,
   },
   tableRowStyle: {
     flexDirection: 'row',
@@ -16,7 +16,16 @@ const styles = StyleSheet.create({
     fontWeight: 'semibold',
   },
   tableCellStyle: {
-    padding: '6px 0',
+    padding: '6pt 0',
+  },
+});
+
+const borderedTableStyles = StyleSheet.create({
+  table: {
+    border: `1pt solid ${defaultTheme.colors.grey_1}`,
+  },
+  theader: {
+    paddingLeft: '15pt',
   },
 });
 
@@ -26,19 +35,22 @@ const TableRow = ({
   headerCellWidth,
   valueCellWidth,
   hasBottomBorder,
+  useExternalBorders,
 }: {
   headerName?: string;
   value?: string;
   headerCellWidth: number;
   valueCellWidth: number;
   hasBottomBorder: boolean;
+  useExternalBorders: boolean;
 }): ReactElement => {
   return (
     <View style={styles.tableRowStyle} fixed>
       <View
         style={{
           width: `${headerCellWidth}%`,
-          ...(hasBottomBorder && { borderBottom: `1px solid ${defaultTheme.colors.grey_2}` }),
+          ...(useExternalBorders && borderedTableStyles.theader),
+          ...(hasBottomBorder && { borderBottom: `1pt solid ${defaultTheme.colors.grey_1}` }),
         }}
       >
         <Text style={{ ...styles.tableCellStyle, ...styles.tableCellHeaderStyle }}>
@@ -49,7 +61,7 @@ const TableRow = ({
       <View
         style={{
           width: `${valueCellWidth}%`,
-          ...(hasBottomBorder && { borderBottom: `1px solid ${defaultTheme.colors.grey_2}` }),
+          ...(hasBottomBorder && { borderBottom: `1pt solid ${defaultTheme.colors.grey_1}` }),
         }}
       >
         <Text style={styles.tableCellStyle}>{value}</Text>
@@ -65,13 +77,15 @@ interface DataCell {
 
 const VerticalTable = ({
   data,
-  useBorderStyle = true,
+  useInternalBorders = true,
+  useExternalBorders = false,
 }: {
   data: DataCell[];
-  useBorderStyle?: boolean;
+  useInternalBorders?: boolean;
+  useExternalBorders?: boolean;
 }) => {
   return (
-    <View style={styles.tableStyle}>
+    <View style={{ ...styles.tableStyle, ...(useExternalBorders && borderedTableStyles.table) }}>
       {data.map((cell: DataCell, i: number) => {
         return (
           <TableRow
@@ -80,7 +94,8 @@ const VerticalTable = ({
             value={cell.fieldValue}
             headerCellWidth={30}
             valueCellWidth={70}
-            hasBottomBorder={useBorderStyle && i !== data.length - 1}
+            hasBottomBorder={useInternalBorders && i !== data.length - 1}
+            useExternalBorders={useExternalBorders}
           />
         );
       })}

@@ -40,13 +40,16 @@ const PdfCollaboratorsFormData = ({ data }: { data: any }) => {
         </SectionTitle>
         {personnel.length ? (
           personnel.map((person: any) => (
-            <VerticalTable
-              key={person.id}
-              data={personnelFields.map((field) => ({
-                fieldName: field.fieldName,
-                fieldValue: person.info[field.fieldKey],
-              }))}
-            />
+            <View key={person.id} style={{ marginTop: '15pt' }} wrap={false}>
+              <VerticalTable
+                key={person.id}
+                data={personnelFields.map((field) => ({
+                  fieldName: field.fieldName,
+                  fieldValue: person.info[field.fieldKey],
+                }))}
+                useExternalBorders
+              />
+            </View>
           ))
         ) : (
           <PDFParagraph>
@@ -56,9 +59,9 @@ const PdfCollaboratorsFormData = ({ data }: { data: any }) => {
       </View>
       <View
         style={{
-          borderTop: `1px solid ${defaultTheme.colors.grey_1}`,
-          marginTop: '25px',
-          paddingTop: '5px',
+          borderTop: `1pt solid ${defaultTheme.colors.grey_1}`,
+          marginTop: '25pt',
+          paddingTop: '5pt',
         }}
       >
         <SectionTitle>
@@ -67,14 +70,15 @@ const PdfCollaboratorsFormData = ({ data }: { data: any }) => {
         {students.length ? (
           students.map((student: any) => {
             return (
-              // need box table styling
-              <VerticalTable
-                key={student.id}
-                data={studentFields.map((field) => ({
-                  fieldName: field.fieldName,
-                  fieldValue: student.info[field.fieldKey],
-                }))}
-              />
+              <View key={student.id} style={{ marginTop: '15pt' }} wrap={false}>
+                <VerticalTable
+                  data={studentFields.map((field) => ({
+                    fieldName: field.fieldName,
+                    fieldValue: student.info[field.fieldKey],
+                  }))}
+                  useExternalBorders
+                />
+              </View>
             );
           })
         ) : (
@@ -103,7 +107,7 @@ const StaticCollaborators = ({ isPdf = false, data = {} }: { isPdf?: boolean; da
       <TitleComponent>C. Collaborators</TitleComponent>
 
       <SectionComponent>
-        <TextComponent style={{ marginBottom: isPdf ? '20px' : '43px' }}>
+        <TextComponent style={{ marginBottom: isPdf ? '20pt' : '43px' }}>
           Please include the names of all{' '}
           <TextComponent as="span" bold style={{ fontWeight: 600 }}>
             investigators, collaborators, research staff (including post-docs) and students

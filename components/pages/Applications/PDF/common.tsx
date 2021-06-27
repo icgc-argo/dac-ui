@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
   page: {
     display: 'flex',
     flex: 1,
-    padding: '15px 10px',
+    padding: '15pt 10pt',
   },
   section: {
     display: 'flex',
@@ -40,12 +40,12 @@ export const styles = StyleSheet.create({
   title: {
     fontFamily: 'WorkSans',
     fontWeight: 'semibold',
-    fontSize: '24px',
+    fontSize: 24,
     lineHeight: 1.4,
   },
   text: {
     fontFamily: 'WorkSans',
-    fontSize: '11px',
+    fontSize: 11,
     fontWeight: 'normal',
     lineHeight: 1.7,
   },
@@ -58,10 +58,10 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: 'WorkSans',
     color: defaultTheme.colors.secondary,
-    fontSize: '14px',
+    fontSize: 14,
     fontWeight: 'semibold',
     lineHeight: 1.4,
-    margin: '10px 0',
+    margin: '10pt 0',
   },
 });
 
@@ -94,7 +94,7 @@ export const Checkbox = ({ TextComponent, checked }: { TextComponent: any; check
   return (
     <View style={{ display: 'flex', flexDirection: 'row' }}>
       {checked ? <FilledCheckbox /> : <EmptyCheckbox />}
-      <PDFParagraph style={{ marginLeft: '5px', marginTop: '2px' }}>{TextComponent}</PDFParagraph>
+      <PDFParagraph style={{ marginLeft: '5pt', marginTop: '2pt' }}>{TextComponent}</PDFParagraph>
     </View>
   );
 };

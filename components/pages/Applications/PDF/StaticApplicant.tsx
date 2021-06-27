@@ -50,7 +50,7 @@ const PdfApplicantFormData = ({ data }: { data: any }) => {
         }}
       >
         <SectionTitle>{FORM_TEXT.applicant.address}</SectionTitle>
-        <VerticalTable data={addressData} useBorderStyle={false} />
+        <VerticalTable data={addressData} useInternalBorders={false} />
       </View>
     </View>
   );
