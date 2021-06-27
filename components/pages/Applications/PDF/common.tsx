@@ -7,7 +7,7 @@ import Link from '@icgc-argo/uikit/Link';
 import PDFLayout from './PdfLayout';
 import EmptyCheckbox from './icons/EmptyCheckbox';
 import FilledCheckbox from './icons/FilledCheckbox';
-import { FieldAccessor, PdfFieldName, PdfFormField } from './types';
+import { FieldAccessor, PdfField, PdfFieldName, PdfFormField } from './types';
 
 const WorkSansBold = require('public/fonts/WorkSans-Bold.ttf').default;
 const WorkSansLight = require('public/fonts/WorkSans-Light.ttf').default;
@@ -66,11 +66,26 @@ export const styles = StyleSheet.create({
 });
 
 // react-pdf components
-export const PDFTitle = ({ children, style }: { children: ReactNode; style?: any }) => {
+export const PDFTitle = ({ children, style = {} }: { children: ReactNode; style?: any }) => {
   return <Text style={{ ...styles.title, ...style }}>{children}</Text>;
 };
 
-export const PDFParagraph = ({ children, style }: { children: ReactNode; style?: any }) => {
+export const PDFText = ({
+  children,
+  style = {},
+  asListItem = false,
+}: {
+  children: ReactNode;
+  style?: any;
+  asListItem?: boolean;
+}) => (
+  <Text style={{ ...styles.text, ...style }}>
+    {asListItem && '• '}
+    {children}
+  </Text>
+);
+
+export const PDFParagraph = ({ children, style = {} }: { children: ReactNode; style?: any }) => {
   return (
     <Text wrap={false} style={{ ...styles.text, ...styles.paragraph, ...style }}>
       {children}
@@ -78,15 +93,15 @@ export const PDFParagraph = ({ children, style }: { children: ReactNode; style?:
   );
 };
 
-export const StyledView = ({ children, style }: { children: ReactNode; style?: any }) => {
+export const StyledView = ({ children, style = {} }: { children: ReactNode; style?: any }) => {
   return <View style={{ ...styles.section, ...style }}>{children}</View>;
 };
 
-export const PDFLink = ({ children, style }: { children: ReactNode; style?: any }) => {
+export const PDFLink = ({ children, style = {} }: { children: ReactNode; style?: any }) => {
   return <Text style={{ ...styles.paragraph, ...styles.link, ...style }}>{children}</Text>;
 };
 
-export const SectionTitle = ({ children, style }: { children: ReactNode; style?: any }) => {
+export const SectionTitle = ({ children, style = {} }: { children: ReactNode; style?: any }) => {
   return <Text style={{ ...styles.sectionTitle, ...style }}>{children}</Text>;
 };
 
@@ -99,8 +114,26 @@ export const Checkbox = ({ TextComponent, checked }: { TextComponent: any; check
   );
 };
 
+export const PDFTextArea = ({ text }: { text?: string }) => {
+  return (
+    <View
+      wrap={false}
+      style={{
+        border: `1pt solid ${defaultTheme.colors.grey_2}`,
+        height: 276,
+        width: '100%',
+        margin: '10pt 10pt 20pt',
+      }}
+    >
+      {text?.length && <PDFText style={{ padding: '2pt' }}>{text}</PDFText>}
+    </View>
+  );
+};
 // ui components
 export const Section = ({ children }: { children: ReactNode }) => <section>{children}</section>;
+
+export const Li = ({ children }: { children: ReactNode }) => <li>{children}</li>;
+export const Ul = ({ children }: { children: ReactNode }) => <ul>{children}</ul>;
 
 // need to use element other than React.Fragment so props can be passed
 export const ContainerDiv = ({ children }: { children: ReactNode }) => <div>{children}</div>;
@@ -111,6 +144,14 @@ export const UITitle = ({ children }: { children: ReactNode }) => (
   </Typography>
 );
 
+export const UISectionTitle = ({ children }: { children: ReactNode }) => {
+  return (
+    <Typography bold component="h3" color="secondary">
+      {children}
+    </Typography>
+  );
+};
+
 export const getStaticComponents = (isPdf: boolean) => {
   return isPdf
     ? {
@@ -119,38 +160,57 @@ export const getStaticComponents = (isPdf: boolean) => {
         LinkComponent: PDFLink,
         SectionComponent: View,
         ContainerComponent: PDFLayout,
+        SectionTitle,
+        UnorderedListComponent: View,
+        ListComponent: PDFText,
+        GenericContainer: View,
       }
     : {
         TextComponent: Typography,
         TitleComponent: UITitle,
         LinkComponent: Link,
         SectionComponent: Section,
-        ContainerComponent: ContainerDiv,
+        ContainerComponent: Section,
+        SectionTitle: UISectionTitle,
+        UnorderedListComponent: Ul,
+        ListComponent: Li,
+        GenericContainer: React.Fragment,
       };
 };
 
 export const PdfFormFields: PdfFormField = {
-  [PdfFieldName.NAME]: { fieldName: 'Name', fieldKey: FieldAccessor.DISPLAY_NAME },
-  [PdfFieldName.PRIMARY_AFFILIATION]: {
-    fieldName: 'Primary Affiliation',
+  [PdfField.NAME]: { fieldName: PdfFieldName.NAME, fieldKey: FieldAccessor.DISPLAY_NAME },
+  [PdfField.PRIMARY_AFFILIATION]: {
+    fieldName: PdfFieldName.PRIMARY_AFFILIATION,
     fieldKey: FieldAccessor.PRIMARY_AFFILIATION,
   },
-  [PdfFieldName.INSTITUTIONAL_EMAIL]: {
-    fieldName: 'Institutional Email',
+  [PdfField.INSTITUTIONAL_EMAIL]: {
+    fieldName: PdfFieldName.INSTITUTIONAL_EMAIL,
     fieldKey: FieldAccessor.INSTITUTIONAL_EMAIL,
   },
-  [PdfFieldName.GOOGLE_EMAIL]: { fieldName: 'Google Email', fieldKey: FieldAccessor.GOOGLE_EMAIL },
-  [PdfFieldName.RESEARCHER_PROFILE_URL]: {
-    fieldName: 'Researcher Profile URL',
+  [PdfField.GOOGLE_EMAIL]: {
+    fieldName: PdfFieldName.GOOGLE_EMAIL,
+    fieldKey: FieldAccessor.GOOGLE_EMAIL,
+  },
+  [PdfField.RESEARCHER_PROFILE_URL]: {
+    fieldName: PdfFieldName.RESEARCHER_PROFILE_URL,
     fieldKey: FieldAccessor.RESEARCHER_PROFILE_URL,
   },
-  [PdfFieldName.POSITION_TITLE]: {
-    fieldName: 'Position Title',
+  [PdfField.POSITION_TITLE]: {
+    fieldName: PdfFieldName.POSITION_TITLE,
     fieldKey: FieldAccessor.POSITION_TITLE,
   },
-  [PdfFieldName.PURSUING_DEGREE]: {
-    fieldName: 'Pursuing Degree',
+  [PdfField.PURSUING_DEGREE]: {
+    fieldName: PdfFieldName.PURSUING_DEGREE,
     fieldKey: FieldAccessor.POSITION_TITLE,
+  },
+  [PdfField.PROJECT_TITLE]: {
+    fieldName: PdfFieldName.PROJECT_TITLE,
+    fieldKey: FieldAccessor.PROJECT_TITLE,
+  },
+  [PdfField.PROJECT_WEBSITE]: {
+    fieldName: PdfFieldName.PROJECT_WEBSITE,
+    fieldKey: FieldAccessor.PROJECT_WEBSITE,
   },
 };
 

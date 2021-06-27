@@ -15,6 +15,16 @@ import {
 } from '../types';
 import { isRequired, useLocalValidation } from '../validations';
 import PublicationURLs from './PublicationURLs';
+import StaticProjectInfo, {
+  AimsBubble,
+  BackgroundBubble,
+  DataUseBubble,
+  LaySummaryBubble,
+  StaticLaySummary,
+  StaticResearchSummary,
+} from '../../../PDF/StaticProjectInfo';
+import FORM_TEXT from 'components/pages/Applications/PDF/textConstants';
+import { css } from '@icgc-argo/uikit';
 
 const ProjectInfo = ({
   isSectionDisabled,
@@ -35,22 +45,11 @@ const ProjectInfo = ({
 
   return (
     <article>
-      <Typography bold component="h2">
-        D. Project Information
-      </Typography>
-
-      <section>
-        <Typography>
-          Please fill out the following details for your research project, including the website url
-          if available.
-        </Typography>
-
-        <RequiredFieldsMessage />
-      </section>
+      <StaticProjectInfo />
 
       <section>
         <Typography bold component="h3" color="secondary">
-          BASIC INFORMATION
+          {FORM_TEXT.project_info.basic_info}
         </Typography>
 
         <FormControl error={!!localState.title?.error} required={isRequired(localState.title)}>
@@ -85,44 +84,20 @@ const ProjectInfo = ({
       </section>
 
       <section>
-        <Typography bold component="h3" color="secondary">
-          RESEARCH SUMMARY - SCIENTIFIC ABSTRACT
-        </Typography>
-
-        <Typography>
-          This section should describe the{' '}
-          <Typography as="span" bold>
-            background, aims, and methodology
-          </Typography>{' '}
-          of your research project, as well as plans for{' '}
-          <Typography as="span" bold>
-            how you will use the ICGC Controlled Data.
-          </Typography>
-        </Typography>
+        <StaticResearchSummary />
 
         <FormControl
           className="vertical"
           error={!!localState.background?.error}
           required={isRequired(localState.background)}
         >
-          <InputLabel htmlFor="background">Background (max. 200 words)</InputLabel>
-          <FormFieldHelpBubble
-            text={
-              <>
-                Provide a short summary of the background basis of your research. For example,
-                <ul>
-                  <li>What founding research is your project based on?</li>
-                  <li>
-                    If possible, include any previous research in this area that you have completed
-                    that is relevant.
-                  </li>
-                </ul>
-              </>
-            }
-          />
+          <InputLabel htmlFor="background">
+            {FORM_TEXT.project_info.inputLabel.background}
+          </InputLabel>
+          <FormFieldHelpBubble text={<BackgroundBubble />} />
 
           <Textarea
-            aria-label="Background (max. 200 words)"
+            aria-label={FORM_TEXT.project_info.inputLabel.background}
             countLimit={200}
             countPosition="absolute"
             countType="words"
@@ -142,24 +117,11 @@ const ProjectInfo = ({
           error={!!localState.aims?.error}
           required={isRequired(localState.aims)}
         >
-          <InputLabel htmlFor="aims">Aims (max. 200 words)</InputLabel>
-          <FormFieldHelpBubble
-            text={
-              <>
-                Provide a summary of what your project hopes to achieve using the ICGC Controlled
-                Data. For example:
-                <ul>
-                  <li>
-                    How will your research impact health research or biological understanding?
-                  </li>
-                  <li>What are some planned outputs for your research project?</li>
-                </ul>
-              </>
-            }
-          />
+          <InputLabel htmlFor="aims">{FORM_TEXT.project_info.inputLabel.aims}</InputLabel>
+          <FormFieldHelpBubble text={<AimsBubble />} />
 
           <Textarea
-            aria-label="Aims (max. 200 words)"
+            aria-label={FORM_TEXT.project_info.inputLabel.aims}
             countLimit={200}
             countPosition="absolute"
             countType="words"
@@ -179,42 +141,11 @@ const ProjectInfo = ({
           error={!!localState.methodology?.error}
           required={isRequired(localState.methodology)}
         >
-          <InputLabel htmlFor="aims">Use for Data and Methodology (max. 200 words)</InputLabel>
-          <FormFieldHelpBubble
-            text={
-              <>
-                Provide a summary of the methods for your research project and the plans for data
-                usage, including:
-                <ul>
-                  <li>
-                    What major methods and technologies will you use (in-depth methodology is not
-                    required)?
-                  </li>
-                  <li>How exactly will the ICGC Controlled Data be used?</li>
-                  <li>
-                    <Typography as="span" bold>
-                      Please note:
-                    </Typography>{' '}
-                    If you are planning on combining ICGC controlled data with other datasets, as
-                    per{' '}
-                    <Link href="#" rel="noopener noreferrer" target="_blank">
-                      Term 5 of the Data Access Agreement (DAA)
-                    </Link>
-                    , you agree not to link or combine the ICGC Controlled Data to other data
-                    available in a way that could re-identify the Research Participants.{' '}
-                    <Typography as="span" bold>
-                      Please confirm how the methods you intend to use to combine datasets will
-                      minimize the risk for re-identification of the ICGC data donors
-                    </Typography>
-                    .
-                  </li>
-                </ul>
-              </>
-            }
-          />
+          <InputLabel htmlFor="aims">{FORM_TEXT.project_info.inputLabel.dataUse}</InputLabel>
+          <FormFieldHelpBubble text={<DataUseBubble />} />
 
           <Textarea
-            aria-label="Use for Data and Methodology (max. 200 words)"
+            aria-label={FORM_TEXT.project_info.inputLabel.dataUse}
             countLimit={200}
             countPosition="absolute"
             countType="words"
@@ -231,54 +162,18 @@ const ProjectInfo = ({
       </section>
 
       <section>
-        <Typography bold component="h3" color="secondary">
-          PROJECT LAY SUMMARY
-        </Typography>
-
-        <Typography>
-          The lay summaries of ICGC DACO approved projects are posted on the{' '}
-          <Link href="#" rel="noopener noreferrer" target="_blank">
-            ICGC ARGO website
-          </Link>
-          .
-        </Typography>
+        <StaticLaySummary />
 
         <FormControl
           className="vertical"
           error={!!localState.summary?.error}
           required={isRequired(localState.summary)}
         >
-          <InputLabel htmlFor="summary">Lay Summary (max. 200 words)</InputLabel>
-          <FormFieldHelpBubble
-            text={
-              <>
-                Provide a short project summary targeted towards the general public, including ICGC
-                data donors.
-                <ul>
-                  <li>
-                    Describe your project as if you were describing to a friend who is not an
-                    expert.
-                  </li>
-                  <li>
-                    Scientific terminology such as "germline," "non-coding regions," "somatic," and
-                    "whole-genome/whole- exome/next-generation sequencing" should therefore be
-                    described or defined in lay terms.
-                  </li>
-                  <li>
-                    In addition to explaining the background and objectives of your research
-                    project,{' '}
-                    <Typography as="span" bold>
-                      please clearly explain how the ICGC Controlled Data will be used
-                    </Typography>
-                    .
-                  </li>
-                </ul>
-              </>
-            }
-          />
+          <InputLabel htmlFor="summary">{FORM_TEXT.project_info.inputLabel.laySummary}</InputLabel>
+          <FormFieldHelpBubble text={<LaySummaryBubble />} />
 
           <Textarea
-            aria-label="Lay Summary  (max. 200 words)"
+            aria-label={FORM_TEXT.project_info.inputLabel.laySummary}
             countLimit={200}
             countPosition="absolute"
             countType="words"

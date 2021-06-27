@@ -33,7 +33,7 @@ const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
         <StaticApplicant isPdf data={data} />
         <StaticRepresentative isPdf data={data} />
         <StaticCollaborators isPdf data={data} />
-        {/* <StaticProjectInfo isPdf data={data} /> */}
+        <StaticProjectInfo isPdf data={data} />
         {/* <StaticEthics isPdf data={data} /> */}
         {/* <StaticITAgreements isPdf data={data} /> */}
         {/* <StaticDataAccessAgreement isPdf data={data} /> */}
