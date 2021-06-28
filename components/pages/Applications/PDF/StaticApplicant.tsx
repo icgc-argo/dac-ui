@@ -38,7 +38,7 @@ const PdfApplicantFormData = ({ data }: { data: any }) => {
 
   return (
     <View>
-      <View style={{ borderTop: `1px solid ${defaultTheme.colors.grey_1}`, paddingTop: '5px' }}>
+      <View>
         <SectionTitle>{FORM_TEXT.applicant.title}</SectionTitle>
         <VerticalTable data={applicantData} />
       </View>
@@ -87,7 +87,11 @@ const StaticApplicant = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?:
         </TextComponent>
         {!isPdf && <RequiredFieldsMessage />}
       </SectionComponent>
-      {isPdf && <PdfApplicantFormData data={data} />}
+      <SectionComponent
+        style={{ borderTop: `1px solid ${defaultTheme.colors.grey_1}`, paddingTop: '5px' }}
+      >
+        {isPdf && <PdfApplicantFormData data={data} />}
+      </SectionComponent>
     </ContainerComponent>
   );
 };

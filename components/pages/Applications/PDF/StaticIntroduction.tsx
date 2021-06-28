@@ -6,6 +6,7 @@ import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessag
 import { PDFLink, getStaticComponents, Checkbox, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
+import { Text } from '@react-pdf/renderer';
 
 const StaticIntroduction = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?: any }) => {
   const { NEXT_PUBLIC_ARGO_ROOT } = getConfig();
@@ -79,10 +80,10 @@ const StaticIntroduction = ({ isPdf = false, data = {} }: { isPdf?: boolean; dat
           <Checkbox
             checked={data?.sections?.terms.agreement.accepted}
             TextComponent={
-              <TextComponent>
-                <TextComponent style={{ fontWeight: 600 }}>I acknowledge</TextComponent> that I have
-                read and understand the above terms.
-              </TextComponent>
+              <Text>
+                <Text style={{ fontWeight: 600 }}>I acknowledge</Text> that I have read and
+                understand the above terms.
+              </Text>
             }
           />
         </SectionComponent>

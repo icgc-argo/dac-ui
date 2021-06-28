@@ -18,7 +18,13 @@ import { PdfFieldName } from './types';
 const BasicInfo = ({ data }: { data: any }) => {
   const infoFields = [PdfFormFields.PROJECT_TITLE, PdfFormFields.PROJECT_WEBSITE];
   return (
-    <View style={{ borderTop: `1px solid ${defaultTheme.colors.grey_1}`, paddingTop: '5pt' }}>
+    <View
+      style={{
+        borderTop: `1px solid ${defaultTheme.colors.grey_1}`,
+        paddingTop: '5pt',
+        margin: '10pt 0 30pt',
+      }}
+    >
       <SectionTitle>{FORM_TEXT.project_info.basic_info}</SectionTitle>
       <VerticalTable
         data={infoFields.map((field) => ({
@@ -175,7 +181,9 @@ const PdfPublicationsFormData = ({ data }: { data: any }) => {
 export const StaticResearchSummary = ({ isPdf = false }: { isPdf?: boolean }) => {
   const { SectionTitle, SectionComponent, TextComponent } = getStaticComponents(isPdf);
   return (
-    <SectionComponent>
+    <SectionComponent
+      style={{ borderTop: `1pt solid ${defaultTheme.colors.grey_1}`, paddingTop: '5pt' }}
+    >
       <SectionTitle>RESEARCH SUMMARY - SCIENTIFIC ABSTRACT</SectionTitle>
 
       <TextComponent>
