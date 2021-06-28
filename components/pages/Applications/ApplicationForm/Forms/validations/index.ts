@@ -1,22 +1,30 @@
 import { Dispatch, useCallback, useEffect, useReducer, useState } from 'react';
-import { isEqual, merge } from 'lodash';
+import { isEqual, merge, omit } from 'lodash';
 
-import { getFieldDataFromEvent, schemaValidator } from './helpers';
-import yup, { combinedSchema } from './schemas';
+import { API } from 'global/constants';
+import { useAuthContext } from 'global/hooks';
+
+import { sectionsOrder, sectionStatusMapping } from '../constants';
 import {
   FormFieldType,
   FormSectionValidationState_Sections,
+  FormFieldValidationTriggerFunction,
   FormFieldValidatorFunction,
   FormSectionValidatorFunction_Main,
   FormValidationAction,
   FormValidationStateParameters,
   FORM_STATES,
+  FormSectionNames,
+  FormSectionValidationState_SectionBase,
+  SECTION_STATUS,
 } from '../types';
+import { getFieldDataFromEvent, schemaValidator, sectionFieldsSeeder } from './helpers';
+import yup, { combinedSchema } from './schemas';
 
 export { getMin, isRequired } from './helpers';
 
 export const validationReducer = (
-  state: FormValidationStateParameters,
+  formState: FormValidationStateParameters,
   action: FormValidationAction,
 ): FormValidationStateParameters => {
   switch (action.type) {
@@ -31,7 +39,7 @@ export const validationReducer = (
         action.type === 'array'
           ? errorValue
             ? Object.entries({
-                ...state[action.section]?.fields?.[fieldName]?.value,
+                ...formState.sections[action.section]?.fields?.[fieldName]?.value,
                 ...action.value,
               })
                 .map(([, item]: [any, any]) =>
@@ -52,38 +60,43 @@ export const validationReducer = (
                   {},
                 )
             : {
-                ...state[action.section]?.fields?.[fieldName]?.value,
+                ...formState.sections[action.section]?.fields?.[fieldName]?.value,
                 ...action.value,
               }
           : action.value;
 
       return {
-        ...state,
-        [action.section]: {
-          ...state[action.section],
-          ...(action.overall &&
-            state[action.section]?.overall === FORM_STATES.PRISTINE && {
-              overall: action.overall,
-            }),
-          fields: {
-            ...state[action.section]?.fields,
-            [fieldName]: {
-              ...state[action.section]?.fields?.[fieldName],
-              ...(action.type === 'object'
-                ? {
-                    fields: {
-                      ...state[action.section]?.fields?.[fieldName]?.fields,
-                      [fieldIndex]: {
-                        ...state[action.section]?.fields?.[fieldName]?.fields?.[fieldIndex],
-                        error: action.error || undefined,
-                        value,
+        ...formState,
+        sections: {
+          ...formState.sections,
+          [action.section]: {
+            ...formState.sections[action.section],
+            ...(action.overall &&
+              formState.sections[action.section]?.overall === FORM_STATES.PRISTINE && {
+                overall: action.overall,
+              }),
+            fields: {
+              ...formState.sections[action.section]?.fields,
+              [fieldName]: {
+                ...formState.sections[action.section]?.fields?.[fieldName],
+                ...(action.type === 'object'
+                  ? {
+                      fields: {
+                        ...formState.sections[action.section]?.fields?.[fieldName]?.fields,
+                        [fieldIndex]: {
+                          ...formState.sections[action.section]?.fields?.[fieldName]?.fields?.[
+                            fieldIndex
+                          ],
+                          error: action.error || undefined,
+                          value,
+                        },
                       },
-                    },
-                  }
-                : {
-                    error: action.error || undefined,
-                    value,
-                  }),
+                    }
+                  : {
+                      error: action.error || undefined,
+                      value,
+                    }),
+              },
             },
           },
         },
@@ -92,27 +105,33 @@ export const validationReducer = (
 
     case 'overall': {
       return {
-        ...state,
-        [action.section]: {
-          ...state[action.section],
-          overall: action.overall,
+        ...formState,
+        sections: {
+          ...formState.sections,
+          [action.section]: {
+            ...formState.sections[action.section],
+            overall: action.overall,
+          },
         },
       };
     }
 
     case 'remove': {
       return {
-        ...state,
-        [action.section]: {
-          ...state[action.section],
-          fields: {
-            ...state[action.section]?.fields,
-            [action.field]: {
-              ...state[action.section]?.fields?.[action.field],
-              value: {
-                ...state[action.section]?.fields?.[action.field]?.value,
-                [action.value]: {
-                  hidden: true,
+        ...formState,
+        sections: {
+          ...formState.sections,
+          [action.section]: {
+            ...formState.sections[action.section],
+            fields: {
+              ...formState.sections[action.section]?.fields,
+              [action.field]: {
+                ...formState.sections[action.section]?.fields?.[action.field],
+                value: {
+                  ...formState.sections[action.section]?.fields?.[action.field]?.value,
+                  [action.value]: {
+                    hidden: true,
+                  },
                 },
               },
             },
@@ -121,20 +140,53 @@ export const validationReducer = (
       };
     }
 
+    case 'seeding': {
+      const { createdAtUtc, lastUpdatedAtUtc, revisionRequest, sections, state, __v } =
+        action.value;
+
+      return {
+        ...formState,
+        createdAtUtc,
+        lastUpdatedAtUtc,
+        revisionRequest,
+        sections: sectionsOrder.reduce((seededSectionsData, sectionName) => {
+          const seedData = sections[sectionName] || {};
+          const validationData =
+            formState.sections[sectionName] ||
+            (console.error(`Seeding for "${sectionName}" hasn't been implemented yet`), {});
+
+          return Object.keys(seedData).length
+            ? {
+                ...seededSectionsData,
+                [sectionName]: {
+                  ...validationData,
+                  fields: sectionFieldsSeeder(validationData.fields, omit(seedData, 'meta')),
+                  meta: seedData?.meta,
+                  overall: sectionStatusMapping[seedData?.meta?.status as SECTION_STATUS],
+                },
+              }
+            : seededSectionsData;
+        }, {} as Record<FormSectionNames, FormSectionValidationState_SectionBase>),
+        state,
+        __seeded: true,
+        __v,
+      };
+    }
+
     default:
       console.info('unhandled action type', action.type);
-      return state;
+      return formState;
   }
 };
 
 export const validator: FormSectionValidatorFunction_Main =
-  (validationState, dispatch) =>
+  (formState, dispatch) =>
   (origin, validateSection) =>
   async (field, value, shouldPersistResults) => {
     if (validateSection) {
       const { error } = await schemaValidator(
         combinedSchema[origin],
-        Object.entries(validationState[origin]?.fields as object).reduce(
+        Object.entries(formState.sections[origin]?.fields as object).reduce(
           (acc, [field, data]) => ({
             ...acc,
             [field]: data.value,
@@ -149,7 +201,7 @@ export const validator: FormSectionValidatorFunction_Main =
         overall: error
           ? FORM_STATES.INCOMPLETE
           : !['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
-              validationState[origin]?.overall || '',
+              formState.sections[origin]?.overall || '',
             )
           ? FORM_STATES.COMPLETE
           : undefined,
@@ -181,7 +233,7 @@ export const validator: FormSectionValidatorFunction_Main =
           fieldIndex && fieldOverride !== 'overall' ? `${fieldName}[${fieldIndex}]` : fieldName,
         ),
         fieldOverride === 'overall'
-          ? Object.values<FormFieldType>(validationState[origin]?.fields[fieldName]?.value)
+          ? Object.values<FormFieldType>(formState.sections[origin]?.fields[fieldName]?.value)
               .filter(({ hidden }) => !hidden)
               .map(({ value }) => value)
           : value,
@@ -193,7 +245,7 @@ export const validator: FormSectionValidatorFunction_Main =
         field,
         ...(shouldPersistResults && { overall: FORM_STATES.TOUCHED }),
         section: origin,
-        type: validationState[origin]?.fields?.[fieldName]?.type,
+        type: formState.sections[origin]?.fields?.[fieldName]?.type,
         ...(fieldIsArray
           ? {
               error,
@@ -211,32 +263,49 @@ export const validator: FormSectionValidatorFunction_Main =
   };
 
 export const useFormValidation = (appId: string) => {
-  const [validationState, validationDispatch]: [
-    FormValidationStateParameters,
-    Dispatch<FormValidationAction>,
-  ] = useReducer(validationReducer, {
-    id: appId,
-    ...Object.entries(combinedSchema).reduce(
-      (acc, [field, schema]) => ({
-        ...acc,
-        [field]: {
-          ...(schema?.describe?.() || schema),
-          overall: FORM_STATES.PRISTINE,
-        },
-      }),
-      {},
-    ),
-    signature: {
-      ...combinedSchema.signature.describe(),
-      overall: FORM_STATES.DISABLED,
-    },
-    version: 0,
-  } as FormValidationStateParameters);
+  const { fetchWithAuth, isLoading } = useAuthContext();
+  const [formState, validationDispatch]: [FormValidationStateParameters, Dispatch<any>] =
+    useReducer(validationReducer, {
+      appId,
+      sections: {
+        ...Object.entries(combinedSchema).reduce(
+          (acc, [field, schema]) => ({
+            ...acc,
+            [field]: {
+              ...(schema?.describe?.() || schema),
+              overall: FORM_STATES.PRISTINE,
+            },
+          }),
+          {},
+        ),
+      },
+      __seeded: false,
+      __v: 0,
+    } as FormValidationStateParameters);
 
-  const validateSection = validator(validationState, validationDispatch);
+  useEffect(() => {
+    fetchWithAuth({
+      url: `${API.APPLICATIONS}/${appId}`,
+    })
+      .then(({ data, ...response }: { data?: Record<string, any> } = {}) =>
+        data
+          ? validationDispatch({
+              type: 'seeding',
+              value: data,
+            })
+          : console.error('Something went wrong seeding the application form', response),
+      )
+      .catch((error: Error) => {
+        // TODO dev logging, errors should not be shown to user
+        console.error(error);
+      });
+  }, [appId]);
+
+  const validateSection = validator(formState, validationDispatch);
 
   return {
-    validationState,
+    isLoading,
+    formState,
     validateSection,
   };
 };
@@ -308,7 +377,7 @@ export const useLocalValidation = (
     [localState],
   );
 
-  const validateFieldTouched = async (event: any) => {
+  const validateFieldTouched: FormFieldValidationTriggerFunction = async (event) => {
     const { eventType, field, fieldType, value } = getFieldDataFromEvent(event);
 
     if (eventType && field && fieldType) {

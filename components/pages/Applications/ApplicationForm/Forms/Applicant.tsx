@@ -1,4 +1,5 @@
-import { css } from '@icgc-argo/uikit';
+import { ReactElement } from 'react';
+import { css } from '@emotion/core';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 import Input from '@icgc-argo/uikit/form/Input';
@@ -6,32 +7,25 @@ import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import MultiSelect, { Option } from '@icgc-argo/uikit/form/MultiSelect';
 import Select from '@icgc-argo/uikit/form/Select';
 import Typography from '@icgc-argo/uikit/Typography';
-import StaticApplicant from '../../PDF/StaticApplicant';
-import FORM_TEXT from '../../PDF/textConstants';
+
+import StaticApplicant from 'components/pages/Applications/PDF/StaticApplicant';
+import FORM_TEXT from 'components/pages/Applications/PDF/textConstants';
 
 import { countriesList, honorificsList } from './constants';
 import DoubleFieldRow from './DoubleFieldRow';
-import { FormSectionValidationState_Applicant, FormSectionValidatorFunction_Origin } from './types';
-import { isRequired, useLocalValidation } from './validations';
+import { FormFieldValidationTriggerFunction, FormSectionValidationState_Applicant } from './types';
+import { isRequired } from './validations';
 import { transformToSelectOptions } from './validations/helpers';
 
 const Applicant = ({
   isSectionDisabled,
-  storedFields,
-  validateSection,
+  localState,
+  validateFieldTouched,
 }: {
   isSectionDisabled: boolean;
-  storedFields: FormSectionValidationState_Applicant;
-  validateSection: FormSectionValidatorFunction_Origin;
-}) => {
-  const {
-    localState,
-    validateFieldTouched,
-  }: {
-    localState: FormSectionValidationState_Applicant;
-    validateFieldTouched: (event: any) => void;
-  } = useLocalValidation(storedFields, validateSection('applicant'));
-
+  localState: FormSectionValidationState_Applicant;
+  validateFieldTouched: FormFieldValidationTriggerFunction;
+}): ReactElement => {
   return (
     <article>
       <StaticApplicant />
@@ -42,6 +36,7 @@ const Applicant = ({
 
         <DoubleFieldRow>
           <FormControl
+            disabled={isSectionDisabled}
             error={!!localState.info_title?.error}
             required={isRequired(localState.info_title)}
           >
@@ -49,7 +44,6 @@ const Applicant = ({
 
             <Select
               aria-label="Title"
-              disabled={isSectionDisabled}
               id="info_title"
               onBlur={validateFieldTouched}
               eventOnChange={validateFieldTouched}
@@ -64,6 +58,7 @@ const Applicant = ({
 
         <DoubleFieldRow>
           <FormControl
+            disabled={isSectionDisabled}
             error={!!localState.info_firstName?.error}
             required={isRequired(localState.info_firstName)}
           >
@@ -71,7 +66,6 @@ const Applicant = ({
 
             <Input
               aria-label="First Name"
-              disabled={isSectionDisabled}
               id="info_firstName"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
@@ -82,6 +76,7 @@ const Applicant = ({
           </FormControl>
 
           <FormControl
+            disabled={isSectionDisabled}
             error={!!localState.info_middleName?.error}
             required={isRequired(localState.info_middleName)}
           >
@@ -89,7 +84,6 @@ const Applicant = ({
 
             <Input
               aria-label="Middle Name"
-              disabled={isSectionDisabled}
               id="info_middleName"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
@@ -102,6 +96,7 @@ const Applicant = ({
 
         <DoubleFieldRow>
           <FormControl
+            disabled={isSectionDisabled}
             error={!!localState.info_lastName?.error}
             required={isRequired(localState.info_lastName)}
           >
@@ -109,7 +104,6 @@ const Applicant = ({
 
             <Input
               aria-label="Last Name"
-              disabled={isSectionDisabled}
               id="info_lastName"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
@@ -120,6 +114,7 @@ const Applicant = ({
           </FormControl>
 
           <FormControl
+            disabled={isSectionDisabled}
             error={!!localState.info_suffix?.error}
             required={isRequired(localState.info_suffix)}
           >
@@ -127,7 +122,6 @@ const Applicant = ({
 
             <Input
               aria-label="Suffix, e.g. Jr., Sr., MD."
-              disabled={isSectionDisabled}
               id="info_suffix"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
@@ -141,6 +135,7 @@ const Applicant = ({
 
         <DoubleFieldRow helpText="The legal entity responsible for this application.">
           <FormControl
+            disabled={isSectionDisabled}
             error={!!localState.info_primaryAffiliation?.error}
             required={isRequired(localState.info_primaryAffiliation)}
           >
@@ -148,7 +143,6 @@ const Applicant = ({
 
             <Input
               aria-label="Primary Affiliation"
-              disabled={isSectionDisabled}
               id="info_primaryAffiliation"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
@@ -163,6 +157,7 @@ const Applicant = ({
 
         <DoubleFieldRow helpText="Must be the institutional email address of the Principal Investigator.">
           <FormControl
+            disabled={isSectionDisabled}
             error={!!localState.info_institutionEmail?.error}
             required={isRequired(localState.info_institutionEmail)}
           >
@@ -170,7 +165,6 @@ const Applicant = ({
 
             <Input
               aria-label="Institutional Email"
-              disabled={isSectionDisabled}
               id="info_institutionEmail"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
@@ -185,6 +179,7 @@ const Applicant = ({
 
         <DoubleFieldRow helpText="Must be the Gmail or G Suite email address of the Principal Investigator.">
           <FormControl
+            disabled={isSectionDisabled}
             error={!!localState.info_googleEmail?.error}
             required={isRequired(localState.info_googleEmail)}
           >
@@ -192,7 +187,6 @@ const Applicant = ({
 
             <Input
               aria-label="Google Email"
-              disabled={isSectionDisabled}
               id="info_googleEmail"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
@@ -205,6 +199,7 @@ const Applicant = ({
 
         <DoubleFieldRow helpText="Please provide a link to your profile on your institution/company website.">
           <FormControl
+            disabled={isSectionDisabled}
             error={!!localState.info_institutionWebsite?.error}
             required={isRequired(localState.info_institutionWebsite)}
           >
@@ -212,7 +207,6 @@ const Applicant = ({
 
             <Input
               aria-label="Institution/Company Website"
-              disabled={isSectionDisabled}
               id="info_institutionWebsite"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
@@ -226,6 +220,7 @@ const Applicant = ({
         </DoubleFieldRow>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.info_positionTitle?.error}
           required={isRequired(localState.info_positionTitle)}
         >
@@ -233,7 +228,6 @@ const Applicant = ({
 
           <Input
             aria-label="Position Title"
-            disabled={isSectionDisabled}
             id="info_positionTitle"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -250,6 +244,7 @@ const Applicant = ({
         </Typography>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.address_country?.error}
           required={isRequired(localState.address_country)}
         >
@@ -263,7 +258,6 @@ const Applicant = ({
                 overflow: auto;
               }
             `}
-            disabled={isSectionDisabled}
             id="address_country"
             name="address_country"
             onChange={validateFieldTouched}
@@ -282,6 +276,7 @@ const Applicant = ({
         </FormControl>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.address_building?.error}
           required={isRequired(localState.address_building)}
         >
@@ -289,7 +284,6 @@ const Applicant = ({
 
           <Input
             aria-label="Building, e.g. MaRS Centre, South Tower"
-            disabled={isSectionDisabled}
             id="address_building"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -301,6 +295,7 @@ const Applicant = ({
         </FormControl>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.address_street?.error}
           required={isRequired(localState.address_street)}
         >
@@ -308,7 +303,6 @@ const Applicant = ({
 
           <Input
             aria-label="Street Address, e.g. 101 College Street, Suite 800"
-            disabled={isSectionDisabled}
             id="address_street"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -320,6 +314,7 @@ const Applicant = ({
         </FormControl>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.address_cityAndProvince?.error}
           required={isRequired(localState.address_cityAndProvince)}
         >
@@ -327,7 +322,6 @@ const Applicant = ({
 
           <Input
             aria-label="City and Province/State"
-            disabled={isSectionDisabled}
             id="address_cityAndProvince"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -341,6 +335,7 @@ const Applicant = ({
         </FormControl>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.address_postalCode?.error}
           required={isRequired(localState.address_postalCode)}
         >
@@ -348,7 +343,6 @@ const Applicant = ({
 
           <Input
             aria-label="Postal/Zip Code"
-            disabled={isSectionDisabled}
             id="address_postalCode"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
