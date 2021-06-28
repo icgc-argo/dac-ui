@@ -37,12 +37,12 @@ const ApplicationHeader = ({ data }: { data: any }): ReactElement => {
           appId={appId}
           applicant={applicant}
           createdAt={format(new Date(createdAtUtc), DATE_FORMAT)}
-          lastUpdated={format(new Date(lastUpdatedAtUtc), DATE_FORMAT + ' h:m aaaa')}
+          lastUpdated={format(new Date(lastUpdatedAtUtc), DATE_FORMAT + ' h:mm aaaa')}
         />
 
         <Progress />
 
-        <Actions />
+        <Actions appId={appId} />
       </div>
     </PageHeader>
   );
