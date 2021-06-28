@@ -13,6 +13,7 @@ import {
 } from './types';
 import StaticITAgreements from '../../PDF/StaticITAgreements';
 import { isRequired } from './validations';
+import FORM_TEXT from '../../PDF/textConstants';
 
 const ITAgreements = ({
   isSectionDisabled,
@@ -37,20 +38,17 @@ const ITAgreements = ({
           required={isRequired(localState.agreements?.fields?.it_agreement_software_updates)}
         >
           <FormCheckbox
-            aria-label="You will keep all computer systems on which ICGC Controlled Data reside, or which
-            provide access to such data, up-to-date with respect to software patches and antivirus
-            file definitions (if applicable)."
+            aria-label={FORM_TEXT.itAgreements.declarations.it_agreement_software_updates}
             checked={localState.agreements?.fields?.it_agreement_software_updates?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             value="agreements--it_agreement_software_updates"
           >
             <Typography bold component="span">
-              Yes
+              {FORM_TEXT.itAgreements.yes}
             </Typography>
-            , You will keep all computer systems on which ICGC Controlled Data reside, or which
-            provide access to such data, up-to-date with respect to software patches and antivirus
-            file definitions (if applicable).
+            {FORM_TEXT.itAgreements.commaSeparator}
+            {FORM_TEXT.itAgreements.declarations.it_agreement_software_updates}
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -64,18 +62,17 @@ const ITAgreements = ({
           required={isRequired(localState.agreements?.fields?.it_agreement_protect_data)}
         >
           <FormCheckbox
-            aria-label="You will protect ICGC Controlled Data against disclosure to and use by unauthorized
-            individuals."
+            aria-label={FORM_TEXT.itAgreements.declarations.it_agreement_protect_data}
             checked={localState.agreements?.fields?.it_agreement_protect_data?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             value="agreements--it_agreement_protect_data"
           >
             <Typography bold component="span">
-              Yes
+              {FORM_TEXT.itAgreements.yes}
             </Typography>
-            , You will protect ICGC Controlled Data against disclosure to and use by unauthorized
-            individuals.
+            {FORM_TEXT.itAgreements.commaSeparator}
+            {FORM_TEXT.itAgreements.declarations.it_agreement_protect_data}
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -89,16 +86,17 @@ const ITAgreements = ({
           required={isRequired(localState.agreements?.fields?.it_agreement_monitor_access)}
         >
           <FormCheckbox
-            aria-label="You will monitor and control which individuals have access to ICGC controlled Data."
+            aria-label={FORM_TEXT.itAgreements.declarations.it_agreement_monitor_access}
             checked={localState.agreements?.fields?.it_agreement_monitor_access?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             value="agreements--it_agreement_monitor_access"
           >
             <Typography bold component="span">
-              Yes
+              {FORM_TEXT.itAgreements.yes}
             </Typography>
-            , You will monitor and control which individuals have access to ICGC controlled Data.
+            {FORM_TEXT.itAgreements.commaSeparator}
+            {FORM_TEXT.itAgreements.declarations.it_agreement_monitor_access}
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -112,18 +110,17 @@ const ITAgreements = ({
           required={isRequired(localState.agreements?.fields?.it_agreement_destroy_copies)}
         >
           <FormCheckbox
-            aria-label="You will securely destroy all copies of ICGC Controlled Data in accordance with the
-            terms and conditions of the Data Access Agreement."
+            aria-label={FORM_TEXT.itAgreements.declarations.it_agreement_destroy_copies}
             checked={localState.agreements?.fields?.it_agreement_destroy_copies?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             value="agreements--it_agreement_destroy_copies"
           >
             <Typography bold component="span">
-              Yes
+              {FORM_TEXT.itAgreements.yes}
             </Typography>
-            , You will securely destroy all copies of ICGC Controlled Data in accordance with the
-            terms and conditions of the Data Access Agreement.
+            {FORM_TEXT.itAgreements.commaSeparator}
+            {FORM_TEXT.itAgreements.declarations.it_agreement_destroy_copies}
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -137,18 +134,17 @@ const ITAgreements = ({
           required={isRequired(localState.agreements?.fields?.it_agreement_onboard_training)}
         >
           <FormCheckbox
-            aria-label="You will familiarize all individuals who have access to ICGC Controlled Data with the
-            restrictions on its use."
+            aria-label={FORM_TEXT.itAgreements.declarations.it_agreement_onboard_training}
             checked={localState.agreements?.fields?.it_agreement_onboard_training?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             value="agreements--it_agreement_onboard_training"
           >
             <Typography bold component="span">
-              Yes
+              {FORM_TEXT.itAgreements.yes}
             </Typography>
-            , You will familiarize all individuals who have access to ICGC Controlled Data with the
-            restrictions on its use.
+            {FORM_TEXT.itAgreements.commaSeparator}
+            {FORM_TEXT.itAgreements.declarations.it_agreement_onboard_training}
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -166,8 +162,9 @@ const ITAgreements = ({
           )}
         >
           <FormCheckbox
-            aria-label="You agree to swiftly provide a copy of both your institutional and Research Project
-            related IT policy documents upon request from a DACO representative."
+            aria-label={
+              FORM_TEXT.itAgreements.declarations.it_agreement_provide_institutional_policies
+            }
             checked={
               localState.agreements?.fields?.it_agreement_provide_institutional_policies?.value
             }
@@ -176,10 +173,10 @@ const ITAgreements = ({
             value="agreements--it_agreement_provide_institutional_policies"
           >
             <Typography bold component="span">
-              Yes
+              {FORM_TEXT.itAgreements.yes}
             </Typography>
-            , You agree to swiftly provide a copy of both your institutional and Research Project
-            related IT policy documents upon request from a DACO representative.
+            {FORM_TEXT.itAgreements.commaSeparator}
+            {FORM_TEXT.itAgreements.declarations.it_agreement_provide_institutional_policies}
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -193,18 +190,17 @@ const ITAgreements = ({
           required={isRequired(localState.agreements?.fields?.it_agreement_contact_daco_fraud)}
         >
           <FormCheckbox
-            aria-label="You will notify the DACO immediately if you become aware or suspect that someone has
-            gained unauthorized access to the ICGC Controlled Data."
+            aria-label={FORM_TEXT.itAgreements.declarations.it_agreement_contact_daco_fraud}
             checked={localState.agreements?.fields?.it_agreement_contact_daco_fraud?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             value="agreements--it_agreement_contact_daco_fraud"
           >
             <Typography bold component="span">
-              Yes
+              {FORM_TEXT.itAgreements.yes}
             </Typography>
-            , You will notify the DACO immediately if you become aware or suspect that someone has
-            gained unauthorized access to the ICGC Controlled Data.
+            {FORM_TEXT.itAgreements.commaSeparator}
+            {FORM_TEXT.itAgreements.declarations.it_agreement_contact_daco_fraud}
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>

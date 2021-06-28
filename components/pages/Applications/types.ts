@@ -1,5 +1,6 @@
 import { Method } from 'axios';
 import { SortingRule } from 'react-table';
+import { string } from 'yup/lib/locale';
 
 export type ApplicationRecord = {
   appId: string;
@@ -51,6 +52,11 @@ export type ApplicationsSortingRule = SortingRule & {
   id: ApplicationsField | string;
 };
 
+export interface Agreement {
+  name: string;
+  accepted: boolean;
+}
+
 export type ApplicationsResponseItem = {
   appId: string;
   applicant: {
@@ -67,6 +73,114 @@ export type ApplicationsResponseItem = {
   lastUpdatedAtUtc: string;
   state: string;
 };
+
+interface Address {
+  building: string;
+  cityAndProvince: string;
+  country: string;
+  postalCode: string;
+  streetAddress: string;
+}
+
+interface IndividualInfo {
+  firstName: string;
+  googleEmail: string;
+  displayName: string;
+  institutionEmail: string;
+  institutionWebsite: string;
+  lastName: string;
+  middleName: string;
+  positionTitle: string;
+  primaryAffiliation: string;
+  suffix: string;
+  title: string;
+}
+
+interface Terms {
+  agreements: Agreement;
+}
+
+interface Individual {
+  address: Address;
+  info: IndividualInfo;
+}
+
+export interface ApprovalDoc {
+  name: 'string';
+  objectId: 'string';
+  uploadedAtUtc: 'string';
+}
+
+export enum ITAgreementEnum {
+  IT_AGREEMENT_CONTACT_DACO_FRAUD = 'it_agreement_contact_daco_fraud',
+  IT_AGREEMENT_PROVIDE_INSTITUTIONAL_POLICIES = 'it_agreement_provide_institutional_policies',
+  IT_AGREEMENT_ONBOARD_TRAINING = 'it_agreement_onboard_training',
+  IT_AGREEMENT_DESTROY_COPIES = 'it_agreement_destroy_copies',
+  IT_AGREEMENT_MONITOR_ACCESS = 'it_agreement_monitor_access',
+  IT_AGREEMENT_PROTECT_DATA = 'it_agreement_protect_data',
+  IT_AGREEMENT_SOFTWARE_UPDATES = 'it_agreement_software_updates',
+}
+
+interface ITAgreement extends Agreement {
+  name: ITAgreementEnum;
+}
+
+export interface ITAgreements {
+  agreements: ITAgreement[];
+}
+
+interface Collaborator {
+  info: IndividualInfo;
+  type: string; // make enum
+  id: string;
+}
+
+interface Representative {
+  address: Address;
+  info: IndividualInfo;
+}
+
+interface Collaborators {
+  list: Collaborator[];
+}
+
+interface ProjectInfo {
+  publicationsURLs: string[];
+  background: string;
+  methodology: string;
+  aims: string;
+  website: string;
+  title: string;
+}
+
+interface EthicsLetter {
+  declaredAsRequired: boolean;
+  approvalLetterDocs: ApprovalDoc[];
+}
+
+interface DataAccessAgreement {
+  agreements: Agreement[];
+}
+
+interface Appendices {
+  agreements: Agreement[];
+}
+
+export interface ApplicationData {
+  appId: string;
+  state: ApplicationState;
+  sections: {
+    terms: Terms;
+    applicant: Individual;
+    representative: Representative;
+    collaborators: Collaborators;
+    projectInfo: ProjectInfo;
+    ethicsLetter: EthicsLetter;
+    ITAgreements: ITAgreements;
+    dataAccessAgreement: DataAccessAgreement;
+    appendices: Appendices;
+  };
+}
 
 export type ApplicationsResponseData = {
   pagingInfo: {

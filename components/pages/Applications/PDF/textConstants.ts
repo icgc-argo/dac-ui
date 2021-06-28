@@ -49,6 +49,26 @@ const FORM_TEXT = {
       },
     },
   },
+  itAgreements: {
+    commaSeparator: ', ',
+    yes: 'Yes',
+    declarations: {
+      it_agreement_software_updates: `You will keep all computer systems on which ICGC Controlled Data reside, or which
+        provide access to such data, up-to-date with respect to software patches and antivirus
+        file definitions (if applicable).`,
+      it_agreement_protect_data: `You will protect ICGC Controlled Data against disclosure to and use by unauthorized
+        individuals.`,
+      it_agreement_monitor_access: `You will monitor and control which individuals have access to ICGC controlled Data.`,
+      it_agreement_destroy_copies: `You will securely destroy all copies of ICGC Controlled Data in accordance with the
+        terms and conditions of the Data Access Agreement.`,
+      it_agreement_onboard_training: `You will familiarize all individuals who have access to ICGC Controlled Data with the
+        restrictions on its use.`,
+      it_agreement_provide_institutional_policies: `You agree to swiftly provide a copy of both your institutional and Research Project
+        related IT policy documents upon request from a DACO representative.`,
+      it_agreement_contact_daco_fraud: `You will notify the DACO immediately if you become aware or suspect that someone has
+        gained unauthorized access to the ICGC Controlled Data.`,
+    },
+  },
 };
 
 export default FORM_TEXT;

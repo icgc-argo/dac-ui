@@ -146,7 +146,7 @@ export const Checkbox = ({
         display: 'flex',
         flexDirection: 'row',
         border: `1pt solid ${defaultTheme.colors.grey_1}`,
-        padding: '4pt 0pt 0pt 4pt',
+        padding: '4pt 4pt 0pt 4pt',
         ...style,
       }}
     >

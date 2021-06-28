@@ -2,27 +2,58 @@ import React from 'react';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
-import { getStaticComponents, SectionTitle } from './common';
+import { Checkbox, getStaticComponents, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
-import { View } from '@react-pdf/renderer';
+import { View, Text } from '@react-pdf/renderer';
 import { css } from '@icgc-argo/uikit';
 import Typography from '@icgc-argo/uikit/Typography';
+import { ApplicationData, ITAgreements, ITAgreementEnum } from '../types';
 
-const StaticITAgreements = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?: any }) => {
+const PdfAgreementsFormData = ({ data }: { data?: ITAgreements }) => {
+  const CheckboxText = ({ text }: { text: string }) => (
+    <Text>
+      <Text style={{ fontWeight: 'semibold' }}>{FORM_TEXT.itAgreements.yes}</Text>
+      {FORM_TEXT.itAgreements.commaSeparator}
+      {text}
+    </Text>
+  );
+  return (
+    <View>
+      {data?.agreements
+        .filter((agreement) => Object.values(ITAgreementEnum).includes(agreement.name))
+        .map((agreement) => (
+          <View key={agreement.name} style={{ marginBottom: '10pt' }} wrap={false}>
+            <Checkbox
+              checked={agreement.accepted}
+              TextComponent={
+                <CheckboxText text={FORM_TEXT.itAgreements.declarations[agreement.name]} />
+              }
+            />
+          </View>
+        ))}
+    </View>
+  );
+};
+
+const StaticITAgreements = ({
+  isPdf = false,
+  data,
+}: {
+  isPdf?: boolean;
+  data?: ApplicationData;
+}) => {
   const {
     ContainerComponent,
     SectionComponent,
     TextComponent,
-    LinkComponent,
     ListComponent,
     GenericContainer,
-    UnorderedListComponent,
     OrderedListComponent,
     TitleComponent,
     SectionTitle,
   } = getStaticComponents(isPdf);
 
-  const agreements = [
+  const agreementDetails = [
     ({ count }: { count: number }) => (
       <ListComponent count={count}>
         <TextComponent bold component="span" style={{ fontWeight: 600 }}>
@@ -103,12 +134,13 @@ const StaticITAgreements = ({ isPdf = false, data = {} }: { isPdf?: boolean; dat
   ];
 
   // cannot use TextComponent in pdf context, cannot use plain <ul> in ui context
+  // is there a nicer way to do this
   const UlAsTypography = isPdf ? View : Typography;
   return (
     <ContainerComponent
-      appId={data.appId}
-      state={data.state}
-      applicant={data?.sections?.applicant.info}
+      appId={data?.appId}
+      state={data?.state}
+      applicant={data?.sections.applicant.info}
     >
       <TitleComponent>F. Information Technology Agreements</TitleComponent>
 
@@ -137,7 +169,7 @@ const StaticITAgreements = ({ isPdf = false, data = {} }: { isPdf?: boolean; dat
         </TextComponent>
 
         <OrderedListComponent>
-          {agreements.map((Agreement, i) => (
+          {agreementDetails.map((Agreement, i) => (
             <Agreement count={i + 1} />
           ))}
         </OrderedListComponent>
@@ -178,10 +210,11 @@ const StaticITAgreements = ({ isPdf = false, data = {} }: { isPdf?: boolean; dat
           <ListComponent asListItem>Privacy breach notification</ListComponent>
         </UlAsTypography>
 
-        <TextComponent bold>
+        <TextComponent bold style={{ fontWeight: 600, marginTop: '15pt' }}>
           You MUST agree to the following procedures in order to have access to the ICGC Controlled
           Data:
         </TextComponent>
+        {isPdf && <PdfAgreementsFormData data={data?.sections.ITAgreements} />}
       </GenericContainer>
     </ContainerComponent>
   );

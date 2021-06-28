@@ -15,6 +15,7 @@ import { View } from '@react-pdf/renderer';
 import { css } from '@icgc-argo/uikit';
 import { BANNER_VARIANTS } from '@icgc-argo/uikit/notifications/Banner';
 import Table from './Table';
+import { ApprovalDoc } from '../../Applications/types';
 
 const StaticAttachLetterMessage = ({ isPdf = false }: { isPdf: boolean }) => {
   const { GenericContainer, TextComponent } = getStaticComponents(isPdf);
@@ -33,12 +34,6 @@ const StaticAttachLetterMessage = ({ isPdf = false }: { isPdf: boolean }) => {
     </GenericContainer>
   );
 };
-
-interface ApprovalDoc {
-  name: 'string';
-  objectId: 'string';
-  uploadedAtUtc: 'string';
-}
 
 const ApprovalLetterDocs = ({ data }: { data: ApprovalDoc[] }) => {
   return (
