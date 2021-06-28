@@ -10,10 +10,10 @@ import Typography from '@icgc-argo/uikit/Typography';
 import FormFieldHelpBubble from '../FormFieldHelpBubble';
 import RequiredFieldsMessage from '../RequiredFieldsMessage';
 import {
+  FormFieldValidationTriggerFunction,
   FormSectionValidationState_ProjectInfo,
-  FormSectionValidatorFunction_Origin,
 } from '../types';
-import { isRequired, useLocalValidation } from '../validations';
+import { isRequired } from '../validations';
 import PublicationURLs from './PublicationURLs';
 import StaticProjectInfo, {
   AimsBubble,
@@ -28,21 +28,13 @@ import { css } from '@icgc-argo/uikit';
 
 const ProjectInfo = ({
   isSectionDisabled,
-  storedFields,
-  validateSection,
+  localState,
+  validateFieldTouched,
 }: {
   isSectionDisabled: boolean;
-  storedFields: FormSectionValidationState_ProjectInfo;
-  validateSection: FormSectionValidatorFunction_Origin;
+  localState: FormSectionValidationState_ProjectInfo;
+  validateFieldTouched: FormFieldValidationTriggerFunction;
 }): ReactElement => {
-  const {
-    localState,
-    validateFieldTouched,
-  }: {
-    localState: FormSectionValidationState_ProjectInfo;
-    validateFieldTouched: (event: any) => void;
-  } = useLocalValidation(storedFields, validateSection('projectInfo'));
-
   return (
     <article>
       <StaticProjectInfo />
@@ -52,12 +44,15 @@ const ProjectInfo = ({
           {FORM_TEXT.project_info.basic_info}
         </Typography>
 
-        <FormControl error={!!localState.title?.error} required={isRequired(localState.title)}>
+        <FormControl
+          disabled={isSectionDisabled}
+          error={!!localState.title?.error}
+          required={isRequired(localState.title)}
+        >
           <InputLabel htmlFor="title">Project Title</InputLabel>
 
           <Input
             aria-label="Project Title"
-            disabled={isSectionDisabled}
             id="title"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -67,12 +62,15 @@ const ProjectInfo = ({
           <FormHelperText onErrorOnly>{localState.title?.error?.[0]}</FormHelperText>
         </FormControl>
 
-        <FormControl error={!!localState.website?.error} required={isRequired(localState.website)}>
+        <FormControl
+          disabled={isSectionDisabled}
+          error={!!localState.website?.error}
+          required={isRequired(localState.website)}
+        >
           <InputLabel htmlFor="website">Project Website</InputLabel>
 
           <Input
             aria-label="Project Website"
-            disabled={isSectionDisabled}
             id="website"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -88,6 +86,7 @@ const ProjectInfo = ({
 
         <FormControl
           className="vertical"
+          disabled={isSectionDisabled}
           error={!!localState.background?.error}
           required={isRequired(localState.background)}
         >
@@ -114,6 +113,7 @@ const ProjectInfo = ({
 
         <FormControl
           className="vertical"
+          disabled={isSectionDisabled}
           error={!!localState.aims?.error}
           required={isRequired(localState.aims)}
         >
@@ -138,6 +138,7 @@ const ProjectInfo = ({
 
         <FormControl
           className="vertical"
+          disabled={isSectionDisabled}
           error={!!localState.methodology?.error}
           required={isRequired(localState.methodology)}
         >
@@ -166,6 +167,7 @@ const ProjectInfo = ({
 
         <FormControl
           className="vertical"
+          disabled={isSectionDisabled}
           error={!!localState.summary?.error}
           required={isRequired(localState.summary)}
         >
@@ -190,7 +192,7 @@ const ProjectInfo = ({
       </section>
 
       <PublicationURLs
-        {...localState.publicationURLs}
+        {...localState.publicationsURLs}
         isSectionDisabled={isSectionDisabled}
         validateFieldTouched={validateFieldTouched}
       />

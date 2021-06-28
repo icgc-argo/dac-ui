@@ -73,7 +73,7 @@ export const applicantSchema = yup.object().shape({
   info_title: yup.string().default(''),
 });
 
-export const dataAccessAgreementsSchema = yup.object().shape({
+export const dataAccessAgreementSchema = yup.object().shape({
   agreements: yup.object().shape({
     daa_correct_application_content: yup.boolean().default(false).oneOf([true]).required(),
     daa_agree_to_terms: yup.boolean().default(false).oneOf([true]).required(),
@@ -104,7 +104,7 @@ export const projectInfoSchema = yup.object().shape({
   aims: yup.string().default('').test(maxWords(200)).required(),
   background: yup.string().default('').test(maxWords(200)).required(),
   methodology: yup.string().default('').test(maxWords(200)).required(),
-  publicationURLs: yup
+  publicationsURLs: yup
     .array(
       yup
         .string()
@@ -136,6 +136,7 @@ export const representativeSchema = yup.object().shape({
     .required(),
   address_postalCode: yup.string().default('').required(),
   address_street: yup.string().default('').required(),
+  addressSameAsApplicant: yup.boolean().default(false),
   info_firstName: yup.string().default('').required(),
   info_institutionEmail: yup
     .string()
@@ -155,12 +156,12 @@ export const signatureSchema = yup.object().shape({});
 export const combinedSchema = {
   appendices: appendicesSchema,
   applicant: applicantSchema,
-  dataAccessAgreements: dataAccessAgreementsSchema,
-  introduction: introductionSchema,
-  itAgreements: itAgreementsSchema,
+  dataAccessAgreement: dataAccessAgreementSchema,
+  ITAgreements: itAgreementsSchema,
   projectInfo: projectInfoSchema,
   representative: representativeSchema,
   signature: signatureSchema,
+  terms: introductionSchema,
 } as Record<FormSectionNames, any>;
 
 export default yup;

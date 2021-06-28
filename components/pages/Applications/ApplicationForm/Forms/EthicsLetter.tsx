@@ -1,3 +1,4 @@
+import { ReactElement } from 'react';
 import Banner, { BANNER_VARIANTS } from '@icgc-argo/uikit/notifications/Banner';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
@@ -8,31 +9,23 @@ import RadioCheckboxGroup from '@icgc-argo/uikit/form/RadioCheckboxGroup';
 import Typography from '@icgc-argo/uikit/Typography';
 
 import {
+  FormFieldValidationTriggerFunction,
   FormSectionValidationState_EthicsLetter,
-  FormSectionValidatorFunction_Origin,
 } from './types';
-import { isRequired, useLocalValidation } from './validations';
+import { isRequired } from './validations';
 import { css } from '@emotion/core';
 import StaticEthics from '../../PDF/StaticEthics';
 import FORM_TEXT from '../../PDF/textConstants';
 
 const EthicsLetter = ({
   isSectionDisabled,
-  storedFields,
-  validateSection,
+  localState,
+  validateFieldTouched,
 }: {
   isSectionDisabled: boolean;
-  storedFields: FormSectionValidationState_EthicsLetter;
-  validateSection: FormSectionValidatorFunction_Origin;
-}) => {
-  const {
-    localState,
-    validateFieldTouched,
-  }: {
-    localState: FormSectionValidationState_EthicsLetter;
-    validateFieldTouched: (event: any) => void;
-  } = useLocalValidation(storedFields, validateSection('introduction'));
-
+  localState: FormSectionValidationState_EthicsLetter;
+  validateFieldTouched: FormFieldValidationTriggerFunction;
+}): ReactElement => {
   return (
     <article>
       <StaticEthics />
@@ -44,6 +37,7 @@ const EthicsLetter = ({
 
         <FormControl
           className="vertical"
+          disabled={isSectionDisabled}
           error={!!localState.declaredAsRequired?.error}
           required={true}
           // required={isRequired(localState.declaredAsRequired)}
@@ -56,13 +50,13 @@ const EthicsLetter = ({
             css={css`
               margin-top: 15px;
             `}
-            isChecked={false}
-            onChange={function noRefCheck() {}}
+            isChecked={localState.declaredAsRequired?.value}
+            onChange={validateFieldTouched}
           >
-            <FormRadio value="one" checked>
+            <FormRadio disabled={isSectionDisabled} value="false" checked>
               {FORM_TEXT.ethics.declarationOptions.one}
             </FormRadio>
-            <FormRadio disabled value="two">
+            <FormRadio disabled value="true">
               {FORM_TEXT.ethics.declarationOptions.two.a}{' '}
               <Typography bold component="span">
                 {FORM_TEXT.ethics.declarationOptions.two.b}{' '}

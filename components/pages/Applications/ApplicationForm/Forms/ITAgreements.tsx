@@ -1,36 +1,29 @@
+import { ReactElement } from 'react';
 import { css } from '@emotion/core';
 import { UikitTheme } from '@icgc-argo/uikit/index';
 import FormCheckbox from '@icgc-argo/uikit/form/FormCheckbox';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
-import Link from '@icgc-argo/uikit/Link';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
 
 import {
+  FormFieldValidationTriggerFunction,
   FormSectionValidationState_ITAgreements,
-  FormSectionValidatorFunction_Origin,
 } from './types';
-import { isRequired, useLocalValidation } from './validations';
 import StaticITAgreements from '../../PDF/StaticITAgreements';
+import { isRequired } from './validations';
 
 const ITAgreements = ({
   isSectionDisabled,
-  storedFields,
-  validateSection,
+  localState,
+  validateFieldTouched,
 }: {
   isSectionDisabled: boolean;
-  storedFields: FormSectionValidationState_ITAgreements;
-  validateSection: FormSectionValidatorFunction_Origin;
-}) => {
+  localState: FormSectionValidationState_ITAgreements;
+  validateFieldTouched: FormFieldValidationTriggerFunction;
+}): ReactElement => {
   const theme: UikitTheme = useTheme();
-  const {
-    localState,
-    validateFieldTouched,
-  }: {
-    localState: FormSectionValidationState_ITAgreements;
-    validateFieldTouched: (event: any) => void;
-  } = useLocalValidation(storedFields, validateSection('itAgreements'));
 
   return (
     <article>
@@ -39,6 +32,7 @@ const ITAgreements = ({
       {/* getting that extra grey bar here from the article > section styling */}
       <section>
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.it_agreement_software_updates?.error}
           required={isRequired(localState.agreements?.fields?.it_agreement_software_updates)}
         >
@@ -46,7 +40,6 @@ const ITAgreements = ({
             aria-label="You will keep all computer systems on which ICGC Controlled Data reside, or which
             provide access to such data, up-to-date with respect to software patches and antivirus
             file definitions (if applicable)."
-            disabled={isSectionDisabled}
             checked={localState.agreements?.fields?.it_agreement_software_updates?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -66,13 +59,13 @@ const ITAgreements = ({
         </FormControl>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.it_agreement_protect_data?.error}
           required={isRequired(localState.agreements?.fields?.it_agreement_protect_data)}
         >
           <FormCheckbox
             aria-label="You will protect ICGC Controlled Data against disclosure to and use by unauthorized
             individuals."
-            disabled={isSectionDisabled}
             checked={localState.agreements?.fields?.it_agreement_protect_data?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -91,12 +84,12 @@ const ITAgreements = ({
         </FormControl>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.it_agreement_monitor_access?.error}
           required={isRequired(localState.agreements?.fields?.it_agreement_monitor_access)}
         >
           <FormCheckbox
             aria-label="You will monitor and control which individuals have access to ICGC controlled Data."
-            disabled={isSectionDisabled}
             checked={localState.agreements?.fields?.it_agreement_monitor_access?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -114,13 +107,13 @@ const ITAgreements = ({
         </FormControl>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.it_agreement_destroy_copies?.error}
           required={isRequired(localState.agreements?.fields?.it_agreement_destroy_copies)}
         >
           <FormCheckbox
             aria-label="You will securely destroy all copies of ICGC Controlled Data in accordance with the
             terms and conditions of the Data Access Agreement."
-            disabled={isSectionDisabled}
             checked={localState.agreements?.fields?.it_agreement_destroy_copies?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -139,13 +132,13 @@ const ITAgreements = ({
         </FormControl>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.it_agreement_onboard_training?.error}
           required={isRequired(localState.agreements?.fields?.it_agreement_onboard_training)}
         >
           <FormCheckbox
             aria-label="You will familiarize all individuals who have access to ICGC Controlled Data with the
             restrictions on its use."
-            disabled={isSectionDisabled}
             checked={localState.agreements?.fields?.it_agreement_onboard_training?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -164,6 +157,7 @@ const ITAgreements = ({
         </FormControl>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={
             !!localState.agreements?.fields?.it_agreement_provide_institutional_policies?.error
           }
@@ -174,7 +168,6 @@ const ITAgreements = ({
           <FormCheckbox
             aria-label="You agree to swiftly provide a copy of both your institutional and Research Project
             related IT policy documents upon request from a DACO representative."
-            disabled={isSectionDisabled}
             checked={
               localState.agreements?.fields?.it_agreement_provide_institutional_policies?.value
             }
@@ -195,13 +188,13 @@ const ITAgreements = ({
         </FormControl>
 
         <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.it_agreement_contact_daco_fraud?.error}
           required={isRequired(localState.agreements?.fields?.it_agreement_contact_daco_fraud)}
         >
           <FormCheckbox
             aria-label="You will notify the DACO immediately if you become aware or suspect that someone has
             gained unauthorized access to the ICGC Controlled Data."
-            disabled={isSectionDisabled}
             checked={localState.agreements?.fields?.it_agreement_contact_daco_fraud?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}

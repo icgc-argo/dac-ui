@@ -1,5 +1,8 @@
 import { ReactElement } from 'react';
+import { FORM_STATES } from '../Forms/types';
 
-const ApplicationProgress = (): ReactElement => <section>progress bar here</section>;
+const ApplicationProgress = ({ state }: { state: FORM_STATES }): ReactElement => (
+  <section>{state || 'progress bar here'}</section>
+);
 
 export default ApplicationProgress;

@@ -21,6 +21,17 @@ export enum EVENT_TARGET_TAGS {
   TEXTAREA = 'TEXTAREA',
 }
 
+export enum SECTION_STATUS {
+  COMPLETE = 'COMPLETE',
+  DISABLED = 'DISABLED',
+  INCOMPLETE = 'INCOMPLETE',
+  LOCKED = 'LOCKED',
+  PRISTINE = 'PRISTINE',
+  REVISIONS_MADE = 'REVISIONS MADE',
+  REVISIONS_REQUESTED = 'REVISIONS REQUESTED',
+  REVISIONS_REQUESTED_DISABLED = 'REVISIONS REQUESTED DISABLED',
+}
+
 export enum FORM_STATES {
   CAN_EDIT = 'canEdit',
   COMPLETE = 'complete',
@@ -31,6 +42,8 @@ export enum FORM_STATES {
   TOUCHED = 'touched',
   PRISTINE = 'pristine',
 }
+
+export type SectionStatusMapping = Record<SECTION_STATUS, FormSectionOverallState>;
 
 export type FormSectionOverallState = `${FORM_STATES}`;
 
@@ -87,47 +100,53 @@ export type FormSectionValidationState_Applicant = FormSectionValidationState_Se
   address_street: { value: string };
   address_postalCode: { value: string };
 }>;
-export type FormSectionValidationState_Collaborators = FormSectionValidationState_SectionsGenericType<{}>;
-export type FormSectionValidationState_DataAccessAgreements = FormSectionValidationState_SectionsGenericType<{
-  agreements: {
-    fields: {
-      daa_correct_application_content: FormFieldType;
-      daa_agree_to_terms: FormFieldType;
+export type FormSectionValidationState_Collaborators =
+  FormSectionValidationState_SectionsGenericType<{}>;
+export type FormSectionValidationState_DataAccessAgreements =
+  FormSectionValidationState_SectionsGenericType<{
+    agreements: {
+      fields: {
+        daa_correct_application_content: FormFieldType;
+        daa_agree_to_terms: FormFieldType;
+      };
     };
-  };
-}>;
-export type FormSectionValidationState_EthicsLetter = FormSectionValidationState_SectionsGenericType<{
-  declaredAsRequired: { value: boolean };
-  approvalLetterDocs: { value: [] };
-}>;
-export type FormSectionValidationState_Introduction = FormSectionValidationState_SectionsGenericType<{
-  agreement: { value: boolean };
-}>;
-export type FormSectionValidationState_ITAgreements = FormSectionValidationState_SectionsGenericType<{
-  agreements: {
-    fields: {
-      it_agreement_software_updates: FormFieldType;
-      it_agreement_protect_data: FormFieldType;
-      it_agreement_monitor_access: FormFieldType;
-      it_agreement_destroy_copies: FormFieldType;
-      it_agreement_onboard_training: FormFieldType;
-      it_agreement_provide_institutional_policies: FormFieldType;
-      it_agreement_contact_daco_fraud: FormFieldType;
+  }>;
+export type FormSectionValidationState_EthicsLetter =
+  FormSectionValidationState_SectionsGenericType<{
+    declaredAsRequired: { value: boolean };
+    approvalLetterDocs: { value: [] };
+  }>;
+export type FormSectionValidationState_Introduction =
+  FormSectionValidationState_SectionsGenericType<{
+    agreement: { value: boolean };
+  }>;
+export type FormSectionValidationState_ITAgreements =
+  FormSectionValidationState_SectionsGenericType<{
+    agreements: {
+      fields: {
+        it_agreement_software_updates: FormFieldType;
+        it_agreement_protect_data: FormFieldType;
+        it_agreement_monitor_access: FormFieldType;
+        it_agreement_destroy_copies: FormFieldType;
+        it_agreement_onboard_training: FormFieldType;
+        it_agreement_provide_institutional_policies: FormFieldType;
+        it_agreement_contact_daco_fraud: FormFieldType;
+      };
     };
-  };
-}>;
-export type FormSectionValidationState_ProjectInfo = FormSectionValidationState_SectionsGenericType<{
-  aims: { value: string };
-  background: { value: string };
-  methodology: { value: string };
-  publicationURLs: {
-    hasThreeValidURLs: boolean;
-    value: Record<number, FormFieldType>;
-  };
-  summary: { value: string };
-  title: { value: string };
-  website: { value: string };
-}>;
+  }>;
+export type FormSectionValidationState_ProjectInfo =
+  FormSectionValidationState_SectionsGenericType<{
+    aims: { value: string };
+    background: { value: string };
+    methodology: { value: string };
+    publicationsURLs: {
+      hasThreeValidURLs: boolean;
+      value: Record<number, FormFieldType>;
+    };
+    summary: { value: string };
+    title: { value: string };
+    website: { value: string };
+  }>;
 export type FormSectionValidationState_Representative = FormSectionValidationState_SectionsGenericType<{
   info_firstName: { value: string };
   info_institutionEmail: { value: string };
@@ -169,7 +188,8 @@ export type FormValidationActionTypes =
   | 'string'
   | 'object'
   | 'overall'
-  | 'remove';
+  | 'remove'
+  | 'seeding';
 
 export type FormValidationAction = {
   error?: string[];
@@ -181,6 +201,7 @@ export type FormValidationAction = {
 };
 
 interface FormValidationState_Base {
+  appId: string;
   approvedAtUtc?: string;
   approvedBy?: string;
   closedAtUtc?: string;
@@ -188,16 +209,18 @@ interface FormValidationState_Base {
   createdAtUtc?: string;
   denialReason?: string;
   expiresAtUtc?: string;
-  id: string;
-  state?: string;
+  lastUpdatedAtUtc?: string;
+  revisionRequest: any; // temporary state
+  state?: string; // called `state` in BE, but that complicates things in FE
   submittedAtUtc?: string;
   submitterId?: string;
-  updatedAtUtc?: string;
-  version: number;
+  __seeded: boolean;
+  __v: number;
 }
 
-export type FormValidationStateParameters = FormValidationState_Base &
-  Record<FormSectionNames, FormSectionValidationState_SectionBase>;
+export type FormValidationStateParameters = FormValidationState_Base & {
+  sections: Record<FormSectionNames, FormSectionValidationState_SectionBase>;
+};
 
 export type FormSectionUpdateLocalStateFunction = (fieldData: FormValidationAction) => void;
 
@@ -223,6 +246,7 @@ export type FormFieldDataFromEvent = (
       value?: string;
     };
 
+export type FormFieldValidationTriggerFunction = (event: any) => Promise<void>;
 export type FormFieldValidatorFunction = (
   field?: string,
   value?: any,

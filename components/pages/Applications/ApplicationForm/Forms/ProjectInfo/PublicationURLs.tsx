@@ -16,7 +16,7 @@ import { FormFieldType } from '../types';
 import { getMin, isRequired } from '../validations';
 import { StaticPublications } from 'components/pages/Applications/PDF/StaticProjectInfo';
 
-const ID = 'publicationURLs';
+const ID = 'publicationsURLs';
 
 const PublicationURLs = ({
   error = [],
@@ -64,7 +64,7 @@ const PublicationURLs = ({
             ...urlsAcc,
             [index]: item,
           }),
-          // this pads the publicationURLs array to have at least `minPublications`-many items
+          // this pads the publicationsURLs array to have at least `minPublications`-many items
           Array.from(
             {
               length: Math.max(minPublications, publicationsCount),
@@ -86,7 +86,10 @@ const PublicationURLs = ({
                       width: 30px;
                     `}
                     disabled={isSectionDisabled}
-                    onClick={changePublicationsCount('remove', `publicationURLs--${index}--remove`)}
+                    onClick={changePublicationsCount(
+                      'remove',
+                      `publicationsURLs--${index}--remove`,
+                    )}
                     size="sm"
                     variant="text"
                   >
@@ -112,15 +115,18 @@ const PublicationURLs = ({
                 margin: 10px 0;
                 padding: 10px;
               `}
-              key={`publicationURLs--${index}`}
+              key={`publicationsURLs--${index}`}
             >
-              <FormControl error={!!item.error} required={isRequired(innerType)}>
+              <FormControl
+                disabled={isSectionDisabled}
+                error={!!item.error}
+                required={isRequired(innerType)}
+              >
                 <InputLabel htmlFor="title">Publication URL</InputLabel>
 
                 <Input
                   aria-label="Project Title"
-                  disabled={isSectionDisabled}
-                  id={`publicationURLs--${index}`}
+                  id={`publicationsURLs--${index}`}
                   onBlur={validateFieldTouched}
                   onChange={validateFieldTouched}
                   value={item.value}

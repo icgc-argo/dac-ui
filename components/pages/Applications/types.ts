@@ -1,6 +1,5 @@
 import { Method } from 'axios';
 import { SortingRule } from 'react-table';
-import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
 export type ApplicationRecord = {
   appId: string;
@@ -12,6 +11,18 @@ export type ApplicationRecord = {
   lastUpdated: string;
   status: string;
 };
+
+export enum ApplicationState {
+  DRAFT = 'DRAFT',
+  SIGN_AND_SUBMIT = 'SIGN AND SUBMIT',
+  REVIEW = 'REVIEW',
+  REVISIONS_REQUESTED = 'REVISIONS REQUESTED',
+  REJECTED = 'REJECTED',
+  APPROVED = 'APPROVED',
+  RENEWING = 'RENEWING',
+  CLOSED = 'CLOSED',
+  EXPIRED = 'EXPIRED',
+}
 
 export type SortedChangeFunction = (
   newSorted: SortingRule[],
