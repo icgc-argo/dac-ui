@@ -1,18 +1,4 @@
 import Typography from '@icgc-argo/uikit/Typography';
-import Banner, { BANNER_VARIANTS } from '@icgc-argo/uikit/notifications/Banner';
-import FormControl from '@icgc-argo/uikit/form/FormControl';
-import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
-import FormRadio from '@icgc-argo/uikit/form/FormRadio';
-import InputLabel from '@icgc-argo/uikit/form/InputLabel';
-import Link from '@icgc-argo/uikit/Link';
-import RadioCheckboxGroup from '@icgc-argo/uikit/form/RadioCheckboxGroup';
-
-import RequiredFieldsMessage from './RequiredFieldsMessage';
-import {
-  FormSectionValidationState_EthicsLetter,
-  FormSectionValidatorFunction_Origin,
-} from './types';
-import { isRequired, useLocalValidation } from './validations';
 import { css } from '@emotion/core';
 import React, { useState } from 'react';
 import Button from '@icgc-argo/uikit/Button';
@@ -36,23 +22,6 @@ import { isRequired, useLocalValidation } from './validations';
 import { transformToSelectOptions } from './validations/helpers';
 import RadioCheckboxGroup from '@icgc-argo/uikit/form/RadioCheckboxGroup';
 import FormRadio from '@icgc-argo/uikit/form/FormRadio';
-
-const Actions = () => {
-  const theme = useTheme();
-  return (
-    <div
-      css={css`
-        width: 100%;
-        padding: 0 10px;
-        display: flex;
-        justify-content: space-between;
-      `}
-    >
-      <Icon name="edit" width="20px" height="20px" fill={theme.colors.accent2} />
-      <Icon name="trash" width="19px" height="20px" />
-    </div>
-  );
-};
 
 const Actions = () => {
   const theme = useTheme();
@@ -105,7 +74,7 @@ const columns = [
 
 const mock = [
   {
-    positionTitle: 'Authorized Personnel',
+    positionTitle: 'Authorized Personannel',
     firstName: 'Taylor',
     lastName: 'Data',
     googleEmail: 't@gmail.com',
@@ -137,17 +106,10 @@ const Collaborators = ({
   validateSection: any;
 }) => {
   const [collaborators, setCollaborators] = useState(mock);
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-  const [showModal, setShowModal] = useState(false);
->>>>>>> add collaborators modal form
-=======
   const [isModalVisible, setModalVisible] = useState(false);
   const [collaboratorType, setCollaboratorType] = useState(CollaboratorType.PERSONNEL);
 
   const dismissModal = () => setModalVisible(false);
->>>>>>> styling
 
   const containerRef = React.createRef<HTMLDivElement>();
   const theme = useTheme();
