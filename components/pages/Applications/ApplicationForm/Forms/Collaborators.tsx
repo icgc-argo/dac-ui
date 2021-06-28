@@ -23,7 +23,6 @@ import pluralize from 'pluralize';
 import { isEmpty } from 'lodash';
 import ContentPlaceholder from '@icgc-argo/uikit/ContentPlaceholder';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
-import { useAuthContext } from 'global/hooks';
 import Modal from '@icgc-argo/uikit/Modal';
 import { ModalPortal } from 'components/Root';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
@@ -37,7 +36,6 @@ import { isRequired, useLocalValidation } from './validations';
 import { transformToSelectOptions } from './validations/helpers';
 import RadioCheckboxGroup from '@icgc-argo/uikit/form/RadioCheckboxGroup';
 import FormRadio from '@icgc-argo/uikit/form/FormRadio';
-import { formStyle } from '.';
 
 const Actions = () => {
   const theme = useTheme();
@@ -549,12 +547,13 @@ const Collaborators = ({
                       <InputLabel htmlFor="info_positionTitle">Position Title</InputLabel>
 
                       <Input
-                        aria-label="Pursuing Degree"
+                        aria-label="Position Title"
                         disabled={isSectionDisabled}
                         id="info_positionTitle"
                         onBlur={validateFieldTouched}
                         onChange={validateFieldTouched}
                         value={localState.info_positionTitle?.value}
+                        placeholder="e.g. Bioinformatician"
                       />
 
                       <FormHelperText onErrorOnly>
@@ -575,6 +574,7 @@ const Collaborators = ({
                         onBlur={validateFieldTouched}
                         onChange={validateFieldTouched}
                         value={localState.info_pursuingDegree?.value}
+                        placeholder="e.g. Doctoral"
                       />
 
                       <FormHelperText onErrorOnly>
