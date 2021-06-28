@@ -75,7 +75,7 @@ const columns = [
 
 const mockCollaborators = [
   {
-    positionTitle: 'Authorized Personannel',
+    positionTitle: 'Authorized Personnel',
     firstName: 'Taylor',
     lastName: 'Data',
     googleEmail: 't@gmail.com',
