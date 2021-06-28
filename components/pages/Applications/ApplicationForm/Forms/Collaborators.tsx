@@ -1,6 +1,6 @@
 import Typography from '@icgc-argo/uikit/Typography';
 import { css } from '@emotion/core';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import Table from '@icgc-argo/uikit/Table';
@@ -22,6 +22,7 @@ import { isRequired, useLocalValidation } from './validations';
 import { transformToSelectOptions } from './validations/helpers';
 import RadioCheckboxGroup from '@icgc-argo/uikit/form/RadioCheckboxGroup';
 import FormRadio from '@icgc-argo/uikit/form/FormRadio';
+import { FormSectionValidationState_Applicant, FormFieldValidationTriggerFunction } from './types';
 
 const Actions = () => {
   const theme = useTheme();
@@ -72,7 +73,7 @@ const columns = [
   },
 ];
 
-const mock = [
+const mockCollaborators = [
   {
     positionTitle: 'Authorized Personannel',
     firstName: 'Taylor',
@@ -95,17 +96,14 @@ enum CollaboratorType {
 }
 
 const Collaborators = ({
-  appId,
   isSectionDisabled,
-  storedFields,
-  validateSection,
+  localState,
+  validateFieldTouched,
 }: {
-  appId: string;
-  isSectionDisabled: any;
-  storedFields: any;
-  validateSection: any;
-}) => {
-  const [collaborators, setCollaborators] = useState(mock);
+  isSectionDisabled: boolean;
+  localState: FormSectionValidationState_Applicant;
+  validateFieldTouched: FormFieldValidationTriggerFunction;
+}): ReactElement => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [collaboratorType, setCollaboratorType] = useState(CollaboratorType.PERSONNEL);
 
@@ -113,14 +111,6 @@ const Collaborators = ({
 
   const containerRef = React.createRef<HTMLDivElement>();
   const theme = useTheme();
-
-  const {
-    localState,
-    validateFieldTouched,
-  }: {
-    localState: any; //FormSectionValidationState_Applicant;
-    validateFieldTouched: (event: any) => void;
-  } = useLocalValidation(storedFields, validateSection('collaborators'));
 
   return (
     <article>
@@ -160,8 +150,8 @@ const Collaborators = ({
           `}
         >
           <Typography variant="data">
-            {collaborators.length.toLocaleString()}{' '}
-            {pluralize('Collaborators', collaborators.length)}
+            {mockCollaborators.length.toLocaleString()}{' '}
+            {pluralize('Collaborators', mockCollaborators.length)}
           </Typography>
           <Button
             size="sm"
@@ -190,7 +180,7 @@ const Collaborators = ({
           `}
         >
           <Col>
-            {isEmpty(collaborators) ? (
+            {isEmpty(mockCollaborators) ? (
               <ContentPlaceholder
                 title="You have not added any Collaborators."
                 subtitle='To get started, click the "Add a collaborator" button above.'
@@ -213,7 +203,7 @@ const Collaborators = ({
                 showPagination={false}
                 defaultSorted={[{ id: 'positionTitle', desc: false }]}
                 columns={columns}
-                data={collaborators}
+                data={mockCollaborators}
                 parentRef={containerRef}
                 stripped
                 withOutsideBorder
