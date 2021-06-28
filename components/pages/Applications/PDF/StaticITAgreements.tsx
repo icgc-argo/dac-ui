@@ -168,9 +168,9 @@ const StaticITAgreements = ({
           At a minimum, you agree to the following:
         </TextComponent>
 
-        <OrderedListComponent>
+        <OrderedListComponent style={isPdf ? { width: '95%', marginBottom: '15pt' } : {}}>
           {agreementDetails.map((Agreement, i) => (
-            <Agreement count={i + 1} />
+            <Agreement key={i} count={i + 1} />
           ))}
         </OrderedListComponent>
 

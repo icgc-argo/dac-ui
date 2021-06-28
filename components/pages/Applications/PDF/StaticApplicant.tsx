@@ -44,9 +44,9 @@ const PdfApplicantFormData = ({ data }: { data: any }) => {
       </View>
       <View
         style={{
-          borderTop: `1px solid ${defaultTheme.colors.grey_1}`,
-          marginTop: '25px',
-          paddingTop: '5px',
+          borderTop: `1pt solid ${defaultTheme.colors.grey_1}`,
+          marginTop: '25pt',
+          paddingTop: '5pt',
         }}
       >
         <SectionTitle>{FORM_TEXT.applicant.address}</SectionTitle>

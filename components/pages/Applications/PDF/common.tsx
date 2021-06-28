@@ -72,6 +72,9 @@ export const styles = StyleSheet.create({
     borderRadius: '8pt',
     marginBottom: '25pt',
   },
+  highlighted: {
+    color: defaultTheme.colors.secondary,
+  },
 });
 
 // react-pdf components

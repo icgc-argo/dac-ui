@@ -36,7 +36,7 @@ const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
         <StaticProjectInfo isPdf data={data} />
         <StaticEthics isPdf data={data} />
         <StaticITAgreements isPdf data={data} />
-        {/* <StaticDataAccessAgreement isPdf data={data} /> */}
+        <StaticDataAccessAgreement isPdf data={data} />
         {/* <StaticAppendices isPdf data={data} /> */}
       </Document>,
     ).toBlob();

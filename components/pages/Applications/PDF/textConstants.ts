@@ -69,6 +69,19 @@ const FORM_TEXT = {
         gained unauthorized access to the ICGC Controlled Data.`,
     },
   },
+  dataAccessAgreements: {
+    definitions: 'DEFINITIONS',
+    dataAccessTerms: 'DATA ACCESS TERMS AND CONDITIONS',
+    agreements: 'AGREEMENTS',
+    commaSeparator: ', ',
+    yes: 'Yes',
+    declarations: {
+      daa_correct_application_content: `You certify that the contents in the application are true and correct to the best of
+      your knowledge and belief.`,
+      daa_agree_to_terms: `You have read and agree to abide by the terms and conditions outlined in the Data
+      Access Agreement.`,
+    },
+  },
 };
 
 export default FORM_TEXT;

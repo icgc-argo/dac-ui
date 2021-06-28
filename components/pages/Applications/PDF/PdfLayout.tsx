@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    padding: '15pt 10pt',
+    padding: '15pt 15pt 15pt 10pt',
   },
   section: {
     margin: 10,
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     marginTop: '15pt',
   },
   header: {
-    height: '20pt',
+    height: '30pt',
     flexDirection: 'row',
     justifyContent: 'flex-end',
     fontSize: 11,

@@ -121,8 +121,17 @@ export enum ITAgreementEnum {
   IT_AGREEMENT_SOFTWARE_UPDATES = 'it_agreement_software_updates',
 }
 
+export enum DataAccessAgreementEnum {
+  DAA_CORRECT_APPLICATION_CONTENT = 'daa_correct_application_content',
+  DAA_AGREE_TO_TERMS = 'daa_agree_to_terms',
+}
+
 interface ITAgreement extends Agreement {
   name: ITAgreementEnum;
+}
+
+export interface DataAccessAgreement extends Agreement {
+  name: DataAccessAgreementEnum;
 }
 
 export interface ITAgreements {
@@ -158,8 +167,8 @@ interface EthicsLetter {
   approvalLetterDocs: ApprovalDoc[];
 }
 
-interface DataAccessAgreement {
-  agreements: Agreement[];
+export interface DataAccessAgreement {
+  agreements: DataAccessAgreement[];
 }
 
 interface Appendices {
