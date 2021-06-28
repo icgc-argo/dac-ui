@@ -30,6 +30,25 @@ const FORM_TEXT = {
       laySummary: 'Lay Summary (max. 200 words)',
     },
   },
+  ethics: {
+    title: 'ETHICS APPROVAL',
+    inputLabel: {
+      declaration: 'Please choose one of the following options',
+    },
+    declarationOptions: {
+      one: `You represent and warrant that your country/region does not require your Research
+      Project to undergo ethics review.`,
+      two: {
+        a: `Your country/region requires your Research Project to undergo ethics review, and
+        therefore, this Research Project has been approved by an IRB/REC formally designated
+        to approve and/or monitor research involving humans.`,
+        b: `As per the`,
+        link: `Data Access Agreement`,
+        c: `, current and applicable ethical approval is the responsibility of the Principal
+        Investigator.`,
+      },
+    },
+  },
 };
 
 export default FORM_TEXT;
