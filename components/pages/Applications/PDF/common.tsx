@@ -8,6 +8,8 @@ import PDFLayout from './PdfLayout';
 import EmptyCheckbox from './icons/EmptyCheckbox';
 import FilledCheckbox from './icons/FilledCheckbox';
 import { FieldAccessor, PdfField, PdfFieldName, PdfFormField } from './types';
+import Banner from '@icgc-argo/uikit/notifications/Banner';
+import { css } from '@icgc-argo/uikit';
 
 const WorkSansBold = require('public/fonts/WorkSans-Bold.ttf').default;
 const WorkSansLight = require('public/fonts/WorkSans-Light.ttf').default;
@@ -42,6 +44,7 @@ export const styles = StyleSheet.create({
     fontWeight: 'semibold',
     fontSize: 24,
     lineHeight: 1.4,
+    marginBottom: '10pt',
   },
   text: {
     fontFamily: 'WorkSans',
@@ -63,6 +66,12 @@ export const styles = StyleSheet.create({
     lineHeight: 1.4,
     margin: '10pt 0',
   },
+  banner: {
+    border: `1pt solid ${defaultTheme.colors.accent2}`,
+    padding: '7pt 9pt',
+    borderRadius: '8pt',
+    marginBottom: '25pt',
+  },
 });
 
 // react-pdf components
@@ -74,15 +83,32 @@ export const PDFText = ({
   children,
   style = {},
   asListItem = false,
+  count,
 }: {
   children: ReactNode;
   style?: any;
   asListItem?: boolean;
+  count?: number;
 }) => (
-  <Text style={{ ...styles.text, ...style }}>
-    {asListItem && '• '}
-    {children}
-  </Text>
+  <View>
+    <View style={{ display: 'flex', flexDirection: 'row' }} wrap={false}>
+      {count && (
+        <Text style={styles.text}>
+          {count}.{'  '}
+        </Text>
+      )}
+      {asListItem && <Text style={{ fontSize: 11 }}>{'•  '}</Text>}
+      <Text
+        style={{
+          ...styles.text,
+          ...(count && styles.paragraph),
+          ...style,
+        }}
+      >
+        {children}
+      </Text>
+    </View>
+  </View>
 );
 
 export const PDFParagraph = ({ children, style = {} }: { children: ReactNode; style?: any }) => {
@@ -105,11 +131,27 @@ export const SectionTitle = ({ children, style = {} }: { children: ReactNode; st
   return <Text style={{ ...styles.sectionTitle, ...style }}>{children}</Text>;
 };
 
-export const Checkbox = ({ TextComponent, checked }: { TextComponent: any; checked: boolean }) => {
+export const Checkbox = ({
+  TextComponent,
+  checked,
+  style = {},
+}: {
+  TextComponent: any;
+  checked: boolean;
+  style?: any;
+}) => {
   return (
-    <View style={{ display: 'flex', flexDirection: 'row' }}>
+    <View
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        border: `1pt solid ${defaultTheme.colors.grey_1}`,
+        padding: '4pt 0pt 0pt 4pt',
+        ...style,
+      }}
+    >
       {checked ? <FilledCheckbox /> : <EmptyCheckbox />}
-      <PDFParagraph style={{ marginLeft: '5pt', marginTop: '2pt' }}>{TextComponent}</PDFParagraph>
+      <PDFText style={{ marginLeft: '10pt' }}>{TextComponent}</PDFText>
     </View>
   );
 };
@@ -129,11 +171,38 @@ export const PDFTextArea = ({ text }: { text?: string }) => {
     </View>
   );
 };
+
+export const PDFBanner = ({ content }: { content: ReactNode }) => {
+  return <View style={styles.banner}>{content}</View>;
+};
+
 // ui components
 export const Section = ({ children }: { children: ReactNode }) => <section>{children}</section>;
 
 export const Li = ({ children }: { children: ReactNode }) => <li>{children}</li>;
 export const Ul = ({ children }: { children: ReactNode }) => <ul>{children}</ul>;
+const Ol = ({ children }: { children: ReactNode }) => {
+  return (
+    <Typography
+      component="ol"
+      css={css`
+        font-size: 13px;
+        margin-left: -10px;
+        padding-left: 25px;
+
+        li {
+          padding: 10px;
+
+          &:nth-of-type(even) {
+            background: ${defaultTheme.colors.grey_4};
+          }
+        }
+      `}
+    >
+      {children}
+    </Typography>
+  );
+};
 
 // need to use element other than React.Fragment so props can be passed
 export const ContainerDiv = ({ children }: { children: ReactNode }) => <div>{children}</div>;
@@ -162,8 +231,10 @@ export const getStaticComponents = (isPdf: boolean) => {
         ContainerComponent: PDFLayout,
         SectionTitle,
         UnorderedListComponent: View,
+        OrderedListComponent: View,
         ListComponent: PDFText,
         GenericContainer: View,
+        BannerComponent: PDFBanner,
       }
     : {
         TextComponent: Typography,
@@ -173,8 +244,10 @@ export const getStaticComponents = (isPdf: boolean) => {
         ContainerComponent: Section,
         SectionTitle: UISectionTitle,
         UnorderedListComponent: Ul,
+        OrderedListComponent: Ol,
         ListComponent: Li,
         GenericContainer: React.Fragment,
+        BannerComponent: Banner,
       };
 };
 
