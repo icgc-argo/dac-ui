@@ -82,6 +82,41 @@ const FORM_TEXT = {
       Access Agreement.`,
     },
   },
+  appendices: {
+    read_the_appendix: 'Read the Appendix',
+    appendix_icgc_goals_policies: {
+      title: `APPENDIX I - INTERNATIONAL CANCER GENOME CONSORTIUM, GOALS, STRUCTURE, POLICIES & GUIDELINES (2008)`,
+      text: 'You have read APPENDIX I',
+    },
+    appendix_large_scale_data_sharing: {
+      title: `APPENDIX II - SHARING DATA FROM LARGE-SCALE BIOLOGICAL RESEARCH PROJECTS: A SYSTEM OF TRIPARTITE RESPONSIBILITY "THE FT. LAUDERDALE GUIDELINES" (2003)`,
+      text: 'You have read APPENDIX II',
+    },
+    appendix_prepublication_policy: {
+      title: `APPENDIX III - TORONTO INTERNATIONAL DATA RELEASE WORKSHOP AUTHORS, PREPUBLICATION DATA SHARING - NATURE 461 (10) 168. (2009)`,
+      text: 'You have read APPENDIX III',
+    },
+    appendix_publication_policy: {
+      title: `APPENDIX IV - INTERNATIONAL CANCER GENOME CONSORTIUM, UPDATE TO GOALS, STRUCTURE, POLICIES & GUIDELINES - SECTION E.3 PUBLICATION POLICY (2008 INCLUDING 2010 AND 2012 UPDATES)`,
+      text: 'You have read APPENDIX IV',
+    },
+    appendix_nih_genomic_inventions: {
+      title: `APPENDIX V - NATIONAL INSTITUTES OF HEALTH, BEST PRACTICES FOR THE LICENSING OF GENOMIC INVENTIONS (2005)`,
+      text: 'You have read APPENDIX V',
+    },
+    appendix_oecd_genetic_inventions: {
+      title: `APPENDIX VI - OECD, GUIDELINES FOR THE LICENSING OF GENETIC INVENTIONS (2006)`,
+      text: 'You have read APPENDIX VI',
+    },
+    appendix_cloud_security: {
+      title: `APPENDIX VII - ICGC DCC: BEST PRACTICES FOR SECURING CONTROLLED DATA IN THE CLOUD (2015)`,
+      text: 'You have read APPENDIX VII',
+    },
+    appendix_ga4gh_framework: {
+      title: `APPENDIX VIII - GA4GH, FRAMEWORK FOR RESPONSIBLE SHARING OF GENOMIC AND HEALTH-RELATED DATA (2014)`,
+      text: 'You have read APPENDIX VIII',
+    },
+  },
 };
 
 export default FORM_TEXT;
