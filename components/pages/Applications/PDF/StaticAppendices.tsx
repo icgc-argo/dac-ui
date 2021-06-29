@@ -70,7 +70,7 @@ const StaticAppendices = ({ isPdf = false, data }: { isPdf?: boolean; data?: App
         >
           <ICGCPolicies isPdf={isPdf} />
           {data?.sections.appendices.agreements.map((agreement) => (
-            <Appendix agreement={agreement} />
+            <Appendix key={agreement.name} agreement={agreement} />
           ))}
         </View>
       )}

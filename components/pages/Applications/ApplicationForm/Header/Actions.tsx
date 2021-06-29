@@ -20,6 +20,8 @@ import StaticEthics from '../../PDF/StaticEthics';
 import StaticITAgreements from '../../PDF/StaticITAgreements';
 import StaticDataAccessAgreement from '../../PDF/StaticDataAccessAgreement';
 import StaticAppendices from '../../PDF/StaticAppendices';
+import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
+import { FILE_DATE } from '../../Dashboard/Applications/InProgress/constants';
 
 const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
   const theme: UikitTheme = useTheme();
@@ -41,7 +43,8 @@ const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
       </Document>,
     ).toBlob();
 
-    saveAs(blob, `${data.appId}-${data.state}`);
+    const dateCreated = getFormattedDate(Date.now(), FILE_DATE);
+    saveAs(blob, `${data.appId}-${dateCreated}`);
   };
 
   return (

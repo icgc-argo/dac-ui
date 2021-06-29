@@ -42,9 +42,9 @@ export const styles = StyleSheet.create({
   title: {
     fontFamily: 'WorkSans',
     fontWeight: 'semibold',
-    fontSize: 24,
+    fontSize: 20,
     lineHeight: 1.4,
-    marginBottom: '10pt',
+    marginBottom: '15pt',
   },
   text: {
     fontFamily: 'WorkSans',
