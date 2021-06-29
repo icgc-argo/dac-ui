@@ -142,8 +142,20 @@ export const StyledView = ({ children, style = {} }: { children: ReactNode; styl
   return <View style={{ ...styles.section, ...style }}>{children}</View>;
 };
 
-export const PDFLink = ({ children, style = {} }: { children: ReactNode; style?: any }) => {
-  return <Text style={{ ...styles.paragraph, ...styles.link, ...style }}>{children}</Text>;
+export const PDFLink = ({
+  children,
+  href,
+  style = {},
+}: {
+  children: ReactNode;
+  href?: string;
+  style?: any;
+}) => {
+  return (
+    <Text style={{ ...styles.paragraph, ...styles.link, ...style }}>
+      {children} {href && `(${href})`}
+    </Text>
+  );
 };
 
 export const SectionTitle = ({ children, style = {} }: { children: ReactNode; style?: any }) => {

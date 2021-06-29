@@ -54,7 +54,7 @@ const PdfEthicsFormData = ({ data }: { data?: ApplicationData }) => {
       {FORM_TEXT.ethics.declarationOptions.two.a}{' '}
       <PDFText>
         {FORM_TEXT.ethics.declarationOptions.two.b}{' '}
-        <PDFLink>{FORM_TEXT.ethics.declarationOptions.two.link}</PDFLink>
+        <PDFLink href="daco-section-link">{FORM_TEXT.ethics.declarationOptions.two.link}</PDFLink>
         {FORM_TEXT.ethics.declarationOptions.two.c}
       </PDFText>
     </View>

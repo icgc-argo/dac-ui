@@ -1,9 +1,8 @@
 import React from 'react';
 
 import { getConfig } from 'global/config';
-import { OICR_LINK, POLICIES_PAGE } from 'global/constants/externalPaths';
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
-import { PDFLink, getStaticComponents, Checkbox, SectionTitle } from './common';
+import { getStaticComponents, Checkbox, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import { Text } from '@react-pdf/renderer';
@@ -16,7 +15,6 @@ const StaticIntroduction = ({
   isPdf?: boolean;
   data?: ApplicationData;
 }) => {
-  const { NEXT_PUBLIC_ARGO_ROOT } = getConfig();
   const {
     TextComponent,
     TitleComponent,
@@ -44,9 +42,8 @@ const StaticIntroduction = ({
           <LinkComponent href="#" rel="noopener noreferrer" target="_blank">
             goals and policies of ICGC
           </LinkComponent>{' '}
-          (see Appendix I){isPdf && <PDFLink> ({POLICIES_PAGE})</PDFLink>} including, but not
-          limited to, policies concerning the purpose and relevance of the research, the protection
-          of the participants and the security of the participants’ data.
+          including, but not limited to, policies concerning the purpose and relevance of the
+          research, the protection of the participants and the security of the participants’ data.
         </TextComponent>
 
         <TextComponent>
@@ -54,7 +51,6 @@ const StaticIntroduction = ({
           <LinkComponent href="#" rel="noopener noreferrer" target="_blank">
             Ontario Institute for Cancer Research (“OICR”)
           </LinkComponent>{' '}
-          {isPdf && <PDFLink>({OICR_LINK}) </PDFLink>}
           which is the legal entity that administrates the ICGC Controlled Data on behalf of ICGC
           member institutions. OICR includes its employees, officers, directors, contractors,
           subcontractors and agents (including the DACO, as defined immediately below).
@@ -76,7 +72,6 @@ const StaticIntroduction = ({
           <LinkComponent href="#" rel="noopener noreferrer" target="_blank">
             ICGC ARGO website
           </LinkComponent>
-          {isPdf && <PDFLink> ({NEXT_PUBLIC_ARGO_ROOT})</PDFLink>}.
         </TextComponent>
 
         {!isPdf && <RequiredFieldsMessage />}
