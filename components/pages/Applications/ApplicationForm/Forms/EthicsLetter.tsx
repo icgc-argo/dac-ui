@@ -54,16 +54,16 @@ const EthicsLetter = ({
             onChange={validateFieldTouched}
           >
             <FormRadio disabled={isSectionDisabled} value="false" checked>
-              {FORM_TEXT.ethics.declarationOptions.one}
+              {FORM_TEXT.ethics.declarationOptions.notRequired}
             </FormRadio>
             <FormRadio disabled value="true">
-              {FORM_TEXT.ethics.declarationOptions.two.a}{' '}
+              {FORM_TEXT.ethics.declarationOptions.required.a}{' '}
               <Typography bold component="span">
-                {FORM_TEXT.ethics.declarationOptions.two.b}{' '}
+                {FORM_TEXT.ethics.declarationOptions.required.b}{' '}
                 <Link href="#" rel="noopener noreferrer" target="_blank">
-                  {FORM_TEXT.ethics.declarationOptions.two.link}
+                  {FORM_TEXT.ethics.declarationOptions.required.link}
                 </Link>
-                {FORM_TEXT.ethics.declarationOptions.two.c}
+                {FORM_TEXT.ethics.declarationOptions.required.c}
               </Typography>
             </FormRadio>
           </RadioCheckboxGroup>

@@ -36,8 +36,8 @@ const FORM_TEXT = {
       declaration: 'Please choose one of the following options',
     },
     declarationOptions: {
-      one: `You represent and warrant that your country/region does not require your Research Project to undergo ethics review.`,
-      two: {
+      notRequired: `You represent and warrant that your country/region does not require your Research Project to undergo ethics review.`,
+      required: {
         a: `Your country/region requires your Research Project to undergo ethics review, and therefore, this Research Project has been approved by an IRB/REC formally designated to approve and/or monitor research involving humans.`,
         b: `As per the`,
         link: `Data Access Agreement`,

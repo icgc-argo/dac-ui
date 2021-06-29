@@ -51,11 +51,13 @@ const PdfEthicsFormData = ({ data }: { data?: ApplicationData }) => {
   const ethicsRequired = data?.sections.ethicsLetter.declaredAsRequired;
   const OptionTwo = (
     <View>
-      {FORM_TEXT.ethics.declarationOptions.two.a}{' '}
+      {FORM_TEXT.ethics.declarationOptions.required.a}{' '}
       <PDFText>
-        {FORM_TEXT.ethics.declarationOptions.two.b}{' '}
-        <PDFLink href="daco-section-link">{FORM_TEXT.ethics.declarationOptions.two.link}</PDFLink>
-        {FORM_TEXT.ethics.declarationOptions.two.c}
+        {FORM_TEXT.ethics.declarationOptions.required.b}{' '}
+        <PDFLink href="daco-section-link">
+          {FORM_TEXT.ethics.declarationOptions.required.link}
+        </PDFLink>
+        {FORM_TEXT.ethics.declarationOptions.required.c}
       </PDFText>
     </View>
   );
@@ -71,7 +73,7 @@ const PdfEthicsFormData = ({ data }: { data?: ApplicationData }) => {
       <SectionTitle>{FORM_TEXT.ethics.title}</SectionTitle>
       <View style={{ marginBottom: '10pt' }}>
         <Checkbox
-          TextComponent={FORM_TEXT.ethics.declarationOptions.one}
+          TextComponent={FORM_TEXT.ethics.declarationOptions.notRequired}
           checked={!ethicsRequired}
         />
       </View>
