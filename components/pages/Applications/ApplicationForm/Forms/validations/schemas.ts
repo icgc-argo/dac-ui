@@ -153,6 +153,30 @@ export const representativeSchema = yup.object().shape({
 
 export const signatureSchema = yup.object().shape({});
 
+
+export const collaboratorSchema = yup.object().shape({
+  info_collaboratorType: yup.string().required().oneOf(['Authorized Personnel','Authorized Student']),
+  info_pursuingDegree: yup.string().default('').required(),
+  info_firstName: yup.string().default('').required(),
+  info_googleEmail: yup
+    .string()
+    .default('')
+    .email('Please enter a valid email address.')
+    .required(),
+  info_institutionWebsite: yup.string().default('').url('Please enter a valid url.').required(),
+  info_institutionEmail: yup
+    .string()
+    .default('')
+    .email('Please enter a valid email address.')
+    .required(),
+  info_lastName: yup.string().default('').required(),
+  info_middleName: yup.string().default(''),
+  info_primaryAffiliation: yup.string().default('').required(),
+  info_suffix: yup.string().default(''),
+  info_title: yup.string().default(''),
+});
+
+
 export const combinedSchema = {
   appendices: appendicesSchema,
   applicant: applicantSchema,
@@ -162,6 +186,7 @@ export const combinedSchema = {
   representative: representativeSchema,
   signature: signatureSchema,
   terms: introductionSchema,
+  collaborators: collaboratorSchema
 } as Record<FormSectionNames, any>;
 
 export default yup;
