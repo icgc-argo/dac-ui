@@ -206,7 +206,7 @@ const StaticDataAccessAgreement = ({
       <SectionComponent
         style={{
           borderTop: `1pt solid ${defaultTheme.colors.grey_1}`,
-          marginTop: '25pt',
+          marginTop: '20pt',
           paddingTop: '5pt',
         }}
       >

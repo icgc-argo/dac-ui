@@ -24,6 +24,8 @@ import StaticCollaborators from '../../PDF/StaticCollaborators';
 import StaticProjectInfo from '../../PDF/StaticProjectInfo';
 import StaticEthics from '../../PDF/StaticEthics';
 import StaticITAgreements from '../../PDF/StaticITAgreements';
+import StaticDataAccessAgreement from '../../PDF/StaticDataAccessAgreement';
+import StaticAppendices from '../../PDF/StaticAppendices';
 
 const Introduction = ({
   isSectionDisabled,
@@ -36,19 +38,19 @@ const Introduction = ({
 }): ReactElement => {
   // for local testing, will be removed when pdf feature complete
   const { fetchWithAuth } = useAuthContext();
-  const [pdfData, setPdfData] = useState(null);
-  const [isClient, setIsClient] = useState(false);
-  useEffect(() => {
-    fetchWithAuth({ url: urlJoin(APPLICATIONS_PATH, 'DACO-5') })
-      .then((res: any) => setPdfData(res.data))
-      .catch((err: AxiosError) => {
-        setPdfData(null);
-        console.error('Application fetch failed, pdf not generated.', err);
-        return null;
-      });
-    // cannot render PDFDownloadLink on server side, dynamically importing did not resolve the issue
-    setIsClient(true);
-  }, []);
+  // const [pdfData, setPdfData] = useState(undefined);
+  // const [isClient, setIsClient] = useState(false);
+  // useEffect(() => {
+  //   fetchWithAuth({ url: urlJoin(APPLICATIONS_PATH, 'DACO-5') })
+  //     .then((res: any) => setPdfData(res.data))
+  //     .catch((err: AxiosError) => {
+  //       setPdfData(undefined);
+  //       console.error('Application fetch failed, pdf not generated.', err);
+  //       return null;
+  //     });
+  //   // cannot render PDFDownloadLink on server side, dynamically importing did not resolve the issue
+  //   setIsClient(true);
+  // }, []);
 
   return (
     <article>
@@ -61,7 +63,7 @@ const Introduction = ({
         `}
       >
         {/* PDFViewer is for testing locally, so commenting out in pr. Will be removed when pdf feature completed */}
-        {isClient && pdfData && (
+        {/* {isClient && pdfData && (
           <PDFViewer height="800" width="500">
             <Document>
               <StaticIntroduction isPdf data={pdfData} />
@@ -71,14 +73,16 @@ const Introduction = ({
               <StaticProjectInfo isPdf data={pdfData} />
               <StaticEthics isPdf data={pdfData} />
               <StaticITAgreements isPdf data={pdfData} />
-              {/* <StaticDataAccessAgreement isPdf data={pdfData} /> */}
-              {/* <StaticAppendices isPdf data={pdfData} /> */}
+              <StaticDataAccessAgreement isPdf data={pdfData} />
+              <StaticAppendices isPdf data={pdfData} />
             </Document>
           </PDFViewer>
-        )}
+        )} */}
       </div>
 
-      <StaticIntroduction />
+      <section>
+        <StaticIntroduction />
+      </section>
       <section>
         <Typography bold component="h3" color="secondary">
           {FORM_TEXT.introduction.title}

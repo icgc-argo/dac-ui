@@ -14,6 +14,7 @@ import FORM_TEXT from './textConstants';
 import { View } from '@react-pdf/renderer';
 import VerticalTable from './VerticalTable';
 import { PdfFieldName } from './types';
+import { ApplicationData } from '../types';
 
 const BasicInfo = ({ data }: { data: any }) => {
   const infoFields = [PdfFormFields.PROJECT_TITLE, PdfFormFields.PROJECT_WEBSITE];
@@ -205,7 +206,13 @@ export const StaticLaySummary = ({ isPdf = false }: { isPdf?: boolean }) => {
     isPdf,
   );
   return (
-    <SectionComponent>
+    <SectionComponent
+      style={{
+        borderTop: `1pt solid ${defaultTheme.colors.grey_1}`,
+        marginTop: '20pt',
+        marginBottom: '15pt',
+      }}
+    >
       <SectionTitle>PROJECT LAY SUMMARY</SectionTitle>
 
       <TextComponent>
@@ -227,7 +234,13 @@ export const StaticPublications = ({ isPdf = false }: { isPdf?: boolean }) => {
   );
 
   return (
-    <SectionComponent>
+    <SectionComponent
+      style={{
+        borderTop: `1pt solid ${defaultTheme.colors.grey_1}`,
+        marginTop: '20pt',
+        marginBottom: '15pt',
+      }}
+    >
       <SectionTitle>RELEVANT PUBLICATIONS</SectionTitle>
 
       <TextComponent>
@@ -254,7 +267,13 @@ export const StaticPublications = ({ isPdf = false }: { isPdf?: boolean }) => {
     </SectionComponent>
   );
 };
-const StaticProjectInfo = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?: any }) => {
+const StaticProjectInfo = ({
+  isPdf = false,
+  data,
+}: {
+  isPdf?: boolean;
+  data?: ApplicationData;
+}) => {
   const {
     ContainerComponent,
     SectionComponent,
@@ -265,8 +284,8 @@ const StaticProjectInfo = ({ isPdf = false, data = {} }: { isPdf?: boolean; data
   // TODO: need to add text for textareas from data
   return (
     <ContainerComponent
-      appId={data.appId}
-      state={data.state}
+      appId={data?.appId}
+      state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
       <TitleComponent>D. Project Information</TitleComponent>
@@ -281,30 +300,31 @@ const StaticProjectInfo = ({ isPdf = false, data = {} }: { isPdf?: boolean; data
       </SectionComponent>
       {isPdf && (
         <View>
-          <BasicInfo data={data.sections.projectInfo} />
+          <BasicInfo data={data?.sections.projectInfo} />
           <StaticResearchSummary isPdf={isPdf} />
           <PDFParagraph style={{ fontWeight: 600 }}>
             {FORM_TEXT.project_info.inputLabel.background}
           </PDFParagraph>
           <BackgroundBubble isPdf />
-          <PDFTextArea text={'Here is some text for the text area'} />
+          <PDFTextArea text={data?.sections.projectInfo.background} />
           <PDFParagraph style={{ fontWeight: 600 }}>
             {FORM_TEXT.project_info.inputLabel.aims}
           </PDFParagraph>
           <AimsBubble isPdf />
-          <PDFTextArea text={'Here is some text for the text area'} />
+          <PDFTextArea text={data?.sections.projectInfo.aims} />
           <PDFParagraph style={{ fontWeight: 600 }}>
             {FORM_TEXT.project_info.inputLabel.dataUse}
           </PDFParagraph>
           <DataUseBubble isPdf />
-          <PDFTextArea text={'Moaaaaarrrr text'} />
+          <PDFTextArea text={data?.sections.projectInfo.methodology} />
           <StaticLaySummary isPdf />
           <PDFParagraph style={{ fontWeight: 600 }}>
             {FORM_TEXT.project_info.inputLabel.laySummary}
           </PDFParagraph>
           <LaySummaryBubble isPdf />
-          <PDFTextArea text={'Lay summary text here'} />
-          <PdfPublicationsFormData data={data.sections.projectInfo.publicationsURLs} />
+          {/* TODO: add lay summary from data */}
+          <PDFTextArea text={'Lay summary data not available'} />
+          <PdfPublicationsFormData data={data?.sections.projectInfo.publicationsURLs} />
         </View>
       )}
     </ContainerComponent>

@@ -156,7 +156,13 @@ const StaticITAgreements = ({
         {!isPdf && <RequiredFieldsMessage />}
       </SectionComponent>
 
-      <GenericContainer>
+      <SectionComponent
+        style={{
+          borderTop: `1pt solid ${defaultTheme.colors.grey_1}`,
+          marginTop: '15pt',
+          marginBottom: '15pt',
+        }}
+      >
         <SectionTitle>IT AGREEMENT</SectionTitle>
 
         <TextComponent
@@ -210,12 +216,12 @@ const StaticITAgreements = ({
           <ListComponent asListItem>Privacy breach notification</ListComponent>
         </UlAsTypography>
 
-        <TextComponent bold style={{ fontWeight: 600, marginTop: '15pt' }}>
+        <TextComponent bold style={{ fontWeight: 600, marginTop: '15pt', marginBottom: '15px' }}>
           You MUST agree to the following procedures in order to have access to the ICGC Controlled
           Data:
         </TextComponent>
         {isPdf && <PdfAgreementsFormData data={data?.sections.ITAgreements} />}
-      </GenericContainer>
+      </SectionComponent>
     </ContainerComponent>
   );
 };
