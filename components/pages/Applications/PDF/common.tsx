@@ -237,6 +237,9 @@ export const UISectionTitle = ({ children }: { children: ReactNode }) => {
   );
 };
 
+// using div element instead of React.Fragment to allow props
+const UIContainer = ({ children }: { children: ReactNode }) => <div>{children}</div>;
+
 export const getStaticComponents = (isPdf: boolean) => {
   return isPdf
     ? {
@@ -262,7 +265,7 @@ export const getStaticComponents = (isPdf: boolean) => {
         UnorderedListComponent: Ul,
         OrderedListComponent: Ol,
         ListComponent: Li,
-        GenericContainer: React.Fragment,
+        GenericContainer: UIContainer,
         BannerComponent: Banner,
       };
 };
