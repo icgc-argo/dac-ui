@@ -31,11 +31,14 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   footer: {
-    height: '20pt',
+    height: '30pt',
     alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: '20pt',
     fontFamily: 'WorkSans',
     fontSize: 11,
-    marginTop: '15pt',
   },
   header: {
     height: '30pt',

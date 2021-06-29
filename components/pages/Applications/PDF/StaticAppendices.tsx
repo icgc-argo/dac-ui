@@ -18,7 +18,9 @@ const Appendix = ({ agreement }: { agreement: AppendixAgreement }) => {
       <Text
         style={{
           ...styles.text,
-          ...{ textTransform: 'uppercase', fontWeight: 'semibold', marginBottom: '3pt' },
+          textTransform: 'uppercase',
+          fontWeight: 'semibold',
+          marginBottom: '3pt',
         }}
       >
         {FORM_TEXT.appendices[agreement.name].title}

@@ -75,6 +75,14 @@ export const styles = StyleSheet.create({
   highlighted: {
     color: defaultTheme.colors.secondary,
   },
+  bubbleContainer: {
+    border: `1px solid ${defaultTheme.colors.grey_1}`,
+    padding: '10pt 5pt',
+    marginBottom: '10pt',
+  },
+  textArea: {
+    margin: '5pt 5pt 15pt 0',
+  },
 });
 
 // react-pdf components
@@ -114,9 +122,17 @@ export const PDFText = ({
   </View>
 );
 
-export const PDFParagraph = ({ children, style = {} }: { children: ReactNode; style?: any }) => {
+export const PDFParagraph = ({
+  children,
+  style = {},
+  wrap = false,
+}: {
+  children: ReactNode;
+  style?: any;
+  wrap?: boolean;
+}) => {
   return (
-    <Text wrap={false} style={{ ...styles.text, ...styles.paragraph, ...style }}>
+    <Text wrap={wrap} style={{ ...styles.text, ...styles.paragraph, ...style }}>
       {children}
     </Text>
   );
@@ -154,25 +170,13 @@ export const Checkbox = ({
       }}
     >
       {checked ? <FilledCheckbox /> : <EmptyCheckbox />}
-      <PDFText style={{ marginLeft: '10pt' }}>{TextComponent}</PDFText>
+      <PDFText style={{ marginLeft: '10pt', width: '95%' }}>{TextComponent}</PDFText>
     </View>
   );
 };
 
-export const PDFTextArea = ({ text }: { text?: string }) => {
-  return (
-    <View
-      wrap={false}
-      style={{
-        border: `1pt solid ${defaultTheme.colors.grey_2}`,
-        height: 276,
-        width: '100%',
-        margin: '10pt 10pt 20pt',
-      }}
-    >
-      {text?.length && <PDFText style={{ padding: '2pt' }}>{text}</PDFText>}
-    </View>
-  );
+export const PDFTextArea = ({ children }: { children: ReactNode }) => {
+  return <Text style={{ ...styles.text, ...styles.textArea }}>{children}</Text>;
 };
 
 export const PDFBanner = ({ content }: { content: ReactNode }) => {
@@ -206,9 +210,6 @@ const Ol = ({ children }: { children: ReactNode }) => {
     </Typography>
   );
 };
-
-// need to use element other than React.Fragment so props can be passed
-export const ContainerDiv = ({ children }: { children: ReactNode }) => <div>{children}</div>;
 
 export const UITitle = ({ children }: { children: ReactNode }) => (
   <Typography bold component="h2">
@@ -290,7 +291,6 @@ export const PdfFormFields: PdfFormField = {
   },
 };
 
-// make this better, and reuse for applicant address
 export const getStreetAddress = (street: string, building: string) => {
   let streetAddress = [];
   street?.length && streetAddress.push(street);
