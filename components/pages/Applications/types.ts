@@ -1,6 +1,5 @@
 import { Method } from 'axios';
 import { SortingRule } from 'react-table';
-import { string } from 'yup/lib/locale';
 
 export type ApplicationRecord = {
   appId: string;
