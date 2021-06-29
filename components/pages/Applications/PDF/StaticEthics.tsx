@@ -15,7 +15,7 @@ import { View } from '@react-pdf/renderer';
 import { css } from '@icgc-argo/uikit';
 import { BANNER_VARIANTS } from '@icgc-argo/uikit/notifications/Banner';
 import Table from './Table';
-import { ApprovalDoc } from '../../Applications/types';
+import { ApplicationData, ApprovalDoc } from '../../Applications/types';
 
 const StaticAttachLetterMessage = ({ isPdf = false }: { isPdf: boolean }) => {
   const { GenericContainer, TextComponent } = getStaticComponents(isPdf);
@@ -35,7 +35,7 @@ const StaticAttachLetterMessage = ({ isPdf = false }: { isPdf: boolean }) => {
   );
 };
 
-const ApprovalLetterDocs = ({ data }: { data: ApprovalDoc[] }) => {
+const ApprovalLetterDocs = ({ data = [] }: { data?: ApprovalDoc[] }) => {
   return (
     <Table
       headers={[
@@ -47,7 +47,8 @@ const ApprovalLetterDocs = ({ data }: { data: ApprovalDoc[] }) => {
   );
 };
 
-const PdfEthicsFormData = ({ ethicsRequired }: { ethicsRequired: boolean }) => {
+const PdfEthicsFormData = ({ data }: { data?: ApplicationData }) => {
+  const ethicsRequired = data?.sections.ethicsLetter.declaredAsRequired;
   const OptionTwo = (
     <View>
       {FORM_TEXT.ethics.declarationOptions.two.a}{' '}
@@ -75,13 +76,19 @@ const PdfEthicsFormData = ({ ethicsRequired }: { ethicsRequired: boolean }) => {
         />
       </View>
       <View>
-        <Checkbox TextComponent={OptionTwo} checked={ethicsRequired} />
+        <Checkbox TextComponent={OptionTwo} checked={ethicsRequired || true} />
+      </View>
+      <View style={{ marginTop: '15pt' }}>
+        {ethicsRequired && <StaticAttachLetterMessage isPdf />}
+        {ethicsRequired && (
+          <ApprovalLetterDocs data={data?.sections.ethicsLetter.approvalLetterDocs} />
+        )}
       </View>
     </View>
   );
 };
 
-const StaticEthics = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?: any }) => {
+const StaticEthics = ({ isPdf = false, data }: { isPdf?: boolean; data?: ApplicationData }) => {
   const {
     ContainerComponent,
     SectionComponent,
@@ -90,11 +97,10 @@ const StaticEthics = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?: an
     BannerComponent,
   } = getStaticComponents(isPdf);
 
-  const ethicsRequired = isPdf && data.sections.ethicsLetter.declaredAsRequired;
   return (
     <ContainerComponent
-      appId={data.appId}
-      state={data.state}
+      appId={data?.appId}
+      state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
       <TitleComponent>E. Ethics</TitleComponent>
@@ -130,11 +136,7 @@ const StaticEthics = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?: an
         {!isPdf && <RequiredFieldsMessage />}
         {isPdf && (
           <View>
-            <PdfEthicsFormData ethicsRequired={ethicsRequired} />
-            {ethicsRequired && <StaticAttachLetterMessage isPdf />}
-            {ethicsRequired && (
-              <ApprovalLetterDocs data={data.sections.ethicsLetter.approvalLetterDocs} />
-            )}
+            <PdfEthicsFormData data={data} />
           </View>
         )}
       </SectionComponent>

@@ -7,8 +7,15 @@ import { PDFLink, getStaticComponents, Checkbox, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import { Text } from '@react-pdf/renderer';
+import { ApplicationData } from '../types';
 
-const StaticIntroduction = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?: any }) => {
+const StaticIntroduction = ({
+  isPdf = false,
+  data,
+}: {
+  isPdf?: boolean;
+  data?: ApplicationData;
+}) => {
   const { NEXT_PUBLIC_ARGO_ROOT } = getConfig();
   const {
     TextComponent,
@@ -20,8 +27,8 @@ const StaticIntroduction = ({ isPdf = false, data = {} }: { isPdf?: boolean; dat
 
   return (
     <ContainerComponent
-      appId={data.appId}
-      state={data.state}
+      appId={data?.appId}
+      state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
       <TitleComponent>Introduction</TitleComponent>
@@ -78,7 +85,8 @@ const StaticIntroduction = ({ isPdf = false, data = {} }: { isPdf?: boolean; dat
         <SectionComponent style={{ borderTop: `1px solid ${defaultTheme.colors.grey_1}` }}>
           <SectionTitle>{FORM_TEXT.introduction.title}</SectionTitle>
           <Checkbox
-            checked={data?.sections?.terms.agreement.accepted}
+            // added '|| false' because typescript complained with possibly undefined data prop
+            checked={data?.sections.terms.agreement.accepted || false}
             TextComponent={
               <Text>
                 <Text style={{ fontWeight: 600 }}>I acknowledge</Text> that I have read and

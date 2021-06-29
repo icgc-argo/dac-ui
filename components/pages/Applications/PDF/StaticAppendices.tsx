@@ -2,7 +2,7 @@ import React from 'react';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
-import { Checkbox, getStaticComponents, PDFLink, SectionTitle, styles } from './common';
+import { Checkbox, getStaticComponents, PDFLink, styles } from './common';
 import FORM_TEXT from './textConstants';
 import { View, Text } from '@react-pdf/renderer';
 import { AppendixAgreement, ApplicationData } from '../types';

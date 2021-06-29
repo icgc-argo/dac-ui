@@ -97,7 +97,7 @@ interface IndividualInfo {
 }
 
 interface Terms {
-  agreements: Agreement;
+  agreement: Agreement;
 }
 
 interface Individual {
@@ -138,9 +138,14 @@ export interface ITAgreements {
   agreements: ITAgreement[];
 }
 
+export enum CollaboratorType {
+  STUDENT = 'student',
+  PERSONNEL = 'personnel',
+}
+
 interface Collaborator {
   info: IndividualInfo;
-  type: string; // make enum
+  type: CollaboratorType;
   id: string;
 }
 

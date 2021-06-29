@@ -6,31 +6,7 @@ import { getStaticComponents, getStreetAddress, PdfFormFields, SectionTitle } fr
 import FORM_TEXT from './textConstants';
 import { View } from '@react-pdf/renderer';
 import VerticalTable from './VerticalTable';
-
-// for testing empty address fields display
-const emptyRepData = {
-  address: {
-    building: '',
-    cityAndProvince: 'Toronto',
-    country: '',
-    postalCode: 'POSTALCODE',
-    streetAddress: '',
-  },
-  addressSameAsApplicant: true,
-  info: {
-    firstName: 'Mario',
-    googleEmail: 'email2@example.com',
-    institutionEmail: 'example@example.com',
-    displayName: 'Mario Rep',
-    institutionWebsite: 'https://www.facit.on.ca',
-    lastName: 'Rep',
-    middleName: '',
-    positionTitle: 'string',
-    primaryAffiliation: 'OICR',
-    suffix: 'string',
-    title: 'M',
-  },
-};
+import { ApplicationData } from '../types';
 
 const PdfRepFormData = ({ data }: { data: any }) => {
   const repFields = [
@@ -41,7 +17,7 @@ const PdfRepFormData = ({ data }: { data: any }) => {
   ];
 
   // there may be a nicer way to handle the mailing address, but not going to worry about it right now
-  // it's onyl used in 2 places
+  // it's only used in 2 places
   const address = data?.sections.representative.address;
   const addressData = [
     {
@@ -82,7 +58,13 @@ const PdfRepFormData = ({ data }: { data: any }) => {
   );
 };
 
-const StaticRepresentative = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?: any }) => {
+const StaticRepresentative = ({
+  isPdf = false,
+  data,
+}: {
+  isPdf?: boolean;
+  data?: ApplicationData;
+}) => {
   const {
     TextComponent,
     TitleComponent,
@@ -93,8 +75,8 @@ const StaticRepresentative = ({ isPdf = false, data = {} }: { isPdf?: boolean; d
 
   return (
     <ContainerComponent
-      appId={data.appId}
-      state={data.state}
+      appId={data?.appId}
+      state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
       <TitleComponent>B. Institutional Representative</TitleComponent>

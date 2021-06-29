@@ -7,6 +7,7 @@ import { getStaticComponents, PdfFormFields, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
 import VerticalTable from './VerticalTable';
 import { getStreetAddress } from './common';
+import { ApplicationData } from '../types';
 
 const PdfApplicantFormData = ({ data }: { data: any }) => {
   const applicantFields = [
@@ -56,7 +57,7 @@ const PdfApplicantFormData = ({ data }: { data: any }) => {
   );
 };
 
-const StaticApplicant = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?: any }) => {
+const StaticApplicant = ({ isPdf = false, data }: { isPdf?: boolean; data?: ApplicationData }) => {
   const {
     TextComponent,
     TitleComponent,
@@ -66,8 +67,8 @@ const StaticApplicant = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?:
 
   return (
     <ContainerComponent
-      appId={data.appId}
-      state={data.state}
+      appId={data?.appId}
+      state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
       <TitleComponent>A. Applicant Information (Principal Investigator)</TitleComponent>

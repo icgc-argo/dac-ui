@@ -1,5 +1,3 @@
-import { string } from 'yup/lib/locale';
-
 export enum FieldAccessor {
   DISPLAY_NAME = 'displayName',
   PRIMARY_AFFILIATION = 'primaryAffiliation',
@@ -21,7 +19,6 @@ export enum PdfField {
   PURSUING_DEGREE = 'PURSUING_DEGREE',
   PROJECT_TITLE = 'PROJECT_TITLE',
   PROJECT_WEBSITE = 'PROJECT_WEBSITE',
-  PUBLICATION_URL = 'PUBLICATION_URL',
 }
 
 export enum PdfFieldName {

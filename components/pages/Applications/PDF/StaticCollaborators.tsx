@@ -1,12 +1,11 @@
 import React from 'react';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 
-import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
 import { getStaticComponents, PdfFormFields, PDFParagraph, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
-import { Text, View } from '@react-pdf/renderer';
+import { View } from '@react-pdf/renderer';
 import VerticalTable from './VerticalTable';
-import { PdfFormField } from './types';
+import { ApplicationData, CollaboratorType } from '../types';
 
 const personnelFields = [
   PdfFormFields.NAME,
@@ -24,21 +23,21 @@ const studentFields = [
   PdfFormFields.PURSUING_DEGREE, // api data shows `positionTitle`, not sure if this is the same thing
 ];
 
-const PdfCollaboratorsFormData = ({ data }: { data: any }) => {
+const PdfCollaboratorsFormData = ({ data }: { data?: ApplicationData }) => {
   const students = data?.sections.collaborators.list.filter(
-    (collaborator: any) => collaborator.type === 'student',
+    (collaborator: any) => collaborator.type === CollaboratorType.STUDENT,
   );
   const personnel = data?.sections.collaborators.list.filter(
-    (collaborator: any) => collaborator.type === 'personnel', // need to check for the correct type
+    (collaborator: any) => collaborator.type === CollaboratorType.PERSONNEL,
   );
 
   return (
     <View>
       <View style={{ borderTop: `1px solid ${defaultTheme.colors.grey_1}`, paddingTop: '5px' }}>
         <SectionTitle>
-          {FORM_TEXT.collaborators.personnel.title} ({personnel.length})
+          {FORM_TEXT.collaborators.personnel.title} ({personnel?.length})
         </SectionTitle>
-        {personnel.length ? (
+        {personnel?.length ? (
           personnel.map((person: any) => (
             <View key={person.id} style={{ marginTop: '15pt' }} wrap={false}>
               <VerticalTable
@@ -65,9 +64,9 @@ const PdfCollaboratorsFormData = ({ data }: { data: any }) => {
         }}
       >
         <SectionTitle>
-          {FORM_TEXT.collaborators.students.title} ({students.length})
+          {FORM_TEXT.collaborators.students.title} ({students?.length})
         </SectionTitle>
-        {students.length ? (
+        {students?.length ? (
           students.map((student: any) => {
             return (
               <View key={student.id} style={{ marginTop: '15pt' }} wrap={false}>
@@ -90,7 +89,13 @@ const PdfCollaboratorsFormData = ({ data }: { data: any }) => {
     </View>
   );
 };
-const StaticCollaborators = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?: any }) => {
+const StaticCollaborators = ({
+  isPdf = false,
+  data,
+}: {
+  isPdf?: boolean;
+  data?: ApplicationData;
+}) => {
   const {
     ContainerComponent,
     SectionComponent,
@@ -100,8 +105,8 @@ const StaticCollaborators = ({ isPdf = false, data = {} }: { isPdf?: boolean; da
 
   return (
     <ContainerComponent
-      appId={data.appId}
-      state={data.state}
+      appId={data?.appId}
+      state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
       <TitleComponent>C. Collaborators</TitleComponent>
