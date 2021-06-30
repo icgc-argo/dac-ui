@@ -25,16 +25,19 @@ yup.setLocale({
 });
 
 export const appendicesSchema = yup.object().shape({
-  agreements: yup.object().shape({
-    appendix_icgc_goals_policies: yup.boolean().default(false).oneOf([true]).required(),
-    appendix_large_scale_data_sharing: yup.boolean().default(false).oneOf([true]).required(),
-    appendix_prepublication_policy: yup.boolean().default(false).oneOf([true]).required(),
-    appendix_publication_policy: yup.boolean().default(false).oneOf([true]).required(),
-    appendix_nih_genomic_inventions: yup.boolean().default(false).oneOf([true]).required(),
-    appendix_oecd_genetic_inventions: yup.boolean().default(false).oneOf([true]).required(),
-    appendix_cloud_security: yup.boolean().default(false).oneOf([true]).required(),
-    appendix_ga4gh_framework: yup.boolean().default(false).oneOf([true]).required(),
-  }),
+  agreements: yup
+    .object()
+    .meta({ shape: 'collection', type: 'boolean' })
+    .shape({
+      appendix_icgc_goals_policies: yup.boolean().default(false).oneOf([true]).required(),
+      appendix_large_scale_data_sharing: yup.boolean().default(false).oneOf([true]).required(),
+      appendix_prepublication_policy: yup.boolean().default(false).oneOf([true]).required(),
+      appendix_publication_policy: yup.boolean().default(false).oneOf([true]).required(),
+      appendix_nih_genomic_inventions: yup.boolean().default(false).oneOf([true]).required(),
+      appendix_oecd_genetic_inventions: yup.boolean().default(false).oneOf([true]).required(),
+      appendix_cloud_security: yup.boolean().default(false).oneOf([true]).required(),
+      appendix_ga4gh_framework: yup.boolean().default(false).oneOf([true]).required(),
+    }),
 });
 
 export const applicantSchema = yup.object().shape({
@@ -92,7 +95,7 @@ export const collaboratorSchema = yup.object().shape({
   info_lastName: yup.string().default('').required(),
   info_middleName: yup.string().default(''),
   info_primaryAffiliation: yup.string().default('').required(),
-  info_pursuingDegree: yup.string().default('').required(),
+  info_positionTitle: yup.string().default('').required(),
   info_suffix: yup.string().default(''),
   info_title: yup.string().default(''),
   info_website: yup
@@ -105,30 +108,37 @@ export const collaboratorSchema = yup.object().shape({
 });
 
 export const dataAccessAgreementSchema = yup.object().shape({
-  agreements: yup.object().shape({
-    daa_correct_application_content: yup.boolean().default(false).oneOf([true]).required(),
-    daa_agree_to_terms: yup.boolean().default(false).oneOf([true]).required(),
-  }),
+  agreements: yup
+    .object()
+    .meta({ shape: 'collection', type: 'boolean' })
+    .shape({
+      daa_correct_application_content: yup.boolean().default(false).oneOf([true]).required(),
+      daa_agree_to_terms: yup.boolean().default(false).oneOf([true]).required(),
+    }),
 });
 
-export const introductionSchema = yup.object().shape({
+export const termsSchema = yup.object().shape({
   agreement: yup.boolean().default(false).oneOf([true]).required(),
 });
 
 export const itAgreementsSchema = yup.object().shape({
-  agreements: yup.object().shape({
-    it_agreement_software_updates: yup.boolean().default(false).oneOf([true]).required(),
-    it_agreement_protect_data: yup.boolean().default(false).oneOf([true]).required(),
-    it_agreement_monitor_access: yup.boolean().default(false).oneOf([true]).required(),
-    it_agreement_destroy_copies: yup.boolean().default(false).oneOf([true]).required(),
-    it_agreement_onboard_training: yup.boolean().default(false).oneOf([true]).required(),
-    it_agreement_provide_institutional_policies: yup
-      .boolean()
-      .default(false)
-      .oneOf([true])
-      .required(),
-    it_agreement_contact_daco_fraud: yup.boolean().default(false).oneOf([true]).required(),
-  }),
+  agreements: yup
+    .object()
+    .meta({ shape: 'collection', type: 'boolean' })
+    .shape({
+      it_agreement_software_updates: yup.boolean().default(false).oneOf([true]).required(),
+      it_agreement_protect_data: yup.boolean().default(false).oneOf([true]).required(),
+      it_agreement_monitor_access: yup.boolean().default(false).oneOf([true]).required(),
+      it_agreement_destroy_copies: yup.boolean().default(false).oneOf([true]).required(),
+      it_agreement_onboard_training: yup.boolean().default(false).oneOf([true]).required(),
+      it_agreement_provide_institutional_policies: yup
+        .boolean()
+        .default(false)
+        .oneOf([true])
+        .required(),
+      it_agreement_contact_daco_fraud: yup.boolean().default(false).oneOf([true]).required(),
+    }),
+  // agreements: yup.array(yup.boolean().default(false).oneOf([true]).required()),
 });
 
 export const projectInfoSchema = yup.object().shape({
@@ -193,7 +203,7 @@ export const combinedSchema = {
   projectInfo: projectInfoSchema,
   representative: representativeSchema,
   signature: signatureSchema,
-  terms: introductionSchema,
+  terms: termsSchema,
 } as Record<FormSectionNames, any>;
 
 export default yup;

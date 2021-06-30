@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { css } from '@emotion/core';
 
 import { UikitTheme } from '@icgc-argo/uikit/index';
@@ -8,8 +8,6 @@ import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 import Input from '@icgc-argo/uikit/form/Input';
 import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import Icon from '@icgc-argo/uikit/Icon';
-import Link from '@icgc-argo/uikit/Link';
-import Typography from '@icgc-argo/uikit/Typography';
 
 import DoubleFieldRow from '../DoubleFieldRow';
 import { FormFieldType } from '../types';
@@ -32,7 +30,7 @@ const PublicationURLs = ({
 
   useEffect(() => {
     const newPublicationsCount = fields
-      ? Object.values(fields).filter((item: any) => !item?.hidden).length
+      ? Object.values(fields).filter((item: any) => item?.value !== null).length
       : 0;
     setPublicationsCount(Math.max(newPublicationsCount, publicationsCount));
     setHasThreeValidURLs(newPublicationsCount >= minPublications && !error?.length);
@@ -74,7 +72,7 @@ const PublicationURLs = ({
         ),
       ).map(
         (item, index) =>
-          !item.hidden && (
+          item.value !== null && (
             <DoubleFieldRow
               actions={
                 index >= minPublications ? (
@@ -120,7 +118,7 @@ const PublicationURLs = ({
               <FormControl
                 disabled={isSectionDisabled}
                 error={!!item.error}
-                required={isRequired(innerType)}
+                required={isRequired(innerType as FormFieldType)}
               >
                 <InputLabel htmlFor="title">Publication URL</InputLabel>
 
