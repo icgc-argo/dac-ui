@@ -24,14 +24,15 @@ const Application = (): ReactElement => {
   const { isLoading, permissions } = useAuthContext();
 
   const isAdmin = permissions.length > 0 && isDacoAdmin(permissions);
-  const pageTitle = appId.toUpperCase() || 'Application page';
+  const normalisedAppId = appId.toUpperCase();
+  const pageTitle = normalisedAppId || 'Application page';
 
   return (
     <DefaultPageLayout title={pageTitle}>
       {isLoading ? (
         <Loader />
       ) : appId ? (
-        <ApplicationForm appId={appId} isAdmin={isAdmin} />
+        <ApplicationForm appId={normalisedAppId} isAdmin={isAdmin} />
       ) : isAdmin ? (
         <ManageApplications />
       ) : (
