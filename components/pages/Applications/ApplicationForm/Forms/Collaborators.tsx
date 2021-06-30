@@ -491,49 +491,31 @@ const Collaborators = ({
                   </FormControl>
                 </DoubleFieldRow>
                 <DoubleFieldRow>
-                  {collaboratorType === CollaboratorType.PERSONNEL ? (
-                    <FormControl
-                      error={!!localState.info_positionTitle?.error}
-                      required={isRequired(localState.info_positionTitle)}
-                    >
-                      <InputLabel htmlFor="info_positionTitle">Position Title</InputLabel>
+                  <FormControl
+                    error={!!localState.info_positionTitle?.error}
+                    required={isRequired(localState.info_positionTitle)}
+                  >
+                    <InputLabel htmlFor="info_positionTitle">
+                      {collaboratorType === CollaboratorType.STUDENT
+                        ? 'Pursuing Degree'
+                        : 'Position Title'}
+                    </InputLabel>
 
-                      <Input
-                        aria-label="Position Title"
-                        disabled={isSectionDisabled}
-                        id="info_positionTitle"
-                        onBlur={validateFieldTouched}
-                        onChange={validateFieldTouched}
-                        value={localState.info_positionTitle?.value}
-                        placeholder="e.g. Bioinformatician"
-                      />
+                    <Input
+                      aria-label="Position Title"
+                      disabled={isSectionDisabled}
+                      id="info_positionTitle"
+                      onBlur={validateFieldTouched}
+                      onChange={validateFieldTouched}
+                      value={localState.info_positionTitle?.value}
+                      placeholder="e.g. Bioinformatician"
+                    />
 
-                      <FormHelperText onErrorOnly>
-                        {localState.info_positionTitle?.error?.[0]}
-                      </FormHelperText>
-                    </FormControl>
-                  ) : collaboratorType === CollaboratorType.STUDENT ? (
-                    <FormControl
-                      error={!!localState.info_pursuingDegree?.error}
-                      required={isRequired(localState.info_pursuingDegree)}
-                    >
-                      <InputLabel htmlFor="info_pursuingDegree">Pursuing Degree</InputLabel>
+                    <FormHelperText onErrorOnly>
+                      {localState.info_positionTitle?.error?.[0]}
+                    </FormHelperText>
+                  </FormControl>
 
-                      <Input
-                        aria-label="Pursuing Degree"
-                        disabled={isSectionDisabled}
-                        id="info_pursuingDegree"
-                        onBlur={validateFieldTouched}
-                        onChange={validateFieldTouched}
-                        value={localState.info_pursuingDegree?.value}
-                        placeholder="e.g. Doctoral"
-                      />
-
-                      <FormHelperText onErrorOnly>
-                        {localState.info_pursuingDegree?.error?.[0]}
-                      </FormHelperText>
-                    </FormControl>
-                  ) : null}
                   <div />
                 </DoubleFieldRow>
               </section>
