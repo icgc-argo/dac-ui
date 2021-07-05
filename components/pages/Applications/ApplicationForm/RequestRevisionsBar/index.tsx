@@ -20,9 +20,7 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
   const { appId } = data;
   const { primaryAffiliation } = data.sections.applicant.info;
 
-  console.log(data)
-
-
+  const buttonsDisabled = ['APPROVED'].includes(data.state);
 
   return (
     <>
@@ -78,6 +76,7 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
             }
           `}>
             <Button
+              disabled={buttonsDisabled}
               onClick={() => {
                 setApproveModalVisible(true);
               }}
@@ -97,6 +96,7 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
               </span>
             </Button>
             <Button
+              disabled={buttonsDisabled}
               onClick={() => {
                 setRequestRevisionsModalVisible(true);
               }}
@@ -112,7 +112,10 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
                 Request Revisions
               </span>
             </Button>
-            <Button size="sm">
+            <Button
+              disabled={buttonsDisabled}
+              size="sm"
+            >
               <span css={instructionBoxButtonContentStyle}>
                 <Icon
                   css={instructionBoxButtonIconStyle}
