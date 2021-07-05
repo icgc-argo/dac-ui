@@ -2,7 +2,7 @@ import React from 'react';
 import InProgress from './InProgress';
 import StartApplication from './Start';
 import { css } from '@emotion/core';
-import useGetApplications from 'global/hooks/useGetApplications';
+import { useGetApplications } from 'global/hooks';
 import { isEmpty } from 'lodash';
 
 const Applications = () => {
