@@ -23,14 +23,14 @@ import {
   DEFAULT_PAGE,
   DEFAULT_SORT,
   formatTableData,
-  statesAllowList,
+  adminStatesAllowList,
   tableColumns,
 } from './utils';
 
 import PageHeader from 'components/PageHeader';
 import { ContentError } from 'components/placeholders';
 import { instructionBoxButtonIconStyle, instructionBoxButtonContentStyle } from 'global/styles';
-import { useApplicationsAPI } from 'global/hooks';
+import { useGetApplications } from 'global/hooks';
 
 const getDefaultSort = (applicationSorts: ApplicationsSort[]) =>
   applicationSorts.map(({ field, order }) => ({ id: field, desc: order === 'desc' }));
@@ -86,11 +86,11 @@ const ManageApplications = (): ReactElement => {
   const theme = useTheme();
   const containerRef = React.createRef<HTMLDivElement>();
 
-  const { error, isLoading, response } = useApplicationsAPI({
+  const { error, isLoading, response } = useGetApplications({
     page,
     pageSize,
     sort,
-    states: statesAllowList,
+    states: adminStatesAllowList,
   });
 
   const { items = [] } = response?.data || {};

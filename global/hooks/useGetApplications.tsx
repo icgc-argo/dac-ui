@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AxiosError, AxiosResponse, Method } from 'axios';
+import urlJoin from 'url-join';
 import { ApplicationsRequestData } from '../../components/pages/Applications/types';
 import useAuthContext from './useAuthContext';
 import {
@@ -11,10 +12,10 @@ import {
 } from 'components/pages/Applications/ManageApplications/utils';
 import { API } from 'global/constants/externalPaths';
 
-const useApplicationsAPI = ({
+// use this for "get application(s) on mount/render" fetch requests.
+
+const useGetApplications = ({
   appId = '',
-  data,
-  method,
   page = DEFAULT_PAGE,
   pageSize = DEFAULT_PAGE_SIZE,
   sort = DEFAULT_SORT,
@@ -22,32 +23,37 @@ const useApplicationsAPI = ({
 }: ApplicationsRequestData = {}) => {
   const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
   const [error, setError] = useState<AxiosError | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const { fetchWithAuth, isLoading, token } = useAuthContext();
+  const { fetchWithAuth, isLoading: isTokenLoading, token } = useAuthContext();
 
   useEffect(() => {
-    if (token && !isLoading) {
+    if (token && !isTokenLoading) {
       fetchWithAuth({
-        data,
-        method,
-        params: {
-          page,
-          pageSize,
-          sort: stringifySort(sort),
-          states: stringifyStates(states),
+        method: 'GET' as Method,
+        ...appId ? {} : {
+          params: {
+            page,
+            pageSize,
+            sort: stringifySort(sort),
+            states: stringifyStates(states),
+          }
         },
-        url: `${API.APPLICATIONS}/${appId}`,
+        url: urlJoin(API.APPLICATIONS, appId),
       })
-        .then((res: any) => {
+        .then((res: AxiosResponse) => {
           setResponse(res);
         })
-        .catch((err: any) => {
+        .catch((err: AxiosError) => {
           setError(err);
-        });
+        })
+        .finally(() => {
+          setIsLoading(false);
+        })
     }
   }, [page, pageSize, stringifySort(sort)]);
 
   return { error, isLoading, response };
 };
 
-export default useApplicationsAPI;
+export default useGetApplications;
