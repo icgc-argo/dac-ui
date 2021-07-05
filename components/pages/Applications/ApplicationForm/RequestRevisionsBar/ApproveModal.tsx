@@ -1,10 +1,15 @@
 import { useState } from 'react';
-
+import { AxiosError } from 'axios';
+import urlJoin from 'url-join';
 import { add, format } from 'date-fns';
+import { css } from '@emotion/core';
 
 import Modal from '@icgc-argo/uikit/Modal';
 import Typography from '@icgc-argo/uikit/Typography';
+import FormControl from '@icgc-argo/uikit/form/FormControl';
+import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 
+import { useAuthContext } from 'global/hooks';
 import { API, DATE_FORMAT } from 'global/constants';
 
 const ApproveModal = ({
@@ -16,14 +21,37 @@ const ApproveModal = ({
   dismissModal: () => any | void;
   primaryAffiliation: string;
 }) => {
-  const [modalIsLoading, setModalIsLoading] = useState(false);
   const startDate = format(new Date(), DATE_FORMAT);
   const endDate = format(add(new Date(startDate), { years: 1 }), DATE_FORMAT);
 
+  const [error, setError] = useState<AxiosError | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { fetchWithAuth } = useAuthContext();
+
+  const submitApproval = () => {
+    setIsLoading(true);
+    fetchWithAuth({
+      data: {
+        state: 'APPROVED'
+      },
+      method: 'PATCH',
+      url: urlJoin(API.APPLICATIONS, appId)
+    })
+      .then(() => {
+        // TODO update state in page
+        setIsLoading(false);
+        dismissModal();
+      })
+      .catch((err: AxiosError) => {
+        setIsLoading(false);
+        setError(err);
+      });
+  };
 
   return (
     <Modal
-      actionButtonText="Approve for Access"
+      actionButtonText={isLoading ? 'Loading' : 'Approve for Access'}
+      actionDisabled={isLoading}
       buttonSize="sm"
       cancelText="Cancel"
       onActionClick={() => submitApproval()}
@@ -40,6 +68,16 @@ const ApproveModal = ({
       <Typography>
         <strong>Start Date:</strong> {startDate} &nbsp; | &nbsp; <strong>End Date:</strong> {endDate}
       </Typography>
+      <FormControl error={!!error}>
+        <FormHelperText
+          css={css`
+            margin-left: 0;
+          `}
+          onErrorOnly
+        >
+          Something went wrong. Please try again.
+        </FormHelperText>
+      </FormControl>
     </Modal>
   );
 };
