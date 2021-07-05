@@ -16,10 +16,12 @@ const ApproveModal = ({
   appId,
   dismissModal,
   primaryAffiliation,
+  refetch,
 }: {
   appId: string;
   dismissModal: () => any | void;
   primaryAffiliation: string;
+  refetch: ({ }) => any | void;
 }) => {
   const startDate = format(new Date(), DATE_FORMAT);
   const endDate = format(add(new Date(startDate), { years: 1 }), DATE_FORMAT);
@@ -38,7 +40,7 @@ const ApproveModal = ({
       url: urlJoin(API.APPLICATIONS, appId)
     })
       .then(() => {
-        // TODO update state in page
+        refetch({});
         setIsLoading(false);
         dismissModal();
       })
