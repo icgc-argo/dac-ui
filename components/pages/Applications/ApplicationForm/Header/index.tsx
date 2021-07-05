@@ -3,12 +3,11 @@ import { format } from 'date-fns';
 import { css } from '@icgc-argo/uikit';
 
 import PageHeader from 'components/PageHeader';
+import { DATE_FORMAT } from 'global/constants';
 
 import Actions from './Actions';
 import Details from './Details';
 import Progress from './Progress';
-
-const DATE_FORMAT = 'MMM. dd, yyyy';
 
 const ApplicationHeader = ({ data }: { data: any }): ReactElement => {
   const {

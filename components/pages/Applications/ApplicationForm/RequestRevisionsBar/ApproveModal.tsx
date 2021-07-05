@@ -5,10 +5,7 @@ import { add, format } from 'date-fns';
 import Modal from '@icgc-argo/uikit/Modal';
 import Typography from '@icgc-argo/uikit/Typography';
 
-import { useApplicationsAPI } from 'global/hooks';
-import { useEffect } from 'react';
-
-const DATE_FORMAT = 'MMM. dd, yyyy';
+import { API, DATE_FORMAT } from 'global/constants';
 
 const ApproveModal = ({
   appId,
