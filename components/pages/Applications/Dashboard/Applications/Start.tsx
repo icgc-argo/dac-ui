@@ -6,6 +6,7 @@ import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
 import { useAuthContext } from 'global/hooks';
 import React from 'react';
+import urlJoin from 'url-join';
 import DashboardCard from '../Card';
 import { useRouter } from 'next/router';
 import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
@@ -22,7 +23,7 @@ const StartApplication = () => {
       method: 'POST',
     })
       .then(({ data }: { data: any }) => {
-        router.push(`${APPLICATIONS_PATH}/${data.appId}`);
+        router.push(urlJoin(APPLICATIONS_PATH, data.appId));
       })
       .catch((e: any) => console.error('Failed to create new application.', e));
   };

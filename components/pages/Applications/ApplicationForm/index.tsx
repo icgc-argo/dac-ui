@@ -1,7 +1,7 @@
 import { ReactElement, useEffect, useState } from 'react';
 
 import Loader from 'components/Loader';
-import { useApplicationsAPI } from 'global/hooks';
+import { useGetApplications } from 'global/hooks';
 
 import ApplicationHeader from './Header';
 import ApplicationFormsBase from './Forms';
@@ -9,7 +9,7 @@ import RequestRevisionsBar from './RequestRevisionsBar';
 
 const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
   const [appData, setAppData] = useState({});
-  const { response, isLoading } = useApplicationsAPI({ appId });
+  const { response, isLoading } = useGetApplications({ appId });
 
   useEffect(() => {
     response && setAppData(response.data);

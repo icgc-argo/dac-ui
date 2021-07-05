@@ -40,9 +40,9 @@ const ApplicationHeader = ({ data }: { data: any }): ReactElement => {
           lastUpdated={format(new Date(lastUpdatedAtUtc), DATE_FORMAT + ' h:mm aaaa')}
         />
 
-        <Progress />
+        <Progress state={state} />
 
-        <Actions />
+        <Actions appId={appId} />
       </div>
     </PageHeader>
   );

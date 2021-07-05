@@ -1,3 +1,4 @@
+import { ReactElement } from 'react';
 import { css } from '@emotion/core';
 import FormCheckbox from '@icgc-argo/uikit/form/FormCheckbox';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
@@ -6,29 +7,18 @@ import Link from '@icgc-argo/uikit/Link';
 import Typography from '@icgc-argo/uikit/Typography';
 
 import RequiredFieldsMessage from './RequiredFieldsMessage';
-import {
-  FormSectionValidationState_Appendices,
-  FormSectionValidatorFunction_Origin,
-} from './types';
-import { isRequired, useLocalValidation } from './validations';
+import { FormFieldValidationTriggerFunction, FormSectionValidationState_Appendices } from './types';
+import { isRequired } from './validations';
 
 const Appendices = ({
   isSectionDisabled,
-  storedFields,
-  validateSection,
+  localState,
+  validateFieldTouched,
 }: {
   isSectionDisabled: boolean;
-  storedFields: FormSectionValidationState_Appendices;
-  validateSection: FormSectionValidatorFunction_Origin;
-}) => {
-  const {
-    localState,
-    validateFieldTouched,
-  }: {
-    localState: FormSectionValidationState_Appendices;
-    validateFieldTouched: (event: any) => void;
-  } = useLocalValidation(storedFields, validateSection('appendices'));
-
+  localState: FormSectionValidationState_Appendices;
+  validateFieldTouched: FormFieldValidationTriggerFunction;
+}): ReactElement => {
   return (
     <article>
       <Typography bold component="h2">
@@ -65,12 +55,12 @@ const Appendices = ({
 
         <FormControl
           className="closer"
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.appendix_icgc_goals_policies?.error}
           required={isRequired(localState.agreements?.fields?.appendix_icgc_goals_policies)}
         >
           <FormCheckbox
             aria-label="You have read APPENDIX I"
-            disabled={isSectionDisabled}
             checked={localState.agreements?.fields?.appendix_icgc_goals_policies?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -103,12 +93,12 @@ const Appendices = ({
 
         <FormControl
           className="closer"
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.appendix_large_scale_data_sharing?.error}
           required={isRequired(localState.agreements?.fields?.appendix_large_scale_data_sharing)}
         >
           <FormCheckbox
             aria-label="You have read APPENDIX II"
-            disabled={isSectionDisabled}
             checked={localState.agreements?.fields?.appendix_large_scale_data_sharing?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -141,12 +131,12 @@ const Appendices = ({
 
         <FormControl
           className="closer"
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.appendix_prepublication_policy?.error}
           required={isRequired(localState.agreements?.fields?.appendix_prepublication_policy)}
         >
           <FormCheckbox
             aria-label="You have read APPENDIX III"
-            disabled={isSectionDisabled}
             checked={localState.agreements?.fields?.appendix_prepublication_policy?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -179,12 +169,12 @@ const Appendices = ({
 
         <FormControl
           className="closer"
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.appendix_publication_policy?.error}
           required={isRequired(localState.agreements?.fields?.appendix_publication_policy)}
         >
           <FormCheckbox
             aria-label="You have read APPENDIX IV"
-            disabled={isSectionDisabled}
             checked={localState.agreements?.fields?.appendix_publication_policy?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -217,12 +207,12 @@ const Appendices = ({
 
         <FormControl
           className="closer"
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.appendix_nih_genomic_inventions?.error}
           required={isRequired(localState.agreements?.fields?.appendix_nih_genomic_inventions)}
         >
           <FormCheckbox
             aria-label="You have read APPENDIX V"
-            disabled={isSectionDisabled}
             checked={localState.agreements?.fields?.appendix_nih_genomic_inventions?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -254,12 +244,12 @@ const Appendices = ({
 
         <FormControl
           className="closer"
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.appendix_oecd_genetic_inventions?.error}
           required={isRequired(localState.agreements?.fields?.appendix_oecd_genetic_inventions)}
         >
           <FormCheckbox
             aria-label="You have read APPENDIX VI"
-            disabled={isSectionDisabled}
             checked={localState.agreements?.fields?.appendix_oecd_genetic_inventions?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -291,12 +281,12 @@ const Appendices = ({
 
         <FormControl
           className="closer"
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.appendix_cloud_security?.error}
           required={isRequired(localState.agreements?.fields?.appendix_cloud_security)}
         >
           <FormCheckbox
             aria-label="You have read APPENDIX VII"
-            disabled={isSectionDisabled}
             checked={localState.agreements?.fields?.appendix_cloud_security?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
@@ -329,12 +319,12 @@ const Appendices = ({
 
         <FormControl
           className="closer"
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.appendix_ga4gh_framework?.error}
           required={isRequired(localState.agreements?.fields?.appendix_ga4gh_framework)}
         >
           <FormCheckbox
             aria-label="You have read APPENDIX VIII"
-            disabled={isSectionDisabled}
             checked={localState.agreements?.fields?.appendix_ga4gh_framework?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}

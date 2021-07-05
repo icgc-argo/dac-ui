@@ -21,6 +21,17 @@ export enum EVENT_TARGET_TAGS {
   TEXTAREA = 'TEXTAREA',
 }
 
+export enum SECTION_STATUS {
+  COMPLETE = 'COMPLETE',
+  DISABLED = 'DISABLED',
+  INCOMPLETE = 'INCOMPLETE',
+  LOCKED = 'LOCKED',
+  PRISTINE = 'PRISTINE',
+  REVISIONS_MADE = 'REVISIONS MADE',
+  REVISIONS_REQUESTED = 'REVISIONS REQUESTED',
+  REVISIONS_REQUESTED_DISABLED = 'REVISIONS REQUESTED DISABLED',
+}
+
 export enum FORM_STATES {
   CAN_EDIT = 'canEdit',
   COMPLETE = 'complete',
@@ -31,6 +42,8 @@ export enum FORM_STATES {
   TOUCHED = 'touched',
   PRISTINE = 'pristine',
 }
+
+export type SectionStatusMapping = Record<SECTION_STATUS, FormSectionOverallState>;
 
 export type FormSectionOverallState = `${FORM_STATES}`;
 
@@ -72,7 +85,6 @@ export type FormSectionValidationState_Appendices = FormSectionValidationState_S
 export type FormSectionValidationState_Applicant = FormSectionValidationState_SectionsGenericType<{
   info_firstName: { value: string };
   info_googleEmail: { value: string };
-  info_institutionWebsite: { value: string };
   info_institutionEmail: { value: string };
   info_lastName: { value: string };
   info_middleName: { value: string };
@@ -80,10 +92,11 @@ export type FormSectionValidationState_Applicant = FormSectionValidationState_Se
   info_primaryAffiliation: { value: string };
   info_suffix: { value: string };
   info_title: { value: string };
+  info_website: { value: string };
   address_building: { value: string };
   address_cityAndProvince: { value: string };
   address_country: { value: string };
-  address_street: { value: string };
+  address_streetAddress: { value: string };
   address_postalCod: { value: string };
 }>;
 export type FormSectionValidationState_Collaborators =
@@ -125,7 +138,7 @@ export type FormSectionValidationState_ProjectInfo =
     aims: { value: string };
     background: { value: string };
     methodology: { value: string };
-    publicationURLs: {
+    publicationsURLs: {
       hasThreeValidURLs: boolean;
       value: Record<number, FormFieldType>;
     };
@@ -146,7 +159,7 @@ export type FormSectionValidationState_Representative =
     address_building: { value: string };
     address_cityAndProvince: { value: string };
     address_country: { value: string };
-    address_street: { value: string };
+    address_streetAddress: { value: string };
     address_postalCod: { value: string };
   }>;
 export type FormSectionValidationState_Signature =
@@ -176,7 +189,8 @@ export type FormValidationActionTypes =
   | 'string'
   | 'object'
   | 'overall'
-  | 'remove';
+  | 'remove'
+  | 'seeding';
 
 export type FormValidationAction = {
   error?: string[];
@@ -188,6 +202,7 @@ export type FormValidationAction = {
 };
 
 interface FormValidationState_Base {
+  appId: string;
   approvedAtUtc?: string;
   approvedBy?: string;
   closedAtUtc?: string;
@@ -195,16 +210,18 @@ interface FormValidationState_Base {
   createdAtUtc?: string;
   denialReason?: string;
   expiresAtUtc?: string;
-  id: string;
-  state?: string;
+  lastUpdatedAtUtc?: string;
+  revisionRequest: any; // temporary state
+  state?: string; // called `state` in BE, but that complicates things in FE
   submittedAtUtc?: string;
   submitterId?: string;
-  updatedAtUtc?: string;
-  version: number;
+  __seeded: boolean;
+  __v: number;
 }
 
-export type FormValidationStateParameters = FormValidationState_Base &
-  Record<FormSectionNames, FormSectionValidationState_SectionBase>;
+export type FormValidationStateParameters = FormValidationState_Base & {
+  sections: Record<FormSectionNames, FormSectionValidationState_SectionBase>;
+};
 
 export type FormSectionUpdateLocalStateFunction = (fieldData: FormValidationAction) => void;
 
@@ -228,6 +245,7 @@ export type FormFieldDataFromEvent = (event: ChangeEvent<HTMLInputElement>) =>
       value?: string;
     };
 
+export type FormFieldValidationTriggerFunction = (event: any) => Promise<void>;
 export type FormFieldValidatorFunction = (
   field?: string,
   value?: any,
