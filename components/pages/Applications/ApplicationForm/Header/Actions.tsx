@@ -11,7 +11,7 @@ import { saveAs } from 'file-saver';
 import StaticIntroduction from 'components/pages/Applications/PDF/StaticIntroduction';
 import StaticApplicant from '../../PDF/StaticApplicant';
 import { useAuthContext } from 'global/hooks';
-import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
+import { API } from 'global/constants/externalPaths';
 import { AxiosError } from 'axios';
 
 const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
@@ -48,7 +48,7 @@ const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
         variant="secondary"
         size="sm"
         onClick={async () => {
-          const data = await fetchWithAuth({ url: urlJoin(APPLICATIONS_PATH, appId) })
+          const data = await fetchWithAuth({ url: urlJoin(API.APPLICATIONS, appId) })
             .then((res: any) => res.data)
             .catch((err: AxiosError) => {
               console.error('Application fetch failed, pdf not generated.', err);
