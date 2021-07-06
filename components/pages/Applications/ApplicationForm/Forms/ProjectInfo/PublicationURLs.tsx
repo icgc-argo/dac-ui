@@ -14,6 +14,7 @@ import Typography from '@icgc-argo/uikit/Typography';
 import DoubleFieldRow from '../DoubleFieldRow';
 import { FormFieldType } from '../types';
 import { getMin, isRequired } from '../validations';
+import { StaticPublications } from 'components/pages/Applications/PDF/StaticProjectInfo';
 
 const ID = 'publicationsURLs';
 
@@ -55,29 +56,7 @@ const PublicationURLs = ({
 
   return (
     <section>
-      <Typography bold component="h3" color="secondary">
-        RELEVANT PUBLICATIONS
-      </Typography>
-
-      <Typography>
-        <Typography as="span" bold>
-          Please provide at least three links to relevant publications
-        </Typography>
-        , of which you, the applicant, were an author or a co-author. These should be links (URLs)
-        to publication websites such as{' '}
-        <Link href="https://pubmed.gov" rel="noopener noreferrer" target="_blank">
-          pubmed.gov
-        </Link>
-        ,{' '}
-        <Link href="https://biorxiv.org" rel="noopener noreferrer" target="_blank">
-          biorxiv.org
-        </Link>
-        , or{' '}
-        <Link href="https://medrxiv.org" rel="noopener noreferrer" target="_blank">
-          medrxiv.org
-        </Link>
-        .
-      </Typography>
+      <StaticPublications />
 
       {Object.values<FormFieldType>(
         Object.entries(fields || {}).reduce(
