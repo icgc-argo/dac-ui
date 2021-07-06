@@ -46,19 +46,12 @@ export const applicantSchema = yup.object().shape({
     .oneOf(transformContriesToValidationOptions(countriesList))
     .required(),
   address_postalCode: yup.string().default('').required(),
-  address_street: yup.string().default('').required(),
+  address_streetAddress: yup.string().default('').required(),
   info_firstName: yup.string().default('').required(),
   info_googleEmail: yup
     .string()
     .default('')
     .email('Please enter a valid email address.')
-    .required(),
-  info_institutionWebsite: yup
-    .string()
-    .default('')
-    .url(
-      'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
-    )
     .required(),
   info_institutionEmail: yup
     .string()
@@ -71,6 +64,44 @@ export const applicantSchema = yup.object().shape({
   info_primaryAffiliation: yup.string().default('').required(),
   info_suffix: yup.string().default(''),
   info_title: yup.string().default(''),
+  info_website: yup
+    .string()
+    .default('')
+    .url(
+      'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
+    )
+    .required(),
+});
+
+export const collaboratorSchema = yup.object().shape({
+  info_collaboratorType: yup
+    .string()
+    .required()
+    .oneOf(['Authorized Personnel', 'Authorized Student']),
+  info_firstName: yup.string().default('').required(),
+  info_googleEmail: yup
+    .string()
+    .default('')
+    .email('Please enter a valid email address.')
+    .required(),
+  info_institutionEmail: yup
+    .string()
+    .default('')
+    .email('Please enter a valid email address.')
+    .required(),
+  info_lastName: yup.string().default('').required(),
+  info_middleName: yup.string().default(''),
+  info_primaryAffiliation: yup.string().default('').required(),
+  info_pursuingDegree: yup.string().default('').required(),
+  info_suffix: yup.string().default(''),
+  info_title: yup.string().default(''),
+  info_website: yup
+    .string()
+    .default('')
+    .url(
+      'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
+    )
+    .required(),
 });
 
 export const dataAccessAgreementSchema = yup.object().shape({
@@ -135,7 +166,7 @@ export const representativeSchema = yup.object().shape({
     .oneOf(transformContriesToValidationOptions(countriesList))
     .required(),
   address_postalCode: yup.string().default('').required(),
-  address_street: yup.string().default('').required(),
+  address_streetAddress: yup.string().default('').required(),
   addressSameAsApplicant: yup.boolean().default(false),
   info_firstName: yup.string().default('').required(),
   info_institutionEmail: yup
@@ -153,40 +184,16 @@ export const representativeSchema = yup.object().shape({
 
 export const signatureSchema = yup.object().shape({});
 
-
-export const collaboratorSchema = yup.object().shape({
-  info_collaboratorType: yup.string().required().oneOf(['Authorized Personnel','Authorized Student']),
-  info_pursuingDegree: yup.string().default('').required(),
-  info_firstName: yup.string().default('').required(),
-  info_googleEmail: yup
-    .string()
-    .default('')
-    .email('Please enter a valid email address.')
-    .required(),
-  info_institutionWebsite: yup.string().default('').url('Please enter a valid url.').required(),
-  info_institutionEmail: yup
-    .string()
-    .default('')
-    .email('Please enter a valid email address.')
-    .required(),
-  info_lastName: yup.string().default('').required(),
-  info_middleName: yup.string().default(''),
-  info_primaryAffiliation: yup.string().default('').required(),
-  info_suffix: yup.string().default(''),
-  info_title: yup.string().default(''),
-});
-
-
 export const combinedSchema = {
   appendices: appendicesSchema,
   applicant: applicantSchema,
+  collaborators: collaboratorSchema,
   dataAccessAgreement: dataAccessAgreementSchema,
   ITAgreements: itAgreementsSchema,
   projectInfo: projectInfoSchema,
   representative: representativeSchema,
   signature: signatureSchema,
   terms: introductionSchema,
-  collaborators: collaboratorSchema
 } as Record<FormSectionNames, any>;
 
 export default yup;
