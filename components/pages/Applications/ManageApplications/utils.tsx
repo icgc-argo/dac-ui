@@ -104,12 +104,12 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
   ];
 
 export const DEFAULT_PAGE: number = 0;
-export const DEFAULT_PAGE_SIZE: number = 5;
+export const DEFAULT_PAGE_SIZE: number = 20;
 export const DEFAULT_SORT: ApplicationsSort[] = [
   { field: 'state', order: 'desc' } as ApplicationsSort,
 ];
 
-export const statesAllowList = [
+export const adminStatesAllowList = [
   'APPROVED',
   'CLOSED',
   'EXPIRED',

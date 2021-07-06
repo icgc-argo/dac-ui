@@ -200,22 +200,20 @@ const Applicant = ({
         <DoubleFieldRow helpText="Please provide a link to your profile on your institution/company website.">
           <FormControl
             disabled={isSectionDisabled}
-            error={!!localState.info_institutionWebsite?.error}
-            required={isRequired(localState.info_institutionWebsite)}
+            error={!!localState.info_website?.error}
+            required={isRequired(localState.info_website)}
           >
-            <InputLabel htmlFor="info_institutionWebsite">Researcher Profile URL</InputLabel>
+            <InputLabel htmlFor="info_website">Researcher Profile URL</InputLabel>
 
             <Input
               aria-label="Institution/Company Website"
-              id="info_institutionWebsite"
+              id="info_website"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
-              value={localState.info_institutionWebsite?.value}
+              value={localState.info_website?.value}
             />
 
-            <FormHelperText onErrorOnly>
-              {localState.info_institutionWebsite?.error?.[0]}
-            </FormHelperText>
+            <FormHelperText onErrorOnly>{localState.info_website?.error?.[0]}</FormHelperText>
           </FormControl>
         </DoubleFieldRow>
 
@@ -296,21 +294,23 @@ const Applicant = ({
 
         <FormControl
           disabled={isSectionDisabled}
-          error={!!localState.address_street?.error}
-          required={isRequired(localState.address_street)}
+          error={!!localState.address_streetAddress?.error}
+          required={isRequired(localState.address_streetAddress)}
         >
-          <InputLabel htmlFor="address_street">Street Address</InputLabel>
+          <InputLabel htmlFor="address_streetAddress">Street Address</InputLabel>
 
           <Input
             aria-label="Street Address, e.g. 101 College Street, Suite 800"
-            id="address_street"
+            id="address_streetAddress"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             placeholder="e.g. 101 College Street, Suite 800"
-            value={localState.address_street?.value}
+            value={localState.address_streetAddress?.value}
           />
 
-          <FormHelperText onErrorOnly>{localState.address_street?.error?.[0]}</FormHelperText>
+          <FormHelperText onErrorOnly>
+            {localState.address_streetAddress?.error?.[0]}
+          </FormHelperText>
         </FormControl>
 
         <FormControl

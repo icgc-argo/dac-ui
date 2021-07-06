@@ -86,7 +86,6 @@ export type FormSectionValidationState_Appendices = FormSectionValidationState_S
 export type FormSectionValidationState_Applicant = FormSectionValidationState_SectionsGenericType<{
   info_firstName: { value: string };
   info_googleEmail: { value: string };
-  info_institutionWebsite: { value: string };
   info_institutionEmail: { value: string };
   info_lastName: { value: string };
   info_middleName: { value: string };
@@ -94,10 +93,11 @@ export type FormSectionValidationState_Applicant = FormSectionValidationState_Se
   info_primaryAffiliation: { value: string };
   info_suffix: { value: string };
   info_title: { value: string };
+  info_website: { value: string };
   address_building: { value: string };
   address_cityAndProvince: { value: string };
   address_country: { value: string };
-  address_street: { value: string };
+  address_streetAddress: { value: string };
   address_postalCode: { value: string };
 }>;
 export type FormSectionValidationState_Collaborators =
@@ -147,22 +147,25 @@ export type FormSectionValidationState_ProjectInfo =
     title: { value: string };
     website: { value: string };
   }>;
-export type FormSectionValidationState_Representative = FormSectionValidationState_SectionsGenericType<{
-  info_firstName: { value: string };
-  info_institutionEmail: { value: string };
-  info_lastName: { value: string };
-  info_middleName: { value: string };
-  info_positionTitle: { value: string };
-  info_primaryAffiliation: { value: string };
-  info_suffix: { value: string };
-  info_title: { value: string };
-  address_building: { value: string };
-  address_cityAndProvince: { value: string };
-  address_country: { value: string };
-  address_street: { value: string };
-  address_postalCode: { value: string };
-}>;
-export type FormSectionValidationState_Signature = FormSectionValidationState_SectionsGenericType<{}>;
+
+export type FormSectionValidationState_Representative =
+  FormSectionValidationState_SectionsGenericType<{
+    info_firstName: { value: string };
+    info_institutionEmail: { value: string };
+    info_lastName: { value: string };
+    info_middleName: { value: string };
+    info_positionTitle: { value: string };
+    info_primaryAffiliation: { value: string };
+    info_suffix: { value: string };
+    info_title: { value: string };
+    address_building: { value: string };
+    address_cityAndProvince: { value: string };
+    address_country: { value: string };
+    address_streetAddress: { value: string };
+    address_postalCode: { value: string };
+  }>;
+export type FormSectionValidationState_Signature =
+  FormSectionValidationState_SectionsGenericType<{}>;
 
 export type FormSectionValidationState_Sections =
   | FormSectionValidationState_Appendices

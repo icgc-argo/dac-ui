@@ -271,21 +271,23 @@ const Representative = ({
 
         <FormControl
           disabled={isSectionDisabled}
-          error={!!localState.address_street?.error}
-          required={isRequired(localState.address_street)}
+          error={!!localState.address_streetAddress?.error}
+          required={isRequired(localState.address_streetAddress)}
         >
-          <InputLabel htmlFor="address_street">Street Address</InputLabel>
+          <InputLabel htmlFor="address_streetAddress">Street Address</InputLabel>
 
           <Input
             aria-label="Street Address, e.g. 101 College Street, Suite 800"
-            id="address_street"
+            id="address_streetAddress"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             placeholder="e.g. 101 College Street, Suite 800"
-            value={localState.address_street?.value}
+            value={localState.address_streetAddress?.value}
           />
 
-          <FormHelperText onErrorOnly>{localState.address_street?.error?.[0]}</FormHelperText>
+          <FormHelperText onErrorOnly>
+            {localState.address_streetAddress?.error?.[0]}
+          </FormHelperText>
         </FormControl>
 
         <FormControl
