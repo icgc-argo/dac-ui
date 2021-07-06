@@ -3,6 +3,8 @@ import { Page, View, Text, StyleSheet } from '@react-pdf/renderer';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ReactNode } from 'react';
+import { PDFLink } from './common';
+import { getConfig } from 'global/config';
 
 const styles = StyleSheet.create({
   page: {
@@ -75,7 +77,9 @@ const PDFLayout = ({
       <View style={styles.section}>{children}</View>
       <View style={styles.footer} fixed>
         <Text>
-          {appId} created by {displayName} using ICGC-DACO (https://www.daco.icgc.org)
+          {/* TODO: get daco url from config/constant value */}
+          {appId} created by {displayName} using{' '}
+          <PDFLink href={'https://daco.icgc.org'}>ICGC-DACO</PDFLink>
         </Text>
       </View>
       {isDraftState && <Watermark />}
