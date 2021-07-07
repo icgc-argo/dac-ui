@@ -65,8 +65,9 @@ export type FormFieldType = Partial<
     }
 >;
 
-type FormSectionValidationState_SectionsGenericType<T extends Record<string, FormFieldType>> =
-  Record<string, Partial<T[keyof T] & FormFieldType>>;
+type FormSectionValidationState_SectionsGenericType<
+  T extends Record<string, FormFieldType>
+> = Record<string, Partial<T[keyof T] & FormFieldType>>;
 
 export type FormSectionValidationState_Appendices = FormSectionValidationState_SectionsGenericType<{
   agreements: {
@@ -97,7 +98,7 @@ export type FormSectionValidationState_Applicant = FormSectionValidationState_Se
   address_cityAndProvince: { value: string };
   address_country: { value: string };
   address_streetAddress: { value: string };
-  address_postalCod: { value: string };
+  address_postalCode: { value: string };
 }>;
 export type FormSectionValidationState_Collaborators =
   FormSectionValidationState_SectionsGenericType<{}>;
@@ -146,6 +147,7 @@ export type FormSectionValidationState_ProjectInfo =
     title: { value: string };
     website: { value: string };
   }>;
+
 export type FormSectionValidationState_Representative =
   FormSectionValidationState_SectionsGenericType<{
     info_firstName: { value: string };
@@ -160,7 +162,7 @@ export type FormSectionValidationState_Representative =
     address_cityAndProvince: { value: string };
     address_country: { value: string };
     address_streetAddress: { value: string };
-    address_postalCod: { value: string };
+    address_postalCode: { value: string };
   }>;
 export type FormSectionValidationState_Signature =
   FormSectionValidationState_SectionsGenericType<{}>;
@@ -225,7 +227,9 @@ export type FormValidationStateParameters = FormValidationState_Base & {
 
 export type FormSectionUpdateLocalStateFunction = (fieldData: FormValidationAction) => void;
 
-export type FormFieldDataFromEvent = (event: ChangeEvent<HTMLInputElement>) =>
+export type FormFieldDataFromEvent = (
+  event: ChangeEvent<HTMLInputElement>,
+) =>
   | {
       eventType: string;
       field: string;

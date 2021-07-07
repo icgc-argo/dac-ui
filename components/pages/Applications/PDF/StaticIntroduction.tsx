@@ -1,14 +1,20 @@
 import React from 'react';
 
 import { getConfig } from 'global/config';
-import { OICR_LINK, POLICIES_PAGE } from 'global/constants/externalPaths';
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
-import { PDFLink, getStaticComponents, Checkbox, SectionTitle } from './common';
+import { getStaticComponents, Checkbox, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
+import { Text } from '@react-pdf/renderer';
+import { ApplicationData } from '../types';
 
-const StaticIntroduction = ({ isPdf = false, data = {} }: { isPdf?: boolean; data?: any }) => {
-  const { NEXT_PUBLIC_ARGO_ROOT } = getConfig();
+const StaticIntroduction = ({
+  isPdf = false,
+  data,
+}: {
+  isPdf?: boolean;
+  data?: ApplicationData;
+}) => {
   const {
     TextComponent,
     TitleComponent,
@@ -19,8 +25,8 @@ const StaticIntroduction = ({ isPdf = false, data = {} }: { isPdf?: boolean; dat
 
   return (
     <ContainerComponent
-      appId={data.appId}
-      state={data.state}
+      appId={data?.appId}
+      state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
       <TitleComponent>Introduction</TitleComponent>
@@ -36,9 +42,8 @@ const StaticIntroduction = ({ isPdf = false, data = {} }: { isPdf?: boolean; dat
           <LinkComponent href="#" rel="noopener noreferrer" target="_blank">
             goals and policies of ICGC
           </LinkComponent>{' '}
-          (see Appendix I){isPdf && <PDFLink> ({POLICIES_PAGE})</PDFLink>} including, but not
-          limited to, policies concerning the purpose and relevance of the research, the protection
-          of the participants and the security of the participants’ data.
+          including, but not limited to, policies concerning the purpose and relevance of the
+          research, the protection of the participants and the security of the participants’ data.
         </TextComponent>
 
         <TextComponent>
@@ -46,7 +51,6 @@ const StaticIntroduction = ({ isPdf = false, data = {} }: { isPdf?: boolean; dat
           <LinkComponent href="#" rel="noopener noreferrer" target="_blank">
             Ontario Institute for Cancer Research (“OICR”)
           </LinkComponent>{' '}
-          {isPdf && <PDFLink>({OICR_LINK}) </PDFLink>}
           which is the legal entity that administrates the ICGC Controlled Data on behalf of ICGC
           member institutions. OICR includes its employees, officers, directors, contractors,
           subcontractors and agents (including the DACO, as defined immediately below).
@@ -68,7 +72,6 @@ const StaticIntroduction = ({ isPdf = false, data = {} }: { isPdf?: boolean; dat
           <LinkComponent href="#" rel="noopener noreferrer" target="_blank">
             ICGC ARGO website
           </LinkComponent>
-          {isPdf && <PDFLink> ({NEXT_PUBLIC_ARGO_ROOT})</PDFLink>}.
         </TextComponent>
 
         {!isPdf && <RequiredFieldsMessage />}
@@ -77,12 +80,13 @@ const StaticIntroduction = ({ isPdf = false, data = {} }: { isPdf?: boolean; dat
         <SectionComponent style={{ borderTop: `1px solid ${defaultTheme.colors.grey_1}` }}>
           <SectionTitle>{FORM_TEXT.introduction.title}</SectionTitle>
           <Checkbox
-            checked={data?.sections?.terms.agreement.accepted}
+            // added '|| false' because typescript complained with possibly undefined data prop
+            checked={data?.sections.terms.agreement.accepted || false}
             TextComponent={
-              <TextComponent>
-                <TextComponent style={{ fontWeight: 600 }}>I acknowledge</TextComponent> that I have
-                read and understand the above terms.
-              </TextComponent>
+              <Text>
+                <Text style={{ fontWeight: 600 }}>I acknowledge</Text> that I have read and
+                understand the above terms.
+              </Text>
             }
           />
         </SectionComponent>
