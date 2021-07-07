@@ -3,13 +3,13 @@ import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import { View } from '@react-pdf/renderer';
 
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
-import { getStaticComponents, PdfFormFields, SectionTitle } from './common';
+import { getFieldValue, getStaticComponents, PdfFormFields, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
 import VerticalTable from './VerticalTable';
 import { getStreetAddress } from './common';
 import { ApplicationData } from '../types';
 
-const PdfApplicantFormData = ({ data }: { data: any }) => {
+const PdfApplicantFormData = ({ data }: { data?: ApplicationData }) => {
   const applicantFields = [
     PdfFormFields.NAME,
     PdfFormFields.PRIMARY_AFFILIATION,
@@ -19,22 +19,22 @@ const PdfApplicantFormData = ({ data }: { data: any }) => {
     PdfFormFields.POSITION_TITLE,
   ];
   const applicantData = applicantFields.map(({ fieldName, fieldKey }) => {
-    return { fieldName, fieldValue: data.sections.applicant.info[fieldKey] };
+    return { fieldName, fieldValue: getFieldValue(data?.sections.applicant.info, fieldKey) };
   });
 
-  const address = data.sections.applicant.address;
+  const address = data?.sections.applicant.address;
   const addressData = [
     {
       fieldName: 'Mailing Address',
-      fieldValue: getStreetAddress(address.streetAddress, address.building),
+      fieldValue: getStreetAddress(address?.streetAddress, address?.building),
     },
     {
-      fieldValue: address.cityAndProvince,
+      fieldValue: address?.cityAndProvince,
     },
     {
-      fieldValue: address.country,
+      fieldValue: address?.country,
     },
-    { fieldValue: address.postalCode },
+    { fieldValue: address?.postalCode },
   ];
 
   return (
@@ -69,7 +69,7 @@ const StaticApplicant = ({ isPdf = false, data }: { isPdf?: boolean; data?: Appl
     <ContainerComponent
       appId={data?.appId}
       state={data?.state}
-      applicant={data?.sections?.applicant.info}
+      applicant={data?.sections.applicant.info}
     >
       <TitleComponent>A. Applicant Information (Principal Investigator)</TitleComponent>
       <SectionComponent>

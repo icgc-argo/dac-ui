@@ -1,5 +1,6 @@
 import { Method } from 'axios';
 import { SortingRule } from 'react-table';
+import { FieldAccessor } from './PDF/types';
 
 export type ApplicationRecord = {
   appId: string;
@@ -73,26 +74,29 @@ export type ApplicationsResponseItem = {
   state: string;
 };
 
+export type ApplicationDataByField = {
+  [k in FieldAccessor]: string | string[];
+};
+
+export type IndividualInfo = {
+  [FieldAccessor.FIRST_NAME]: string;
+  [FieldAccessor.GOOGLE_EMAIL]: string;
+  [FieldAccessor.DISPLAY_NAME]: string;
+  [FieldAccessor.INSTITUTIONAL_EMAIL]: string;
+  [FieldAccessor.LAST_NAME]: string;
+  [FieldAccessor.MIDDLE_NAME]: string;
+  [FieldAccessor.POSITION_TITLE]: string;
+  [FieldAccessor.PRIMARY_AFFILIATION]: string;
+  [FieldAccessor.SUFFIX]: string;
+  [FieldAccessor.TITLE]: string;
+};
+
 interface Address {
   building: string;
   cityAndProvince: string;
   country: string;
   postalCode: string;
   streetAddress: string;
-}
-
-interface IndividualInfo {
-  firstName: string;
-  googleEmail: string;
-  displayName: string;
-  institutionEmail: string;
-  institutionWebsite: string;
-  lastName: string;
-  middleName: string;
-  positionTitle: string;
-  primaryAffiliation: string;
-  suffix: string;
-  title: string;
 }
 
 interface Terms {
@@ -108,6 +112,16 @@ export interface ApprovalDoc {
   name: 'string';
   objectId: 'string';
   uploadedAtUtc: 'string';
+}
+
+export interface ProjectInfo {
+  [FieldAccessor.PUBLICATIONS_URL]: string[];
+  [FieldAccessor.BACKGROUND]: string;
+  [FieldAccessor.METHODOLOGY]: string;
+  [FieldAccessor.AIMS]: string;
+  [FieldAccessor.WEBSITE]: string;
+  [FieldAccessor.TITLE]: string;
+  [FieldAccessor.SUMMARY]: string;
 }
 
 export enum ITAgreementEnum {
@@ -155,15 +169,6 @@ interface Representative {
 
 interface Collaborators {
   list: Collaborator[];
-}
-
-interface ProjectInfo {
-  publicationsURLs: string[];
-  background: string;
-  methodology: string;
-  aims: string;
-  website: string;
-  title: string;
 }
 
 interface EthicsLetter {

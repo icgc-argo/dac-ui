@@ -5,6 +5,7 @@ import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ReactNode } from 'react';
 import { PDFLink } from './common';
 import { getConfig } from 'global/config';
+import { ApplicationDataByField } from '../types';
 
 const styles = StyleSheet.create({
   page: {
@@ -59,10 +60,7 @@ const PDFLayout = ({
   state = 'draft',
   children,
 }: {
-  applicant?: {
-    displayName: string;
-    title: string;
-  };
+  applicant?: Partial<ApplicationDataByField>;
   appId?: string;
   state?: string;
   children: ReactNode;

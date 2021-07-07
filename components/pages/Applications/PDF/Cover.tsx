@@ -4,7 +4,7 @@ import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import { View, Text, StyleSheet } from '@react-pdf/renderer';
 import PDFLayout from './PdfLayout';
 import PDFIcgcDaco from './icons/PdfIcgcDaco';
-import { PDFText, PDFTitle } from './common';
+import { getDisplayName, PDFText, PDFTitle } from './common';
 import VerticalTable from './VerticalTable';
 import { ApplicationData } from '../types';
 import { getFormattedDate } from '../Dashboard/Applications/InProgress/helpers';
@@ -42,7 +42,7 @@ const Cover = ({ data }: { data?: ApplicationData }) => {
     {
       fieldName: 'Principal Investigator',
       fieldValue: (
-        <Text style={styles.tableValue}>{data?.sections.applicant.info.displayName}</Text>
+        <Text style={styles.tableValue}>{getDisplayName(data?.sections.applicant.info)}</Text>
       ),
     },
     {

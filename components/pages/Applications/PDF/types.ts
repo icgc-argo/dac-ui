@@ -7,6 +7,17 @@ export enum FieldAccessor {
   POSITION_TITLE = 'positionTitle',
   PROJECT_TITLE = 'title',
   PROJECT_WEBSITE = 'website',
+  FIRST_NAME = 'firstName',
+  LAST_NAME = 'lastName',
+  MIDDLE_NAME = 'middleName',
+  SUFFIX = 'suffix',
+  TITLE = 'title',
+  PUBLICATIONS_URL = 'publicationsURLs',
+  BACKGROUND = 'background',
+  METHODOLOGY = 'methodology',
+  AIMS = 'aims',
+  WEBSITE = 'website',
+  SUMMARY = 'summary',
 }
 
 export enum PdfField {

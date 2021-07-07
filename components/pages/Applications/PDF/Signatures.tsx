@@ -1,13 +1,20 @@
 import React from 'react';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
-
 import { View, StyleSheet } from '@react-pdf/renderer';
+
 import PDFLayout from './PdfLayout';
-import { PdfFormFields, PDFLink, PDFParagraph, PDFText, PDFTitle, SectionTitle } from './common';
+import {
+  getFieldValue,
+  PdfFormFields,
+  PDFLink,
+  PDFParagraph,
+  PDFText,
+  PDFTitle,
+  SectionTitle,
+} from './common';
 import VerticalTable from './VerticalTable';
 import { ApplicationData } from '../types';
 import { ADOBE_ACROBAT_LINK, DOCUSIGN_LINK } from 'global/constants/externalPaths';
-import { FieldAccessor, PdfFieldName, PdfFormField } from './types';
 import { styles as commonStyles } from './common';
 
 const styles = StyleSheet.create({
@@ -46,14 +53,14 @@ const Signatures = ({ data }: { data?: ApplicationData }) => {
     PdfFormFields.POSITION_TITLE,
   ];
 
-  const applicantData = signerFields.map((field: any) => ({
+  const applicantData = signerFields.map((field) => ({
     fieldName: field.fieldName,
-    fieldValue: data?.sections.applicant.info[field.fieldKey],
+    fieldValue: getFieldValue(data?.sections.applicant.info, field.fieldKey),
   }));
 
   const representativeData = signerFields.map((field) => ({
     fieldName: field.fieldName,
-    fieldValue: data?.sections.representative.info[field.fieldKey],
+    fieldValue: getFieldValue(data?.sections.representative.info, field.fieldKey),
   }));
 
   const dacoData = ['Name', 'Title', 'Date of Approval'].map((fieldName: string) => ({

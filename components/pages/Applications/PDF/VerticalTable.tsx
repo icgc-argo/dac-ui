@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Text, View, StyleSheet } from '@react-pdf/renderer';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
+import { PdfFieldName } from './types';
 
 const styles = StyleSheet.create({
   tableStyle: {
@@ -71,8 +72,8 @@ const TableRow = ({
   );
 };
 
-interface DataCell {
-  fieldName?: string;
+export interface DataCell {
+  fieldName?: PdfFieldName | string;
   fieldValue?: string | React.ReactElement;
 }
 
@@ -83,6 +84,7 @@ const VerticalTable = ({
   headerCellWidth = 30,
   valueCellWidth = 70,
   style = {},
+  wrap = false,
 }: {
   data: DataCell[];
   useInternalBorders?: boolean;
@@ -90,9 +92,11 @@ const VerticalTable = ({
   headerCellWidth?: number;
   valueCellWidth?: number;
   style?: object;
+  wrap?: boolean;
 }) => {
   return (
     <View
+      wrap={wrap}
       style={{
         ...styles.tableStyle,
         ...(useExternalBorders && borderedTableStyles.table),
