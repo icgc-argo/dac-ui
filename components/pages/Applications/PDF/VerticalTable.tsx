@@ -55,7 +55,7 @@ const TableRow = ({
         }}
       >
         <Text style={{ ...styles.tableCellStyle, ...styles.tableCellHeaderStyle }}>
-          {headerName}
+          {headerName ? `${headerName}:` : ''}
         </Text>
       </View>
 
