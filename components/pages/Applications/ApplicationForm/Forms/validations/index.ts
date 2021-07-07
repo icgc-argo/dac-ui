@@ -141,8 +141,16 @@ export const validationReducer = (
     }
 
     case 'seeding': {
-      const { createdAtUtc, lastUpdatedAtUtc, revisionRequest, sections, state, __v } =
-        action.value;
+      const {
+        createdAtUtc,
+        lastUpdatedAtUtc,
+        revisionRequest,
+        sections,
+        state,
+        __v,
+      } = action.value;
+
+      const reviewStateEditableSections = ['collaborators', 'ethicsLetter'];
 
       return {
         ...formState,
@@ -153,7 +161,7 @@ export const validationReducer = (
           const seedData = sections[sectionName] || {};
           const validationData =
             formState.sections[sectionName] ||
-            (console.error(`Seeding for "${sectionName}" hasn't been implemented yet`), {});
+            (console.error(`Seeding for "${sectionName}" hasn'state been implemented yet`), {});
 
           return Object.keys(seedData).length
             ? {
@@ -162,7 +170,10 @@ export const validationReducer = (
                   ...validationData,
                   fields: sectionFieldsSeeder(validationData.fields, omit(seedData, 'meta')),
                   meta: seedData?.meta,
-                  overall: sectionStatusMapping[seedData?.meta?.status as SECTION_STATUS],
+                  overall:
+                    state === 'REVIEW' && reviewStateEditableSections.includes(sectionName)
+                      ? FORM_STATES.CAN_EDIT
+                      : sectionStatusMapping[seedData?.meta?.status as SECTION_STATUS],
                 },
               }
             : seededSectionsData;
@@ -179,109 +190,111 @@ export const validationReducer = (
   }
 };
 
-export const validator: FormSectionValidatorFunction_Main =
-  (formState, dispatch) =>
-  (origin, validateSection) =>
-  async (field, value, shouldPersistResults) => {
-    if (validateSection) {
-      const { error } = await schemaValidator(
-        combinedSchema[origin],
-        Object.entries(formState.sections[origin]?.fields as object).reduce(
-          (acc, [field, data]) => ({
-            ...acc,
-            [field]: data.value,
-          }),
-          {},
-        ),
-      );
+export const validator: FormSectionValidatorFunction_Main = (formState, dispatch) => (
+  origin,
+  validateSection,
+) => async (field, value, shouldPersistResults) => {
+  if (validateSection) {
+    const { error } = await schemaValidator(
+      combinedSchema[origin],
+      Object.entries(formState.sections[origin]?.fields as object).reduce(
+        (acc, [field, data]) => ({
+          ...acc,
+          [field]: data.value,
+        }),
+        {},
+      ),
+    );
 
+    const results = {
+      section: origin,
+      type: 'overall',
+      overall: error
+        ? FORM_STATES.INCOMPLETE
+        : !['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
+            formState.sections[origin]?.overall || '',
+          )
+        ? FORM_STATES.COMPLETE
+        : undefined,
+      ...(error && { error }),
+    } as FormValidationAction;
+    dispatch(results);
+
+    return results;
+  } else if (field) {
+    const [fieldName, fieldIndex, fieldOverride] = field.split('--');
+    const fieldIsArray = !Number.isNaN(Number(fieldIndex));
+
+    if (fieldOverride) {
       const results = {
+        field: fieldName,
         section: origin,
-        type: 'overall',
-        overall: error
-          ? FORM_STATES.INCOMPLETE
-          : !['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
-              formState.sections[origin]?.overall || '',
-            )
-          ? FORM_STATES.COMPLETE
-          : undefined,
-        ...(error && { error }),
+        type: fieldOverride,
+        value: fieldIndex,
       } as FormValidationAction;
+
       dispatch(results);
 
       return results;
-    } else if (field) {
-      const [fieldName, fieldIndex, fieldOverride] = field.split('--');
-      const fieldIsArray = !Number.isNaN(Number(fieldIndex));
-
-      if (fieldOverride) {
-        const results = {
-          field: fieldName,
-          section: origin,
-          type: fieldOverride,
-          value: fieldIndex,
-        } as FormValidationAction;
-
-        dispatch(results);
-
-        return results;
-      }
-
-      const { error } = await schemaValidator(
-        yup.reach(
-          combinedSchema[origin],
-          fieldIndex && fieldOverride !== 'overall' ? `${fieldName}[${fieldIndex}]` : fieldName,
-        ),
-        fieldOverride === 'overall'
-          ? Object.values<FormFieldType>(formState.sections[origin]?.fields[fieldName]?.value)
-              .filter(({ hidden }) => !hidden)
-              .map(({ value }) => value)
-          : value,
-      );
-
-      const nextValue = { ...(error && { error }), value };
-
-      const results = {
-        field,
-        ...(shouldPersistResults && { overall: FORM_STATES.TOUCHED }),
-        section: origin,
-        type: formState.sections[origin]?.fields?.[fieldName]?.type,
-        ...(fieldIsArray
-          ? {
-              error,
-              value: {
-                [fieldIndex]: nextValue,
-              },
-            }
-          : nextValue),
-      } as FormValidationAction;
-
-      shouldPersistResults && dispatch(results);
-
-      return results;
     }
-  };
+
+    const { error } = await schemaValidator(
+      yup.reach(
+        combinedSchema[origin],
+        fieldIndex && fieldOverride !== 'overall' ? `${fieldName}[${fieldIndex}]` : fieldName,
+      ),
+      fieldOverride === 'overall'
+        ? Object.values<FormFieldType>(formState.sections[origin]?.fields[fieldName]?.value)
+            .filter(({ hidden }) => !hidden)
+            .map(({ value }) => value)
+        : value,
+    );
+
+    const nextValue = { ...(error && { error }), value };
+
+    const results = {
+      field,
+      ...(shouldPersistResults && { overall: FORM_STATES.TOUCHED }),
+      section: origin,
+      type: formState.sections[origin]?.fields?.[fieldName]?.type,
+      ...(fieldIsArray
+        ? {
+            error,
+            value: {
+              [fieldIndex]: nextValue,
+            },
+          }
+        : nextValue),
+    } as FormValidationAction;
+
+    shouldPersistResults && dispatch(results);
+
+    return results;
+  }
+};
 
 export const useFormValidation = (appId: string) => {
   const { fetchWithAuth, isLoading } = useAuthContext();
-  const [formState, validationDispatch]: [FormValidationStateParameters, Dispatch<any>] =
-    useReducer(validationReducer, {
-      appId,
-      sections: {
-        ...Object.entries(combinedSchema).reduce(
-          (acc, [field, schema]) => ({
-            ...acc,
-            [field]: {
-              ...(schema?.describe?.() || schema),
-              overall: FORM_STATES.PRISTINE,
-            },
-          }),
-          {},
-        ),
-      },
-      __seeded: false,
-      __v: 0,
-    } as FormValidationStateParameters);
+  const [formState, validationDispatch]: [
+    FormValidationStateParameters,
+    Dispatch<any>,
+  ] = useReducer(validationReducer, {
+    appId,
+    sections: {
+      ...Object.entries(combinedSchema).reduce(
+        (acc, [field, schema]) => ({
+          ...acc,
+          [field]: {
+            ...(schema?.describe?.() || schema),
+            overall: FORM_STATES.PRISTINE,
+          },
+        }),
+        {},
+      ),
+    },
+    __seeded: false,
+    __v: 0,
+  } as FormValidationStateParameters);
 
   useEffect(() => {
     fetchWithAuth({
