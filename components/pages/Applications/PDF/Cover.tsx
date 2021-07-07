@@ -9,6 +9,7 @@ import VerticalTable from './VerticalTable';
 import { ApplicationData } from '../types';
 import { getFormattedDate } from '../Dashboard/Applications/InProgress/helpers';
 import { TIME_DAY_AND_DATE_FORMAT } from '../Dashboard/Applications/InProgress/constants';
+import { FieldAccessor } from './types';
 
 const styles = StyleSheet.create({
   tableValue: {
@@ -48,7 +49,9 @@ const Cover = ({ data }: { data?: ApplicationData }) => {
     {
       fieldName: 'Institution',
       fieldValue: (
-        <Text style={styles.tableValue}>{data?.sections.applicant.info.primaryAffiliation}</Text>
+        <Text style={styles.tableValue}>
+          {data?.sections.applicant.info[FieldAccessor.PRIMARY_AFFILIATION]}
+        </Text>
       ),
     },
     {

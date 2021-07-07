@@ -13,7 +13,7 @@ import {
 import FORM_TEXT from './textConstants';
 import { View } from '@react-pdf/renderer';
 import VerticalTable, { DataCell } from './VerticalTable';
-import { PdfFieldName } from './types';
+import { FieldAccessor, PdfFieldName } from './types';
 import { ApplicationData, ApplicationDataByField } from '../types';
 
 const BasicInfo = ({ data }: { data?: Partial<ApplicationDataByField> }) => {
@@ -290,7 +290,6 @@ const StaticProjectInfo = ({
     TitleComponent,
   } = getStaticComponents(isPdf);
 
-  // TODO: need to add text for textareas from data
   return (
     <ContainerComponent
       appId={data?.appId}
@@ -315,24 +314,26 @@ const StaticProjectInfo = ({
             {FORM_TEXT.project_info.inputLabel.background}
           </PDFParagraph>
           <BackgroundBubble isPdf />
-          <PDFTextArea>{data?.sections.projectInfo.background}</PDFTextArea>
+          <PDFTextArea>{data?.sections.projectInfo[FieldAccessor.BACKGROUND]}</PDFTextArea>
           <PDFParagraph style={{ fontWeight: 600 }}>
             {FORM_TEXT.project_info.inputLabel.aims}
           </PDFParagraph>
           <AimsBubble isPdf />
-          <PDFTextArea>{data?.sections.projectInfo.aims}</PDFTextArea>
+          <PDFTextArea>{data?.sections.projectInfo[FieldAccessor.AIMS]}</PDFTextArea>
           <PDFParagraph style={{ fontWeight: 600 }}>
             {FORM_TEXT.project_info.inputLabel.dataUse}
           </PDFParagraph>
           <DataUseBubble isPdf />
-          <PDFTextArea>{data?.sections.projectInfo.methodology}</PDFTextArea>
+          <PDFTextArea>{data?.sections.projectInfo[FieldAccessor.METHODOLOGY]}</PDFTextArea>
           <StaticLaySummary isPdf />
           <PDFParagraph style={{ fontWeight: 600 }}>
             {FORM_TEXT.project_info.inputLabel.laySummary}
           </PDFParagraph>
           <LaySummaryBubble isPdf />
-          <PDFTextArea>{data?.sections.projectInfo.summary}</PDFTextArea>
-          <PdfPublicationsFormData data={data?.sections.projectInfo.publicationsURLs as string[]} />
+          <PDFTextArea>{data?.sections.projectInfo[FieldAccessor.SUMMARY]}</PDFTextArea>
+          <PdfPublicationsFormData
+            data={data?.sections.projectInfo[FieldAccessor.PUBLICATIONS_URL] as string[]}
+          />
         </View>
       )}
     </ContainerComponent>

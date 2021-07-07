@@ -45,7 +45,6 @@ const Signature = () => (
   </View>
 );
 
-// data needs to be ApplicationData type. needs to be fixed here and in other verticalTable usages
 const Signatures = ({ data }: { data?: ApplicationData }) => {
   const signerFields = [
     PdfFormFields.NAME,
