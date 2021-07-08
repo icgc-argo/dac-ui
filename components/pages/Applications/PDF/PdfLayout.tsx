@@ -6,6 +6,7 @@ import { ReactNode } from 'react';
 import { PDFLink } from './common';
 import { getConfig } from 'global/config';
 import { ApplicationDataByField } from '../types';
+import { DACO_ROOT } from 'global/constants/externalPaths';
 
 const styles = StyleSheet.create({
   page: {
@@ -41,13 +42,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: '20pt',
     fontFamily: 'WorkSans',
-    fontSize: 11,
+    fontSize: 8,
   },
   header: {
     height: '30pt',
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    fontSize: 11,
+    fontSize: 8,
     fontFamily: 'WorkSans',
   },
 });
@@ -75,9 +76,7 @@ const PDFLayout = ({
       <View style={styles.section}>{children}</View>
       <View style={styles.footer} fixed>
         <Text>
-          {/* TODO: get daco url from config/constant value */}
-          {appId} created by {displayName} using{' '}
-          <PDFLink href={'https://daco.icgc.org'}>ICGC-DACO</PDFLink>
+          {appId} created for {displayName} by <PDFLink href={DACO_ROOT}>ICGC-DACO</PDFLink>
         </Text>
       </View>
       {isDraftState && <Watermark />}

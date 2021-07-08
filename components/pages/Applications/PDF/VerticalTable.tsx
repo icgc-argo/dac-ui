@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     width: 'auto',
     fontFamily: 'WorkSans',
-    fontSize: 11,
+    fontSize: 8,
   },
   tableRowStyle: {
     flexDirection: 'row',

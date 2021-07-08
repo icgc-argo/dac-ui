@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   },
   tableCellStyle: {
     padding: '6pt',
-    fontSize: 11,
+    fontSize: 8,
     fontFamily: 'WorkSans',
   },
 });
