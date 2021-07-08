@@ -120,7 +120,7 @@ export type FormSectionValidationState_DataAccessAgreements =
   }>;
 export type FormSectionValidationState_EthicsLetter =
   FormSectionValidationState_SectionsGenericType<{
-    declaredAsRequired: { value: boolean };
+    declaredAsRequired: { value: boolean | null };
     approvalLetterDocs: { value: [] };
   }>;
 export type FormSectionValidationState_Introduction =
