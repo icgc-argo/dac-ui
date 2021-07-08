@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
@@ -7,6 +7,7 @@ import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import { Document, pdf } from '@react-pdf/renderer';
 import urlJoin from 'url-join';
 import { saveAs } from 'file-saver';
+import { isEqual } from 'lodash';
 
 import StaticIntroduction from 'components/pages/Applications/PDF/StaticIntroduction';
 import StaticApplicant from '../../PDF/StaticApplicant';
@@ -24,11 +25,44 @@ import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helper
 import { FILE_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
 import Cover from '../../PDF/Cover';
 import Signatures from '../../PDF/Signatures';
+import { ApplicationState } from '../../types';
 
-const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
+const CustomLoadingButton = ({ text }: { text: string }) => {
+  const theme = useTheme();
+  return (
+    <div
+      css={css`
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: ${theme.colors.accent2_dark};
+        width: 140px;
+      `}
+    >
+      <Icon
+        name="spinner"
+        width={'12px'}
+        height={'12px'}
+        fill={theme.colors.accent2_dark}
+        css={css`
+          margin-right: 4px;
+        `}
+      />
+      {text}
+    </div>
+  );
+};
+
+const HeaderActions = ({
+  appId,
+  state,
+}: {
+  appId: string;
+  state: ApplicationState;
+}): ReactElement => {
   const theme: UikitTheme = useTheme();
   const { fetchWithAuth } = useAuthContext();
-
+  const [pdfIsLoading, setPdfIsLoading] = useState<boolean>(false);
   // generate the PDF on request, so that app data is most recent (not when page is loaded)
   const generatePDFDocument = async (data: any) => {
     const blob = await pdf(
@@ -51,8 +85,10 @@ const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
 
     const dateCreated = getFormattedDate(Date.now(), FILE_DATE_FORMAT);
     saveAs(blob, `${data.appId}-${dateCreated}`);
+    setPdfIsLoading(false);
   };
 
+  const pdfButtonText = `${isEqual(state, ApplicationState.DRAFT) ? 'Draft' : 'Download'} PDF`;
   return (
     <section
       css={css`
@@ -67,14 +103,21 @@ const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
         Close Application
       </Button>
       <Button
+        // setting width on button & CustomLoadingButton to prevent resize on loading state
+        css={css`
+          width: 140px;
+        `}
         isAsync
+        Loader={(props: any) => <CustomLoadingButton text={pdfButtonText} {...props} />}
         variant="secondary"
-        size="sm"
+        isLoading={pdfIsLoading}
         onClick={async () => {
+          setPdfIsLoading(true);
           const data = await fetchWithAuth({ url: urlJoin(APPLICATIONS_PATH, appId) })
             .then((res: any) => res.data)
             .catch((err: AxiosError) => {
               console.error('Application fetch failed, pdf not generated.', err);
+              setPdfIsLoading(false);
               return null;
             });
           // if data fetch fails, do not proceed to pdf generation
@@ -91,8 +134,7 @@ const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
           height="12px"
           name="download"
         />{' '}
-        {/* hardcoded 'Draft' for now but button text will reflect application state when data hookup is complete */}
-        Draft PDF
+        {pdfButtonText}
       </Button>
     </section>
   );

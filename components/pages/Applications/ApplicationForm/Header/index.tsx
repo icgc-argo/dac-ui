@@ -42,7 +42,7 @@ const ApplicationHeader = ({ data }: { data: any }): ReactElement => {
 
         <Progress state={state} />
 
-        <Actions appId={appId} />
+        <Actions appId={appId} state={state} />
       </div>
     </PageHeader>
   );
