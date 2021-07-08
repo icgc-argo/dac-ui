@@ -118,7 +118,7 @@ export const dataAccessAgreementSchema = yup.object().shape({
 });
 
 export const ethicsLetterSchema = yup.object().shape({
-  declaredAsRequired: yup.boolean().default(false).oneOf([true]).required(),
+  declaredAsRequired: yup.boolean().required(),
   approvalLetterDocs: yup.array().when('declaredAsRequired', {
     is: true, // alternatively: (val) => val == true
     then: yup.array().min(1),

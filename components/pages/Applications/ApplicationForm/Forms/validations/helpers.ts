@@ -44,6 +44,7 @@ export const getFieldDataFromEvent: FormFieldDataFromEvent = (event) => {
           value: event.target.checked,
         };
 
+      case 'radio': // this many need refactoring after improving UiKit Radio components
       case 'select-one':
       case 'text':
         return {
@@ -91,7 +92,7 @@ const getSeedValueByFieldType = (fieldType: string, fieldBase: any, seedValue: a
     case 'array': {
       // Ensure starting with an array that satisfies a minimum number of fields,
       // as they'll be PATCHed together, in order to avoid order bugs
-      const valueFiller = fieldBase?.innerType?.type === 'string' ? '' : null;
+      const valueFiller = fieldBase.innerType?.type === 'string' ? '' : null;
       const baseArray = Array.from({ length: getMin(fieldBase) }, () => ({ value: valueFiller }));
 
       const seedObj = {
@@ -180,7 +181,7 @@ export const getValueByFieldTypeToPublish = (
     }
 
     case 'string':
-      return { [fieldName]: fieldNameInner ? { [fieldNameInner]: value } : value };
+      return { [fieldName]: fieldNameInner ? { [fieldNameInner]: value.trim() } : value.trim() };
 
     default:
       console.log('nope', type);

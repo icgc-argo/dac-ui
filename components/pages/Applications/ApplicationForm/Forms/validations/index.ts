@@ -366,13 +366,15 @@ export const useLocalValidation = (
 
   const updateLocalState = useCallback(
     ({ error, field, value, type }: FormValidationAction) => {
-      fieldsTouched.has(field) || setFieldTouched((prev) => new Set(prev.add(field)));
-
       const [fieldName, fieldIndex, fieldOverride] = field.split('--');
       const currentSectionData = localState[sectionName];
       const currentSectionFields = currentSectionData?.fields;
       const currentField = currentSectionFields[fieldName];
       const oldValue = currentField.value;
+
+      fieldOverride === 'remove' ||
+        fieldsTouched.has(field) ||
+        setFieldTouched((prev) => new Set(prev.add(field)));
 
       const newState = {
         ...localState,
@@ -454,8 +456,6 @@ export const useLocalValidation = (
         case 'change':
         case 'mousedown': {
           if ('text' === fieldType) {
-            setFieldTouched((prev) => new Set(prev.add(field)));
-
             updateLocalState({
               field,
               value: fieldIndex

@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useCallback, useState } from 'react';
 import Banner, { BANNER_VARIANTS } from '@icgc-argo/uikit/notifications/Banner';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
@@ -26,6 +26,32 @@ const EthicsLetter = ({
   localState: FormSectionValidationState_EthicsLetter;
   validateFieldTouched: FormFieldValidationTriggerFunction;
 }): ReactElement => {
+  const [selectedRadioValue, setSelectedRadioValue] = useState(
+    localState.declaredAsRequired?.value || null,
+  );
+
+  // this handler was customised to handle things that ought be handled by the RadioCheckboxGroup itself
+  // TODO: improve that, as well as implement the component's focus/blur and error behaviours
+  const handleSelectedRadioValueChange = (value: boolean) => {
+    validateFieldTouched({
+      // faking event values to keep scope limited
+      target: {
+        id: 'declaredAsRequired',
+        tagName: 'INPUT',
+        type: 'radio',
+        value,
+      },
+      type: 'change',
+    });
+
+    setSelectedRadioValue(value);
+  };
+
+  const isChecked = useCallback(
+    (radioValue) => radioValue === selectedRadioValue,
+    [selectedRadioValue],
+  );
+
   return (
     <article>
       <StaticEthics />
@@ -39,8 +65,7 @@ const EthicsLetter = ({
           className="vertical"
           disabled={isSectionDisabled}
           error={!!localState.declaredAsRequired?.error}
-          required={true}
-          // required={isRequired(localState.declaredAsRequired)}
+          required={isRequired(localState.declaredAsRequired)}
         >
           <InputLabel htmlFor="declaredAsRequired">
             {FORM_TEXT.ethics.inputLabel.declaration}
@@ -50,13 +75,12 @@ const EthicsLetter = ({
             css={css`
               margin-top: 15px;
             `}
-            isChecked={localState.declaredAsRequired?.value}
-            onChange={validateFieldTouched}
+            id="declaredAsRequired"
+            isChecked={isChecked}
+            onChange={handleSelectedRadioValueChange}
           >
-            <FormRadio disabled={isSectionDisabled} value="false" checked>
-              {FORM_TEXT.ethics.declarationOptions.notRequired}
-            </FormRadio>
-            <FormRadio disabled value="true">
+            <FormRadio value={false}>{FORM_TEXT.ethics.declarationOptions.notRequired}</FormRadio>
+            <FormRadio value={true}>
               {FORM_TEXT.ethics.declarationOptions.required.a}{' '}
               <Typography bold component="span">
                 {FORM_TEXT.ethics.declarationOptions.required.b}{' '}
