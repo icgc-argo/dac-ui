@@ -27,6 +27,26 @@ import Cover from '../../PDF/Cover';
 import Signatures from '../../PDF/Signatures';
 import { ApplicationState } from '../../types';
 
+// EXPIRED and RENEWING are tbd, CLOSED excludes Action buttons
+const getPdfButtonText = (state: ApplicationState) => {
+  let text = 'PDF';
+
+  if ([ApplicationState.DRAFT, ApplicationState.REVISIONS_REQUESTED].includes(state)) {
+    return (text = 'DRAFT ' + text);
+  }
+  if (isEqual(state, ApplicationState.SIGN_AND_SUBMIT)) {
+    return (text = 'FINALIZED ' + text);
+  }
+  if (
+    [ApplicationState.REVIEW, ApplicationState.APPROVED, ApplicationState.REJECTED].includes(state)
+  ) {
+    return (text = 'SIGNED ' + text);
+  }
+  console.warn('Illegal app state! State: ', state);
+};
+
+const PDF_BUTTON_WIDTH = 130;
+
 const CustomLoadingButton = ({ text }: { text: string }) => {
   const theme = useTheme();
   return (
@@ -36,7 +56,7 @@ const CustomLoadingButton = ({ text }: { text: string }) => {
         align-items: center;
         justify-content: center;
         color: ${theme.colors.accent2_dark};
-        width: 140px;
+        width: ${PDF_BUTTON_WIDTH}px;
       `}
     >
       <Icon
@@ -88,7 +108,8 @@ const HeaderActions = ({
     setPdfIsLoading(false);
   };
 
-  const pdfButtonText = `${isEqual(state, ApplicationState.DRAFT) ? 'Draft' : 'Download'} PDF`;
+  const pdfButtonText = getPdfButtonText(state);
+
   return (
     <section
       css={css`
@@ -105,7 +126,7 @@ const HeaderActions = ({
       <Button
         // setting width on button & CustomLoadingButton to prevent resize on loading state
         css={css`
-          width: 140px;
+          width: ${PDF_BUTTON_WIDTH}px;
         `}
         isAsync
         Loader={(props: any) => <CustomLoadingButton text={pdfButtonText} {...props} />}

@@ -1,10 +1,10 @@
-import { Page, View, Text, StyleSheet } from '@react-pdf/renderer';
-
-import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
-import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ReactNode } from 'react';
+import { Page, View, Text, StyleSheet } from '@react-pdf/renderer';
+import { isEqual } from 'lodash';
+import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
+
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { PDFLink } from './common';
-import { getConfig } from 'global/config';
 import { ApplicationDataByField } from '../types';
 
 const styles = StyleSheet.create({
@@ -65,7 +65,9 @@ const PDFLayout = ({
   state?: string;
   children: ReactNode;
 }) => {
-  const isDraftState = state === ApplicationState.DRAFT;
+  const isDraftState =
+    isEqual(state, ApplicationState.DRAFT) || isEqual(state, ApplicationState.REVISIONS_REQUESTED);
+
   const displayName = `${applicant?.title ? `${applicant.title} ` : ''}${applicant?.displayName}`;
   return (
     <Page style={styles.page} wrap={false}>
