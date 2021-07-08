@@ -178,6 +178,7 @@ const PdfPublicationsFormData = ({ data = [] }: { data?: string[] }) => {
     fieldName: PdfFieldName.PUBLICATION_URL,
     fieldValue: d,
   }));
+  // pdf is required to show a minimum of 3 publication fields, so appending empty rows if less than 3 publications have been added
   while (pubData.length < MIN_PUBLICATION_FIELDS) {
     pubData.push({
       fieldName: PdfFieldName.PUBLICATION_URL,
