@@ -150,8 +150,6 @@ export const validationReducer = (
         __v,
       } = action.value;
 
-      const reviewStateEditableSections = ['collaborators', 'ethicsLetter'];
-
       return {
         ...formState,
         createdAtUtc,
@@ -161,7 +159,7 @@ export const validationReducer = (
           const seedData = sections[sectionName] || {};
           const validationData =
             formState.sections[sectionName] ||
-            (console.error(`Seeding for "${sectionName}" hasn'state been implemented yet`), {});
+            (console.error(`Seeding for "${sectionName}" hasn't been implemented yet`), {});
 
           return Object.keys(seedData).length
             ? {
@@ -171,7 +169,7 @@ export const validationReducer = (
                   fields: sectionFieldsSeeder(validationData.fields, omit(seedData, 'meta')),
                   meta: seedData?.meta,
                   overall:
-                    state === 'REVIEW' && reviewStateEditableSections.includes(sectionName)
+                    state === 'APPROVED' && ['collaborators'].includes(sectionName)
                       ? FORM_STATES.CAN_EDIT
                       : sectionStatusMapping[seedData?.meta?.status as SECTION_STATUS],
                 },

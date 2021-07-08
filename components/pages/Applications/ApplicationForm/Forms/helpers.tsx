@@ -50,6 +50,7 @@ export const sectionSelector = ({
     <SectionComponent
       isSectionDisabled={isSectionDisabled}
       localState={localState}
+      state={formState.state}
       validateFieldTouched={validateFieldTouched}
     />
   ) : (
