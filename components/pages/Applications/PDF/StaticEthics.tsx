@@ -51,11 +51,7 @@ const ApprovalLetterDocs = ({ data = [] }: { data?: ApprovalDoc[] }) => {
 const PdfEthicsFormData = ({ data }: { data?: ApplicationData }) => {
   // check if null first, as this means neither has been checked
   const ethicsRequiredPresent = !isNull(data?.sections.ethicsLetter.declaredAsRequired);
-
-  const ethicsRequiredTrue =
-    ethicsRequiredPresent && data?.sections.ethicsLetter.declaredAsRequired;
-  const ethicsRequiredFalse =
-    ethicsRequiredPresent && !data?.sections.ethicsLetter.declaredAsRequired;
+  const ethicsRequired = ethicsRequiredPresent && !!data?.sections.ethicsLetter.declaredAsRequired;
 
   const OptionTwo = (
     <View>
@@ -82,18 +78,18 @@ const PdfEthicsFormData = ({ data }: { data?: ApplicationData }) => {
       <View style={{ marginBottom: '10pt' }}>
         <Checkbox
           TextComponent={FORM_TEXT.ethics.declarationOptions.notRequired}
-          checked={ethicsRequiredFalse}
+          checked={ethicsRequiredPresent && !ethicsRequired}
         />
       </View>
       <View>
-        <Checkbox TextComponent={OptionTwo} checked={ethicsRequiredTrue as boolean} />
+        <Checkbox TextComponent={OptionTwo} checked={ethicsRequired} />
       </View>
-      <View style={{ marginTop: '15pt' }}>
-        {ethicsRequiredTrue && <StaticAttachLetterMessage isPdf />}
-        {ethicsRequiredTrue && (
+      {ethicsRequired && (
+        <View style={{ marginTop: '15pt' }}>
+          <StaticAttachLetterMessage isPdf />
           <ApprovalLetterDocs data={data?.sections.ethicsLetter.approvalLetterDocs} />
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 };
