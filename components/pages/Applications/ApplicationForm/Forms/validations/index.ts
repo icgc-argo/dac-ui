@@ -1,6 +1,7 @@
 import { Dispatch, useCallback, useEffect, useReducer, useState } from 'react';
 import { isEqual, merge, omit } from 'lodash';
 
+import { AuthAPIFetchFunction } from 'components/pages/Applications/types';
 import { API } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
 
@@ -18,8 +19,14 @@ import {
   FormSectionValidationState_SectionBase,
   SECTION_STATUS,
 } from '../types';
-import { getFieldDataFromEvent, schemaValidator, sectionFieldsSeeder } from './helpers';
+import {
+  getFieldDataFromEvent,
+  getValueByFieldTypeToPublish,
+  schemaValidator,
+  sectionFieldsSeeder,
+} from './helpers';
 import yup, { combinedSchema } from './schemas';
+import { AxiosResponse } from 'axios';
 
 export { getMin, isRequired } from './helpers';
 
@@ -42,6 +49,7 @@ export const validationReducer = (
                 ...formState.sections[action.section]?.fields?.[fieldName]?.value,
                 ...action.value,
               })
+                .filter(([, item]: [any, any]) => item.value !== null)
                 .map(([, item]: [any, any]) =>
                   errorValue.includes(item.value)
                     ? {
@@ -71,10 +79,6 @@ export const validationReducer = (
           ...formState.sections,
           [action.section]: {
             ...formState.sections[action.section],
-            ...(action.overall &&
-              formState.sections[action.section]?.overall === FORM_STATES.PRISTINE && {
-                overall: action.overall,
-              }),
             fields: {
               ...formState.sections[action.section]?.fields,
               [fieldName]: {
@@ -116,30 +120,7 @@ export const validationReducer = (
       };
     }
 
-    case 'remove': {
-      return {
-        ...formState,
-        sections: {
-          ...formState.sections,
-          [action.section]: {
-            ...formState.sections[action.section],
-            fields: {
-              ...formState.sections[action.section]?.fields,
-              [action.field]: {
-                ...formState.sections[action.section]?.fields?.[action.field],
-                value: {
-                  ...formState.sections[action.section]?.fields?.[action.field]?.value,
-                  [action.value]: {
-                    hidden: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      };
-    }
-
+    case 'updating':
     case 'seeding': {
       const { createdAtUtc, lastUpdatedAtUtc, revisionRequest, sections, state, __v } =
         action.value;
@@ -161,8 +142,11 @@ export const validationReducer = (
                 [sectionName]: {
                   ...validationData,
                   fields: sectionFieldsSeeder(validationData.fields, omit(seedData, 'meta')),
-                  meta: seedData?.meta,
-                  overall: sectionStatusMapping[seedData?.meta?.status as SECTION_STATUS],
+                  meta: {
+                    ...validationData.meta,
+                    ...seedData.meta,
+                    overall: sectionStatusMapping[seedData?.meta?.status as SECTION_STATUS],
+                  },
                 },
               }
             : seededSectionsData;
@@ -180,7 +164,7 @@ export const validationReducer = (
 };
 
 export const validator: FormSectionValidatorFunction_Main =
-  (formState, dispatch) =>
+  (formState, dispatch, apiFetcher) =>
   (origin, validateSection) =>
   async (field, value, shouldPersistResults) => {
     if (validateSection) {
@@ -201,7 +185,7 @@ export const validator: FormSectionValidatorFunction_Main =
         overall: error
           ? FORM_STATES.INCOMPLETE
           : !['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
-              formState.sections[origin]?.overall || '',
+              formState.sections[origin]?.meta.overall || '',
             )
           ? FORM_STATES.COMPLETE
           : undefined,
@@ -214,36 +198,27 @@ export const validator: FormSectionValidatorFunction_Main =
       const [fieldName, fieldIndex, fieldOverride] = field.split('--');
       const fieldIsArray = !Number.isNaN(Number(fieldIndex));
 
-      if (fieldOverride) {
-        const results = {
-          field: fieldName,
-          section: origin,
-          type: fieldOverride,
-          value: fieldIndex,
-        } as FormValidationAction;
+      const { error } = fieldOverride
+        ? { error: null } // TODO: this validation will be handled in ticket #138
+        : await schemaValidator(
+            yup.reach(
+              combinedSchema[origin],
+              fieldIndex && fieldOverride !== 'overall' ? `${fieldName}[${fieldIndex}]` : fieldName,
+            ),
+            fieldOverride === 'overall'
+              ? Object.values<FormFieldType>(formState.sections[origin]?.fields[fieldName]?.value)
+                  .filter(({ value }) => value !== null)
+                  .map(({ value }) => value)
+              : value,
+          );
 
-        dispatch(results);
-
-        return results;
-      }
-
-      const { error } = await schemaValidator(
-        yup.reach(
-          combinedSchema[origin],
-          fieldIndex && fieldOverride !== 'overall' ? `${fieldName}[${fieldIndex}]` : fieldName,
-        ),
-        fieldOverride === 'overall'
-          ? Object.values<FormFieldType>(formState.sections[origin]?.fields[fieldName]?.value)
-              .filter(({ hidden }) => !hidden)
-              .map(({ value }) => value)
-          : value,
-      );
-
-      const nextValue = { ...(error && { error }), value };
+      const nextValue = {
+        ...(error && { error }),
+        value,
+      };
 
       const results = {
         field,
-        ...(shouldPersistResults && { overall: FORM_STATES.TOUCHED }),
         section: origin,
         type: formState.sections[origin]?.fields?.[fieldName]?.type,
         ...(fieldIsArray
@@ -256,7 +231,43 @@ export const validator: FormSectionValidatorFunction_Main =
           : nextValue),
       } as FormValidationAction;
 
-      shouldPersistResults && dispatch(results);
+      if (shouldPersistResults) {
+        dispatch(results);
+        // const stateBefore = await apiFetcher().then(({ data }) => data);
+        // console.log('before', stateBefore);
+
+        // WIP: this condition is temporary, to allow partial persistence implementation
+        if (['array', 'boolean', 'object', 'string'].includes(results.type)) {
+          const stateAfter = await apiFetcher({
+            method: 'PATCH',
+            data: {
+              sections: {
+                [origin]: getValueByFieldTypeToPublish(
+                  results,
+                  formState.sections[origin]?.fields?.[fieldName]?.meta,
+                  formState.sections[origin]?.fields?.[fieldName]?.value,
+                ),
+              },
+              // __v: formState.__v,
+            },
+          }).then(({ data, ...response } = {} as AxiosResponse<any>) => {
+            data
+              ? dispatch({
+                  type: 'updating',
+                  value: data,
+                })
+              : console.error(
+                  'Something went wrong updating the application form',
+                  response || 'no data in response',
+                );
+
+            return data;
+          });
+
+          console.log('after', stateAfter);
+        }
+        // dispatch(results);
+      }
 
       return results;
     }
@@ -264,16 +275,28 @@ export const validator: FormSectionValidatorFunction_Main =
 
 export const useFormValidation = (appId: string) => {
   const { fetchWithAuth, isLoading } = useAuthContext();
+  const apiFetcher: AuthAPIFetchFunction = useCallback(
+    ({ data, method } = {}) =>
+      fetchWithAuth({
+        data,
+        method,
+        url: `${API.APPLICATIONS}/${appId}`,
+      }),
+    [],
+  );
+
   const [formState, validationDispatch]: [FormValidationStateParameters, Dispatch<any>] =
     useReducer(validationReducer, {
       appId,
       sections: {
         ...Object.entries(combinedSchema).reduce(
-          (acc, [field, schema]) => ({
+          (acc, [section, schema]) => ({
             ...acc,
-            [field]: {
+            [section]: {
               ...(schema?.describe?.() || schema),
-              overall: FORM_STATES.PRISTINE,
+              meta: {
+                overall: FORM_STATES.PRISTINE,
+              },
             },
           }),
           {},
@@ -284,9 +307,7 @@ export const useFormValidation = (appId: string) => {
     } as FormValidationStateParameters);
 
   useEffect(() => {
-    fetchWithAuth({
-      url: `${API.APPLICATIONS}/${appId}`,
-    })
+    apiFetcher()
       .then(({ data, ...response }: { data?: Record<string, any> } = {}) =>
         data
           ? validationDispatch({
@@ -301,7 +322,7 @@ export const useFormValidation = (appId: string) => {
       });
   }, [appId]);
 
-  const validateSection = validator(formState, validationDispatch);
+  const validateSection = validator(formState, validationDispatch, apiFetcher);
 
   return {
     isLoading,
@@ -361,7 +382,7 @@ export const useLocalValidation = (
                         ...([fieldOverride, type].includes('remove')
                           ? {
                               [fieldIndex]: {
-                                hidden: true,
+                                value: null,
                               },
                             }
                           : value),
@@ -394,7 +415,7 @@ export const useLocalValidation = (
           if (canBlur) {
             const shouldPersistData =
               !!fieldType &&
-              ['text'].includes(fieldType) &&
+              ['select-one', 'text', 'textarea'].includes(fieldType) &&
               fieldsTouched.has(field) &&
               value !==
                 (fieldIndex
@@ -428,7 +449,7 @@ export const useLocalValidation = (
                 return new Set(prev);
               });
 
-            const changes = await fieldValidator(field);
+            const changes = await fieldValidator(field, null, !!'remove');
 
             changes && updateLocalState(changes);
           } else {

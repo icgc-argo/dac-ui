@@ -1,4 +1,4 @@
-import { Method } from 'axios';
+import { AxiosResponse, Method } from 'axios';
 import { SortingRule } from 'react-table';
 
 export type ApplicationRecord = {
@@ -230,3 +230,8 @@ export enum ApplicationsField {
   lastUpdatedAtUtc = 'lastUpdatedAtUtc',
   state = 'state',
 }
+
+export type AuthAPIFetchFunction = (options?: {
+  data?: any;
+  method?: Method;
+}) => Promise<AxiosResponse<any>>;

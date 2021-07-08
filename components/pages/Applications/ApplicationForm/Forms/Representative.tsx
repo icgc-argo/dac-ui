@@ -159,7 +159,7 @@ const Representative = ({
           </FormControl>
         </DoubleFieldRow>
 
-        <DoubleFieldRow helpText="Must be the institutional email address of the Principal Investigator.">
+        <DoubleFieldRow helpText="Must be the institutional email address of the Institutional Representative.">
           <FormControl
             disabled={isSectionDisabled}
             error={!!localState.info_institutionEmail?.error}
