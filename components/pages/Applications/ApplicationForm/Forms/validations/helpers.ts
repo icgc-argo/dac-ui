@@ -133,12 +133,11 @@ export const getValueByFieldTypeToPublish = (
 
   switch (type) {
     case 'array':
-      const meep = Object.entries({
-        ...fieldValue,
-        ...value,
-      });
       return {
-        [fieldName]: meep
+        [fieldName]: Object.entries({
+          ...fieldValue,
+          ...value,
+        })
           .filter((urlObj) => (urlObj[1] as FormFieldType).value !== null)
           .map((urlObj) => (urlObj[1] as FormFieldType).value),
       };
