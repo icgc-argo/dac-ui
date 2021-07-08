@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Text, View, StyleSheet } from '@react-pdf/renderer';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
+import { PdfFieldName } from './types';
 
 const styles = StyleSheet.create({
   tableStyle: {
@@ -14,6 +15,7 @@ const styles = StyleSheet.create({
   },
   tableCellHeaderStyle: {
     fontWeight: 'semibold',
+    marginRight: '10pt',
   },
   tableCellStyle: {
     padding: '6pt 0',
@@ -38,7 +40,7 @@ const TableRow = ({
   useExternalBorders,
 }: {
   headerName?: string;
-  value?: string;
+  value?: string | React.ReactElement;
   headerCellWidth: number;
   valueCellWidth: number;
   hasBottomBorder: boolean;
@@ -54,7 +56,7 @@ const TableRow = ({
         }}
       >
         <Text style={{ ...styles.tableCellStyle, ...styles.tableCellHeaderStyle }}>
-          {headerName}
+          {headerName ? `${headerName}:` : ''}
         </Text>
       </View>
 
@@ -70,30 +72,45 @@ const TableRow = ({
   );
 };
 
-interface DataCell {
-  fieldName?: string;
-  fieldValue?: string;
+export interface DataCell {
+  fieldName?: PdfFieldName | string;
+  fieldValue?: string | React.ReactElement;
 }
 
 const VerticalTable = ({
   data,
   useInternalBorders = true,
   useExternalBorders = false,
+  headerCellWidth = 30,
+  valueCellWidth = 70,
+  style = {},
+  wrap = false,
 }: {
   data: DataCell[];
   useInternalBorders?: boolean;
   useExternalBorders?: boolean;
+  headerCellWidth?: number;
+  valueCellWidth?: number;
+  style?: object;
+  wrap?: boolean;
 }) => {
   return (
-    <View style={{ ...styles.tableStyle, ...(useExternalBorders && borderedTableStyles.table) }}>
+    <View
+      wrap={wrap}
+      style={{
+        ...styles.tableStyle,
+        ...(useExternalBorders && borderedTableStyles.table),
+        ...style,
+      }}
+    >
       {data.map((cell: DataCell, i: number) => {
         return (
           <TableRow
             key={`${cell.fieldName}-${i}`}
             headerName={cell.fieldName}
             value={cell.fieldValue}
-            headerCellWidth={30}
-            valueCellWidth={70}
+            headerCellWidth={headerCellWidth}
+            valueCellWidth={valueCellWidth}
             hasBottomBorder={useInternalBorders && i !== data.length - 1}
             useExternalBorders={useExternalBorders}
           />

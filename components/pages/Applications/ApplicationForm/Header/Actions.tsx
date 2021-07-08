@@ -21,7 +21,9 @@ import StaticITAgreements from '../../PDF/StaticITAgreements';
 import StaticDataAccessAgreement from '../../PDF/StaticDataAccessAgreement';
 import StaticAppendices from '../../PDF/StaticAppendices';
 import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
-import { FILE_DATE } from '../../Dashboard/Applications/InProgress/constants';
+import { FILE_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
+import Cover from '../../PDF/Cover';
+import Signatures from '../../PDF/Signatures';
 
 const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
   const theme: UikitTheme = useTheme();
@@ -31,6 +33,8 @@ const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
   const generatePDFDocument = async (data: any) => {
     const blob = await pdf(
       <Document>
+        {/* Cover is PDF only */}
+        <Cover data={data} />
         <StaticIntroduction isPdf data={data} />
         <StaticApplicant isPdf data={data} />
         <StaticRepresentative isPdf data={data} />
@@ -40,10 +44,12 @@ const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
         <StaticITAgreements isPdf data={data} />
         <StaticDataAccessAgreement isPdf data={data} />
         <StaticAppendices isPdf data={data} />
+        {/* Signatures is PDF only */}
+        <Signatures data={data} />
       </Document>,
     ).toBlob();
 
-    const dateCreated = getFormattedDate(Date.now(), FILE_DATE);
+    const dateCreated = getFormattedDate(Date.now(), FILE_DATE_FORMAT);
     saveAs(blob, `${data.appId}-${dateCreated}`);
   };
 
