@@ -464,6 +464,11 @@ export const useLocalValidation = (
           break;
         }
 
+        case 'focus': {
+          ['select-one'].includes(fieldType) && setFieldTouched((prev) => new Set(prev.add(field)));
+          break;
+        }
+
         default: {
           console.info('unhandled Field event', event);
           break;
