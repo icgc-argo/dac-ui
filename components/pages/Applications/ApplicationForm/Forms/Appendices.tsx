@@ -9,6 +9,9 @@ import Typography from '@icgc-argo/uikit/Typography';
 import RequiredFieldsMessage from './RequiredFieldsMessage';
 import { FormFieldValidationTriggerFunction, FormSectionValidationState_Appendices } from './types';
 import { isRequired } from './validations';
+import StaticAppendices, { ICGCPolicies } from '../../PDF/StaticAppendices';
+import FORM_TEXT from '../../PDF/textConstants';
+import { AppendixEnum } from '../../types';
 
 const Appendices = ({
   isSectionDisabled,
@@ -21,24 +24,13 @@ const Appendices = ({
 }): ReactElement => {
   return (
     <article>
-      <Typography bold component="h2">
-        H. Appendices
-      </Typography>
+      <StaticAppendices />
 
       <section>
-        <Typography>Please review and agree to the following Appendices.</Typography>
-
-        <RequiredFieldsMessage />
-      </section>
-
-      <section>
-        <Typography bold component="h3" color="secondary">
-          ICGC POLICIES
-        </Typography>
+        <ICGCPolicies />
 
         <Typography bold>
-          APPENDIX I - INTERNATIONAL CANCER GENOME CONSORTIUM, GOALS, STRUCTURE, POLICIES &
-          GUIDELINES (2008)
+          {FORM_TEXT.appendices[AppendixEnum.ICGC_GOALS_POLICIES].title}
           <br />
           <Link
             css={css`
@@ -49,7 +41,7 @@ const Appendices = ({
             target="_blank"
             variant="BLOCK"
           >
-            Read the Appendix
+            {FORM_TEXT.appendices.read_the_appendix}
           </Link>
         </Typography>
 
@@ -60,13 +52,13 @@ const Appendices = ({
           required={isRequired(localState.agreements?.fields?.appendix_icgc_goals_policies)}
         >
           <FormCheckbox
-            aria-label="You have read APPENDIX I"
+            aria-label={FORM_TEXT.appendices.appendix_icgc_goals_policies.text}
             checked={localState.agreements?.fields?.appendix_icgc_goals_policies?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             value="agreements--appendix_icgc_goals_policies"
           >
-            You have read APPENDIX I
+            {FORM_TEXT.appendices.appendix_icgc_goals_policies.text}
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -75,8 +67,7 @@ const Appendices = ({
         </FormControl>
 
         <Typography bold>
-          APPENDIX II - SHARING DATA FROM LARGE-SCALE BIOLOGICAL RESEARCH PROJECTS: A SYSTEM OF
-          TRIPARTITE RESPONSIBILITY "THE FT. LAUDERDALE GUIDELINES" (2003)
+          {FORM_TEXT.appendices[AppendixEnum.LARGE_SCALE_DATA_SHARING].title}
           <br />
           <Link
             css={css`
@@ -87,7 +78,7 @@ const Appendices = ({
             target="_blank"
             variant="BLOCK"
           >
-            Read the Appendix
+            {FORM_TEXT.appendices.read_the_appendix}
           </Link>
         </Typography>
 
@@ -98,13 +89,13 @@ const Appendices = ({
           required={isRequired(localState.agreements?.fields?.appendix_large_scale_data_sharing)}
         >
           <FormCheckbox
-            aria-label="You have read APPENDIX II"
+            aria-label={FORM_TEXT.appendices.appendix_large_scale_data_sharing.text}
             checked={localState.agreements?.fields?.appendix_large_scale_data_sharing?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             value="agreements--appendix_large_scale_data_sharing"
           >
-            You have read APPENDIX II
+            {FORM_TEXT.appendices.appendix_large_scale_data_sharing.text}
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -113,8 +104,7 @@ const Appendices = ({
         </FormControl>
 
         <Typography bold>
-          APPENDIX III - TORONTO INTERNATIONAL DATA RELEASE WORKSHOP AUTHORS, PREPUBLICATION DATA
-          SHARING - NATURE 461 (10) 168. (2009)
+          {FORM_TEXT.appendices[AppendixEnum.PREPUBLICATION_POLICY].title}
           <br />
           <Link
             css={css`
@@ -125,7 +115,7 @@ const Appendices = ({
             target="_blank"
             variant="BLOCK"
           >
-            Read the Appendix
+            {FORM_TEXT.appendices.read_the_appendix}
           </Link>
         </Typography>
 
@@ -136,13 +126,13 @@ const Appendices = ({
           required={isRequired(localState.agreements?.fields?.appendix_prepublication_policy)}
         >
           <FormCheckbox
-            aria-label="You have read APPENDIX III"
+            aria-label={FORM_TEXT.appendices.appendix_prepublication_policy.text}
             checked={localState.agreements?.fields?.appendix_prepublication_policy?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             value="agreements--appendix_prepublication_policy"
           >
-            You have read APPENDIX III
+            {FORM_TEXT.appendices.appendix_prepublication_policy.text}
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -151,8 +141,7 @@ const Appendices = ({
         </FormControl>
 
         <Typography bold>
-          APPENDIX IV - INTERNATIONAL CANCER GENOME CONSORTIUM, UPDATE TO GOALS, STRUCTURE, POLICIES
-          & GUIDELINES - SECTION E.3 PUBLICATION POLICY (2008 INCLUDING 2010 AND 2012 UPDATES)
+          {FORM_TEXT.appendices[AppendixEnum.PUBLICATION_POLICY].title}
           <br />
           <Link
             css={css`
@@ -163,7 +152,7 @@ const Appendices = ({
             target="_blank"
             variant="BLOCK"
           >
-            Read the Appendix
+            {FORM_TEXT.appendices.read_the_appendix}
           </Link>
         </Typography>
 
@@ -174,13 +163,13 @@ const Appendices = ({
           required={isRequired(localState.agreements?.fields?.appendix_publication_policy)}
         >
           <FormCheckbox
-            aria-label="You have read APPENDIX IV"
+            aria-label={FORM_TEXT.appendices.appendix_publication_policy.text}
             checked={localState.agreements?.fields?.appendix_publication_policy?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             value="agreements--appendix_publication_policy"
           >
-            You have read APPENDIX IV
+            {FORM_TEXT.appendices.appendix_publication_policy.text}
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -189,8 +178,7 @@ const Appendices = ({
         </FormControl>
 
         <Typography bold>
-          APPENDIX V - NATIONAL INSTITUTES OF HEALTH, BEST PRACTICES FOR THE LICENSING OF GENOMIC
-          INVENTIONS (2005)
+          {FORM_TEXT.appendices[AppendixEnum.NIH_GENOMIC_INVENTIONS].title}
           <br />
           <Link
             css={css`
@@ -201,7 +189,7 @@ const Appendices = ({
             target="_blank"
             variant="BLOCK"
           >
-            Read the Appendix
+            {FORM_TEXT.appendices.read_the_appendix}
           </Link>
         </Typography>
 
@@ -212,13 +200,13 @@ const Appendices = ({
           required={isRequired(localState.agreements?.fields?.appendix_nih_genomic_inventions)}
         >
           <FormCheckbox
-            aria-label="You have read APPENDIX V"
+            aria-label={FORM_TEXT.appendices.appendix_nih_genomic_inventions.text}
             checked={localState.agreements?.fields?.appendix_nih_genomic_inventions?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             value="agreements--appendix_nih_genomic_inventions"
           >
-            You have read APPENDIX V
+            {FORM_TEXT.appendices.appendix_nih_genomic_inventions.text}
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -227,7 +215,7 @@ const Appendices = ({
         </FormControl>
 
         <Typography bold>
-          APPENDIX VI - OECD, GUIDELINES FOR THE LICENSING OF GENETIC INVENTIONS (2006)
+          {FORM_TEXT.appendices[AppendixEnum.OECD_GENETIC_INVENTIONS].title}
           <br />
           <Link
             css={css`
@@ -238,7 +226,7 @@ const Appendices = ({
             target="_blank"
             variant="BLOCK"
           >
-            Read the Appendix
+            {FORM_TEXT.appendices.read_the_appendix}
           </Link>
         </Typography>
 
@@ -249,13 +237,13 @@ const Appendices = ({
           required={isRequired(localState.agreements?.fields?.appendix_oecd_genetic_inventions)}
         >
           <FormCheckbox
-            aria-label="You have read APPENDIX VI"
+            aria-label={FORM_TEXT.appendices.appendix_oecd_genetic_inventions.text}
             checked={localState.agreements?.fields?.appendix_oecd_genetic_inventions?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             value="agreements--appendix_oecd_genetic_inventions"
           >
-            You have read APPENDIX VI
+            {FORM_TEXT.appendices.appendix_oecd_genetic_inventions.text}
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -264,7 +252,7 @@ const Appendices = ({
         </FormControl>
 
         <Typography bold>
-          APPENDIX VII - ICGC DCC: BEST PRACTICES FOR SECURING CONTROLLED DATA IN THE CLOUD (2015)
+          {FORM_TEXT.appendices[AppendixEnum.CLOUD_SECURITY].title}
           <br />
           <Link
             css={css`
@@ -275,7 +263,7 @@ const Appendices = ({
             target="_blank"
             variant="BLOCK"
           >
-            Read the Appendix
+            {FORM_TEXT.appendices.read_the_appendix}
           </Link>
         </Typography>
 
@@ -286,13 +274,13 @@ const Appendices = ({
           required={isRequired(localState.agreements?.fields?.appendix_cloud_security)}
         >
           <FormCheckbox
-            aria-label="You have read APPENDIX VII"
+            aria-label={FORM_TEXT.appendices.appendix_cloud_security.text}
             checked={localState.agreements?.fields?.appendix_cloud_security?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             value="agreements--appendix_cloud_security"
           >
-            You have read APPENDIX VII
+            {FORM_TEXT.appendices.appendix_cloud_security.text}
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>
@@ -301,8 +289,7 @@ const Appendices = ({
         </FormControl>
 
         <Typography bold>
-          APPENDIX VIII - GA4GH, FRAMEWORK FOR RESPONSIBLE SHARING OF GENOMIC AND HEALTH-RELATED
-          DATA (2014)
+          {FORM_TEXT.appendices[AppendixEnum.GA4GH_FRAMEWORK].title}
           <br />
           <Link
             css={css`
@@ -313,7 +300,7 @@ const Appendices = ({
             target="_blank"
             variant="BLOCK"
           >
-            Read the Appendix
+            {FORM_TEXT.appendices.read_the_appendix}
           </Link>
         </Typography>
 
@@ -324,13 +311,13 @@ const Appendices = ({
           required={isRequired(localState.agreements?.fields?.appendix_ga4gh_framework)}
         >
           <FormCheckbox
-            aria-label="You have read APPENDIX VIII"
+            aria-label={FORM_TEXT.appendices.appendix_ga4gh_framework.text}
             checked={localState.agreements?.fields?.appendix_ga4gh_framework?.value}
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             value="agreements--appendix_ga4gh_framework"
           >
-            You have read APPENDIX VIII
+            {FORM_TEXT.appendices.appendix_ga4gh_framework.text}
           </FormCheckbox>
 
           <FormHelperText onErrorOnly>

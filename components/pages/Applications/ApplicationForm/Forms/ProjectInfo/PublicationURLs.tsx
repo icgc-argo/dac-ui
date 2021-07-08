@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { css } from '@emotion/core';
 
 import { UikitTheme } from '@icgc-argo/uikit/index';
@@ -8,12 +8,11 @@ import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 import Input from '@icgc-argo/uikit/form/Input';
 import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import Icon from '@icgc-argo/uikit/Icon';
-import Link from '@icgc-argo/uikit/Link';
-import Typography from '@icgc-argo/uikit/Typography';
 
 import DoubleFieldRow from '../DoubleFieldRow';
 import { FormFieldType } from '../types';
 import { getMin, isRequired } from '../validations';
+import { StaticPublications } from 'components/pages/Applications/PDF/StaticProjectInfo';
 
 const ID = 'publicationsURLs';
 
@@ -31,7 +30,7 @@ const PublicationURLs = ({
 
   useEffect(() => {
     const newPublicationsCount = fields
-      ? Object.values(fields).filter((item: any) => !item?.hidden).length
+      ? Object.values(fields).filter((item: any) => item?.value !== null).length
       : 0;
     setPublicationsCount(Math.max(newPublicationsCount, publicationsCount));
     setHasThreeValidURLs(newPublicationsCount >= minPublications && !error?.length);
@@ -55,29 +54,7 @@ const PublicationURLs = ({
 
   return (
     <section>
-      <Typography bold component="h3" color="secondary">
-        RELEVANT PUBLICATIONS
-      </Typography>
-
-      <Typography>
-        <Typography as="span" bold>
-          Please provide at least three links to relevant publications
-        </Typography>
-        , of which you, the applicant, were an author or a co-author. These should be links (URLs)
-        to publication websites such as{' '}
-        <Link href="https://pubmed.gov" rel="noopener noreferrer" target="_blank">
-          pubmed.gov
-        </Link>
-        ,{' '}
-        <Link href="https://biorxiv.org" rel="noopener noreferrer" target="_blank">
-          biorxiv.org
-        </Link>
-        , or{' '}
-        <Link href="https://medrxiv.org" rel="noopener noreferrer" target="_blank">
-          medrxiv.org
-        </Link>
-        .
-      </Typography>
+      <StaticPublications />
 
       {Object.values<FormFieldType>(
         Object.entries(fields || {}).reduce(
@@ -95,7 +72,7 @@ const PublicationURLs = ({
         ),
       ).map(
         (item, index) =>
-          !item.hidden && (
+          item.value !== null && (
             <DoubleFieldRow
               actions={
                 index >= minPublications ? (
@@ -141,7 +118,7 @@ const PublicationURLs = ({
               <FormControl
                 disabled={isSectionDisabled}
                 error={!!item.error}
-                required={isRequired(innerType)}
+                required={isRequired(innerType as FormFieldType)}
               >
                 <InputLabel htmlFor="title">Publication URL</InputLabel>
 

@@ -8,13 +8,14 @@ import Link from '@icgc-argo/uikit/Link';
 import RadioCheckboxGroup from '@icgc-argo/uikit/form/RadioCheckboxGroup';
 import Typography from '@icgc-argo/uikit/Typography';
 
-import RequiredFieldsMessage from './RequiredFieldsMessage';
 import {
   FormFieldValidationTriggerFunction,
   FormSectionValidationState_EthicsLetter,
 } from './types';
 import { isRequired } from './validations';
 import { css } from '@emotion/core';
+import StaticEthics from '../../PDF/StaticEthics';
+import FORM_TEXT from '../../PDF/textConstants';
 
 const EthicsLetter = ({
   isSectionDisabled,
@@ -27,44 +28,11 @@ const EthicsLetter = ({
 }): ReactElement => {
   return (
     <article>
-      <Typography bold component="h2">
-        E. Ethics
-      </Typography>
-
-      <section>
-        <Typography>
-          ICGC is aware that some countries/regions do not require ethics approval for use of coded
-          data (i.e. use of the ICGC Controlled Data). Depending on the nature of your Research
-          Project, it is possible, however, that such approval is needed in your country. If you are
-          uncertain as to whether your Research Project needs ethics approval to use ICGC Controlled
-          Data, we suggest you contact your local institutional review board / research ethics
-          committee (IRB/REC) to clarify the matter.
-        </Typography>
-
-        <Banner
-          css={css`
-            margin-top: 15px;
-          `}
-          content={
-            <Typography>
-              <Typography bold component="span">
-                Please note:
-              </Typography>{' '}
-              The DACO and the ICGC are not responsible for the ethics approval/monitoring of
-              individual Research Projects and bear no responsibility for the applicant's failure to
-              comply with local/national ethical requirements.
-            </Typography>
-          }
-          size="SM"
-          variant={BANNER_VARIANTS.WARNING}
-        />
-
-        <RequiredFieldsMessage />
-      </section>
+      <StaticEthics />
 
       <section>
         <Typography bold component="h3" color="secondary">
-          ETHICS APPROVAL
+          {FORM_TEXT.ethics.title}
         </Typography>
 
         <FormControl
@@ -75,7 +43,7 @@ const EthicsLetter = ({
           // required={isRequired(localState.declaredAsRequired)}
         >
           <InputLabel htmlFor="declaredAsRequired">
-            Please choose one of the following options
+            {FORM_TEXT.ethics.inputLabel.declaration}
           </InputLabel>
 
           <RadioCheckboxGroup
@@ -86,20 +54,16 @@ const EthicsLetter = ({
             onChange={validateFieldTouched}
           >
             <FormRadio disabled={isSectionDisabled} value="false" checked>
-              You represent and warrant that your country/region does not require your Research
-              Project to undergo ethics review.
+              {FORM_TEXT.ethics.declarationOptions.notRequired}
             </FormRadio>
             <FormRadio disabled value="true">
-              Your country/region requires your Research Project to undergo ethics review, and
-              therefore, this Research Project has been approved by an IRB/REC formally designated
-              to approve and/or monitor research involving humans.{' '}
+              {FORM_TEXT.ethics.declarationOptions.required.a}{' '}
               <Typography bold component="span">
-                As per the{' '}
+                {FORM_TEXT.ethics.declarationOptions.required.b}{' '}
                 <Link href="#" rel="noopener noreferrer" target="_blank">
-                  Data Access Agreement
+                  {FORM_TEXT.ethics.declarationOptions.required.link}
                 </Link>
-                , current and applicable ethical approval is the responsibility of the Principal
-                Investigator.
+                {FORM_TEXT.ethics.declarationOptions.required.c}
               </Typography>
             </FormRadio>
           </RadioCheckboxGroup>

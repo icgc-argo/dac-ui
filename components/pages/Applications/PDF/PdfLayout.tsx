@@ -3,6 +3,9 @@ import { Page, View, Text, StyleSheet } from '@react-pdf/renderer';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ReactNode } from 'react';
+import { PDFLink } from './common';
+import { getConfig } from 'global/config';
+import { ApplicationDataByField } from '../types';
 
 const styles = StyleSheet.create({
   page: {
@@ -10,7 +13,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    padding: '15px 10px',
+    padding: '15pt 15pt 15pt 10pt',
   },
   section: {
     margin: 10,
@@ -22,7 +25,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     transform: 'rotate(-45deg)',
     fontFamily: 'WorkSans',
-    fontSize: '48px',
+    fontSize: 48,
     fontWeight: 900,
     top: '47%',
     left: '37%',
@@ -31,16 +34,20 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   footer: {
-    height: '20px',
+    height: '30pt',
     alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: '20pt',
     fontFamily: 'WorkSans',
-    fontSize: '11px',
+    fontSize: 11,
   },
   header: {
-    height: '20px',
+    height: '30pt',
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    fontSize: '11px',
+    fontSize: 11,
     fontFamily: 'WorkSans',
   },
 });
@@ -53,10 +60,7 @@ const PDFLayout = ({
   state = 'draft',
   children,
 }: {
-  applicant?: {
-    displayName: string;
-    title: string;
-  };
+  applicant?: Partial<ApplicationDataByField>;
   appId?: string;
   state?: string;
   children: ReactNode;
@@ -71,7 +75,9 @@ const PDFLayout = ({
       <View style={styles.section}>{children}</View>
       <View style={styles.footer} fixed>
         <Text>
-          {appId} created by {displayName} using ICGC-DACO (https://www.daco.icgc.org)
+          {/* TODO: get daco url from config/constant value */}
+          {appId} created by {displayName} using{' '}
+          <PDFLink href={'https://daco.icgc.org'}>ICGC-DACO</PDFLink>
         </Text>
       </View>
       {isDraftState && <Watermark />}

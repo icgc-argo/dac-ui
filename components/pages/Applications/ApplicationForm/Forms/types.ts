@@ -7,6 +7,8 @@ import {
 import { UikitIconNames } from '@icgc-argo/uikit/Icon/icons';
 import { TAG_VARIANTS } from '@icgc-argo/uikit/Tag';
 
+import { AuthAPIFetchFunction } from 'components/pages/Applications/types';
+
 import { countriesList, honorificsList, sectionsOrder } from './constants';
 
 export type CountryNamesAndAbbreviations = typeof countriesList[number];
@@ -59,9 +61,14 @@ export type FormFieldType = Partial<
     SchemaDescription & {
       error: string[];
       fields: any;
-      hidden: boolean; // added for array handling consistency (a.k.a "remove")
       touched: boolean;
       value: any;
+    } & {
+      // WIP: this handles shape mutations (validation vs persistence)
+      meta: {
+        shape: 'collection';
+        type: 'boolean';
+      };
     }
 >;
 
@@ -97,7 +104,7 @@ export type FormSectionValidationState_Applicant = FormSectionValidationState_Se
   address_cityAndProvince: { value: string };
   address_country: { value: string };
   address_streetAddress: { value: string };
-  address_postalCod: { value: string };
+  address_postalCode: { value: string };
 }>;
 export type FormSectionValidationState_Collaborators =
   FormSectionValidationState_SectionsGenericType<{}>;
@@ -146,6 +153,7 @@ export type FormSectionValidationState_ProjectInfo =
     title: { value: string };
     website: { value: string };
   }>;
+
 export type FormSectionValidationState_Representative =
   FormSectionValidationState_SectionsGenericType<{
     info_firstName: { value: string };
@@ -160,7 +168,7 @@ export type FormSectionValidationState_Representative =
     address_cityAndProvince: { value: string };
     address_country: { value: string };
     address_streetAddress: { value: string };
-    address_postalCod: { value: string };
+    address_postalCode: { value: string };
   }>;
 export type FormSectionValidationState_Signature =
   FormSectionValidationState_SectionsGenericType<{}>;
@@ -179,8 +187,10 @@ export type FormSectionValidationState_Sections =
 
 export type FormSectionValidationState_SectionBase = {
   fields: Partial<FormSectionValidationState_Sections>;
-  overall: FORM_STATES;
-  tooltips: Partial<Record<FormSectionOverallState, ReactNode>>;
+  meta: {
+    overall: FORM_STATES;
+    tooltips: Partial<Record<FormSectionOverallState, ReactNode>>;
+  };
 } & Partial<SchemaObjectDescription>;
 
 export type FormValidationActionTypes =
@@ -190,7 +200,8 @@ export type FormValidationActionTypes =
   | 'object'
   | 'overall'
   | 'remove'
-  | 'seeding';
+  | 'seeding'
+  | 'updating';
 
 export type FormValidationAction = {
   error?: string[];
@@ -259,5 +270,6 @@ export type FormSectionValidatorFunction_Origin = (
 
 export type FormSectionValidatorFunction_Main = (
   state: FormValidationStateParameters,
-  dispatch: Dispatch<FormValidationAction>,
+  dispatch: Dispatch<Partial<FormValidationAction>>,
+  apiFetcher: AuthAPIFetchFunction,
 ) => FormSectionValidatorFunction_Origin;

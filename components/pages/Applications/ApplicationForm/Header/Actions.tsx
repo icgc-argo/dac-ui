@@ -13,6 +13,17 @@ import StaticApplicant from '../../PDF/StaticApplicant';
 import { useAuthContext } from 'global/hooks';
 import { API } from 'global/constants/externalPaths';
 import { AxiosError } from 'axios';
+import StaticRepresentative from '../../PDF/StaticRepresentative';
+import StaticCollaborators from '../../PDF/StaticCollaborators';
+import StaticProjectInfo from '../../PDF/StaticProjectInfo';
+import StaticEthics from '../../PDF/StaticEthics';
+import StaticITAgreements from '../../PDF/StaticITAgreements';
+import StaticDataAccessAgreement from '../../PDF/StaticDataAccessAgreement';
+import StaticAppendices from '../../PDF/StaticAppendices';
+import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
+import { FILE_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
+import Cover from '../../PDF/Cover';
+import Signatures from '../../PDF/Signatures';
 
 const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
   const theme: UikitTheme = useTheme();
@@ -22,12 +33,24 @@ const HeaderActions = ({ appId }: { appId: string }): ReactElement => {
   const generatePDFDocument = async (data: any) => {
     const blob = await pdf(
       <Document>
+        {/* Cover is PDF only */}
+        <Cover data={data} />
         <StaticIntroduction isPdf data={data} />
         <StaticApplicant isPdf data={data} />
+        <StaticRepresentative isPdf data={data} />
+        <StaticCollaborators isPdf data={data} />
+        <StaticProjectInfo isPdf data={data} />
+        <StaticEthics isPdf data={data} />
+        <StaticITAgreements isPdf data={data} />
+        <StaticDataAccessAgreement isPdf data={data} />
+        <StaticAppendices isPdf data={data} />
+        {/* Signatures is PDF only */}
+        <Signatures data={data} />
       </Document>,
     ).toBlob();
 
-    saveAs(blob, `${data.appId}-${data.state}`);
+    const dateCreated = getFormattedDate(Date.now(), FILE_DATE_FORMAT);
+    saveAs(blob, `${data.appId}-${dateCreated}`);
   };
 
   return (

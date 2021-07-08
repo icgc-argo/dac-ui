@@ -8,6 +8,7 @@ import {
   EVENT_TARGET_TAGS,
   FormFieldDataFromEvent,
   FormFieldType,
+  FormValidationAction,
   FormValidationStateParameters,
 } from '../types';
 
@@ -87,8 +88,26 @@ export const schemaValidator = (fieldSchema: any, value: any) =>
 
 const getSeedValueByFieldType = (fieldType: string, fieldBase: any, seedValue: any) => {
   switch (fieldType) {
-    case 'array':
-      return { value: seedValue.map((value: unknown) => ({ value })) };
+    case 'array': {
+      // Ensure starting with an array that satisfies a minimum number of fields,
+      // as they'll be PATCHed together, in order to avoid order bugs
+      const valueFiller = fieldBase.innerType.type === 'string' ? '' : null;
+      const baseArray = Array.from({ length: getMin(fieldBase) }, () => ({ value: valueFiller }));
+
+      const seedObj = {
+        value: seedValue.reduce(
+          (acc: Record<number, any>, value: unknown, index: number) => ({
+            ...acc,
+            [index]: {
+              value: value ?? valueFiller,
+            },
+          }),
+          baseArray,
+        ),
+      };
+
+      return seedObj;
+    }
 
     case 'boolean': {
       return {
@@ -101,6 +120,70 @@ const getSeedValueByFieldType = (fieldType: string, fieldBase: any, seedValue: a
 
     default:
       console.log('nope', fieldType);
+  }
+};
+
+export const getValueByFieldTypeToPublish = (
+  { field = '', type, value }: Partial<FormValidationAction>,
+  fieldMeta?: FormFieldType['meta'],
+  fieldValue?: any,
+): any => {
+  const [fieldNameSource, fieldIndex] = field.split('--');
+  const [fieldName, fieldNameInner] = fieldNameSource.split('_');
+
+  switch (type) {
+    case 'array':
+      return {
+        [fieldName]: Object.entries({
+          ...fieldValue,
+          ...value,
+        })
+          .filter((urlObj) => (urlObj[1] as FormFieldType).value !== null)
+          .map((urlObj) => (urlObj[1] as FormFieldType).value),
+      };
+
+    case 'boolean':
+      if (fieldMeta) {
+        if (fieldMeta.shape === 'collection') {
+          return {
+            accepted: value,
+            name: fieldNameSource,
+          };
+        }
+      }
+
+      return {
+        [fieldName]: fieldNameInner
+          ? { [fieldNameInner]: { accepted: value } }
+          : { accepted: value },
+      };
+
+    case 'object': {
+      if (fieldMeta) {
+        if (fieldMeta.shape === 'collection') {
+          return {
+            [fieldName]: [
+              getValueByFieldTypeToPublish(
+                {
+                  field: fieldIndex,
+                  type: fieldMeta.type,
+                  value,
+                },
+                fieldMeta,
+              ),
+            ],
+          };
+        }
+      }
+
+      return null;
+    }
+
+    case 'string':
+      return { [fieldName]: fieldNameInner ? { [fieldNameInner]: value } : value };
+
+    default:
+      console.log('nope', type);
   }
 };
 
