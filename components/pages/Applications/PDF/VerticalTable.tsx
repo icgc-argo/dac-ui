@@ -2,13 +2,13 @@ import React, { ReactElement } from 'react';
 import { Text, View, StyleSheet } from '@react-pdf/renderer';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import { PdfFieldName } from './types';
+import { styles as commonStyles } from './common';
 
 const styles = StyleSheet.create({
   tableStyle: {
     display: 'flex',
     width: 'auto',
-    fontFamily: 'WorkSans',
-    fontSize: 8,
+    lineHeight: 1,
   },
   tableRowStyle: {
     flexDirection: 'row',
@@ -98,6 +98,7 @@ const VerticalTable = ({
     <View
       wrap={wrap}
       style={{
+        ...commonStyles.text,
         ...styles.tableStyle,
         ...(useExternalBorders && borderedTableStyles.table),
         ...style,
