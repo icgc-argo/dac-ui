@@ -1,7 +1,13 @@
 import React from 'react';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 
-import { getStaticComponents, PdfFormFields, PDFParagraph, SectionTitle } from './common';
+import {
+  getFieldValue,
+  getStaticComponents,
+  PdfFormFields,
+  PDFParagraph,
+  SectionTitle,
+} from './common';
 import FORM_TEXT from './textConstants';
 import { View } from '@react-pdf/renderer';
 import VerticalTable from './VerticalTable';
@@ -44,7 +50,7 @@ const PdfCollaboratorsFormData = ({ data }: { data?: ApplicationData }) => {
                 key={person.id}
                 data={personnelFields.map((field) => ({
                   fieldName: field.fieldName,
-                  fieldValue: person.info[field.fieldKey],
+                  fieldValue: getFieldValue(person.info, field.fieldKey),
                 }))}
                 useExternalBorders
               />
@@ -73,7 +79,7 @@ const PdfCollaboratorsFormData = ({ data }: { data?: ApplicationData }) => {
                 <VerticalTable
                   data={studentFields.map((field) => ({
                     fieldName: field.fieldName,
-                    fieldValue: student.info[field.fieldKey],
+                    fieldValue: getFieldValue(student.info, field.fieldKey),
                   }))}
                   useExternalBorders
                 />

@@ -46,16 +46,14 @@ const Outline = ({
       </Typography>
 
       {sections.map((name) => {
-        const status = formState.sections[name]?.overall || 'pristine';
-
         return (
           <FormSection
             active={selectedSection === name}
             key={name}
             label={sectionsData[name]?.description || name}
-            status={status}
+            status={formState.sections[name]?.meta.overall}
             switchSection={() => setSelectedSection(name)}
-            tooltip={sectionsData[name]?.tooltips?.[status] || ''}
+            tooltip={sectionsData[name].tooltips?.[status] || ''}
           />
         );
       })}

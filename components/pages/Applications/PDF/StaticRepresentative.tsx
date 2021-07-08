@@ -2,13 +2,19 @@ import React from 'react';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
-import { getStaticComponents, getStreetAddress, PdfFormFields, SectionTitle } from './common';
+import {
+  getFieldValue,
+  getStaticComponents,
+  getStreetAddress,
+  PdfFormFields,
+  SectionTitle,
+} from './common';
 import FORM_TEXT from './textConstants';
 import { View } from '@react-pdf/renderer';
 import VerticalTable from './VerticalTable';
 import { ApplicationData } from '../types';
 
-const PdfRepFormData = ({ data }: { data: any }) => {
+const PdfRepFormData = ({ data }: { data?: ApplicationData }) => {
   const repFields = [
     PdfFormFields.NAME,
     PdfFormFields.PRIMARY_AFFILIATION,
@@ -22,15 +28,15 @@ const PdfRepFormData = ({ data }: { data: any }) => {
   const addressData = [
     {
       fieldName: 'Mailing Address',
-      fieldValue: getStreetAddress(address.streetAddress, address.building),
+      fieldValue: getStreetAddress(address?.streetAddress, address?.building),
     },
     {
-      fieldValue: address.cityAndProvince,
+      fieldValue: address?.cityAndProvince,
     },
     {
-      fieldValue: address.country,
+      fieldValue: address?.country,
     },
-    { fieldValue: address.postalCode },
+    { fieldValue: address?.postalCode },
   ];
 
   return (
@@ -40,7 +46,7 @@ const PdfRepFormData = ({ data }: { data: any }) => {
         <VerticalTable
           data={repFields.map((field) => ({
             fieldName: field.fieldName,
-            fieldValue: data?.sections.representative.info[field.fieldKey],
+            fieldValue: getFieldValue(data?.sections.representative.info, field.fieldKey),
           }))}
         />
       </View>

@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Text, View, Font, StyleSheet, Svg } from '@react-pdf/renderer';
+import { Text, View, Font, StyleSheet } from '@react-pdf/renderer';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import Typography from '@icgc-argo/uikit/Typography';
 import Link from '@icgc-argo/uikit/Link';
@@ -270,6 +270,37 @@ export const getStaticComponents = (isPdf: boolean) => {
       };
 };
 
+export const getStreetAddress = (street?: string, building?: string) => {
+  let streetAddress = [];
+  street?.length && streetAddress.push(street);
+  building?.length && streetAddress.push(building);
+  return streetAddress.join(', ');
+};
+
+export const getDisplayName = (info: any) => {
+  let name: string[] = [];
+  const nameAccessors = [
+    FieldAccessor.TITLE,
+    FieldAccessor.FIRST_NAME,
+    FieldAccessor.MIDDLE_NAME,
+    FieldAccessor.LAST_NAME,
+    FieldAccessor.SUFFIX,
+  ];
+  nameAccessors.map((accessor) => {
+    if (info[accessor]) {
+      name.push(info[accessor]);
+    }
+  });
+  return name.join(' ');
+};
+
+export const getFieldValue = (info: any, accessor: FieldAccessor) => {
+  if (accessor === FieldAccessor.DISPLAY_NAME) {
+    return getDisplayName(info);
+  }
+  return info[accessor];
+};
+
 export const PdfFormFields: PdfFormField = {
   [PdfField.NAME]: { fieldName: PdfFieldName.NAME, fieldKey: FieldAccessor.DISPLAY_NAME },
   [PdfField.PRIMARY_AFFILIATION]: {
@@ -304,11 +335,4 @@ export const PdfFormFields: PdfFormField = {
     fieldName: PdfFieldName.PROJECT_WEBSITE,
     fieldKey: FieldAccessor.PROJECT_WEBSITE,
   },
-};
-
-export const getStreetAddress = (street: string, building: string) => {
-  let streetAddress = [];
-  street?.length && streetAddress.push(street);
-  building?.length && streetAddress.push(building);
-  return streetAddress.join(', ');
 };

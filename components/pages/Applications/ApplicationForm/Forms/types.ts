@@ -7,6 +7,8 @@ import {
 import { UikitIconNames } from '@icgc-argo/uikit/Icon/icons';
 import { TAG_VARIANTS } from '@icgc-argo/uikit/Tag';
 
+import { AuthAPIFetchFunction } from 'components/pages/Applications/types';
+
 import { countriesList, honorificsList, sectionsOrder } from './constants';
 
 export type CountryNamesAndAbbreviations = typeof countriesList[number];
@@ -59,15 +61,19 @@ export type FormFieldType = Partial<
     SchemaDescription & {
       error: string[];
       fields: any;
-      hidden: boolean; // added for array handling consistency (a.k.a "remove")
       touched: boolean;
       value: any;
+    } & {
+      // WIP: this handles shape mutations (validation vs persistence)
+      meta: {
+        shape: 'collection';
+        type: 'boolean';
+      };
     }
 >;
 
-type FormSectionValidationState_SectionsGenericType<
-  T extends Record<string, FormFieldType>
-> = Record<string, Partial<T[keyof T] & FormFieldType>>;
+type FormSectionValidationState_SectionsGenericType<T extends Record<string, FormFieldType>> =
+  Record<string, Partial<T[keyof T] & FormFieldType>>;
 
 export type FormSectionValidationState_Appendices = FormSectionValidationState_SectionsGenericType<{
   agreements: {
@@ -181,8 +187,10 @@ export type FormSectionValidationState_Sections =
 
 export type FormSectionValidationState_SectionBase = {
   fields: Partial<FormSectionValidationState_Sections>;
-  overall: FORM_STATES;
-  tooltips: Partial<Record<FormSectionOverallState, ReactNode>>;
+  meta: {
+    overall: FORM_STATES;
+    tooltips: Partial<Record<FormSectionOverallState, ReactNode>>;
+  };
 } & Partial<SchemaObjectDescription>;
 
 export type FormValidationActionTypes =
@@ -192,7 +200,8 @@ export type FormValidationActionTypes =
   | 'object'
   | 'overall'
   | 'remove'
-  | 'seeding';
+  | 'seeding'
+  | 'updating';
 
 export type FormValidationAction = {
   error?: string[];
@@ -227,9 +236,7 @@ export type FormValidationStateParameters = FormValidationState_Base & {
 
 export type FormSectionUpdateLocalStateFunction = (fieldData: FormValidationAction) => void;
 
-export type FormFieldDataFromEvent = (
-  event: ChangeEvent<HTMLInputElement>,
-) =>
+export type FormFieldDataFromEvent = (event: ChangeEvent<HTMLInputElement>) =>
   | {
       eventType: string;
       field: string;
@@ -263,5 +270,6 @@ export type FormSectionValidatorFunction_Origin = (
 
 export type FormSectionValidatorFunction_Main = (
   state: FormValidationStateParameters,
-  dispatch: Dispatch<FormValidationAction>,
+  dispatch: Dispatch<Partial<FormValidationAction>>,
+  apiFetcher: AuthAPIFetchFunction,
 ) => FormSectionValidatorFunction_Origin;

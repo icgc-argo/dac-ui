@@ -6,13 +6,13 @@ import { FormSectionNames, SectionStatusMapping } from './types';
 
 const Appendices = dynamic(() => import('./Appendices'), { loading: Loader });
 const Applicant = dynamic(() => import('./Applicant'), { loading: Loader });
+const Collaborators = dynamic(() => import('./Collaborators'), { loading: Loader });
 const DataAccessAgreement = dynamic(() => import('./DataAccessAgreement'), { loading: Loader });
 const EthicsLetter = dynamic(() => import('./EthicsLetter'), { loading: Loader });
-const Introduction = dynamic(() => import('./Introduction'), { loading: Loader });
 const ITAgreements = dynamic(() => import('./ITAgreements'), { loading: Loader });
 const Representative = dynamic(() => import('./Representative'), { loading: Loader });
 const ProjectInfo = dynamic(() => import('./ProjectInfo'), { loading: Loader });
-const Collaborators = dynamic(() => import('./Collaborators'), { loading: Loader });
+const Terms = dynamic(() => import('./Terms'), { loading: Loader });
 
 export const sectionsData = {
   appendices: { component: Appendices, description: 'H. Appendices' },
@@ -32,7 +32,7 @@ export const sectionsData = {
       disabled: 'All required fields must be filled out before submitting the application.',
     },
   },
-  terms: { component: Introduction, description: 'Introduction' },
+  terms: { component: Terms, description: 'Introduction' },
 } as Record<FormSectionNames, Record<string, any>>;
 
 export const sectionsOrder = [
