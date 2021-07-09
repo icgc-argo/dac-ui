@@ -200,7 +200,12 @@ export const representativeSchema = yup.object().shape({
 export const signatureSchema = yup.object().shape({});
 
 export const termsSchema = yup.object().shape({
-  agreement: yup.boolean().default(false).oneOf([true]).required(),
+  agreement: yup
+    .boolean()
+    .default(false)
+    .meta({ shape: 'singleAcceptance', type: 'boolean' })
+    .oneOf([true])
+    .required(),
 });
 
 export const combinedSchema = {

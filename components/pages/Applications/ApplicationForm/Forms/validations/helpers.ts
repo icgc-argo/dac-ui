@@ -143,21 +143,24 @@ export const getValueByFieldTypeToPublish = (
           .map((urlObj) => (urlObj[1] as FormFieldType).value),
       };
 
-    case 'boolean':
+    case 'boolean': {
       if (fieldMeta) {
         if (fieldMeta.shape === 'collection') {
           return {
             accepted: value,
             name: fieldNameSource,
           };
+        } else if (fieldMeta.shape === 'singleAcceptance') {
+          return {
+            [fieldNameSource]: { accepted: value },
+          };
         }
       }
 
       return {
-        [fieldName]: fieldNameInner
-          ? { [fieldNameInner]: { accepted: value } }
-          : { accepted: value },
+        [fieldNameSource]: value,
       };
+    }
 
     case 'object': {
       if (fieldMeta) {

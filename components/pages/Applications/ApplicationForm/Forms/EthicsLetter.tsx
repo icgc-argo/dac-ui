@@ -1,4 +1,5 @@
-import { ReactElement, useCallback, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useState } from 'react';
+import { css } from '@emotion/core';
 import Banner, { BANNER_VARIANTS } from '@icgc-argo/uikit/notifications/Banner';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
@@ -8,12 +9,13 @@ import Link from '@icgc-argo/uikit/Link';
 import RadioCheckboxGroup from '@icgc-argo/uikit/form/RadioCheckboxGroup';
 import Typography from '@icgc-argo/uikit/Typography';
 
+import DoubleFieldRow from './DoubleFieldRow';
+import FormFieldHelpBubble from './FormFieldHelpBubble';
 import {
   FormFieldValidationTriggerFunction,
   FormSectionValidationState_EthicsLetter,
 } from './types';
 import { isRequired } from './validations';
-import { css } from '@emotion/core';
 import StaticEthics from '../../PDF/StaticEthics';
 import FORM_TEXT from '../../PDF/textConstants';
 
@@ -31,7 +33,8 @@ const EthicsLetter = ({
   );
 
   // this handler was customised to handle things that ought be handled by the RadioCheckboxGroup itself
-  // TODO: improve that, as well as implement the component's focus/blur and error behaviours
+  // TODO: improve that, as well as implement the component's focus/blur
+  // which will be needed to implement "required field" error behaviours
   const handleSelectedRadioValueChange = (value: boolean) => {
     validateFieldTouched({
       // faking event values to keep scope limited
@@ -47,10 +50,11 @@ const EthicsLetter = ({
     setSelectedRadioValue(value);
   };
 
-  const isChecked = useCallback(
-    (radioValue) => radioValue === selectedRadioValue,
-    [selectedRadioValue],
-  );
+  const isChecked = (radioValue: boolean) => radioValue === selectedRadioValue;
+
+  useEffect(() => {
+    setSelectedRadioValue(localState.declaredAsRequired?.value);
+  }, [localState.declaredAsRequired?.value]);
 
   return (
     <article>
@@ -94,6 +98,38 @@ const EthicsLetter = ({
 
           <FormHelperText onErrorOnly>{localState.declaredAsRequired?.error?.[0]}</FormHelperText>
         </FormControl>
+
+        {selectedRadioValue && (
+          <>
+            {/* <DoubleFieldRow helpText="Allowed file types: pdf, doc, docx. | Max file size: 200MB"> */}
+            <DoubleFieldRow>
+              <FormControl
+                className="vertical"
+                required={isRequired(localState.approvalLetterDocs)}
+              >
+                <InputLabel htmlFor="approvalLetterDocs">
+                  Please attach an ethics approval letter to this application:
+                </InputLabel>
+              </FormControl>
+
+              <FormFieldHelpBubble
+                css={css`
+                  margin: 0 !important;
+                `}
+                tail="left"
+                text="Allowed file types: pdf, doc, docx. | Max file size: 200MB"
+              />
+            </DoubleFieldRow>
+
+            <Typography>
+              If the ethics approval is written in a language other than English,{' '}
+              <Typography as="span" bold>
+                please upload a version translated to English
+              </Typography>
+              .
+            </Typography>
+          </>
+        )}
       </section>
     </article>
   );

@@ -6,10 +6,7 @@ import Typography from '@icgc-argo/uikit/Typography';
 
 import StaticIntroduction from 'components/pages/Applications/PDF/StaticIntroduction';
 
-import {
-  FormFieldValidationTriggerFunction,
-  FormSectionValidationState_Introduction,
-} from './types';
+import { FormFieldValidationTriggerFunction, FormSectionValidationState_Terms } from './types';
 import { isRequired } from './validations';
 import FORM_TEXT from '../../PDF/textConstants';
 
@@ -19,7 +16,7 @@ const Introduction = ({
   validateFieldTouched,
 }: {
   isSectionDisabled: boolean;
-  localState: FormSectionValidationState_Introduction;
+  localState: FormSectionValidationState_Terms;
   validateFieldTouched: FormFieldValidationTriggerFunction;
 }): ReactElement => {
   return (

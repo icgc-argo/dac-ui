@@ -123,10 +123,6 @@ export type FormSectionValidationState_EthicsLetter =
     declaredAsRequired: { value: boolean | null };
     approvalLetterDocs: { value: [] };
   }>;
-export type FormSectionValidationState_Introduction =
-  FormSectionValidationState_SectionsGenericType<{
-    agreement: { value: boolean };
-  }>;
 export type FormSectionValidationState_ITAgreements =
   FormSectionValidationState_SectionsGenericType<{
     agreements: {
@@ -173,6 +169,9 @@ export type FormSectionValidationState_Representative =
   }>;
 export type FormSectionValidationState_Signature =
   FormSectionValidationState_SectionsGenericType<{}>;
+export type FormSectionValidationState_Terms = FormSectionValidationState_SectionsGenericType<{
+  agreement: { value: boolean };
+}>;
 
 export type FormSectionValidationState_Sections =
   | FormSectionValidationState_Appendices
@@ -180,11 +179,11 @@ export type FormSectionValidationState_Sections =
   | FormSectionValidationState_Collaborators
   | FormSectionValidationState_DataAccessAgreements
   | FormSectionValidationState_EthicsLetter
-  | FormSectionValidationState_Introduction
   | FormSectionValidationState_ITAgreements
   | FormSectionValidationState_ProjectInfo
   | FormSectionValidationState_Representative
-  | FormSectionValidationState_Signature;
+  | FormSectionValidationState_Signature
+  | FormSectionValidationState_Terms;
 
 export type FormSectionValidationState_SectionBase = {
   fields: Partial<FormSectionValidationState_Sections>;

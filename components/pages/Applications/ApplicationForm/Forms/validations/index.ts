@@ -475,7 +475,7 @@ export const useLocalValidation = (
 
             changes && updateLocalState(changes);
           } else {
-            const shouldPersistData = ['checkbox', 'select-one'].includes(fieldType);
+            const shouldPersistData = ['checkbox', 'radio', 'select-one'].includes(fieldType);
             const checkMultiSelectValue =
               fieldType === 'select-one' && Array.isArray(value) ? value[0] : value;
 
