@@ -230,8 +230,12 @@ interface FormValidationState_Base {
   __v: number;
 }
 
+export type FormValidationState_AllSectionsObj = Record<
+  FormSectionNames,
+  FormSectionValidationState_SectionBase
+>;
 export type FormValidationStateParameters = FormValidationState_Base & {
-  sections: Record<FormSectionNames, FormSectionValidationState_SectionBase>;
+  sections: FormValidationState_AllSectionsObj;
 };
 
 export type FormSectionUpdateLocalStateFunction = (fieldData: FormValidationAction) => void;
