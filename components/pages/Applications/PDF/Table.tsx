@@ -2,6 +2,8 @@ import React from 'react';
 import { Text, View, StyleSheet } from '@react-pdf/renderer';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 
+import { styles as commonStyles } from './common';
+
 const styles = StyleSheet.create({
   tableStyle: {
     display: 'flex',
@@ -20,8 +22,7 @@ const styles = StyleSheet.create({
   },
   tableCellStyle: {
     padding: '6pt',
-    fontSize: 11,
-    fontFamily: 'WorkSans',
+    lineHeight: 1,
   },
 });
 
@@ -38,12 +39,13 @@ const Table = ({ headers, data }: { headers: { name: string; accessor: string }[
               style={{
                 width: '50%',
                 border: `1pt solid ${defaultTheme.colors.grey_1}`,
-                borderBottom: 0,
+                ...(data.length > 0 && { borderBottom: 0 }),
                 ...(!lastColumn && { borderRight: 0 }),
               }}
             >
               <Text
                 style={{
+                  ...commonStyles.text,
                   ...styles.tableCellStyle,
                   ...styles.tableCellHeaderStyle,
                 }}
@@ -67,7 +69,7 @@ const Table = ({ headers, data }: { headers: { name: string; accessor: string }[
                 ...(isLastItem && { borderBottom: `1pt solid ${defaultTheme.colors.grey_1}` }),
               }}
             >
-              <Text style={styles.tableCellStyle}>{cell.name}</Text>
+              <Text style={{ ...commonStyles.text, ...styles.tableCellStyle }}>{cell.name}</Text>
             </View>
             <View
               style={{
@@ -77,7 +79,9 @@ const Table = ({ headers, data }: { headers: { name: string; accessor: string }[
                 ...(isLastItem && { borderBottom: `1pt solid ${defaultTheme.colors.grey_1}` }),
               }}
             >
-              <Text style={styles.tableCellStyle}>{cell.uploadedAtUtc}</Text>
+              <Text style={{ ...commonStyles.text, ...styles.tableCellStyle }}>
+                {cell.uploadedAtUtc}
+              </Text>
             </View>
           </View>
         );

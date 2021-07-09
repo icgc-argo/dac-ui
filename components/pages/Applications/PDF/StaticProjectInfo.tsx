@@ -16,6 +16,8 @@ import VerticalTable, { DataCell } from './VerticalTable';
 import { FieldAccessor, PdfFieldName } from './types';
 import { ApplicationData, ApplicationDataByField } from '../types';
 
+const MIN_PUBLICATION_FIELDS = 3;
+
 const BasicInfo = ({ data }: { data?: Partial<ApplicationDataByField> }) => {
   const infoFields = [PdfFormFields.PROJECT_TITLE, PdfFormFields.PROJECT_WEBSITE];
   return (
@@ -172,15 +174,21 @@ export const LaySummaryBubble = ({ isPdf = false }: { isPdf?: boolean }) => {
 };
 
 const PdfPublicationsFormData = ({ data = [] }: { data?: string[] }) => {
+  const pubData = data.map((d: string) => ({
+    fieldName: PdfFieldName.PUBLICATION_URL,
+    fieldValue: d,
+  }));
+  // pdf is required to show a minimum of 3 publication fields, so appending empty rows if less than 3 publications have been added
+  while (pubData.length < MIN_PUBLICATION_FIELDS) {
+    pubData.push({
+      fieldName: PdfFieldName.PUBLICATION_URL,
+      fieldValue: '',
+    });
+  }
   return (
     <View>
       <StaticPublications isPdf />
-      <VerticalTable
-        data={data.map((d: string) => ({
-          fieldName: PdfFieldName.PUBLICATION_URL,
-          fieldValue: d,
-        }))}
-      />
+      <VerticalTable data={pubData} />
     </View>
   );
 };
@@ -192,6 +200,8 @@ export const StaticResearchSummary = ({ isPdf = false }: { isPdf?: boolean }) =>
       style={{
         borderTop: `1pt solid ${defaultTheme.colors.grey_1}`,
         paddingTop: '5pt',
+        marginTop: '5pt',
+        marginBottom: '10pt',
       }}
     >
       <SectionTitle>RESEARCH SUMMARY - SCIENTIFIC ABSTRACT</SectionTitle>
@@ -218,7 +228,8 @@ export const StaticLaySummary = ({ isPdf = false }: { isPdf?: boolean }) => {
     <SectionComponent
       style={{
         borderTop: `1pt solid ${defaultTheme.colors.grey_1}`,
-        marginTop: '20pt',
+        paddingTop: '5pt',
+        marginTop: '5pt',
         marginBottom: '15pt',
       }}
     >
@@ -246,7 +257,8 @@ export const StaticPublications = ({ isPdf = false }: { isPdf?: boolean }) => {
     <SectionComponent
       style={{
         borderTop: `1pt solid ${defaultTheme.colors.grey_1}`,
-        marginTop: '20pt',
+        paddingTop: '5pt',
+        marginTop: '5pt',
         marginBottom: '15pt',
       }}
     >
