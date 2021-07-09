@@ -12,7 +12,7 @@ import { ModalPortal } from 'components/Root';
 import RequestRevisionsModal from "./RequestRevisionsModal";
 import ApproveModal from "./ApproveModal";
 
-const RequestRevisionsBar = ({ data, refetch }: { data: any, refetch: ({ }) => any | void }) => {
+const RequestRevisionsBar = ({ data }: { data: any }) => {
   const theme = useTheme();
   const [isRequestRevisionsModalVisible, setRequestRevisionsModalVisible] = useState(false);
   const [isApproveModalVisible, setApproveModalVisible] = useState(false);
@@ -37,7 +37,6 @@ const RequestRevisionsBar = ({ data, refetch }: { data: any, refetch: ({ }) => a
             appId={appId}
             dismissModal={() => setApproveModalVisible(false)}
             primaryAffiliation={primaryAffiliation}
-            refetch={refetch}
           />
         </ModalPortal>
       )}

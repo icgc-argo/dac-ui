@@ -17,12 +17,10 @@ const ApproveModal = ({
   appId,
   dismissModal,
   primaryAffiliation,
-  refetch,
 }: {
   appId: string;
   dismissModal: () => any | void;
   primaryAffiliation: string;
-  refetch: ({ }) => any | void;
 }) => {
   const startDate = format(new Date(), DATE_FORMAT);
   const endDate = format(add(new Date(startDate), { years: 1 }), DATE_FORMAT);

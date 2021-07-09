@@ -9,7 +9,7 @@ import RequestRevisionsBar from './RequestRevisionsBar';
 
 const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
   const [appData, setAppData] = useState({});
-  const { response, isLoading, refetch } = useGetApplications({ appId });
+  const { response, isLoading } = useGetApplications({ appId });
 
   useEffect(() => {
     response && setAppData(response.data);
@@ -20,7 +20,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
   ) : (
     <>
       <ApplicationHeader data={appData} />
-      {isAdmin && <RequestRevisionsBar data={appData} refetch={refetch} />}
+      {isAdmin && <RequestRevisionsBar data={appData} />}
       <ApplicationFormsBase appId={appId} />
     </>
   );

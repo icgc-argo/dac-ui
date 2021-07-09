@@ -24,8 +24,6 @@ const useGetApplications = ({
   const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
   const [error, setError] = useState<AxiosError | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  // trigger rerender by calling refetch({})
-  const [shouldRefetch, refetch] = useState<{}>({});
 
   const { fetchWithAuth, isLoading: isTokenLoading, token } = useAuthContext();
 
@@ -53,9 +51,9 @@ const useGetApplications = ({
           setIsLoading(false);
         })
     }
-  }, [page, pageSize, stringifySort(sort), shouldRefetch]);
+  }, [page, pageSize, stringifySort(sort)]);
 
-  return { error, isLoading, refetch, response };
+  return { error, isLoading, response };
 };
 
 export default useGetApplications;
