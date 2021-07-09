@@ -36,7 +36,6 @@ export enum SECTION_STATUS {
 }
 
 export enum FORM_STATES {
-  AMMENDABLE = 'ammendable',
   CAN_EDIT = 'canEdit',
   COMPLETE = 'complete',
   DISABLED = 'disabled',
