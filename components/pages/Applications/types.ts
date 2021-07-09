@@ -163,8 +163,9 @@ interface Collaborator {
 }
 
 interface Representative {
-  address: Address;
+  address?: Address;
   info: IndividualInfo;
+  addressSameAsApplicant: boolean;
 }
 
 interface Collaborators {
