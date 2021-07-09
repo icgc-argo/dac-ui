@@ -25,8 +25,9 @@ import { transformToSelectOptions } from './validations/helpers';
 import RadioCheckboxGroup from '@icgc-argo/uikit/form/RadioCheckboxGroup';
 import FormRadio from '@icgc-argo/uikit/form/FormRadio';
 import { FormSectionValidationState_Applicant, FormFieldValidationTriggerFunction } from './types';
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
-const Actions = () => {
+const Actions = ({ state }: { state: ApplicationState }) => {
   const theme = useTheme();
   return (
     <div
@@ -37,13 +38,13 @@ const Actions = () => {
         justify-content: space-between;
       `}
     >
-      <Icon name="edit" width="20px" height="20px" fill={theme.colors.accent2} />
+      {state !== 'APPROVED' && (<Icon name="edit" width="20px" height="20px" fill={theme.colors.accent2} />)}
       <Icon name="trash" width="19px" height="20px" />
     </div>
   );
 };
 
-const columns = [
+const makeColumns = ({ state }: { state: ApplicationState }) => ([
   {
     Header: 'Collaborator Type',
     accessor: 'positionTitle',
@@ -71,9 +72,9 @@ const columns = [
   {
     Header: 'Actions',
     width: 90,
-    Cell: () => <Actions />,
+    Cell: () => <Actions state={state} />,
   },
-];
+]);
 
 const mockCollaborators = [
   {
@@ -100,10 +101,12 @@ enum CollaboratorType {
 const Collaborators = ({
   isSectionDisabled,
   localState,
+  state,
   validateFieldTouched,
 }: {
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_Applicant;
+  state: ApplicationState;
   validateFieldTouched: FormFieldValidationTriggerFunction;
 }): ReactElement => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -183,7 +186,7 @@ const Collaborators = ({
                 `}
                 showPagination={false}
                 defaultSorted={[{ id: 'positionTitle', desc: false }]}
-                columns={columns}
+                columns={makeColumns({ state })}
                 data={mockCollaborators}
                 parentRef={containerRef}
                 stripped
