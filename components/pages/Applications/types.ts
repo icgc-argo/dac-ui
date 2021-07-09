@@ -226,7 +226,6 @@ export type ApplicationsResponseData = {
 };
 
 export enum ApplicationsField {
-  // TODO: nested properties currently can't sort. waiting for backend
   'applicant.info.displayName' = 'displayName',
   'applicant.info.googleEmail' = 'googleEmail',
   'applicant.info.primaryAffiliation' = 'primaryAffiliation',
