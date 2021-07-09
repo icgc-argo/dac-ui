@@ -159,6 +159,7 @@ const StaticITAgreements = ({
       <SectionComponent
         style={{
           borderTop: `1pt solid ${defaultTheme.colors.grey_1}`,
+          paddingTop: '5pt',
           marginTop: '15pt',
           marginBottom: '15pt',
         }}

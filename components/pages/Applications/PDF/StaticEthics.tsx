@@ -16,6 +16,7 @@ import { css } from '@icgc-argo/uikit';
 import { BANNER_VARIANTS } from '@icgc-argo/uikit/notifications/Banner';
 import Table from './Table';
 import { ApplicationData, ApprovalDoc } from '../../Applications/types';
+import { isNull } from 'lodash';
 
 const StaticAttachLetterMessage = ({ isPdf = false }: { isPdf: boolean }) => {
   const { GenericContainer, TextComponent } = getStaticComponents(isPdf);
@@ -48,7 +49,10 @@ const ApprovalLetterDocs = ({ data = [] }: { data?: ApprovalDoc[] }) => {
 };
 
 const PdfEthicsFormData = ({ data }: { data?: ApplicationData }) => {
-  const ethicsRequired = data?.sections.ethicsLetter.declaredAsRequired;
+  // check if null first, as this means neither has been checked
+  const ethicsRequiredPresent = !isNull(data?.sections.ethicsLetter.declaredAsRequired);
+  const ethicsRequired = ethicsRequiredPresent && !!data?.sections.ethicsLetter.declaredAsRequired;
+
   const OptionTwo = (
     <View>
       {FORM_TEXT.ethics.declarationOptions.required.a}{' '}
@@ -74,18 +78,18 @@ const PdfEthicsFormData = ({ data }: { data?: ApplicationData }) => {
       <View style={{ marginBottom: '10pt' }}>
         <Checkbox
           TextComponent={FORM_TEXT.ethics.declarationOptions.notRequired}
-          checked={!ethicsRequired}
+          checked={ethicsRequiredPresent && !ethicsRequired}
         />
       </View>
       <View>
-        <Checkbox TextComponent={OptionTwo} checked={ethicsRequired || true} />
+        <Checkbox TextComponent={OptionTwo} checked={ethicsRequired} />
       </View>
-      <View style={{ marginTop: '15pt' }}>
-        {ethicsRequired && <StaticAttachLetterMessage isPdf />}
-        {ethicsRequired && (
+      {ethicsRequired && (
+        <View style={{ marginTop: '15pt' }}>
+          <StaticAttachLetterMessage isPdf />
           <ApprovalLetterDocs data={data?.sections.ethicsLetter.approvalLetterDocs} />
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 };

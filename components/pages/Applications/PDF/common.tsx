@@ -42,13 +42,13 @@ export const styles = StyleSheet.create({
   title: {
     fontFamily: 'WorkSans',
     fontWeight: 'semibold',
-    fontSize: 20,
+    fontSize: 14,
     lineHeight: 1.4,
     marginBottom: '15pt',
   },
   text: {
     fontFamily: 'WorkSans',
-    fontSize: 11,
+    fontSize: 8,
     fontWeight: 'normal',
     lineHeight: 1.7,
   },
@@ -61,7 +61,7 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: 'WorkSans',
     color: defaultTheme.colors.secondary,
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: 'semibold',
     lineHeight: 1.4,
     margin: '10pt 0',
@@ -81,7 +81,7 @@ export const styles = StyleSheet.create({
     marginBottom: '10pt',
   },
   textArea: {
-    margin: '5pt 5pt 15pt 0',
+    margin: '5pt 5pt 25pt 0',
   },
 });
 
@@ -108,7 +108,7 @@ export const PDFText = ({
           {count}.{'  '}
         </Text>
       )}
-      {asListItem && <Text style={{ fontSize: 11 }}>{'•  '}</Text>}
+      {asListItem && <Text style={styles.text}>{'•  '}</Text>}
       <Text
         style={{
           ...styles.text,
@@ -317,7 +317,7 @@ export const PdfFormFields: PdfFormField = {
   },
   [PdfField.RESEARCHER_PROFILE_URL]: {
     fieldName: PdfFieldName.RESEARCHER_PROFILE_URL,
-    fieldKey: FieldAccessor.RESEARCHER_PROFILE_URL,
+    fieldKey: FieldAccessor.WEBSITE,
   },
   [PdfField.POSITION_TITLE]: {
     fieldName: PdfFieldName.POSITION_TITLE,
@@ -333,6 +333,6 @@ export const PdfFormFields: PdfFormField = {
   },
   [PdfField.PROJECT_WEBSITE]: {
     fieldName: PdfFieldName.PROJECT_WEBSITE,
-    fieldKey: FieldAccessor.PROJECT_WEBSITE,
+    fieldKey: FieldAccessor.WEBSITE,
   },
 };

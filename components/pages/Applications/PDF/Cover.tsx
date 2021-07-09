@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
 const Cover = ({ data }: { data?: ApplicationData }) => {
   const piData = [
     {
-      fieldName: 'Daco Application #',
+      fieldName: 'DACO Application #',
       fieldValue: <Text style={styles.tableValue}>{data?.appId}</Text>,
     },
     {

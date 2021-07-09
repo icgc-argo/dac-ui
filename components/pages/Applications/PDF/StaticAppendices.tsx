@@ -30,7 +30,7 @@ const Appendix = ({ agreement }: { agreement: AppendixAgreement }) => {
           TextComponent={
             <Text>
               {FORM_TEXT.appendices[agreement.name].text} {/* TODO: get correct urls */}
-              <PDFLink style={{ fontSize: 11 }}>({'https://www.some_url.com'})</PDFLink>
+              <PDFLink style={styles.text}>({'https://www.some_url.com'})</PDFLink>
             </Text>
           }
           checked={agreement.accepted}

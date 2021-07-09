@@ -8,6 +8,7 @@ const {
   NEXT_PUBLIC_DAC_API_ROOT,
 } = getConfig();
 
+export const DACO_ROOT = 'https://daco.icgc-argo.org';
 export const ARGO_ROOT = NEXT_PUBLIC_ARGO_PLATFORM_ROOT;
 const ARGO_POLICIES = urlJoin(NEXT_PUBLIC_ARGO_ROOT, 'page');
 export const CONTACT_PAGE = urlJoin(NEXT_PUBLIC_ARGO_PLATFORM_ROOT, 'contact');

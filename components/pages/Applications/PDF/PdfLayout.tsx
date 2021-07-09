@@ -4,8 +4,9 @@ import { isEqual } from 'lodash';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
-import { PDFLink } from './common';
+import { PDFLink, styles as commonStyles } from './common';
 import { ApplicationDataByField } from '../types';
+import { DACO_ROOT } from 'global/constants/externalPaths';
 
 const styles = StyleSheet.create({
   page: {
@@ -40,15 +41,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: '20pt',
-    fontFamily: 'WorkSans',
-    fontSize: 11,
+    lineHeight: 1,
   },
   header: {
     height: '30pt',
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    fontSize: 11,
-    fontFamily: 'WorkSans',
+    lineHeight: 1,
   },
 });
 
@@ -71,15 +70,13 @@ const PDFLayout = ({
   const displayName = `${applicant?.title ? `${applicant.title} ` : ''}${applicant?.displayName}`;
   return (
     <Page style={styles.page} wrap={false}>
-      <View style={styles.header} fixed>
+      <View style={{ ...commonStyles.text, ...styles.header }} fixed>
         <Text render={({ pageNumber, totalPages }) => `${pageNumber} of ${totalPages}`} fixed />
       </View>
       <View style={styles.section}>{children}</View>
-      <View style={styles.footer} fixed>
+      <View style={{ ...commonStyles.text, ...styles.footer }} fixed>
         <Text>
-          {/* TODO: get daco url from config/constant value */}
-          {appId} created by {displayName} using{' '}
-          <PDFLink href={'https://daco.icgc.org'}>ICGC-DACO</PDFLink>
+          {appId} created for {displayName} by <PDFLink href={DACO_ROOT}>ICGC-DACO</PDFLink>
         </Text>
       </View>
       {isDraftState && <Watermark />}
