@@ -28,21 +28,22 @@ import Signatures from '../../PDF/Signatures';
 import { ApplicationState } from '../../types';
 
 // EXPIRED and RENEWING handling is tbd, CLOSED excludes Action buttons
-const getPdfButtonText = (state: ApplicationState) => {
-  let text = 'PDF';
+const getPdfButtonText: (state: ApplicationState) => string = (state) => {
+  const text = 'PDF';
 
   if ([ApplicationState.DRAFT, ApplicationState.REVISIONS_REQUESTED].includes(state)) {
-    return (text = 'DRAFT ' + text);
+    return `DRAFT ${text}`;
   }
   if (isEqual(state, ApplicationState.SIGN_AND_SUBMIT)) {
-    return (text = 'FINALIZED ' + text);
+    return `FINALIZED ${text}`;
   }
   if (
     [ApplicationState.REVIEW, ApplicationState.APPROVED, ApplicationState.REJECTED].includes(state)
   ) {
-    return (text = 'SIGNED ' + text);
+    return `SIGNED ${text}`;
   }
   console.warn('Illegal app state! State: ', state);
+  return text;
 };
 
 const PDF_BUTTON_WIDTH = 130;
