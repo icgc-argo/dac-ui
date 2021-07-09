@@ -38,7 +38,9 @@ const Actions = ({ state }: { state: ApplicationState }) => {
         justify-content: space-between;
       `}
     >
-      {state !== 'APPROVED' && (<Icon name="edit" width="20px" height="20px" fill={theme.colors.accent2} />)}
+      {!['APPROVED'].includes(state) && (
+        <Icon name="edit" width="20px" height="20px" fill={theme.colors.accent2} />
+      )}
       <Icon name="trash" width="19px" height="20px" />
     </div>
   );
