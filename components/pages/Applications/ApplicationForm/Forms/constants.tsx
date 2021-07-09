@@ -300,7 +300,7 @@ export const countriesList = [
 export const honorificsList = ['Dr.', 'Miss', 'Mr.', 'Mrs.', 'Ms.', 'Prof.'];
 
 export const sectionStatusMapping: SectionStatusMapping = {
-  AMMENDABLE: 'ammendable',
+  AMMENDABLE: 'canEdit',
   COMPLETE: 'complete',
   DISABLED: 'disabled',
   INCOMPLETE: 'incomplete',
