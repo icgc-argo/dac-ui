@@ -9,7 +9,7 @@ export const APPLICANT_APPLICATIONS_LABEL = 'My Applications';
 
 export const DATE_RANGE_DISPLAY_FORMAT = 'Y-MM-dd';
 
-export const DATE_FORMAT = 'MMM. dd, yyyy';
+export const DATE_TEXT_FORMAT = 'MMM. dd, yyyy';
 
 export * from './externalPaths';
 export * from './internalPaths';

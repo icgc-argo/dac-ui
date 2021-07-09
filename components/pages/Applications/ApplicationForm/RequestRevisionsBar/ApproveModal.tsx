@@ -11,7 +11,7 @@ import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 
 import { useAuthContext } from 'global/hooks';
-import { API, DATE_FORMAT } from 'global/constants';
+import { API, DATE_TEXT_FORMAT } from 'global/constants';
 
 const ApproveModal = ({
   appId,
@@ -22,8 +22,8 @@ const ApproveModal = ({
   dismissModal: () => any | void;
   primaryAffiliation: string;
 }) => {
-  const startDate = format(new Date(), DATE_FORMAT);
-  const endDate = format(add(new Date(startDate), { years: 1 }), DATE_FORMAT);
+  const startDate = format(new Date(), DATE_TEXT_FORMAT);
+  const endDate = format(add(new Date(startDate), { years: 1 }), DATE_TEXT_FORMAT);
 
   const [error, setError] = useState<AxiosError | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
