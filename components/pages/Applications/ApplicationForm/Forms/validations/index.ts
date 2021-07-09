@@ -151,10 +151,7 @@ export const validationReducer = (
                   meta: {
                     ...validationData.meta,
                     ...seedData.meta,
-                    overall:
-                      state === 'APPROVED' && ['collaborators'].includes(sectionName)
-                        ? FORM_STATES.CAN_EDIT
-                        : sectionStatusMapping[seedData?.meta?.status as SECTION_STATUS],
+                    overall: sectionStatusMapping[seedData?.meta?.status as SECTION_STATUS],
                   },
                 },
               }

@@ -27,6 +27,7 @@ export const getValidationUIConfig = (status: FormSectionOverallState): Validati
         tagVariant: TAG_VARIANTS.ERROR,
       };
 
+    case FORM_STATES.AMMENDABLE:
     case FORM_STATES.CAN_EDIT:
       return {
         iconName: 'edit',

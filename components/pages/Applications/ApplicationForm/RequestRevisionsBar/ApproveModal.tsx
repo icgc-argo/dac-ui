@@ -3,6 +3,7 @@ import { AxiosError } from 'axios';
 import urlJoin from 'url-join';
 import { add, format } from 'date-fns';
 import { css } from '@emotion/core';
+import router from 'next/router';
 
 import Modal from '@icgc-argo/uikit/Modal';
 import Typography from '@icgc-argo/uikit/Typography';
@@ -40,9 +41,7 @@ const ApproveModal = ({
       url: urlJoin(API.APPLICATIONS, appId)
     })
       .then(() => {
-        refetch({});
-        setIsLoading(false);
-        dismissModal();
+        router.reload();
       })
       .catch((err: AxiosError) => {
         setIsLoading(false);
