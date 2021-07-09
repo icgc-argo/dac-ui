@@ -22,9 +22,12 @@ const PdfRepFormData = ({ data }: { data?: ApplicationData }) => {
     PdfFormFields.POSITION_TITLE,
   ];
 
+  const address = data?.sections.representative.addressSameAsApplicant
+    ? data.sections.applicant.address
+    : data?.sections.representative.address;
+
   // there may be a nicer way to handle the mailing address, but not going to worry about it right now
   // it's only used in 2 places
-  const address = data?.sections.representative.address;
   const addressData = [
     {
       fieldName: 'Mailing Address',
