@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { format } from 'date-fns';
 import { css } from '@icgc-argo/uikit';
+import { isEqual } from 'lodash';
 
 import PageHeader from 'components/PageHeader';
 import { DATE_FORMAT } from 'global/constants';
@@ -8,6 +9,7 @@ import { DATE_FORMAT } from 'global/constants';
 import Actions from './Actions';
 import Details from './Details';
 import Progress from './Progress';
+import { ApplicationState } from '../../types';
 
 const ApplicationHeader = ({ data }: { data: any }): ReactElement => {
   const {
@@ -41,7 +43,7 @@ const ApplicationHeader = ({ data }: { data: any }): ReactElement => {
 
         <Progress state={state} />
 
-        <Actions appId={appId} />
+        {!isEqual(state, ApplicationState.CLOSED) && <Actions appId={appId} state={state} />}
       </div>
     </PageHeader>
   );
