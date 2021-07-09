@@ -35,7 +35,6 @@ export type ApplicationsRequestData = {
   appId?: string;
   data?: any;
   method?: Method;
-  params?: any;
   page?: number;
   pageSize?: number;
   sort?: ApplicationsSort[];
