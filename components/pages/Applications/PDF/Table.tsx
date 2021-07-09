@@ -39,7 +39,7 @@ const Table = ({ headers, data }: { headers: { name: string; accessor: string }[
               style={{
                 width: '50%',
                 border: `1pt solid ${defaultTheme.colors.grey_1}`,
-                ...(data.length && { borderBottom: 0 }),
+                ...(data.length > 0 && { borderBottom: 0 }),
                 ...(!lastColumn && { borderRight: 0 }),
               }}
             >
