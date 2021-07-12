@@ -41,7 +41,7 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
     }
   };
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = (e: any) => {
     const file = e.target.files?.[0];
 
     if (file && file.size <= MAX_FILE_SIZE && VALID_FILE_TYPE.includes(file.type)) {
