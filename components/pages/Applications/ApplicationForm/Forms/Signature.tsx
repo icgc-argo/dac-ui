@@ -1,18 +1,16 @@
 import { css } from '@emotion/core';
 import Button from '@icgc-argo/uikit/Button';
 import Control from '@icgc-argo/uikit/form/FormControl';
-import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
-import Input from '@icgc-argo/uikit/form/Input';
 import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
 import React, { ReactElement, useState } from 'react';
-import DoubleFieldRow from './DoubleFieldRow';
 import FormFieldHelpBubble from './FormFieldHelpBubble';
 import { RequiredStar } from './RequiredFieldsMessage';
 import { styled } from '@icgc-argo/uikit';
 import axios from 'axios';
+import { UPLOAD_TYPES } from './types';
 
 const FormControl = styled(Control)`
   display: flex;
@@ -25,7 +23,7 @@ const FormControl = styled(Control)`
 const VALID_FILE_TYPE = ['application/pdf'];
 const MAX_FILE_SIZE = 2097152;
 
-const Signature = (): ReactElement => {
+const Signature = ({ appId }): ReactElement => {
   const theme = useTheme();
   const [isFileSelected, setFileSelected] = useState(false);
 
@@ -34,20 +32,18 @@ const Signature = (): ReactElement => {
   // make button work as input
   const selectFile = () => {
     const fp = fileInputRef.current;
-    console.log('fp', fp);
     if (fp) {
       fp.click();
     }
   };
 
   const handleFileUpload = (e) => {
-    console.log('e', e.target.files);
     const file = e.target.files?.[0];
-    console.log('file', file);
+
     if (file && file.size <= MAX_FILE_SIZE && VALID_FILE_TYPE.includes(file.type)) {
       const formData = new FormData();
-      formData.append('signature', file);
-      axios.post('/', formData, {
+      formData.append('file', file);
+      axios.post(`/applications/${appId}/assets/${UPLOAD_TYPES.SIGNED_APP}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
