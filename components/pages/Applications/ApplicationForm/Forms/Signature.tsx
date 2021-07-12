@@ -11,6 +11,8 @@ import { RequiredStar } from './RequiredFieldsMessage';
 import { styled } from '@icgc-argo/uikit';
 import axios from 'axios';
 import { UPLOAD_TYPES } from './types';
+import { UPLOAD_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
+import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
 
 const FormControl = styled(Control)`
   display: flex;
@@ -23,9 +25,11 @@ const FormControl = styled(Control)`
 const VALID_FILE_TYPE = ['application/pdf'];
 const MAX_FILE_SIZE = 2097152;
 
-const Signature = ({ appId }): ReactElement => {
+const Signature = ({ appId }: { appId: string }): ReactElement => {
   const theme = useTheme();
-  const [isFileSelected, setFileSelected] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<
+    { name: string; uploadDate: string } | undefined
+  >(undefined);
 
   const fileInputRef = React.createRef<HTMLInputElement>();
 
@@ -43,12 +47,19 @@ const Signature = ({ appId }): ReactElement => {
     if (file && file.size <= MAX_FILE_SIZE && VALID_FILE_TYPE.includes(file.type)) {
       const formData = new FormData();
       formData.append('file', file);
-      axios.post(`/applications/${appId}/assets/${UPLOAD_TYPES.SIGNED_APP}/upload`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      setFileSelected(true);
+      axios
+        .post(`/applications/${appId}/assets/${UPLOAD_TYPES.SIGNED_APP}/upload`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then(() => {
+          const fileDetails = {
+            name: file.name,
+            uploadDate: getFormattedDate(Date.now(), UPLOAD_DATE_FORMAT),
+          };
+          setSelectedFile(fileDetails);
+        });
     } else {
       console.warn('invalid file');
     }
@@ -177,46 +188,84 @@ const Signature = ({ appId }): ReactElement => {
             Signed Application:
           </InputLabel>
 
-          <Button
-            size="sm"
-            onClick={selectFile}
-            aria-label="Signed Application"
-            css={css`
-              width: 220px;
-              margin-right: 70px;
-              margin-left: 20px;
-            `}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".pdf"
-              onChange={handleFileUpload}
+          {selectedFile ? (
+            <Typography
+              variant="data"
               css={css`
-                display: none;
+                width: 100%;
               `}
-            />
-            <Icon
-              name="upload"
-              height="12px"
-              width="12px"
-              fill="white"
-              css={css`
-                margin-right: 3px;
-                margin-bottom: -2px;
-                margin-right: 4px;
-              `}
-            />
-            Upload a file
-          </Button>
-          <FormFieldHelpBubble text="Allowed file types: pdf. | Max file size: 200MB" />
+            >
+              <div
+                css={css`
+                  border: 1px solid ${theme.colors.grey_2};
+                  padding: 8px;
+                  width: 100%;
+                  display: flex;
+                  align-items: center;
+                `}
+              >
+                <Icon
+                  name="file"
+                  fill={theme.colors.accent2}
+                  css={css`
+                    margin-right: 6px;
+                  `}
+                />
+                {`${selectedFile.name} | Uploaded on: ${selectedFile.uploadDate}`}
+                <Icon
+                  name="trash"
+                  fill={theme.colors.accent2}
+                  css={css`
+                    margin-left: auto;
+                  `}
+                />
+              </div>
+            </Typography>
+          ) : (
+            <>
+              <Button
+                size="sm"
+                onClick={selectFile}
+                aria-label="Signed Application"
+                css={css`
+                  width: 220px;
+                  margin-right: 70px;
+                  margin-left: 20px;
+                `}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleFileUpload}
+                  css={css`
+                    display: none;
+                  `}
+                />
+                <Icon
+                  name="upload"
+                  height="12px"
+                  width="12px"
+                  fill="white"
+                  css={css`
+                    margin-right: 3px;
+                    margin-bottom: -2px;
+                    margin-right: 4px;
+                  `}
+                />
+                Upload a file
+              </Button>
+
+              <FormFieldHelpBubble text="Allowed file types: pdf. | Max file size: 200MB" />
+            </>
+          )}
         </FormControl>
 
         <Button
           css={css`
             margin-top: 40px;
           `}
-          disabled={!isFileSelected}
+          disabled={!selectedFile}
         >
           Submit Application
         </Button>
