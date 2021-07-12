@@ -10,6 +10,7 @@ import {
 import { UserWithId } from '../types';
 import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
+import queryString from 'query-string';
 
 type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
@@ -42,23 +43,32 @@ export const AuthProvider = ({
   // a type issue. using `any` for now
   const [isLoading, setLoading] = useState<boolean>(true);
   const [token, setTokenState] = useState<string>(egoJwt);
+  const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const router = useRouter();
+  const { asPath } = router;
 
   const removeToken = () => {
     localStorage.removeItem(EGO_JWT_KEY);
     setTokenState('');
   };
 
-  const logout = () => {
+  const logout = (path?: string) => {
+    // this will be reset to false when user logs in again, and AuthContext is re-instantiated
+    setIsLoggingOut(true);
     removeToken();
-    router.push('/?session_expired=true');
+    if (path) {
+      const { url, query } = queryString.parseUrl(path);
+      router.push({ pathname: url, query: { ...query, loggingOut: true } });
+    } else {
+      router.push('/');
+    }
   };
 
   if (token) {
     if (!isValidJwt(token)) {
       if (egoJwt && token === egoJwt) {
-        logout();
+        logout(asPath);
       }
     } else if (!egoJwt) {
       setTokenState('');
@@ -125,6 +135,7 @@ export const AuthProvider = ({
     cancelFetchWithAuth,
     fetchWithAuth,
     isLoading,
+    isLoggingOut,
     logout,
     permissions,
     token,
