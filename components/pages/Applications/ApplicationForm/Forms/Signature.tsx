@@ -12,6 +12,7 @@ import DoubleFieldRow from './DoubleFieldRow';
 import FormFieldHelpBubble from './FormFieldHelpBubble';
 import { RequiredStar } from './RequiredFieldsMessage';
 import { styled } from '@icgc-argo/uikit';
+import axios from 'axios';
 
 const FormControl = styled(Control)`
   display: flex;
@@ -20,6 +21,9 @@ const FormControl = styled(Control)`
     margin: 0;
   }
 `;
+
+const VALID_FILE_TYPE = ['application/pdf'];
+const MAX_FILE_SIZE = 2097152;
 
 const Signature = (): ReactElement => {
   const theme = useTheme();
@@ -30,8 +34,27 @@ const Signature = (): ReactElement => {
   // make button work as input
   const selectFile = () => {
     const fp = fileInputRef.current;
+    console.log('fp', fp);
     if (fp) {
       fp.click();
+    }
+  };
+
+  const handleFileUpload = (e) => {
+    console.log('e', e.target.files);
+    const file = e.target.files?.[0];
+    console.log('file', file);
+    if (file && file.size <= MAX_FILE_SIZE && VALID_FILE_TYPE.includes(file.type)) {
+      const formData = new FormData();
+      formData.append('signature', file);
+      axios.post('/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      setFileSelected(true);
+    } else {
+      console.warn('invalid file');
     }
   };
 
@@ -172,10 +195,7 @@ const Signature = (): ReactElement => {
               ref={fileInputRef}
               type="file"
               accept=".pdf"
-              onChange={(e) => {
-                console.log(e.target.files);
-                setFileSelected(true);
-              }}
+              onChange={handleFileUpload}
               css={css`
                 display: none;
               `}
