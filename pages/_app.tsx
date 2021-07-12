@@ -42,34 +42,33 @@ const App = ({
   const loggingOut = query.loggingOut || false;
 
   useEffect(() => {
+    console.log('app useEffect')
     // using useEffect because we're waiting for localStorage
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
 
     if (loggingOut) {
-      console.log('loggingOut')
+      setInitialJwt('');
       if (Component.isPublic) {
         const strippedPath = queryString.exclude(path, ['loggingOut']);
         redirect(res, strippedPath);
       } else {
-        console.log('private route')
         redirect(res, '/');
       }
-    } else {
+    } else if (egoJwt) {
       if (isValidJwt(egoJwt)) {
         setInitialJwt(egoJwt);
       } else {
+        // TODO handle refresh token
         setInitialJwt('');
         localStorage.removeItem(EGO_JWT_KEY);
-        // redirect to logout when token is expired/missing only if user is on a non-public page
-        if (!Component.isPublic) {
-          Router.push({
-            pathname: '/',
-            query: { session_expired: true },
-          });
-        }
+        redirect(res, getRedirectQuery(path));
+      }
+    } else {
+      if (!Component.isPublic) {
+        enforceLogin({ ctx });
       }
     }
-  }, [path, query]);
+  });
 
   return (
     <Root egoJwt={initialJwt} pageContext={ctx}>
