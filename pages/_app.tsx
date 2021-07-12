@@ -42,6 +42,7 @@ const App = ({
   const loggingOut = query.loggingOut || false;
 
   useEffect(() => {
+    // using useEffect because we're waiting for localStorage
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
 
     if (loggingOut) {
@@ -53,7 +54,7 @@ const App = ({
         console.log('private route')
         redirect(res, '/');
       }
-    } else if (egoJwt) {
+    } else {
       if (isValidJwt(egoJwt)) {
         setInitialJwt(egoJwt);
       } else {
@@ -68,12 +69,7 @@ const App = ({
         }
       }
     }
-    // else {
-    //   if (!Component.isPublic) {
-    //     enforceLogin({ ctx });
-    //   }
-    // }
-  });
+  }, [path, query]);
 
   return (
     <Root egoJwt={initialJwt} pageContext={ctx}>
