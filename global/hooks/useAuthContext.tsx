@@ -57,7 +57,7 @@ export const AuthProvider = ({
   const logout = () => {
     setIsLoggingOut(true);
     removeToken();
-    const { asPath: path = '' } = pageContext;
+    const { asPath: path } = pageContext;
     if (path) {
       const { url, query } = queryString.parseUrl(path);
       router.push({ pathname: url, query: { ...query, loggingOut: true } });

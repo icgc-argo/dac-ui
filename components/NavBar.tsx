@@ -126,7 +126,7 @@ const LoginButton = () => {
 
   return (
     <Button
-      onClick={() => router.push(egoLoginUrl.href)}
+      onClick={(e) => router.push(egoLoginUrl.href)}
       css={(theme: UikitTheme) =>
         css`
           background-color: ${theme.colors.accent2};
