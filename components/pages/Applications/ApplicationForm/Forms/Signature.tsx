@@ -1,10 +1,26 @@
 import { css } from '@emotion/core';
 import Button from '@icgc-argo/uikit/Button';
+import Control from '@icgc-argo/uikit/form/FormControl';
+import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
+import Input from '@icgc-argo/uikit/form/Input';
+import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
+import DoubleFieldRow from './DoubleFieldRow';
+import FormFieldHelpBubble from './FormFieldHelpBubble';
 import { RequiredStar } from './RequiredFieldsMessage';
+import FileSelectButton from '@icgc-argo/uikit/FileSelectButton';
+import { styled } from '@icgc-argo/uikit';
+
+const FormControl = styled(Control)`
+  display: flex;
+  flex-wrap: nowrap !important;
+  figure {
+    margin: 0;
+  }
+`;
 
 const Signature = (): ReactElement => {
   const theme = useTheme();
@@ -121,6 +137,50 @@ const Signature = (): ReactElement => {
         >
           UPLOAD SIGNED APPLICATION
         </Typography>
+        <FormControl required>
+          <InputLabel
+            htmlFor="signedApplication"
+            css={css`
+              width: 144px !important;
+            `}
+          >
+            Signed Application:
+          </InputLabel>
+
+          <FileSelectButton
+            size="sm"
+            onFilesSelect={(e) => console.log('file selected', e)}
+            aria-label="Signed Application"
+            css={css`
+              width: 220px;
+              margin-right: 70px;
+              margin-left: 20px;
+            `}
+          >
+            <Icon
+              name="upload"
+              height="12px"
+              width="12px"
+              fill="white"
+              css={css`
+                margin-right: 3px;
+
+                margin-bottom: -2px;
+                margin-right: 4px;
+              `}
+            />
+            Upload a file
+          </FileSelectButton>
+          <FormFieldHelpBubble text="Allowed file types: pdf. | Max file size: 200MB" />
+        </FormControl>
+
+        <Button
+          css={css`
+            margin-top: 40px;
+          `}
+        >
+          Submit Application
+        </Button>
       </section>
     </article>
   );
