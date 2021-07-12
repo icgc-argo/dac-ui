@@ -8,15 +8,16 @@ import { useAuthContext } from 'global/hooks';
 import { sectionsOrder, sectionStatusMapping } from '../constants';
 import {
   FormFieldType,
+  FormSectionNames,
+  FormSectionValidationState_SectionBase,
   FormSectionValidationState_Sections,
   FormFieldValidationTriggerFunction,
   FormFieldValidatorFunction,
   FormSectionValidatorFunction_Main,
   FormValidationAction,
   FormValidationStateParameters,
+  FormValidationState_AllSectionsObj,
   FORM_STATES,
-  FormSectionNames,
-  FormSectionValidationState_SectionBase,
   SECTION_STATUS,
 } from '../types';
 import {
@@ -150,7 +151,7 @@ export const validationReducer = (
                 },
               }
             : seededSectionsData;
-        }, {} as Record<FormSectionNames, FormSectionValidationState_SectionBase>),
+        }, {} as FormValidationState_AllSectionsObj),
         state,
         __seeded: true,
         __v,
@@ -306,6 +307,8 @@ export const useFormValidation = (appId: string) => {
       __v: 0,
     } as FormValidationStateParameters);
 
+  const validateSection = validator(formState, validationDispatch, apiFetcher);
+
   useEffect(() => {
     apiFetcher()
       .then(({ data, ...response }: { data?: Record<string, any> } = {}) =>
@@ -322,8 +325,6 @@ export const useFormValidation = (appId: string) => {
       });
   }, [appId]);
 
-  const validateSection = validator(formState, validationDispatch, apiFetcher);
-
   return {
     isLoading,
     formState,
@@ -332,10 +333,15 @@ export const useFormValidation = (appId: string) => {
 };
 
 export const useLocalValidation = (
+  sectionName: FormSectionNames,
   storedFields: FormSectionValidationState_Sections,
   fieldValidator: FormFieldValidatorFunction,
 ) => {
-  const [localState, setLocalState] = useState(storedFields);
+  const [localState, setLocalState] = useState({
+    [sectionName]: {
+      fields: storedFields,
+    },
+  } as FormValidationState_AllSectionsObj);
   const [fieldsTouched, setFieldTouched] = useState(
     new Set<string>(
       Object.entries(storedFields).reduce(
@@ -344,53 +350,69 @@ export const useLocalValidation = (
       ),
     ),
   );
+  const currentFields = localState[sectionName]?.fields || {};
 
   useEffect(() => {
-    if (!isEqual(storedFields, localState)) {
-      setLocalState((prev) => merge(prev, storedFields));
+    if (Object.keys(currentFields).length === 0 || !isEqual(storedFields, localState)) {
+      setLocalState((prev) => ({
+        ...prev,
+        [sectionName]: {
+          ...prev[sectionName],
+          fields: merge(currentFields, storedFields),
+        },
+      }));
     }
   }, [storedFields]);
 
   const updateLocalState = useCallback(
     ({ error, field, value, type }: FormValidationAction) => {
       fieldsTouched.has(field) || setFieldTouched((prev) => new Set(prev.add(field)));
-      const [fieldName, fieldIndex, fieldOverride] = field.split('--');
 
-      const oldValue = localState[fieldName]?.value;
+      const [fieldName, fieldIndex, fieldOverride] = field.split('--');
+      const currentSectionData = localState[sectionName];
+      const currentSectionFields = currentSectionData?.fields;
+      const currentField = currentSectionFields[fieldName];
+      const oldValue = currentField.value;
 
       const newState = {
         ...localState,
-        [fieldName]: {
-          ...localState[fieldName],
-          ...(type === 'object'
-            ? {
-                fields: {
-                  ...localState[fieldName].fields,
-                  [fieldIndex]: {
-                    ...localState[fieldName].fields[fieldIndex],
+        [sectionName]: {
+          ...currentSectionData,
+          fields: {
+            ...currentSectionFields,
+            [fieldName]: {
+              ...currentField,
+              ...(type === 'object'
+                ? {
+                    fields: {
+                      ...currentField.fields,
+                      [fieldIndex]: {
+                        ...currentField.fields[fieldIndex],
+                        error,
+                        value,
+                      },
+                    },
+                  }
+                : {
                     error,
-                    value,
-                  },
-                },
-              }
-            : {
-                error,
-                value:
-                  typeof oldValue === 'object'
-                    ? {
-                        ...oldValue,
-                        ...([fieldOverride, type].includes('remove')
-                          ? {
-                              [fieldIndex]: {
-                                value: null,
-                              },
-                            }
-                          : value),
-                      }
-                    : value,
-              }),
+                    value:
+                      typeof oldValue === 'object'
+                        ? {
+                            ...oldValue,
+                            ...([fieldOverride, type].includes('remove')
+                              ? {
+                                  [fieldIndex]: {
+                                    value: null,
+                                  },
+                                }
+                              : value),
+                          }
+                        : value,
+                  }),
+            },
+          },
         },
-      } as FormSectionValidationState_Sections;
+      } as FormValidationState_AllSectionsObj;
 
       setLocalState(newState);
       return newState;
@@ -409,7 +431,7 @@ export const useLocalValidation = (
           const canBlur = !(
             ['text'].includes(fieldType) &&
             ['address_country'].includes(fieldName) &&
-            localState[fieldName]?.value
+            localState[sectionName]?.fields[fieldName]?.value
           );
 
           if (canBlur) {
@@ -464,6 +486,11 @@ export const useLocalValidation = (
           break;
         }
 
+        case 'focus': {
+          ['select-one'].includes(fieldType) && setFieldTouched((prev) => new Set(prev.add(field)));
+          break;
+        }
+
         default: {
           console.info('unhandled Field event', event);
           break;
@@ -473,7 +500,7 @@ export const useLocalValidation = (
   };
 
   return {
-    localState,
+    localState: currentFields,
     validateFieldTouched,
   };
 };

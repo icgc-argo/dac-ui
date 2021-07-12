@@ -10,10 +10,17 @@ import { instructionBoxButtonContentStyle, instructionBoxButtonIconStyle } from 
 import { ModalPortal } from 'components/Root';
 
 import RequestRevisionsModal from "./RequestRevisionsModal";
+import ApproveModal from "./ApproveModal";
 
-const RequestRevisionsBar = ({ appId }: { appId: string }) => {
+const RequestRevisionsBar = ({ data }: { data: any }) => {
   const theme = useTheme();
   const [isRequestRevisionsModalVisible, setRequestRevisionsModalVisible] = useState(false);
+  const [isApproveModalVisible, setApproveModalVisible] = useState(false);
+
+  const { appId, state } = data;
+  const { primaryAffiliation } = data.sections.applicant.info;
+
+  const buttonsDisabled = ['APPROVED'].includes(state);
 
   return (
     <>
@@ -21,6 +28,15 @@ const RequestRevisionsBar = ({ appId }: { appId: string }) => {
         <ModalPortal>
           <RequestRevisionsModal
             dismissModal={() => setRequestRevisionsModalVisible(false)}
+          />
+        </ModalPortal>
+      )}
+      {isApproveModalVisible && (
+        <ModalPortal>
+          <ApproveModal
+            appId={appId}
+            dismissModal={() => setApproveModalVisible(false)}
+            primaryAffiliation={primaryAffiliation}
           />
         </ModalPortal>
       )}
@@ -59,7 +75,13 @@ const RequestRevisionsBar = ({ appId }: { appId: string }) => {
               }
             }
           `}>
-            <Button size="sm">
+            <Button
+              disabled={buttonsDisabled}
+              onClick={() => {
+                setApproveModalVisible(true);
+              }}
+              size="sm"
+            >
               <span css={instructionBoxButtonContentStyle}>
                 <Icon
                   css={css`
@@ -74,6 +96,7 @@ const RequestRevisionsBar = ({ appId }: { appId: string }) => {
               </span>
             </Button>
             <Button
+              disabled={buttonsDisabled}
               onClick={() => {
                 setRequestRevisionsModalVisible(true);
               }}
@@ -89,7 +112,10 @@ const RequestRevisionsBar = ({ appId }: { appId: string }) => {
                 Request Revisions
               </span>
             </Button>
-            <Button size="sm">
+            <Button
+              disabled={buttonsDisabled}
+              size="sm"
+            >
               <span css={instructionBoxButtonContentStyle}>
                 <Icon
                   css={instructionBoxButtonIconStyle}

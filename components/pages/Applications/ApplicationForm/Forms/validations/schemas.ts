@@ -117,8 +117,13 @@ export const dataAccessAgreementSchema = yup.object().shape({
     }),
 });
 
-export const termsSchema = yup.object().shape({
-  agreement: yup.boolean().default(false).oneOf([true]).required(),
+export const ethicsLetterSchema = yup.object().shape({
+  declaredAsRequired: yup.boolean().default(false).oneOf([true]).required(),
+  approvalLetterDocs: yup.array().when('declaredAsRequired', {
+    is: true, // alternatively: (val) => val == true
+    then: yup.array().min(1),
+    otherwise: yup.array().max(0),
+  }),
 });
 
 export const itAgreementsSchema = yup.object().shape({
@@ -194,11 +199,16 @@ export const representativeSchema = yup.object().shape({
 
 export const signatureSchema = yup.object().shape({});
 
+export const termsSchema = yup.object().shape({
+  agreement: yup.boolean().default(false).oneOf([true]).required(),
+});
+
 export const combinedSchema = {
   appendices: appendicesSchema,
   applicant: applicantSchema,
   collaborators: collaboratorSchema,
   dataAccessAgreement: dataAccessAgreementSchema,
+  ethicsLetter: ethicsLetterSchema,
   ITAgreements: itAgreementsSchema,
   projectInfo: projectInfoSchema,
   representative: representativeSchema,
