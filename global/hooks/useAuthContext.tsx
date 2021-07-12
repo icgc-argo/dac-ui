@@ -10,7 +10,6 @@ import {
 import { UserWithId } from '../types';
 import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
-import queryString from 'query-string';
 
 type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
@@ -35,17 +34,14 @@ const AuthContext = createContext<T_AuthContext>({
 export const AuthProvider = ({
   children,
   egoJwt = '',
-  pageContext = {},
 }: {
   children: React.ReactElement;
   egoJwt: string;
-  pageContext: any;
 }) => {
   // TODO: typing this state as `string` causes a compiler error. the same setup exists in argo but does not cause
   // a type issue. using `any` for now
   const [isLoading, setLoading] = useState<boolean>(true);
   const [token, setTokenState] = useState<string>(egoJwt);
-  const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const router = useRouter();
 
@@ -55,15 +51,8 @@ export const AuthProvider = ({
   };
 
   const logout = () => {
-    setIsLoggingOut(true);
     removeToken();
-    const { asPath: path } = pageContext;
-    if (path) {
-      const { url, query } = queryString.parseUrl(path);
-      router.push({ pathname: url, query: { ...query, loggingOut: true } });
-    } else {
-      router.push('/');
-    }
+    router.push('/?session_expired=true');
   };
 
   if (token) {
@@ -136,7 +125,6 @@ export const AuthProvider = ({
     cancelFetchWithAuth,
     fetchWithAuth,
     isLoading,
-    isLoggingOut,
     logout,
     permissions,
     token,
