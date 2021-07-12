@@ -63,16 +63,17 @@ const App = ({
         if (!Component.isPublic) {
           Router.push({
             pathname: '/',
-            query: { loggingOut: true },
+            query: { session_expired: true },
           });
         }
       }
-    } else {
-      if (!Component.isPublic) {
-        enforceLogin({ ctx });
-      }
     }
-  }, [path, query]);
+    // else {
+    //   if (!Component.isPublic) {
+    //     enforceLogin({ ctx });
+    //   }
+    // }
+  });
 
   return (
     <Root egoJwt={initialJwt} pageContext={ctx}>
