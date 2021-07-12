@@ -4,12 +4,12 @@ import { css } from '@icgc-argo/uikit';
 import { isEqual } from 'lodash';
 
 import PageHeader from 'components/PageHeader';
+import { DATE_TEXT_FORMAT } from 'global/constants';
+
 import Actions from './Actions';
 import Details from './Details';
 import Progress from './Progress';
 import { ApplicationState } from '../../types';
-
-const DATE_FORMAT = 'MMM. dd, yyyy';
 
 const ApplicationHeader = ({ data }: { data: any }): ReactElement => {
   const {
@@ -37,8 +37,8 @@ const ApplicationHeader = ({ data }: { data: any }): ReactElement => {
         <Details
           appId={appId}
           applicant={applicant}
-          createdAt={format(new Date(createdAtUtc), DATE_FORMAT)}
-          lastUpdated={format(new Date(lastUpdatedAtUtc), DATE_FORMAT + ' h:mm aaaa')}
+          createdAt={format(new Date(createdAtUtc), DATE_TEXT_FORMAT)}
+          lastUpdated={format(new Date(lastUpdatedAtUtc), DATE_TEXT_FORMAT + ' h:mm aaaa')}
         />
 
         <Progress state={state} />

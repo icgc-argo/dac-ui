@@ -46,6 +46,7 @@ const Applicant = ({
               aria-label="Title"
               id="info_title"
               onBlur={validateFieldTouched}
+              onFocus={validateFieldTouched}
               eventOnChange={validateFieldTouched}
               options={transformToSelectOptions(honorificsList)}
               value={localState.info_title?.value}

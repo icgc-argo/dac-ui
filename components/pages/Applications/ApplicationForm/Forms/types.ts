@@ -24,6 +24,7 @@ export enum EVENT_TARGET_TAGS {
 }
 
 export enum SECTION_STATUS {
+  AMMENDABLE = 'AMMENDABLE',
   COMPLETE = 'COMPLETE',
   DISABLED = 'DISABLED',
   INCOMPLETE = 'INCOMPLETE',
@@ -230,8 +231,12 @@ interface FormValidationState_Base {
   __v: number;
 }
 
+export type FormValidationState_AllSectionsObj = Record<
+  FormSectionNames,
+  FormSectionValidationState_SectionBase
+>;
 export type FormValidationStateParameters = FormValidationState_Base & {
-  sections: Record<FormSectionNames, FormSectionValidationState_SectionBase>;
+  sections: FormValidationState_AllSectionsObj;
 };
 
 export type FormSectionUpdateLocalStateFunction = (fieldData: FormValidationAction) => void;

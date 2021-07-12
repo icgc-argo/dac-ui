@@ -45,7 +45,7 @@ export const sectionSelector = ({
   }: {
     localState: FormSectionValidationState_Sections;
     validateFieldTouched: (event: any) => void;
-  } = useLocalValidation(storedFields, validator(selectedSection));
+  } = useLocalValidation(selectedSection, storedFields, validator(selectedSection));
 
   return isLoading || !formState.__seeded ? (
     <Loader />
@@ -53,6 +53,7 @@ export const sectionSelector = ({
     <SectionComponent
       isSectionDisabled={isSectionDisabled}
       localState={localState}
+      state={formState.state}
       validateFieldTouched={validateFieldTouched}
     />
   ) : (

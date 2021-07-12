@@ -12,7 +12,7 @@ import { isEqual } from 'lodash';
 import StaticIntroduction from 'components/pages/Applications/PDF/StaticIntroduction';
 import StaticApplicant from '../../PDF/StaticApplicant';
 import { useAuthContext } from 'global/hooks';
-import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
+import { API } from 'global/constants';
 import { AxiosError } from 'axios';
 import StaticRepresentative from '../../PDF/StaticRepresentative';
 import StaticCollaborators from '../../PDF/StaticCollaborators';
@@ -121,7 +121,7 @@ const HeaderActions = ({
         }
       `}
     >
-      <Button onClick={function noRefCheck() {}} size="sm" variant="secondary">
+      <Button onClick={function noRefCheck() { }} size="sm" variant="secondary">
         Close Application
       </Button>
       <Button
@@ -135,7 +135,7 @@ const HeaderActions = ({
         isLoading={pdfIsLoading}
         onClick={async () => {
           setPdfIsLoading(true);
-          const data = await fetchWithAuth({ url: urlJoin(APPLICATIONS_PATH, appId) })
+          const data = await fetchWithAuth({ url: urlJoin(API.APPLICATIONS, appId) })
             .then((res: any) => res.data)
             .catch((err: AxiosError) => {
               console.error('Application fetch failed, pdf not generated.', err);
