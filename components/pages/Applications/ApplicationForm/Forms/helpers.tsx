@@ -25,11 +25,13 @@ export const sectionSelector = ({
   isLoading,
   selectedSection,
   validator,
+  appId,
 }: {
   formState: FormValidationStateParameters;
   isLoading: boolean;
   selectedSection: FormSectionNames;
   validator: FormSectionValidatorFunction_Origin;
+  appId: string;
 }) => {
   const SectionComponent = sectionsData[selectedSection]?.component;
   const {
@@ -55,6 +57,7 @@ export const sectionSelector = ({
       localState={localState}
       state={formState.state}
       validateFieldTouched={validateFieldTouched}
+      appId={appId}
     />
   ) : (
     `Section not implemented: "${selectedSection}"`
