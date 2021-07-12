@@ -1,6 +1,8 @@
-import { createRef, useState } from 'react';
+import { createRef, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import urlJoin from 'url-join';
+import { get } from 'lodash';
+import queryString from 'query-string';
 import AppBar, {
   DropdownMenu,
   Logo,
@@ -28,6 +30,7 @@ import { useAuthContext } from 'global/hooks';
 import { UserWithId } from 'global/types';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
 import { ADMIN_APPLICATIONS_LABEL, APPLICANT_APPLICATIONS_LABEL } from 'global/constants';
+import { createRedirectURL } from 'global/utils';
 
 const StyledMenuItem = styled(MenuItem)`
   ${({ theme }: { theme: UikitTheme }) => `
@@ -120,12 +123,43 @@ const UserDisplayName = ({ user, dropdownOpen }: { user: UserWithId; dropdownOpe
 
 const LoginButton = () => {
   const router = useRouter();
+  const [loginPath, setLoginPath] = useState('');
   const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
   const egoLoginUrl = new URL(urlJoin(NEXT_PUBLIC_EGO_API_ROOT, 'oauth/login/google'));
   egoLoginUrl.searchParams.append('client_id', NEXT_PUBLIC_EGO_CLIENT_ID);
+
+  const { asPath: path, query } = router;
+
+  useEffect(() => {
+    const redirect = get(query, 'redirect') as string;
+    if (redirect) {
+      const parsedRedirect = queryString.parseUrl(redirect);
+      const existingQuery = queryString.stringify(parsedRedirect.query);
+
+      const queryRedirect = createRedirectURL({
+        origin: location.origin,
+        path: parsedRedirect.url,
+        query: existingQuery,
+      });
+      setLoginPath(urlJoin(egoLoginUrl.href, queryRedirect));
+    } else if (path === '/') {
+      setLoginPath(egoLoginUrl.href);
+    } else {
+      const queryString = path.split('?')[1] || '';
+      const pathRoot = path.split('?')[0];
+
+      const redirect = createRedirectURL({
+        origin: location.origin,
+        path: pathRoot,
+        query: queryString,
+      });
+      setLoginPath(urlJoin(egoLoginUrl.href, redirect));
+    }
+  }, [path, query]);
+
   return (
     <Button
-      onClick={(e) => router.push(egoLoginUrl.href)}
+      onClick={() => router.push(loginPath)}
       css={(theme: UikitTheme) =>
         css`
           background-color: ${theme.colors.accent2};
