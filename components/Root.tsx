@@ -95,7 +95,7 @@ const Root = ({
       `}
       </style>
       <Head />
-      <AuthProvider egoJwt={egoJwt}>
+      <AuthProvider egoJwt={egoJwt} pageContext={pageContext}>
         <ThemeProvider>
           <div
             css={css`
