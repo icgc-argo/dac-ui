@@ -7,11 +7,10 @@ import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import DoubleFieldRow from './DoubleFieldRow';
 import FormFieldHelpBubble from './FormFieldHelpBubble';
 import { RequiredStar } from './RequiredFieldsMessage';
-import FileSelectButton from '@icgc-argo/uikit/FileSelectButton';
 import { styled } from '@icgc-argo/uikit';
 
 const FormControl = styled(Control)`
@@ -24,6 +23,18 @@ const FormControl = styled(Control)`
 
 const Signature = (): ReactElement => {
   const theme = useTheme();
+  const [isFileSelected, setFileSelected] = useState(false);
+
+  const fileInputRef = React.createRef<HTMLInputElement>();
+
+  // make button work as input
+  const selectFile = () => {
+    const fp = fileInputRef.current;
+    if (fp) {
+      fp.click();
+    }
+  };
+
   return (
     <article>
       <Typography bold component="h2">
@@ -147,9 +158,9 @@ const Signature = (): ReactElement => {
             Signed Application:
           </InputLabel>
 
-          <FileSelectButton
+          <Button
             size="sm"
-            onFilesSelect={(e) => console.log('file selected', e)}
+            onClick={selectFile}
             aria-label="Signed Application"
             css={css`
               width: 220px;
@@ -157,6 +168,18 @@ const Signature = (): ReactElement => {
               margin-left: 20px;
             `}
           >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf"
+              onChange={(e) => {
+                console.log(e.target.files);
+                setFileSelected(true);
+              }}
+              css={css`
+                display: none;
+              `}
+            />
             <Icon
               name="upload"
               height="12px"
@@ -164,13 +187,12 @@ const Signature = (): ReactElement => {
               fill="white"
               css={css`
                 margin-right: 3px;
-
                 margin-bottom: -2px;
                 margin-right: 4px;
               `}
             />
             Upload a file
-          </FileSelectButton>
+          </Button>
           <FormFieldHelpBubble text="Allowed file types: pdf. | Max file size: 200MB" />
         </FormControl>
 
@@ -178,6 +200,7 @@ const Signature = (): ReactElement => {
           css={css`
             margin-top: 40px;
           `}
+          disabled={!isFileSelected}
         >
           Submit Application
         </Button>
