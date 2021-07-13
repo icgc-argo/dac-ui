@@ -11,5 +11,7 @@ export const DATE_RANGE_DISPLAY_FORMAT = 'Y-MM-dd';
 
 export const DATE_TEXT_FORMAT = 'MMM. dd, yyyy';
 
+export const OAUTH_QUERY_PARAM_NAME = 'isOauth';
+
 export * from './externalPaths';
 export * from './internalPaths';
