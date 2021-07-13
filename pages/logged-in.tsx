@@ -22,7 +22,8 @@
 import { useEffect } from 'react';
 import { css } from '@emotion/core';
 import urlJoin from 'url-join';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
+import queryString from 'query-string';
 
 import DnaLoader from '@icgc-argo/uikit/DnaLoader';
 
@@ -32,7 +33,7 @@ import { APPLICATIONS_PATH, EGO_JWT_KEY } from 'global/constants';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
 import { createPage } from 'global/utils/pages/createPage';
 
-const fetchEgoToken = () => {
+const fetchEgoToken = (redirectPage: string) => {
   const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
   const egoLoginUrl = urlJoin(
     NEXT_PUBLIC_EGO_API_ROOT,
@@ -55,7 +56,7 @@ const fetchEgoToken = () => {
       if (isValidJwt(jwt)) return localStorage.setItem(EGO_JWT_KEY, jwt);
       throw new Error('Invalid jwt, cannot login.');
     })
-    .then(() => Router.push(APPLICATIONS_PATH))
+    .then(() => Router.push(redirectPage))
     .catch((err) => {
       console.warn(err);
       localStorage.removeItem(EGO_JWT_KEY);
@@ -66,13 +67,19 @@ const fetchEgoToken = () => {
 const LoginLoaderPage = createPage({
   getInitialProps: async (ctx) => {
     const { egoJwt, asPath, query } = ctx;
+    console.log('login', ctx)
     return { egoJwt, query, asPath };
   },
   isPublic: true,
 })(() => {
+  // can i get the initial props above somehow?
+  const router = useRouter();
+  const { redirect = '' } = router.query;
+  const redirectPage = (typeof redirect === 'string' ? redirect : redirect[0]) ||
+    APPLICATIONS_PATH;
   useEffect(() => {
-    Router.prefetch(APPLICATIONS_PATH);
-    fetchEgoToken();
+    Router.prefetch(redirectPage);
+    fetchEgoToken(redirectPage);
   }, []);
 
   return (

@@ -123,9 +123,27 @@ const LoginButton = () => {
   const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
   const egoLoginUrl = new URL(urlJoin(NEXT_PUBLIC_EGO_API_ROOT, 'oauth/login/google'));
   egoLoginUrl.searchParams.append('client_id', NEXT_PUBLIC_EGO_CLIENT_ID);
+
+  // TODO: if loggingOut, get redirect param
+  // and attach it here.
+
+  const path = router.asPath === '/' ? '/applications/DACO-59/?section=terms' : router.asPath || '';
+  const redirect_uri = urlJoin(
+    'http://localhost:3000',
+    // `logged-in${encodeURIComponent(`?redirect=${encodeURIComponent(path)}`)}`
+    // `logged-in%3Fredirect%3D${encodeURIComponent(path)}`
+    `logged-in%3Fredirect%3D${encodeURIComponent(path)}`
+    // `logged-in`
+  );
+  const egoUrl = urlJoin(
+    egoLoginUrl.href,
+    `?client_id=${NEXT_PUBLIC_EGO_CLIENT_ID}`,
+    path === '/' ? '' : `&redirect_uri=${redirect_uri}`
+  );
+
   return (
     <Button
-      onClick={(e) => router.push(egoLoginUrl.href)}
+      onClick={() => router.push(egoUrl)}
       css={(theme: UikitTheme) =>
         css`
           background-color: ${theme.colors.accent2};

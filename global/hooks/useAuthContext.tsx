@@ -52,7 +52,8 @@ export const AuthProvider = ({
 
   const logout = () => {
     removeToken();
-    router.push('/?session_expired=true');
+    // TODO: redirect to /?loggingOut=true&redirect=URL
+    router.push('/');
   };
 
   if (token) {
