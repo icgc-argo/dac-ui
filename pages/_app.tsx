@@ -39,7 +39,7 @@ const App = ({
 }) => {
   const [initialJwt, setInitialJwt] = useState<string>('');
 
-  const { res, query } = ctx;
+  const { asPath: path = '', res, query } = ctx;
   const loggingOut = query.loggingOut || false;
 
   const removeJwt = () => {
@@ -52,24 +52,29 @@ const App = ({
     if (loggingOut) {
       removeJwt();
       if (Component.isPublic) {
-        const strippedPath = queryString.exclude(ctx.asPath || '', ['loggingOut']);
+        const strippedPath = queryString.exclude(path, ['loggingOut']);
         redirect(res, strippedPath);
       } else {
         redirect(res, '/');
       }
-    } else if (egoJwt) {
+    } else {
       if (isValidJwt(egoJwt)) {
         setInitialJwt(egoJwt);
       } else {
-        removeJwt();
-        redirect(res, getRedirect(ctx.asPath));
-      }
-    } else {
-      if (!Component.isPublic) {
-        enforceLogin({ ctx });
+        if (res) {
+          removeJwt();
+          redirect(res, getRedirect(path));
+        } else {
+          const forceLogin = () => {
+            removeJwt();
+            redirect(res, getRedirect(path));
+          };
+          // TODO refresh token logic
+          forceLogin();
+        }
       }
     }
-  });
+  }, []);
 
   return (
     <Root egoJwt={initialJwt} pageContext={ctx}>
