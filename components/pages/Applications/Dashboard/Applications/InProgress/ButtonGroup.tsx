@@ -91,18 +91,16 @@ const ButtonGroup = ({ state }: { state: ApplicationState }) => (
   >
     {getButtonConfig(state).map(({ content, link, icon }) => (
       <Fragment key={link}>
-        <Link href={link}>
-          <Button className="action-btns" size="sm">
-            <span
-              css={css`
-                margin-right: 3px;
-              `}
-            >
-              {icon}
-            </span>
-            {content}
-          </Button>
-        </Link>
+        <Button className="action-btns" size="sm" onClick={(e) => router.push(link)}>
+          <span
+            css={css`
+              margin-right: 3px;
+            `}
+          >
+            {icon}
+          </span>
+          {content}
+        </Button>
       </Fragment>
     ))}
   </div>
