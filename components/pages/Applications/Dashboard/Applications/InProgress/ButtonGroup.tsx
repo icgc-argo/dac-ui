@@ -4,6 +4,7 @@ import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import Link from '@icgc-argo/uikit/Link';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
+import router from 'next/router';
 
 const icons = {
   file: <Icon fill="white" height="12px" width="9px" name="file" />,
