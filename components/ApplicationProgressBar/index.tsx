@@ -14,7 +14,7 @@ const defaultProgressItems = [
 
 enum PROGRESS_LABELS {
   DACO_REVIEW = 'DACO Review',
-  DRAFT = 'DRAFT',
+  DRAFT = 'Draft',
   SIGN_AND_SUBMIT = 'Sign & Submit',
   APPROVED = 'Approved',
   REJECTED = 'Rejected',
