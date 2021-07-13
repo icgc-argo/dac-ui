@@ -20,7 +20,7 @@ import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import Select from '@icgc-argo/uikit/form/Select';
 import { honorificsList } from './constants';
 import DoubleFieldRow from './DoubleFieldRow';
-import { isRequired, useLocalValidation } from './validations';
+import { isRequired } from './validations';
 import { transformToSelectOptions } from './validations/helpers';
 import RadioCheckboxGroup from '@icgc-argo/uikit/form/RadioCheckboxGroup';
 import FormRadio from '@icgc-argo/uikit/form/FormRadio';
@@ -46,7 +46,7 @@ const Actions = ({ state }: { state: ApplicationState }) => {
   );
 };
 
-const makeColumns = ({ state }: { state: ApplicationState }) => ([
+const makeColumns = ({ state }: { state: ApplicationState }) => [
   {
     Header: 'Collaborator Type',
     accessor: 'positionTitle',
@@ -76,7 +76,7 @@ const makeColumns = ({ state }: { state: ApplicationState }) => ([
     width: 90,
     Cell: () => <Actions state={state} />,
   },
-]);
+];
 
 const mockCollaborators = [
   {
@@ -411,7 +411,7 @@ const Collaborators = ({
                   </FormControl>
                 </DoubleFieldRow>
 
-                <DoubleFieldRow helpText="The legal entity responsible for this application.">
+                <DoubleFieldRow helpText="This must match the applicant’s primary affiliation exactly.">
                   <FormControl
                     error={!!localState.info_primaryAffiliation?.error}
                     required={isRequired(localState.info_primaryAffiliation)}
@@ -433,7 +433,7 @@ const Collaborators = ({
                   </FormControl>
                 </DoubleFieldRow>
 
-                <DoubleFieldRow helpText="Must be the institutional email address of the Principal Investigator.">
+                <DoubleFieldRow helpText="Must be the institutional email address of the Collaborator.">
                   <FormControl
                     error={!!localState.info_institutionEmail?.error}
                     required={isRequired(localState.info_institutionEmail)}
@@ -455,7 +455,7 @@ const Collaborators = ({
                   </FormControl>
                 </DoubleFieldRow>
 
-                <DoubleFieldRow helpText="Must be the Gmail or G Suite email address of the Principal Investigator.">
+                <DoubleFieldRow helpText="Must be the Gmail or G Suite email address of the Collaborator.">
                   <FormControl
                     error={!!localState.info_googleEmail?.error}
                     required={isRequired(localState.info_googleEmail)}
@@ -477,49 +477,30 @@ const Collaborators = ({
                   </FormControl>
                 </DoubleFieldRow>
                 <DoubleFieldRow>
-                  {collaboratorType === CollaboratorType.PERSONNEL ? (
-                    <FormControl
-                      error={!!localState.info_positionTitle?.error}
-                      required={isRequired(localState.info_positionTitle)}
-                    >
-                      <InputLabel htmlFor="info_positionTitle">Position Title</InputLabel>
+                  <FormControl
+                    error={!!localState.info_positionTitle?.error}
+                    required={isRequired(localState.info_positionTitle)}
+                  >
+                    <InputLabel htmlFor="info_positionTitle">
+                      {collaboratorType === CollaboratorType.STUDENT
+                        ? 'Pursuing Degree'
+                        : 'Position Title'}
+                    </InputLabel>
 
-                      <Input
-                        aria-label="Position Title"
-                        disabled={isSectionDisabled}
-                        id="info_positionTitle"
-                        onBlur={validateFieldTouched}
-                        onChange={validateFieldTouched}
-                        value={localState.info_positionTitle?.value}
-                        placeholder="e.g. Bioinformatician"
-                      />
+                    <Input
+                      aria-label="Position Title"
+                      disabled={isSectionDisabled}
+                      id="info_positionTitle"
+                      onBlur={validateFieldTouched}
+                      onChange={validateFieldTouched}
+                      value={localState.info_positionTitle?.value}
+                      placeholder="e.g. Bioinformatician"
+                    />
 
-                      <FormHelperText onErrorOnly>
-                        {localState.info_positionTitle?.error?.[0]}
-                      </FormHelperText>
-                    </FormControl>
-                  ) : collaboratorType === CollaboratorType.STUDENT ? (
-                    <FormControl
-                      error={!!localState.info_pursuingDegree?.error}
-                      required={isRequired(localState.info_pursuingDegree)}
-                    >
-                      <InputLabel htmlFor="info_pursuingDegree">Pursuing Degree</InputLabel>
-
-                      <Input
-                        aria-label="Pursuing Degree"
-                        disabled={isSectionDisabled}
-                        id="info_pursuingDegree"
-                        onBlur={validateFieldTouched}
-                        onChange={validateFieldTouched}
-                        value={localState.info_pursuingDegree?.value}
-                        placeholder="e.g. Doctoral"
-                      />
-
-                      <FormHelperText onErrorOnly>
-                        {localState.info_pursuingDegree?.error?.[0]}
-                      </FormHelperText>
-                    </FormControl>
-                  ) : null}
+                    <FormHelperText onErrorOnly>
+                      {localState.info_positionTitle?.error?.[0]}
+                    </FormHelperText>
+                  </FormControl>
                   <div />
                 </DoubleFieldRow>
               </section>
