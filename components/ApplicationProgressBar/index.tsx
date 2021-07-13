@@ -12,51 +12,61 @@ const defaultProgressItems = [
   { label: 'Daco Review', state: 'disabled', completed: false },
 ];
 
+enum PROGRESS_LABELS {
+  DACO_REVIEW = 'DACO Review',
+  DRAFT = 'Draft',
+  SIGN_AND_SUBMIT = 'Sign & Submit',
+  APPROVED = 'Approved',
+  REJECTED = 'Rejected',
+  CLOSED = 'Closed',
+  REVISIONS_NEEDED = 'Revisions Needed',
+}
+
 const progressStates: ProgressStates = {
   [ApplicationState.DRAFT]: [
-    { label: 'Draft', state: 'pending', completed: true },
-    { label: 'Sign & Submit', state: 'disabled', completed: false },
-    { label: 'Daco Review', state: 'disabled', completed: false },
+    { label: PROGRESS_LABELS.DRAFT, state: 'pending', completed: true },
+    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'disabled', completed: false },
+    { label: PROGRESS_LABELS.DACO_REVIEW, state: 'disabled', completed: false },
   ],
   [ApplicationState.SIGN_AND_SUBMIT]: [
-    { label: 'Draft', state: 'success', completed: true },
-    { label: 'Sign & Submit', state: 'pending', completed: true },
-    { label: 'Daco Review', state: 'disabled', completed: false },
+    { label: PROGRESS_LABELS.DRAFT, state: 'success', completed: true },
+    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'pending', completed: true },
+    { label: PROGRESS_LABELS.DACO_REVIEW, state: 'disabled', completed: false },
   ],
   [ApplicationState.REVIEW]: [
-    { label: 'Draft', state: 'success', completed: true },
-    { label: 'Sign & Submit', state: 'success', completed: true },
-    { label: 'Daco Review', state: 'pending', completed: true },
+    { label: PROGRESS_LABELS.DRAFT, state: 'success', completed: true },
+    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'success', completed: true },
+    { label: PROGRESS_LABELS.DACO_REVIEW, state: 'pending', completed: true },
   ],
   [ApplicationState.APPROVED]: [
-    { label: 'Draft', state: 'success', completed: true },
-    { label: 'Sign & Submit', state: 'success', completed: true },
-    { label: 'Approved', state: 'success', completed: true },
+    { label: PROGRESS_LABELS.DRAFT, state: 'success', completed: true },
+    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'success', completed: true },
+    { label: PROGRESS_LABELS.APPROVED, state: 'success', completed: true },
   ],
   [ApplicationState.REVISIONS_REQUESTED]: [
-    { label: 'Revisions Needed', state: 'pending', completed: true },
-    { label: 'Sign & Submit', state: 'disabled', completed: false },
-    { label: 'Daco Review', state: 'disabled', completed: false },
+    { label: PROGRESS_LABELS.REVISIONS_NEEDED, state: 'pending', completed: true },
+    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'disabled', completed: false },
+    { label: PROGRESS_LABELS.DACO_REVIEW, state: 'disabled', completed: false },
   ],
   [ApplicationState.REJECTED]: [
-    { label: 'Draft', state: 'success', completed: true },
-    { label: 'Sign & Submit', state: 'success', completed: true },
-    { label: 'Rejected', state: 'closed', completed: true },
+    { label: PROGRESS_LABELS.DRAFT, state: 'success', completed: true },
+    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'success', completed: true },
+    { label: PROGRESS_LABELS.REJECTED, state: 'closed', completed: true },
   ],
   [ApplicationState.CLOSED]: [
-    { label: 'Draft', state: 'closed', completed: true },
-    { label: 'Sign & Submit', state: 'closed', completed: true },
-    { label: 'Closed', state: 'closed', completed: true },
+    { label: PROGRESS_LABELS.DRAFT, state: 'closed', completed: true },
+    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'closed', completed: true },
+    { label: PROGRESS_LABELS.CLOSED, state: 'closed', completed: true },
   ],
   [ApplicationState.EXPIRED]: [
-    { label: 'Draft', state: 'locked', completed: true },
-    { label: 'Sign & Submit', state: 'closed', completed: true },
-    { label: 'Closed', state: 'closed', completed: true },
+    { label: PROGRESS_LABELS.DRAFT, state: 'locked', completed: true },
+    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'closed', completed: true },
+    { label: PROGRESS_LABELS.CLOSED, state: 'closed', completed: true },
   ],
   [ApplicationState.RENEWING]: [
-    { label: 'Draft', state: 'closed', completed: true },
-    { label: 'Sign & Submit', state: 'closed', completed: true },
-    { label: 'Closed', state: 'closed', completed: true },
+    { label: PROGRESS_LABELS.DRAFT, state: 'closed', completed: true },
+    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'closed', completed: true },
+    { label: PROGRESS_LABELS.CLOSED, state: 'closed', completed: true },
   ],
 };
 
