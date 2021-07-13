@@ -1,9 +1,9 @@
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { format as formatDate } from 'date-fns';
-import { SIMPLE_DATE_FORMAT } from './constants';
+import { DATE_TEXT_FORMAT } from 'global/constants';
 
 export const getStatusText = (state: ApplicationState, date: string | number | Date) => {
-  const formattedDate = date ? formatDate(new Date(date), SIMPLE_DATE_FORMAT) : '';
+  const formattedDate = date ? formatDate(new Date(date), DATE_TEXT_FORMAT) : '';
 
   switch (state) {
     case ApplicationState.APPROVED:

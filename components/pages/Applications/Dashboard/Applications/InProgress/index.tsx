@@ -3,10 +3,11 @@ import DashboardCard from '../../Card';
 import { css } from '@emotion/core';
 import Typography from '@icgc-argo/uikit/Typography';
 import ProgressBar from '../../../../../ApplicationProgressBar';
-import { SIMPLE_DATE_FORMAT, TIME_AND_DATE_FORMAT } from './constants';
+import { TIME_AND_DATE_FORMAT } from './constants';
 import { getFormattedDate, getStatusText } from './helpers';
 import ButtonGroup from './ButtonGroup';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
+import { DATE_TEXT_FORMAT } from 'global/constants';
 
 const initState = {
   appId: '1',
@@ -20,7 +21,7 @@ const InProgress = ({ application }: { application: any }) => {
   const { appId, submitterId: primaryAffiliation, state, expiresAtUtc, updatedAtUtc } = initState;
 
   const expiryDate = expiresAtUtc
-    ? `Access Expiry: ${getFormattedDate(expiresAtUtc, SIMPLE_DATE_FORMAT)}`
+    ? `Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`
     : '';
 
   return (
