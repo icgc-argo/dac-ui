@@ -40,10 +40,14 @@ const InProgress = ({ application }: { application: any }) => {
           variant="data"
           as="div"
           css={css`
-            margin-top: 18px;
+            margin-top: 28px;
           `}
         >
-          <div>
+          <div
+            css={css`
+              margin-bottom: 5px;
+            `}
+          >
             <b>Status:</b> {getStatusText(state as ApplicationState, expiresAtUtc)}
           </div>
           <div>
