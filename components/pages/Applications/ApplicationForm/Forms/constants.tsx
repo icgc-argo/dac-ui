@@ -13,6 +13,7 @@ const ITAgreements = dynamic(() => import('./ITAgreements'), { loading: Loader }
 const Representative = dynamic(() => import('./Representative'), { loading: Loader });
 const ProjectInfo = dynamic(() => import('./ProjectInfo'), { loading: Loader });
 const Terms = dynamic(() => import('./Terms'), { loading: Loader });
+const Signature = dynamic(() => import('./Signature'), { loading: Loader });
 
 export const sectionsData = {
   appendices: { component: Appendices, description: 'H. Appendices' },
@@ -27,6 +28,7 @@ export const sectionsData = {
   projectInfo: { component: ProjectInfo, description: 'D. Project Information' },
   representative: { component: Representative, description: 'B. Institutional Representative' },
   signature: {
+    component: Signature,
     description: 'Sign & Submit',
     tooltips: {
       disabled: 'All required fields must be filled out before submitting the application.',
