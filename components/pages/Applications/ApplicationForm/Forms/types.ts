@@ -278,3 +278,9 @@ export type FormSectionValidatorFunction_Main = (
   dispatch: Dispatch<Partial<FormValidationAction>>,
   apiFetcher: AuthAPIFetchFunction,
 ) => FormSectionValidatorFunction_Origin;
+
+
+export enum UPLOAD_TYPES {
+  SIGNED_APP = 'SIGNED_APP',
+  ETHICS = 'ETHICS',
+}
