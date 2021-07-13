@@ -283,7 +283,7 @@ const Collaborators = ({
                   <RadioCheckboxGroup
                     id="info_collaboratorType"
                     aria-label="Collaborator Type"
-                    isChecked={false}
+                    isChecked={(item) => collaboratorType === item}
                     onChange={(type) => setCollaboratorType(type)}
                     css={css`
                       display: flex;
