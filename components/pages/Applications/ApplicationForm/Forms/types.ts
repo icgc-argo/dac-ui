@@ -280,7 +280,6 @@ export type FormSectionValidatorFunction_Main = (
 ) => FormSectionValidatorFunction_Origin;
 
 
-
 export enum UPLOAD_TYPES {
   SIGNED_APP = 'SIGNED_APP',
   ETHICS = 'ETHICS',

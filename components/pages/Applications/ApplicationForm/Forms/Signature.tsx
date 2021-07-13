@@ -5,17 +5,16 @@ import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
-import React, { ReactElement, useCallback, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import FormFieldHelpBubble from './FormFieldHelpBubble';
 import { RequiredStar } from './RequiredFieldsMessage';
 import { styled } from '@icgc-argo/uikit';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import { UPLOAD_TYPES } from './types';
 import { UPLOAD_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
 import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
 import { API } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
-import { AuthAPIFetchFunction } from '../../types';
 
 const FormControl = styled(Control)`
   display: flex;
@@ -136,7 +135,6 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
               </div>
             </li>
             <li>
-              {' '}
               On the last page of the application pdf you will find a signatures page.{' '}
               <b>
                 You must include BOTH the Principal Investigator and the Institutional
