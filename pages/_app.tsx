@@ -99,8 +99,15 @@ App.getInitialProps = async ({ ctx, Component }: AppContext & { Component: PageW
 
   console.log('🏠', { ctx, pageProps })
 
+  const path = ctx.asPath || '';
+
   // intercept redirects from ego to /logged-in
-  // const isLoginRedirect = ctx.asPath?.startsWith('/logged-in%3Fredirect');
+
+  // /logged-in%3Fredirect%3D%252Fapplications%252FDACO-60%253Fsection%253Dapplicant 
+  const isLoginRedirect = path.startsWith('/logged-in%3Fredirect%3D');
+  const decodePath = isLoginRedirect ? queryString.parseUrl(path) : null;
+  console.log({ decodePath })
+
 
   // if redirect, 
 

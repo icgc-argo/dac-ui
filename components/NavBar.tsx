@@ -127,13 +127,14 @@ const LoginButton = () => {
 
   useEffect(() => {
     const redirectPath = router.query?.redirect || '';
+    const redirectString = typeof redirectPath === 'string' ? redirectPath : redirectPath[0];
     const redirect_uri = urlJoin(
       location.origin,
-      `${LOGGED_IN_PATH}%3Fredirect%3D${redirectPath}`
+      `${LOGGED_IN_PATH}%3Fredirect%3D${encodeURIComponent(redirectString)}`
     );
     const egoUrl = urlJoin(
       egoLoginUrl.href,
-      redirectPath ? `&redirect_uri=${redirect_uri}` : ''
+      redirectString ? `&redirect_uri=${redirect_uri}` : ''
     );
     setLoginUrl(egoUrl);
     console.log('🗺 redirect_uri', redirect_uri);
