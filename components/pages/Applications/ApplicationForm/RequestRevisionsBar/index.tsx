@@ -28,6 +28,7 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
       {isRequestRevisionsModalVisible && (
         <ModalPortal>
           <RequestRevisionsModal
+            appId={appId}
             dismissModal={() => setRequestRevisionsModalVisible(false)}
           />
         </ModalPortal>
