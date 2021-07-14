@@ -1,4 +1,4 @@
-import { createRef, useState } from 'react';
+import { createRef, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import urlJoin from 'url-join';
 import AppBar, {
@@ -22,7 +22,7 @@ import {
   HELP_PAGE,
   POLICIES_PAGE,
 } from 'global/constants/externalPaths';
-import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
+import { APPLICATIONS_PATH, LOGGED_IN_PATH } from 'global/constants/internalPaths';
 import { getConfig } from 'global/config';
 import { useAuthContext } from 'global/hooks';
 import { UserWithId } from 'global/types';
@@ -123,27 +123,26 @@ const LoginButton = () => {
   const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
   const egoLoginUrl = new URL(urlJoin(NEXT_PUBLIC_EGO_API_ROOT, 'oauth/login/google'));
   egoLoginUrl.searchParams.append('client_id', NEXT_PUBLIC_EGO_CLIENT_ID);
+  const [loginUrl, setLoginUrl] = useState<string>(egoLoginUrl.href);
 
-  // TODO: if loggingOut, get redirect param
-  // and attach it here.
-
-  const path = router.asPath === '/' ? '/applications/DACO-59/?section=terms' : router.asPath || '';
-  const redirect_uri = urlJoin(
-    'http://localhost:3000',
-    // `logged-in${encodeURIComponent(`?redirect=${encodeURIComponent(path)}`)}`
-    // `logged-in%3Fredirect%3D${encodeURIComponent(path)}`
-    `logged-in%3Fredirect%3D${encodeURIComponent(path)}`
-    // `logged-in`
-  );
-  const egoUrl = urlJoin(
-    egoLoginUrl.href,
-    `?client_id=${NEXT_PUBLIC_EGO_CLIENT_ID}`,
-    path === '/' ? '' : `&redirect_uri=${redirect_uri}`
-  );
+  useEffect(() => {
+    const redirectPath = router.query?.redirect || '';
+    const redirect_uri = urlJoin(
+      location.origin,
+      `${LOGGED_IN_PATH}%3Fredirect%3D${redirectPath}`
+    );
+    const egoUrl = urlJoin(
+      egoLoginUrl.href,
+      redirectPath ? `&redirect_uri=${redirect_uri}` : ''
+    );
+    setLoginUrl(egoUrl);
+    console.log('🗺 redirect_uri', redirect_uri);
+    console.log('🗺 egoUrl', egoUrl);
+  }, [router.asPath]);
 
   return (
     <Button
-      onClick={() => router.push(egoUrl)}
+      onClick={() => router.push(loginUrl)}
       css={(theme: UikitTheme) =>
         css`
           background-color: ${theme.colors.accent2};

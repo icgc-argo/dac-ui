@@ -30,10 +30,10 @@ const App = ({
     // only handle getting/removing token here.
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
     if (isValidJwt(egoJwt)) {
-      console.log('APP: valid JWT');
+      console.log('🏠 valid JWT ✅');
       setInitialJwt(egoJwt);
     } else {
-      console.log('APP: invalid JWT');
+      console.log('🏠 invalid JWT ❌');
       setInitialJwt('');
       localStorage.removeItem(EGO_JWT_KEY);
     }
@@ -61,7 +61,7 @@ const App = ({
 
 
     if (typeof initialJwt !== 'undefined') {
-      console.log('APP: JWT updated');
+      console.log('🏠 JWT updated ⬆️');
       // if (!initialJwt) {
       //   Router.push(egoUrl)
       // }
@@ -70,6 +70,11 @@ const App = ({
       if (!initialJwt && !Component.isPublic) {
         console.log('APP: private page, no auth')
         // TODO: redirect to /?loggingOut=true&redirect=URL
+        const loggingOutPath = `/?loggingOut=true${!ctx.asPath || ctx.asPath === '/'
+          ? ''
+          : `&redirect=${encodeURIComponent(encodeURIComponent(ctx.asPath))}`
+          }`;
+        Router.push(loggingOutPath);
       }
     }
   }, [initialJwt]);
@@ -91,6 +96,14 @@ const App = ({
 
 App.getInitialProps = async ({ ctx, Component }: AppContext & { Component: PageWithConfig }) => {
   const pageProps = await Component.getInitialProps({ ...ctx });
+
+  console.log('🏠', { ctx, pageProps })
+
+  // intercept redirects from ego to /logged-in
+  // const isLoginRedirect = ctx.asPath?.startsWith('/logged-in%3Fredirect');
+
+  // if redirect, 
+
   return {
     ctx: {
       pathname: ctx.pathname,

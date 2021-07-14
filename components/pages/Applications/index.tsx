@@ -18,6 +18,7 @@ type QueryType = {
 };
 
 const Application = (): ReactElement => {
+  console.log('📝 application page')
   const {
     query: { ID: [appId = ''] = [] },
   }: QueryType = useRouter();

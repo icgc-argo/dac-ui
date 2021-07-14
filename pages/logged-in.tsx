@@ -74,6 +74,7 @@ const LoginLoaderPage = createPage({
 })(() => {
   // can i get the initial props above somehow?
   const router = useRouter();
+  console.log('🔑 LOGIN', router.query)
   const { redirect = '' } = router.query;
   const redirectPage = (typeof redirect === 'string' ? redirect : redirect[0]) ||
     APPLICATIONS_PATH;
