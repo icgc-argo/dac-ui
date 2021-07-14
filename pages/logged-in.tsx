@@ -67,7 +67,7 @@ const fetchEgoToken = (redirectPage: string) => {
 const LoginLoaderPage = createPage({
   getInitialProps: async (ctx) => {
     const { egoJwt, asPath, query } = ctx;
-    console.log('login', ctx)
+    console.log('🔑 LOGIN', ctx)
     return { egoJwt, query, asPath };
   },
   isPublic: true,
