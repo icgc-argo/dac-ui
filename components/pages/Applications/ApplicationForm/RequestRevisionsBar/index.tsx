@@ -21,6 +21,7 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
   const { primaryAffiliation } = data.sections.applicant.info;
 
   const buttonsDisabled = ['APPROVED'].includes(state);
+  const buttonsHidden = ['REVISIONS REQUESTED'].includes(state);
 
   return (
     <>
@@ -64,7 +65,7 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
           `}
         >
           <div>
-            Expiry placeholder
+            {/* Expiry placeholder */}
           </div>
           <div css={css`
             display: flex;
@@ -75,57 +76,61 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
               }
             }
           `}>
-            <Button
-              disabled={buttonsDisabled}
-              onClick={() => {
-                setApproveModalVisible(true);
-              }}
-              size="sm"
-            >
-              <span css={instructionBoxButtonContentStyle}>
-                <Icon
-                  css={css`
-                    margin-right: 1px;
-                    margin-left: -4px;
-                  `}
-                  fill={theme.colors.white}
-                  height="12px"
-                  name="checkmark"
-                />
-                Approve
-              </span>
-            </Button>
-            <Button
-              disabled={buttonsDisabled}
-              onClick={() => {
-                setRequestRevisionsModalVisible(true);
-              }}
-              size="sm"
-            >
-              <span css={instructionBoxButtonContentStyle}>
-                <Icon
-                  css={instructionBoxButtonIconStyle}
-                  fill={theme.colors.white}
-                  height="9px"
-                  name="edit"
-                />
-                Request Revisions
-              </span>
-            </Button>
-            <Button
-              disabled={buttonsDisabled}
-              size="sm"
-            >
-              <span css={instructionBoxButtonContentStyle}>
-                <Icon
-                  css={instructionBoxButtonIconStyle}
-                  fill={theme.colors.white}
-                  height="10px"
-                  name="times"
-                />
-                Reject
-              </span>
-            </Button>
+            {!buttonsHidden && (
+              <>
+                <Button
+                  disabled={buttonsDisabled}
+                  onClick={() => {
+                    setApproveModalVisible(true);
+                  }}
+                  size="sm"
+                >
+                  <span css={instructionBoxButtonContentStyle}>
+                    <Icon
+                      css={css`
+                        margin-right: 1px;
+                        margin-left: -4px;
+                      `}
+                      fill={theme.colors.white}
+                      height="12px"
+                      name="checkmark"
+                    />
+                    Approve
+                  </span>
+                </Button>
+                <Button
+                  disabled={buttonsDisabled}
+                  onClick={() => {
+                    setRequestRevisionsModalVisible(true);
+                  }}
+                  size="sm"
+                >
+                  <span css={instructionBoxButtonContentStyle}>
+                    <Icon
+                      css={instructionBoxButtonIconStyle}
+                      fill={theme.colors.white}
+                      height="9px"
+                      name="edit"
+                    />
+                    Request Revisions
+                  </span>
+                </Button>
+                <Button
+                  disabled={buttonsDisabled}
+                  size="sm"
+                >
+                  <span css={instructionBoxButtonContentStyle}>
+                    <Icon
+                      css={instructionBoxButtonIconStyle}
+                      fill={theme.colors.white}
+                      height="10px"
+                      name="times"
+                    />
+                    Reject
+                  </span>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </ContentHeader>
