@@ -226,6 +226,7 @@ interface FormValidationState_Base {
   state?: string; // called `state` in BE, but that complicates things in FE
   submittedAtUtc?: string;
   submitterId?: string;
+  __refetchAllData: (action?: Partial<FormValidationAction>) => void;
   __seeded: boolean;
   __v: number;
 }
@@ -250,14 +251,14 @@ export type FormFieldDataFromEvent = (event: ChangeEvent<HTMLInputElement>) =>
   | {
       eventType: string;
       field: string;
-      fieldType: 'multiselect';
+      fieldType: 'file' | 'multiselect';
       value: any[];
     }
   | {
       eventType?: string;
       field?: string;
       fieldType?: string;
-      value?: string;
+      value?: any;
     };
 
 export type FormFieldValidationTriggerFunction = (event: any) => Promise<void>;
@@ -277,7 +278,6 @@ export type FormSectionValidatorFunction_Main = (
   dispatch: Dispatch<Partial<FormValidationAction>>,
   apiFetcher: AuthAPIFetchFunction,
 ) => FormSectionValidatorFunction_Origin;
-
 
 export enum UPLOAD_TYPES {
   SIGNED_APP = 'SIGNED_APP',

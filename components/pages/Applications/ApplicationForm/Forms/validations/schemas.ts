@@ -119,11 +119,20 @@ export const dataAccessAgreementSchema = yup.object().shape({
 
 export const ethicsLetterSchema = yup.object().shape({
   declaredAsRequired: yup.boolean().required(),
-  approvalLetterDocs: yup.array().when('declaredAsRequired', {
-    is: true, // alternatively: (val) => val == true
-    then: yup.array().min(1),
-    otherwise: yup.array().max(0),
-  }),
+  approvalLetterDocs: yup
+    .array(
+      yup.object().shape({
+        name: yup.string(),
+        objectId: yup.string(),
+        uploadedAtUtc: yup.string(),
+      }),
+    )
+    .when('declaredAsRequired', {
+      is: true, // alternatively: (val) => val == true
+      then: yup.array().min(1),
+      otherwise: yup.array().max(0),
+    })
+    .required(),
 });
 
 export const itAgreementsSchema = yup.object().shape({
@@ -160,6 +169,7 @@ export const projectInfoSchema = yup.object().shape({
         )
         .required(),
     )
+    .meta({ shape: 'publicationURLsArray', filler: '', type: 'string' })
     .test(uniquePublicationURLs)
     .min(3),
   summary: yup.string().default('').test(maxWords(200)).required(),

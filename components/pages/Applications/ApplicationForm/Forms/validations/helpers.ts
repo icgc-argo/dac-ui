@@ -90,21 +90,24 @@ export const schemaValidator = (fieldSchema: any, value: any) =>
 const getSeedValueByFieldType = (fieldType: string, fieldBase: any, seedValue: any) => {
   switch (fieldType) {
     case 'array': {
+      const isPublicationURLsArray = fieldBase.meta?.shape === 'publicationURLsArray';
       // Ensure starting with an array that satisfies a minimum number of fields,
       // as they'll be PATCHed together, in order to avoid order bugs
       const valueFiller = fieldBase.innerType?.type === 'string' ? '' : null;
       const baseArray = Array.from({ length: getMin(fieldBase) }, () => ({ value: valueFiller }));
 
       const seedObj = {
-        value: seedValue.reduce(
-          (acc: Record<number, any>, value: unknown, index: number) => ({
-            ...acc,
-            [index]: {
-              value: value ?? valueFiller,
-            },
-          }),
-          baseArray,
-        ),
+        value: isPublicationURLsArray
+          ? seedValue.reduce(
+              (acc: Record<number, any>, value: unknown, index: number) => ({
+                ...acc,
+                [index]: {
+                  value: value ?? valueFiller,
+                },
+              }),
+              baseArray,
+            )
+          : seedValue,
       };
 
       return seedObj;

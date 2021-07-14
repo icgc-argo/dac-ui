@@ -1,6 +1,5 @@
-import { ReactElement, useCallback, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { css } from '@emotion/core';
-import Banner, { BANNER_VARIANTS } from '@icgc-argo/uikit/notifications/Banner';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 import FormRadio from '@icgc-argo/uikit/form/FormRadio';
@@ -9,23 +8,26 @@ import Link from '@icgc-argo/uikit/Link';
 import RadioCheckboxGroup from '@icgc-argo/uikit/form/RadioCheckboxGroup';
 import Typography from '@icgc-argo/uikit/Typography';
 
-import DoubleFieldRow from './DoubleFieldRow';
-import FormFieldHelpBubble from './FormFieldHelpBubble';
+import StaticEthics from 'components/pages/Applications/PDF/StaticEthics';
+import FORM_TEXT from 'components/pages/Applications/PDF/textConstants';
+
 import {
   FormFieldValidationTriggerFunction,
   FormSectionValidationState_EthicsLetter,
-} from './types';
-import { isRequired } from './validations';
-import StaticEthics from '../../PDF/StaticEthics';
-import FORM_TEXT from '../../PDF/textConstants';
+  FormValidationAction,
+} from '../types';
+import { isRequired } from '../validations';
+import UploadsTable from './UploadsTable';
 
 const EthicsLetter = ({
   isSectionDisabled,
   localState,
+  refetchAllData,
   validateFieldTouched,
 }: {
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_EthicsLetter;
+  refetchAllData: (action: Partial<FormValidationAction>) => void;
   validateFieldTouched: FormFieldValidationTriggerFunction;
 }): ReactElement => {
   const [selectedRadioValue, setSelectedRadioValue] = useState(
@@ -100,35 +102,12 @@ const EthicsLetter = ({
         </FormControl>
 
         {selectedRadioValue && (
-          <>
-            {/* <DoubleFieldRow helpText="Allowed file types: pdf, doc, docx. | Max file size: 200MB"> */}
-            <DoubleFieldRow>
-              <FormControl
-                className="vertical"
-                required={isRequired(localState.approvalLetterDocs)}
-              >
-                <InputLabel htmlFor="approvalLetterDocs">
-                  Please attach an ethics approval letter to this application:
-                </InputLabel>
-              </FormControl>
-
-              <FormFieldHelpBubble
-                css={css`
-                  margin: 0 !important;
-                `}
-                tail="left"
-                text="Allowed file types: pdf, doc, docx. | Max file size: 200MB"
-              />
-            </DoubleFieldRow>
-
-            <Typography>
-              If the ethics approval is written in a language other than English,{' '}
-              <Typography as="span" bold>
-                please upload a version translated to English
-              </Typography>
-              .
-            </Typography>
-          </>
+          <UploadsTable
+            isSectionDisabled={isSectionDisabled}
+            localState={localState}
+            refetchAllData={refetchAllData}
+            required={isRequired(localState.approvalLetterDocs)}
+          />
         )}
       </section>
     </article>

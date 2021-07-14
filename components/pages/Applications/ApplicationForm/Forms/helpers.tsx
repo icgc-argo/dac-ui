@@ -57,6 +57,7 @@ export const sectionSelector = ({
     <SectionComponent
       isSectionDisabled={isSectionDisabled}
       localState={localState}
+      refetchAllData={formState.__refetchAllData}
       state={formState.state}
       validateFieldTouched={validateFieldTouched}
       appId={appId}

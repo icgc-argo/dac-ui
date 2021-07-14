@@ -1,5 +1,6 @@
 import { Dispatch, useCallback, useEffect, useReducer, useState } from 'react';
-import { isEqual, merge, omit } from 'lodash';
+import { isEqual, omit } from 'lodash';
+import merge from 'deepmerge';
 
 import { AuthAPIFetchFunction } from 'components/pages/Applications/types';
 import { API } from 'global/constants';
@@ -9,7 +10,6 @@ import { sectionsOrder, sectionStatusMapping } from '../constants';
 import {
   FormFieldType,
   FormSectionNames,
-  FormSectionValidationState_SectionBase,
   FormSectionValidationState_Sections,
   FormFieldValidationTriggerFunction,
   FormFieldValidatorFunction,
@@ -275,6 +275,7 @@ export const validator: FormSectionValidatorFunction_Main =
   };
 
 export const useFormValidation = (appId: string) => {
+  const [triggerFetch, setTriggerFetch] = useState(true);
   const { fetchWithAuth, isLoading } = useAuthContext();
   const apiFetcher: AuthAPIFetchFunction = useCallback(
     ({ data, method } = {}) =>
@@ -303,6 +304,9 @@ export const useFormValidation = (appId: string) => {
           {},
         ),
       },
+      __refetchAllData: (action: FormValidationAction) => {
+        action ? validationDispatch(action) : setTriggerFetch(true);
+      },
       __seeded: false,
       __v: 0,
     } as FormValidationStateParameters);
@@ -310,20 +314,22 @@ export const useFormValidation = (appId: string) => {
   const validateSection = validator(formState, validationDispatch, apiFetcher);
 
   useEffect(() => {
-    apiFetcher()
-      .then(({ data, ...response }: { data?: Record<string, any> } = {}) =>
-        data
-          ? validationDispatch({
-              type: 'seeding',
-              value: data,
-            })
-          : console.error('Something went wrong seeding the application form', response),
-      )
-      .catch((error: Error) => {
-        // TODO dev logging, errors should not be shown to user
-        console.error(error);
-      });
-  }, [appId]);
+    triggerFetch &&
+      apiFetcher()
+        .then(({ data, ...response }: { data?: Record<string, any> } = {}) =>
+          data
+            ? validationDispatch({
+                type: 'seeding',
+                value: data,
+              })
+            : console.error('Something went wrong seeding the application form', response),
+        )
+        .catch((error: Error) => {
+          // TODO dev logging, errors should not be shown to user
+          console.error(error);
+        })
+        .finally(() => setTriggerFetch(false));
+  }, [appId, triggerFetch]);
 
   return {
     isLoading,
@@ -358,7 +364,13 @@ export const useLocalValidation = (
         ...prev,
         [sectionName]: {
           ...prev[sectionName],
-          fields: merge(currentFields, storedFields),
+          fields: merge(currentFields, storedFields, {
+            customMerge: (key) => {
+              if (key === 'value') {
+                return (oldValue, newValue) => newValue;
+              }
+            },
+          }),
         },
       }));
     }
