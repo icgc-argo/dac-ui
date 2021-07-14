@@ -4,9 +4,19 @@ import PageHeader from 'components/PageHeader';
 import { Container, Row } from 'react-grid-system';
 import Applications from './Applications';
 import AccessBox from './AccessBox';
+import Loader from 'components/Loader';
+import { useGetApplications } from 'global/hooks';
 
 const Dashboard = ({ isAdmin }: { isAdmin: boolean }) => {
-  return (
+  const { error, isLoading, response } = useGetApplications({});
+  console.log('x', error, isLoading, response);
+
+  const applications = response?.data?.items || [];
+  console.log('a', applications);
+
+  return isLoading ? (
+    <Loader />
+  ) : (
     <>
       <PageHeader>My Applications</PageHeader>
       <Container
@@ -42,7 +52,7 @@ const Dashboard = ({ isAdmin }: { isAdmin: boolean }) => {
           </div>
         </Row>
         <Row nogutter>
-          <Applications />
+          <Applications inProgressApplications={applications} />
         </Row>
       </Container>
     </>
