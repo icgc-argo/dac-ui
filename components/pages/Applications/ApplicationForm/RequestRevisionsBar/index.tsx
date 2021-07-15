@@ -21,7 +21,7 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
   const { primaryAffiliation } = data.sections.applicant.info;
 
   const buttonsDisabled = ['APPROVED'].includes(state);
-  const buttonsHidden = ['REVISIONS REQUESTED'].includes(state);
+  const buttonsVisible = !['REVISIONS REQUESTED'].includes(state);
 
   return (
     <>
@@ -77,7 +77,7 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
               }
             }
           `}>
-            {!buttonsHidden && (
+            {buttonsVisible && (
               <>
                 <Button
                   disabled={buttonsDisabled}
