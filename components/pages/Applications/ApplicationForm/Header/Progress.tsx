@@ -1,8 +1,11 @@
-import { ReactElement } from 'react';
-import { FORM_STATES } from '../Forms/types';
+import ProgressBar from 'components/ApplicationProgressBar';
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
+import React, { ReactElement } from 'react';
 
-const ApplicationProgress = ({ state }: { state: FORM_STATES }): ReactElement => (
-  <section>{state || 'progress bar here'}</section>
+const ApplicationProgress = ({ state }: { state: ApplicationState }): ReactElement => (
+  <section>
+    <ProgressBar state={state} />
+  </section>
 );
 
 export default ApplicationProgress;
