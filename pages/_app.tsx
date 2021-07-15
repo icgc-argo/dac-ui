@@ -8,11 +8,7 @@ import { EGO_JWT_KEY } from 'global/constants';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
 import Router from 'next/router';
 import DnaLoader from '@icgc-argo/uikit/DnaLoader';
-import { getConfig } from 'global/config';
-import urlJoin from 'url-join';
 import queryString from 'query-string';
-import { get } from 'lodash';
-
 
 const App = ({
   Component,
@@ -39,37 +35,18 @@ const App = ({
     }
   });
 
-
-  // PARSE
-  // const parsed = queryString.parseUrl(decodeURIComponent(props.ctx.query.redirect));
-  // return get(parsed.query, 'isOauth') === 'true';
-
   useEffect(() => {
     // handle redirects after JWT is checked.
     // setting the default as undefined prevents
     // this hook from running before JWT is checked.
 
-
-    // console.log(redirect_uri, egoLoginUrl.href)
-
-    // const parsed = queryString.parseUrl(decodeURIComponent(egoUrl));
-    // const query = get(parsed.query, 'redirect');
-
-    // console.log({ parsed, query })
-
-    // ATTEMPT 2: TRY WITH QUERY STRING
-
-
     if (typeof initialJwt !== 'undefined') {
       console.log('🏠 JWT updated ⬆️');
-      // if (!initialJwt) {
-      //   Router.push(egoUrl)
-      // }
       const decoded = decodeURIComponent(ctx.asPath || '');
       Router.push(decoded)
       if (!initialJwt && !Component.isPublic) {
         console.log('APP: private page, no auth')
-        // TODO: redirect to /?loggingOut=true&redirect=URL
+        // TODO: redirect param should be asPath with query removed.
         const loggingOutPath = `/?loggingOut=true${!ctx.asPath || ctx.asPath === '/'
           ? ''
           : `&redirect=${encodeURIComponent(encodeURIComponent(ctx.asPath))}`
@@ -78,12 +55,6 @@ const App = ({
       }
     }
   }, [initialJwt]);
-
-  // if (!initialJwt) {
-  //   return <p>boop!</p>
-  // } else {
-  //   return <p>beep!</p>
-  // }
 
   return (
     <Root egoJwt={initialJwt} pageContext={ctx}>
@@ -102,14 +73,11 @@ App.getInitialProps = async ({ ctx, Component }: AppContext & { Component: PageW
   const path = ctx.asPath || '';
 
   // intercept redirects from ego to /logged-in
+  // still causes an ugly 404/redirect experience
 
-  // /logged-in%3Fredirect%3D%252Fapplications%252FDACO-60%253Fsection%253Dapplicant 
   const isLoginRedirect = path.startsWith('/logged-in%3Fredirect%3D');
   const decodePath = isLoginRedirect ? queryString.parseUrl(path) : null;
-  console.log({ decodePath })
-
-
-  // if redirect, 
+  console.log('🏠', { decodePath })
 
   return {
     ctx: {

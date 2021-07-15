@@ -128,6 +128,7 @@ const LoginButton = () => {
   useEffect(() => {
     const redirectPath = router.query?.redirect || '';
     const redirectString = typeof redirectPath === 'string' ? redirectPath : redirectPath[0];
+    // TODO: redirect to current page instead, without the page's URL query if it has one
     const redirect_uri = urlJoin(
       location.origin,
       `${LOGGED_IN_PATH}%3Fredirect%3D${encodeURIComponent(redirectString)}`

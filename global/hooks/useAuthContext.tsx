@@ -52,7 +52,7 @@ export const AuthProvider = ({
 
   const logout = () => {
     removeToken();
-    // TODO: redirect to /?loggingOut=true&redirect=URL
+    // TODO: redirect to /?loggingOut=true&redirect=CURRENT_PATH_NO_QUERY
     router.push('/');
   };
 
