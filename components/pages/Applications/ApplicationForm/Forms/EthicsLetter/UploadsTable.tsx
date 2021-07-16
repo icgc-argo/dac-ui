@@ -140,7 +140,13 @@ const UploadsTable = ({
 
       <div
         css={css`
-          border-bottom: 1px solid ${letterError ? theme.colors.error : theme.colors.grey_2};
+          ${letterCount > 0
+            ? css`
+                margin-bottom: 30px;
+              `
+            : css`
+                border-bottom: 1px solid ${letterError ? theme.colors.error : theme.colors.grey_2};
+              `};
           border-top: 1px solid ${letterError ? theme.colors.error : theme.colors.grey_2};
           padding-top: 10px;
         `}
@@ -268,6 +274,7 @@ const UploadsTable = ({
             data={localState.approvalLetterDocs?.value}
             defaultSorted={[{ id: 'uploadedAtUtc', desc: true }]}
             parentRef={containerRef}
+            showPagination={false}
             stripped
             withOutsideBorder
           />
