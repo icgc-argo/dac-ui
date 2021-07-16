@@ -148,8 +148,13 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
                 a) You can print this page, collect the written signatures, scan the signed page and
                 add it back to the finalized application pdf. <br />
                 b) Or you can add the proper signatures using electronic methods, such as{' '}
-                <a href="https://www.docusign.ca/">DocuSign</a> or{' '}
-                <a href="https://acrobat.adobe.com/us/en/sign.html">AdobeSign.</a>
+                <a href="https://www.docusign.ca/" target="_blank">
+                  DocuSign
+                </a>{' '}
+                or{' '}
+                <a href="https://acrobat.adobe.com/us/en/sign.html" target="_blank">
+                  AdobeSign.
+                </a>
               </div>
             </li>
             <li>Upload the signed application below.</li>
