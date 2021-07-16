@@ -19,7 +19,7 @@ enum PROGRESS_LABELS {
   APPROVED = 'Approved',
   REJECTED = 'Rejected',
   CLOSED = 'Closed',
-  REVISIONS_NEEDED = 'Revisions Needed',
+  REVISIONS_REQUESTED = 'Revisions Requested',
 }
 
 const progressStates: ProgressStates = {
