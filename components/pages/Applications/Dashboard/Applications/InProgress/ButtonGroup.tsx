@@ -2,7 +2,6 @@ import { Fragment } from 'react';
 import { css } from '@emotion/core';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
-import Link from '@icgc-argo/uikit/Link';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import router from 'next/router';
 
@@ -83,15 +82,18 @@ const ButtonGroup = ({ state }: { state: ApplicationState }) => (
     css={css`
       margin-top: 35px;
       display: flex;
-
-      & .action-btns::not(::first-child) {
-        margin-right: 8px;
-      }
     `}
   >
-    {getButtonConfig(state).map(({ content, link, icon }) => (
+    {getButtonConfig(state).map(({ content, link, icon }, index) => (
       <Fragment key={link}>
-        <Button className="action-btns" size="sm" onClick={(e) => router.push(link)}>
+        <Button
+          className="action-btns"
+          size="sm"
+          onClick={() => router.push(link)}
+          css={css`
+            margin-left: ${index ? '8px !important;' : 0}
+          `}
+        >
           <span
             css={css`
               margin-right: 3px;

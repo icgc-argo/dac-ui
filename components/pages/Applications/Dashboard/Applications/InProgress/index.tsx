@@ -14,11 +14,14 @@ const initState = {
   state: ApplicationState.DRAFT,
   submitterId: 'Ontario Institute for Cancer Research',
   expiresAtUtc: '2021-06-16T18:10:13.760Z',
-  updatedAtUtc: '2021-06-16T18:10:13.760Z',
+  lastUpdatedAtUtc: '2021-06-16T18:10:13.760Z',
 };
 
 const InProgress = ({ application }: { application: any }) => {
-  const { appId, submitterId: primaryAffiliation, state, expiresAtUtc, updatedAtUtc } = initState;
+  const { appId, state, expiresAtUtc, lastUpdatedAtUtc } = application;
+  const { primaryAffiliation } = application.applicant.info;
+
+  console.log({ application })
 
   const expiryDate = expiresAtUtc
     ? `Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`
@@ -26,7 +29,7 @@ const InProgress = ({ application }: { application: any }) => {
 
   return (
     <DashboardCard
-      title={`Application: DACO-${appId}`}
+      title={`Application: ${appId}`}
       subtitle={primaryAffiliation}
       info={expiryDate}
     >
@@ -52,7 +55,7 @@ const InProgress = ({ application }: { application: any }) => {
             <b>Status:</b> {getStatusText(state as ApplicationState, expiresAtUtc)}
           </div>
           <div>
-            <b>Last Updated:</b> {getFormattedDate(updatedAtUtc, TIME_AND_DATE_FORMAT)}
+            <b>Last Updated:</b> {getFormattedDate(lastUpdatedAtUtc, TIME_AND_DATE_FORMAT)}
           </div>
         </Typography>
 

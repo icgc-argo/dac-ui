@@ -5,7 +5,7 @@ import { Container, Row } from 'react-grid-system';
 import Applications from './Applications';
 import AccessBox from './AccessBox';
 
-const Dashboard = ({ isAdmin }: { isAdmin: boolean }) => {
+const Dashboard = () => {
   return (
     <>
       <PageHeader>My Applications</PageHeader>
@@ -38,7 +38,7 @@ const Dashboard = ({ isAdmin }: { isAdmin: boolean }) => {
               Access will be granted for a <b>one year period</b>, starting from the date of
               approval by the ICGC DACO.
             </Typography>
-            <AccessBox hasAccess={isAdmin} />
+            <AccessBox />
           </div>
         </Row>
         <Row nogutter>

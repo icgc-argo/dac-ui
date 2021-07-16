@@ -291,7 +291,7 @@ const Collaborators = ({
                         flex: 1;
                       }
 
-                      > :not(:first-child) {
+                      > :not(:first-of-type) {
                         margin-left: 15px;
                       }
                     `}
