@@ -3,9 +3,9 @@ import { format as formatDate } from 'date-fns';
 import { DATE_TEXT_FORMAT } from 'global/constants';
 import { StatusDates } from '.';
 
-const formatStatusDate = (date: string) => formatDate(new Date(date), DATE_TEXT_FORMAT);
-
 export const getStatusText = (state: ApplicationState, dates: StatusDates) => {
+  const formatStatusDate = (date: string) =>
+    formatDate(new Date(date || dates.lastUpdatedAtUtc), DATE_TEXT_FORMAT);
   switch (state) {
     case ApplicationState.APPROVED:
       return `Approved on ${formatStatusDate(
