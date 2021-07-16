@@ -68,7 +68,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
 
         <ButtonGroup appId={appId} state={state as ApplicationState} />
       </div>
-    </DashboardCard >
+    </DashboardCard>
   );
 };
 
