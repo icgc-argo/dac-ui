@@ -21,8 +21,6 @@ const InProgress = ({ application }: { application: any }) => {
   const { appId, state, expiresAtUtc, lastUpdatedAtUtc } = application;
   const { primaryAffiliation } = application.applicant.info;
 
-  console.log({ application })
-
   const expiryDate = expiresAtUtc
     ? `Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`
     : '';
@@ -52,14 +50,14 @@ const InProgress = ({ application }: { application: any }) => {
               margin-bottom: 5px;
             `}
           >
-            <b>Status:</b> {getStatusText(state as ApplicationState, expiresAtUtc)}
+            <b>Status:</b> {getStatusText(state as ApplicationState, lastUpdatedAtUtc)}
           </div>
           <div>
             <b>Last Updated:</b> {getFormattedDate(lastUpdatedAtUtc, TIME_AND_DATE_FORMAT)}
           </div>
         </Typography>
 
-        <ButtonGroup state={state as ApplicationState} />
+        <ButtonGroup appId={appId} state={state as ApplicationState} />
       </div>
     </DashboardCard>
   );

@@ -19,7 +19,13 @@ const Applications = () => {
   }, [response])
 
   return isLoading
-    ? <Loader />
+    ? (
+      <div css={css`width: 100%;`}>
+        <Loader css={css`
+          margin: 24px auto;
+        `}
+        />
+      </div>)
     : error
       ? <ContentError />
       : (
@@ -33,6 +39,7 @@ const Applications = () => {
               display: grid;
               grid-gap: 24px;
               grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+              margin-bottom: 24px;
             `}
           >
             {userApplications.map((application: ApplicationsResponseItem) => (
