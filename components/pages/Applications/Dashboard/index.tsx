@@ -4,14 +4,8 @@ import PageHeader from 'components/PageHeader';
 import { Container, Row } from 'react-grid-system';
 import Applications from './Applications';
 import AccessBox from './AccessBox';
-import { useGetApplications } from 'global/hooks';
-import { ContentError } from 'components/placeholders';
-import Loader from 'components/Loader';
 
 const Dashboard = () => {
-  const { error: applicationsError, isLoading: applicationsLoading, response: applicationsResponse } = useGetApplications();
-  const applications = applicationsResponse?.data?.items || [];
-
   return (
     <>
       <PageHeader>My Applications</PageHeader>
@@ -47,19 +41,7 @@ const Dashboard = () => {
             <AccessBox />
           </div>
         </Row>
-        {applicationsLoading
-          ? (
-            <div css={css`width: 100%;`}>
-              <Loader css={css`margin: 24px auto;`} />
-            </div>
-          )
-          : applicationsError
-            ? <ContentError />
-            : (
-              <Row nogutter>
-                <Applications inProgressApplications={applications} />
-              </Row>
-            )}
+        <Applications />
       </Container>
     </>
   );
