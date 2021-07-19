@@ -75,6 +75,7 @@ const DashboardCard = ({ title, subtitle, info, children }: DashboardCardProps) 
               color: #0774d3;
               font-size: 11px;
               font-weight: bold;
+              text-align: right;
             `}
           >
             {info}

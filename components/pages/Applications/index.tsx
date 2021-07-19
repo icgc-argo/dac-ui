@@ -36,7 +36,7 @@ const Application = (): ReactElement => {
       ) : isAdmin ? (
         <ManageApplications />
       ) : (
-        <Dashboard isAdmin={isAdmin} />
+        <Dashboard />
       )}
     </DefaultPageLayout>
   );
