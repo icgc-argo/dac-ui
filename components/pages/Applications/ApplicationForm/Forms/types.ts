@@ -120,12 +120,8 @@ export type FormSectionValidationState_DataAccessAgreements =
   }>;
 export type FormSectionValidationState_EthicsLetter =
   FormSectionValidationState_SectionsGenericType<{
-    declaredAsRequired: { value: boolean };
+    declaredAsRequired: { value: boolean | null };
     approvalLetterDocs: { value: [] };
-  }>;
-export type FormSectionValidationState_Introduction =
-  FormSectionValidationState_SectionsGenericType<{
-    agreement: { value: boolean };
   }>;
 export type FormSectionValidationState_ITAgreements =
   FormSectionValidationState_SectionsGenericType<{
@@ -173,6 +169,9 @@ export type FormSectionValidationState_Representative =
   }>;
 export type FormSectionValidationState_Signature =
   FormSectionValidationState_SectionsGenericType<{}>;
+export type FormSectionValidationState_Terms = FormSectionValidationState_SectionsGenericType<{
+  agreement: { value: boolean };
+}>;
 
 export type FormSectionValidationState_Sections =
   | FormSectionValidationState_Appendices
@@ -180,11 +179,11 @@ export type FormSectionValidationState_Sections =
   | FormSectionValidationState_Collaborators
   | FormSectionValidationState_DataAccessAgreements
   | FormSectionValidationState_EthicsLetter
-  | FormSectionValidationState_Introduction
   | FormSectionValidationState_ITAgreements
   | FormSectionValidationState_ProjectInfo
   | FormSectionValidationState_Representative
-  | FormSectionValidationState_Signature;
+  | FormSectionValidationState_Signature
+  | FormSectionValidationState_Terms;
 
 export type FormSectionValidationState_SectionBase = {
   fields: Partial<FormSectionValidationState_Sections>;
@@ -227,6 +226,7 @@ interface FormValidationState_Base {
   state?: string; // called `state` in BE, but that complicates things in FE
   submittedAtUtc?: string;
   submitterId?: string;
+  __refetchAllData: (action?: Partial<FormValidationAction>) => void;
   __seeded: boolean;
   __v: number;
 }
@@ -251,14 +251,14 @@ export type FormFieldDataFromEvent = (event: ChangeEvent<HTMLInputElement>) =>
   | {
       eventType: string;
       field: string;
-      fieldType: 'multiselect';
+      fieldType: 'file' | 'multiselect';
       value: any[];
     }
   | {
       eventType?: string;
       field?: string;
       fieldType?: string;
-      value?: string;
+      value?: any;
     };
 
 export type FormFieldValidationTriggerFunction = (event: any) => Promise<void>;
@@ -278,7 +278,6 @@ export type FormSectionValidatorFunction_Main = (
   dispatch: Dispatch<Partial<FormValidationAction>>,
   apiFetcher: AuthAPIFetchFunction,
 ) => FormSectionValidatorFunction_Origin;
-
 
 export enum UPLOAD_TYPES {
   SIGNED_APP = 'SIGNED_APP',

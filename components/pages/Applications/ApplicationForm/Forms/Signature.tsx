@@ -25,13 +25,12 @@ const FormControl = styled(Control)`
 `;
 
 const VALID_FILE_TYPE = ['application/pdf'];
-const MAX_FILE_SIZE = 2097152;
+const MAX_FILE_SIZE = 5242880;
 
 const Signature = ({ appId }: { appId: string }): ReactElement => {
   const theme = useTheme();
-  const [selectedFile, setSelectedFile] = useState<
-    { name: string; uploadDate: string } | undefined
-  >(undefined);
+  const [selectedFile, setSelectedFile] =
+    useState<{ name: string; uploadDate: string } | undefined>(undefined);
 
   const { fetchWithAuth } = useAuthContext();
 
@@ -262,7 +261,7 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
                 Upload a file
               </Button>
 
-              <FormFieldHelpBubble text="Allowed file types: pdf. | Max file size: 200MB" />
+              <FormFieldHelpBubble text="Allowed file types: pdf. | Max file size: 5MB" />
             </>
           )}
         </FormControl>
