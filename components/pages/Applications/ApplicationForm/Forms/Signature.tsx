@@ -17,6 +17,7 @@ import { API } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
 import Modal from '@icgc-argo/uikit/Modal';
 import { ModalPortal } from 'components/Root';
+import Link from '@icgc-argo/uikit/Link';
 
 const FormControl = styled(Control)`
   display: flex;
@@ -153,13 +154,13 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
                 a) You can print this page, collect the written signatures, scan the signed page and
                 add it back to the finalized application pdf. <br />
                 b) Or you can add the proper signatures using electronic methods, such as{' '}
-                <a href="https://www.docusign.ca/" target="_blank">
+                <Link href="https://www.docusign.ca/" target="_blank">
                   DocuSign
-                </a>{' '}
+                </Link>{' '}
                 or{' '}
-                <a href="https://acrobat.adobe.com/us/en/sign.html" target="_blank">
+                <Link href="https://acrobat.adobe.com/us/en/sign.html" target="_blank">
                   AdobeSign.
-                </a>
+                </Link>
               </div>
             </li>
             <li>Upload the signed application below.</li>
