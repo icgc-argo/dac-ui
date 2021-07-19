@@ -139,7 +139,7 @@ const HeaderActions = ({
           const downloadUrl = urlJoin(API.APPLICATIONS, appId, isDownloadZip ? API.APP_PACKAGE : '');
           const data = await fetchWithAuth({ url: downloadUrl, ...isDownloadZip ? { responseType: 'blob' } : {} })
             .then((res: any) => {
-              if (isDownloadZip) {
+              if (res.data && isDownloadZip) {
                 const downloadUrl = window.URL.createObjectURL(new Blob([res.data]));
                 const filename = res.headers['content-disposition'].split('"')[1];
                 const link = document.createElement('a');
