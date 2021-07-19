@@ -22,7 +22,7 @@ import {
   FormSectionValidationState_EthicsLetter,
   FormValidationAction,
   FormValidationStateParameters,
-  UPLOAD_TYPES,
+  DOCUMENT_TYPES,
 } from '../types';
 
 const VALID_FILE_TYPE = [
@@ -64,7 +64,7 @@ const UploadsTable = ({
   const handleFileDelete = (fileId: string) => (event: any) => {
     fetchWithAuth({
       method: 'DELETE',
-      url: `${API.APPLICATIONS}/${appId}/assets/${UPLOAD_TYPES.ETHICS}/assetId/${fileId}`,
+      url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.ETHICS}/assetId/${fileId}`,
     })
       .then(({ data }: { data: FormValidationStateParameters }) =>
         refetchAllData({
@@ -87,7 +87,7 @@ const UploadsTable = ({
       fetchWithAuth({
         data: formData,
         method: 'POST',
-        url: `${API.APPLICATIONS}/${appId}/assets/${UPLOAD_TYPES.ETHICS}/upload`,
+        url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.ETHICS}/upload`,
       })
         .then(({ data }: { data: FormValidationStateParameters }) =>
           refetchAllData({

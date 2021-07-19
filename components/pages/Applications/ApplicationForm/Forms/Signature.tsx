@@ -10,7 +10,7 @@ import FormFieldHelpBubble from './FormFieldHelpBubble';
 import { RequiredStar } from './RequiredFieldsMessage';
 import { styled } from '@icgc-argo/uikit';
 import { AxiosError } from 'axios';
-import { UPLOAD_TYPES } from './types';
+import { DOCUMENT_TYPES } from './types';
 import { UPLOAD_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
 import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
 import { API } from 'global/constants';
@@ -63,7 +63,7 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
       fetchWithAuth({
         data: formData,
         method: 'POST',
-        url: `${API.APPLICATIONS}/${appId}/assets/${UPLOAD_TYPES.SIGNED_APP}/upload`,
+        url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/upload`,
       })
         .then(() => {
           const fileDetails = {
@@ -78,6 +78,18 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
     } else {
       console.warn('invalid file');
     }
+  };
+
+  const deleteDocument = () => {
+    const documentId = '';
+    fetchWithAuth({
+      method: 'DELETE',
+      url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/assetId/${documentId}`,
+    })
+      .then(() => {})
+      .catch((err: AxiosError) => {
+        console.error('Document delete request failed.', err);
+      });
   };
 
   return (
@@ -255,7 +267,9 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
                   fill={theme.colors.accent2}
                   css={css`
                     margin-left: auto;
+                    cursor: pointer;
                   `}
+                  onClick={deleteDocument}
                 />
               </div>
             </Typography>

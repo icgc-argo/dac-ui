@@ -272,7 +272,8 @@ export type FormSectionValidatorFunction_Main = (
   apiFetcher: AuthAPIFetchFunction,
 ) => FormSectionValidatorFunction_Origin;
 
-export enum UPLOAD_TYPES {
+
+export enum DOCUMENT_TYPES {
   SIGNED_APP = 'SIGNED_APP',
   ETHICS = 'ETHICS',
 }
