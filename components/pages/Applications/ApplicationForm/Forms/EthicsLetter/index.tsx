@@ -20,11 +20,13 @@ import { isRequired } from '../validations';
 import UploadsTable from './UploadsTable';
 
 const EthicsLetter = ({
+  appId,
   isSectionDisabled,
   localState,
   refetchAllData,
   validateFieldTouched,
 }: {
+  appId: string;
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_EthicsLetter;
   refetchAllData: (action: Partial<FormValidationAction>) => void;
@@ -103,6 +105,7 @@ const EthicsLetter = ({
 
         {selectedRadioValue && (
           <UploadsTable
+            appId={appId}
             isSectionDisabled={isSectionDisabled}
             localState={localState}
             refetchAllData={refetchAllData}

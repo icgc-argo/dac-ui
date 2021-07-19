@@ -33,11 +33,13 @@ const VALID_FILE_TYPE = [
 const MAX_FILE_SIZE = 5242880;
 
 const UploadsTable = ({
+  appId,
   isSectionDisabled,
   localState,
   refetchAllData,
   required,
 }: {
+  appId: string;
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_EthicsLetter;
   refetchAllData: (action: Partial<FormValidationAction>) => void;
@@ -62,7 +64,7 @@ const UploadsTable = ({
   const handleFileDelete = (fileId: string) => (event: any) => {
     fetchWithAuth({
       method: 'DELETE',
-      url: `${API.APPLICATIONS}/DACO-34/assets/${UPLOAD_TYPES.ETHICS}/assetId/${fileId}`,
+      url: `${API.APPLICATIONS}/${appId}/assets/${UPLOAD_TYPES.ETHICS}/assetId/${fileId}`,
     })
       .then(({ data }: { data: FormValidationStateParameters }) =>
         refetchAllData({
@@ -85,7 +87,7 @@ const UploadsTable = ({
       fetchWithAuth({
         data: formData,
         method: 'POST',
-        url: `${API.APPLICATIONS}/DACO-34/assets/${UPLOAD_TYPES.ETHICS}/upload`,
+        url: `${API.APPLICATIONS}/${appId}/assets/${UPLOAD_TYPES.ETHICS}/upload`,
       })
         .then(({ data }: { data: FormValidationStateParameters }) =>
           refetchAllData({
