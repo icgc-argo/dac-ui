@@ -2,9 +2,10 @@ import { Fragment } from 'react';
 import { css } from '@emotion/core';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
-import Link from '@icgc-argo/uikit/Link';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import router from 'next/router';
+import { APPLICATIONS_PATH } from 'global/constants';
+import urlJoin from 'url-join';
 
 const icons = {
   file: <Icon fill="white" height="12px" width="9px" name="file" />,
@@ -24,7 +25,8 @@ const icons = {
   reset: <Icon fill="white" height="12px" width="10px" name="reset" />,
 };
 
-const getButtonConfig = (state = ''): { content: string; link: string; icon: any }[] => {
+const getButtonConfig = (appId = '', state = ''): { content: string; link: string; icon: any }[] => {
+  const link = urlJoin(APPLICATIONS_PATH, appId);
   switch (state) {
     case ApplicationState.DRAFT:
     case ApplicationState.SIGN_AND_SUBMIT:
@@ -32,7 +34,7 @@ const getButtonConfig = (state = ''): { content: string; link: string; icon: any
       return [
         {
           content: 'Edit Application',
-          link: '/edit',
+          link,
           icon: icons.edit,
         },
       ];
@@ -43,7 +45,7 @@ const getButtonConfig = (state = ''): { content: string; link: string; icon: any
       return [
         {
           content: 'View Application',
-          link: '',
+          link,
           icon: icons.file,
         },
       ];
@@ -51,12 +53,12 @@ const getButtonConfig = (state = ''): { content: string; link: string; icon: any
       return [
         {
           content: 'View Application',
-          link: '',
+          link,
           icon: icons.file,
         },
         {
           content: 'Manage Collaborators',
-          link: '',
+          link: urlJoin(link, '?section=collaborators'),
           icon: icons.user,
         },
       ];
@@ -64,12 +66,12 @@ const getButtonConfig = (state = ''): { content: string; link: string; icon: any
       [
         {
           content: 'View Application',
-          link: '',
+          link,
           icon: icons.file,
         },
         {
           content: 'Reopen',
-          link: '',
+          link,
           icon: icons.reset,
         },
       ];
@@ -78,20 +80,23 @@ const getButtonConfig = (state = ''): { content: string; link: string; icon: any
   return [];
 };
 
-const ButtonGroup = ({ state }: { state: ApplicationState }) => (
+const ButtonGroup = ({ appId, state }: { appId: string; state: ApplicationState }) => (
   <div
     css={css`
       margin-top: 35px;
       display: flex;
-
-      & .action-btns::not(::first-child) {
-        margin-right: 8px;
-      }
     `}
   >
-    {getButtonConfig(state).map(({ content, link, icon }) => (
+    {getButtonConfig(appId, state).map(({ content, link, icon }, index) => (
       <Fragment key={link}>
-        <Button className="action-btns" size="sm" onClick={(e) => router.push(link)}>
+        <Button
+          className="action-btns"
+          size="sm"
+          onClick={() => router.push(link)}
+          css={css`
+            margin-left: ${index ? '8px !important;' : 0}
+          `}
+        >
           <span
             css={css`
               margin-right: 3px;

@@ -72,6 +72,10 @@ export type ApplicationsResponseItem = {
   expiresAtUtc: string;
   lastUpdatedAtUtc: string;
   state: string;
+  createdAtUtc: string;
+  submittedAtUtc: string;
+  closedAtUtc: string;
+  approvedAtUtc: string;
 };
 
 export type ApplicationDataByField = {

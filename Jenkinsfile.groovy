@@ -41,23 +41,16 @@ spec:
   - name: docker
     image: docker:18-git
     tty: true
-    volumeMounts:
-    - mountPath: /var/run/docker.sock
-      name: docker-sock
-  - name: dind-daemon
-    image: docker:18.06-dind
-    securityContext:
-      privileged: true
-    volumeMounts:
-    - name: docker-graph-storage
-      mountPath: /var/lib/docker
+    env:
+    - name: DOCKER_HOST
+      value: tcp://localhost:2375
+    - name: HOME
+      value: /home/jenkins/agent
+  securityContext:
+    runAsUser: 1000
   volumes:
   - name: docker-graph-storage
     emptyDir: {}
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
-      type: File
 """
         }
     }

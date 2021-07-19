@@ -1,11 +1,10 @@
 import { css } from '@emotion/core';
+import { useState } from 'react';
+
 
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
-import Input from '@icgc-argo/uikit/form/Input';
-import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import Modal from '@icgc-argo/uikit/Modal';
-import Textarea from '@icgc-argo/uikit/form/Textarea';
 import Typography from '@icgc-argo/uikit/Typography';
 import useTheme from '@icgc-argo/uikit/utils/useTheme';
 
@@ -15,6 +14,12 @@ import {
 } from './types';
 
 import useRequestRevisionsReducer, { SECONDARY_FIELDS } from './useRequestRevisionsReducer';
+import { AxiosError } from 'axios';
+import { useAuthContext } from 'global/hooks';
+import urlJoin from 'url-join';
+import router from 'next/router';
+import { API } from 'global/constants';
+
 
 const textareaStyle = css`
 /* copied UIKIT textarea styles because textarea wasn't programatically updating.
@@ -139,20 +144,50 @@ const ModalSection = ({
 };
 
 const RequestRevisionsModal = ({
+  appId,
   dismissModal
 }: {
-  // TODO improve in data hookup ticket
+  appId: string;
   dismissModal: () => any | void;
 }) => {
   const { state, dispatch } = useRequestRevisionsReducer();
   const { fields, isSecondaryFieldsEnabled, isSendEnabled } = state;
+  const [error, setError] = useState<AxiosError | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { fetchWithAuth } = useAuthContext();
+
+  const submitRequestRevisions = () => {
+    setIsLoading(true);
+    fetchWithAuth({
+      data: {
+        revisionRequest: Object.entries(fields).reduce((acc, curr) => ({
+          ...acc,
+          [curr[0]]: {
+            details: curr[1].details,
+            requested: curr[1].requested
+          }
+        }), {}),
+        state: 'REVISIONS REQUESTED',
+      },
+      method: 'PATCH',
+      url: urlJoin(API.APPLICATIONS, appId)
+    })
+      .then(() => {
+        router.reload();
+      })
+      .catch((err: AxiosError) => {
+        setIsLoading(false);
+        setError(err);
+      });
+  };
 
   return (
     <Modal
-      actionButtonText="Send Request"
-      actionDisabled={!isSendEnabled}
+      actionButtonText={isLoading ? 'Loading' : 'Send Request'}
+      actionDisabled={isLoading || !isSendEnabled}
       buttonSize="sm"
       cancelText="Cancel"
+      onActionClick={() => submitRequestRevisions()}
       onCancelClick={dismissModal}
       onCloseClick={dismissModal}
       title="Request Revisions"
@@ -181,6 +216,16 @@ const RequestRevisionsModal = ({
           />
         )
       }))}
+      <FormControl error={!!error}>
+        <FormHelperText
+          css={css`
+            margin-left: 0;
+          `}
+          onErrorOnly
+        >
+          Something went wrong. Please try again.
+        </FormHelperText>
+      </FormControl>
     </Modal>
   );
 };
