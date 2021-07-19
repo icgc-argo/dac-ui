@@ -135,15 +135,32 @@ const HeaderActions = ({
         isLoading={pdfIsLoading}
         onClick={async () => {
           setPdfIsLoading(true);
-          const data = await fetchWithAuth({ url: urlJoin(API.APPLICATIONS, appId) })
-            .then((res: any) => res.data)
+          const isDownloadZip = [ApplicationState.REVIEW, ApplicationState.APPROVED].includes(state);
+          const downloadUrl = urlJoin(API.APPLICATIONS, appId, isDownloadZip ? API.APP_PACKAGE : '');
+          const data = await fetchWithAuth({ url: downloadUrl, ...isDownloadZip ? { responseType: 'blob' } : {} })
+            .then((res: any) => {
+              if (isDownloadZip) {
+                const downloadUrl = window.URL.createObjectURL(new Blob([res.data]));
+                const filename = res.headers['content-disposition'].split('"')[1];
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.setAttribute('download', filename);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                setPdfIsLoading(false);
+                return {};
+              } else {
+                return res.data;
+              }
+            })
             .catch((err: AxiosError) => {
               console.error('Application fetch failed, pdf not generated.', err);
               setPdfIsLoading(false);
               return null;
             });
           // if data fetch fails, do not proceed to pdf generation
-          if (data) {
+          if (data && !isDownloadZip) {
             generatePDFDocument(data);
           }
         }}

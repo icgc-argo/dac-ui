@@ -29,6 +29,7 @@ export const ADOBE_ACROBAT_LINK = 'https://acrobat.adobe.com/us/en/sign.html';
 
 // API
 export const API = {
+  APP_PACKAGE: '/assets/APP_PACKAGE',
   APPLICATIONS: '/applications',
   HEALTH: '/health',
 };
