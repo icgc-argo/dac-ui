@@ -6,7 +6,7 @@ import Link from '@icgc-argo/uikit/Link';
 import { Col, Row } from 'react-grid-system';
 
 import DefaultPageLayout from 'components/DefaultPageLayout';
-import { ARGO_ROOT, ICGC_DCC_LINK, ICGC_PCAWG_LINK } from 'global/constants/externalPaths';
+import { HOMEPAGE_ARGO_LINK, ICGC_DCC_LINK, ICGC_PCAWG_LINK } from 'global/constants/externalPaths';
 
 const LinkWhite = ({ children, href }: { children: any; href: string }) => (
   <Link href={href} style={{ color: '#fff' }} target="_blank">
@@ -114,9 +114,10 @@ const IconParagraphRow = ({ children, img }: { children: any; img: string }) => 
   </div>
 );
 
-const PaddedRow = ({ children }: { children: any }) => (
+const PaddedRow = ({ isVerticallyCentered = false, children }: { isVerticallyCentered?: boolean; children: any }) => (
   <Row
     css={css`
+      align-items: ${isVerticallyCentered ? 'center !important' : 'normal'};
       padding: 72px 5% 48px;
     `}
   >
@@ -167,7 +168,9 @@ const Home = () => {
   return (
     <DefaultPageLayout title={'Homepage'}>
       <HeroDiv>
-        <PaddedRow>
+        <PaddedRow
+          isVerticallyCentered
+        >
           <PaddedColumn>
             <Typography
               as="h1"
@@ -208,25 +211,32 @@ const Home = () => {
               bold={true}
               color="white"
               css={css`
-                margin: 0 0 30px;
+                margin: 0 0 24px;
               `}
               variant="subtitle2"
             >
               What will you get access to?
             </Typography>
+            <Typography
+              bold
+              color="white"
+              css={css`
+                margin: 0 0 32px;
+              `}
+            >
+              While all ICGC data sources contain open data, sensitive genomic and clinical data is controlled access data.
+            </Typography>
             <LogoParagraphRow
               Img={<img src="/icgc-argo-logo-white.svg" width={'145px'} height={'23px'} />}
-              imageLink={ARGO_ROOT}
+              imageLink={HOMEPAGE_ARGO_LINK}
             >
-              <LinkWhite href={ARGO_ROOT}>ICGC ARGO</LinkWhite> plans to uniformly analyze specimens
-              from 100,000 cancer patients with high quality clinical data.
+              <LinkWhite href={HOMEPAGE_ARGO_LINK}>ICGC ARGO</LinkWhite> plans to uniformly analyze specimens from 100,000 cancer patients with high quality clinical data. Learn more about the ICGC ARGO project.
             </LogoParagraphRow>
             <LogoParagraphRow
               Img={<img src="/icgc-logo-rgb-divided.svg" width={'140px'} height={'46px'} />}
               imageLink={ICGC_DCC_LINK}
             >
-              <LinkWhite href={ICGC_DCC_LINK}>ICGC 25K Data Portal</LinkWhite> to date has produced
-              &gt;20,000 tumour genomes for 26 cancer types (including{' '}
+              <LinkWhite href={ICGC_DCC_LINK}>ICGC 25K Data Portal</LinkWhite> has produced &gt;20,000 tumour genomes for 26 cancer types (including{' '}
               <LinkWhite href={ICGC_PCAWG_LINK}>PCAWG</LinkWhite> data).
             </LogoParagraphRow>
           </PaddedColumn>

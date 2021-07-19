@@ -10,6 +10,7 @@ const {
 
 export const DACO_ROOT = 'https://daco.icgc-argo.org';
 export const ARGO_ROOT = NEXT_PUBLIC_ARGO_PLATFORM_ROOT;
+export const HOMEPAGE_ARGO_LINK = 'https://www.icgc-argo.org/';
 const ARGO_POLICIES = urlJoin(NEXT_PUBLIC_ARGO_ROOT, 'page');
 export const CONTACT_PAGE = urlJoin(NEXT_PUBLIC_ARGO_PLATFORM_ROOT, 'contact');
 export const POLICIES_PAGE = NEXT_PUBLIC_ARGO_ROOT; // tbd

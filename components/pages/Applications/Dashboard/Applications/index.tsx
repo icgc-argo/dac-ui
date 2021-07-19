@@ -21,7 +21,7 @@ const Applications = () => {
           css={css`
             display: grid;
             grid-gap: 24px;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
             margin-bottom: 24px;
           `}
         >
