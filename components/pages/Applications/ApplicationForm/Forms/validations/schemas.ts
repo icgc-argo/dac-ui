@@ -199,7 +199,13 @@ export const representativeSchema = yup.object().shape({
   info_title: yup.string().default(''),
 });
 
-export const signatureSchema = yup.object().shape({});
+export const signatureSchema = yup.object().shape({
+  signedApp: yup.object().shape({
+    name: yup.string(),
+    objectId: yup.string(),
+    uploadedAtUtc: yup.string(),
+  }),
+});
 
 export const termsSchema = yup.object().shape({
   agreement: yup

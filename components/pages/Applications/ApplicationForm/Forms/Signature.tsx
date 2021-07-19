@@ -9,8 +9,12 @@ import React, { ReactElement, useState } from 'react';
 import FormFieldHelpBubble from './FormFieldHelpBubble';
 import { RequiredStar } from './RequiredFieldsMessage';
 import { styled } from '@icgc-argo/uikit';
-import { AxiosError, AxiosResponse } from 'axios';
-import { DOCUMENT_TYPES } from './types';
+import { AxiosError } from 'axios';
+import {
+  DOCUMENT_TYPES,
+  FormSectionValidationState_Signature,
+  FormValidationStateParameters,
+} from './types';
 import { UPLOAD_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
 import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
 import { API } from 'global/constants';
@@ -20,7 +24,6 @@ import { ModalPortal } from 'components/Root';
 import Link from '@icgc-argo/uikit/Link';
 import { CustomLoadingButton, generatePDFDocument } from './common';
 import urlJoin from 'url-join';
-import { isEmpty } from 'lodash';
 
 const FormControl = styled(Control)`
   display: flex;
@@ -33,12 +36,19 @@ const FormControl = styled(Control)`
 const VALID_FILE_TYPE = ['application/pdf'];
 const MAX_FILE_SIZE = 5242880;
 
-const Signature = ({ appId }: { appId: string }): ReactElement => {
+const Signature = ({
+  appId,
+  localState,
+  refetchAllData,
+}: {
+  appId: string;
+  localState: FormSectionValidationState_Signature;
+  refetchAllData: any;
+}): ReactElement => {
+  console.log('sig local state', localState);
   const theme = useTheme();
-  const [selectedFile, setSelectedFile] = useState<{ name: string; uploadDate?: string } | null>(
-    null,
-  );
 
+  const [selectedFile, setSelectedFile] = useState(localState.fields || null);
   const [signedFormData, setSignedFormData] = useState<null | FormData>(null);
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -63,15 +73,12 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
       method: 'POST',
       url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/upload`,
     })
-      .then((res: AxiosResponse) => {
-        const { signedDocName, uploadedAtUtc } = res.data.sections.signature;
-        const fileDetails = {
-          name: signedDocName,
-          uploadDate: getFormattedDate(uploadedAtUtc, UPLOAD_DATE_FORMAT),
-        };
-        setSelectedFile(fileDetails);
-        setModalVisible(false);
-      })
+      .then(({ data }: { data: FormValidationStateParameters }) =>
+        refetchAllData({
+          type: 'updating',
+          value: data,
+        }),
+      )
       .catch((err: AxiosError) => {
         console.error('File failed to upload.', err);
       });
@@ -84,27 +91,28 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
       const formData = new FormData();
       formData.append('file', file);
       setSignedFormData(formData);
-      setSelectedFile({ name: file.name, uploadDate: undefined });
+      setSelectedFile({ name: file.name });
     } else {
       console.warn('invalid file');
     }
   };
 
   const deleteDocument = () => {
-    const documentId = '';
-    // no upload date means a file was selected but not confirmed for upload, just delete state for FE update
-    if (!selectedFile?.uploadDate) {
-      setSelectedFile(null);
-    } else {
-      fetchWithAuth({
-        method: 'DELETE',
-        url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/assetId/${documentId}`,
+    const documentId = selectedFile.objectId;
+
+    fetchWithAuth({
+      method: 'DELETE',
+      url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/assetId/${documentId}`,
+    })
+      .catch((err: AxiosError) => {
+        console.error('Document delete request failed.', err);
       })
-        .then(() => {})
-        .catch((err: AxiosError) => {
-          console.error('Document delete request failed.', err);
-        });
-    }
+      .finally(({ data }: { data: FormValidationStateParameters }) =>
+        refetchAllData({
+          type: 'updating',
+          value: data,
+        }),
+      );
   };
 
   return (
@@ -277,7 +285,11 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
                   `}
                 />
                 {selectedFile.name || ''}
-                {selectedFile.uploadDate && `| Uploaded on: ${selectedFile.uploadDate}`}
+                {selectedFile.uploadedAtUtc &&
+                  `| Uploaded on: ${getFormattedDate(
+                    selectedFile.uploadedAtUtc,
+                    UPLOAD_DATE_FORMAT,
+                  )}`}
                 <Icon
                   name="trash"
                   fill={theme.colors.accent2}
