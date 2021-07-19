@@ -155,7 +155,7 @@ const HeaderActions = ({
               }
             })
             .catch((err: AxiosError) => {
-              console.error('Application fetch failed, pdf not generated.', err);
+              console.error('Application fetch failed, pdf or zip not generated.', err);
               setPdfIsLoading(false);
               return null;
             });
