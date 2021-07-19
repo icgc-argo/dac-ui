@@ -15,6 +15,8 @@ import { UPLOAD_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/cons
 import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
 import { API } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
+import Modal from '@icgc-argo/uikit/Modal';
+import { ModalPortal } from 'components/Root';
 
 const FormControl = styled(Control)`
   display: flex;
@@ -31,6 +33,9 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
   const theme = useTheme();
   const [selectedFile, setSelectedFile] =
     useState<{ name: string; uploadDate: string } | undefined>(undefined);
+
+  const [isModalVisible, setModalVisible] = useState(false);
+  const dismissModal = () => setModalVisible(false);
 
   const { fetchWithAuth } = useAuthContext();
 
@@ -276,10 +281,32 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
             margin-top: 40px;
           `}
           disabled={!selectedFile}
+          onClick={() => setModalVisible(true)}
         >
           Submit Application
         </Button>
       </section>
+      {isModalVisible && (
+        <ModalPortal>
+          <Modal
+            title="Are you sure you want to submit this application?"
+            onCancelClick={dismissModal}
+            onCloseClick={dismissModal}
+            actionButtonText="Yes, Submit"
+          >
+            <div
+              css={css`
+                max-width: 600px !important;
+              `}
+            >
+              Are you sure you want to submit{' '}
+              <b>Application: DACO-12344 (Ontario Institute for Cancer Research)?</b> If so, the
+              application will be locked for editing and the ICGC DACO will be notified to begin the
+              review process.
+            </div>
+          </Modal>
+        </ModalPortal>
+      )}
     </article>
   );
 };
