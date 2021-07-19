@@ -1,5 +1,5 @@
-import { ReactElement } from 'react';
-import Banner, { BANNER_VARIANTS } from '@icgc-argo/uikit/notifications/Banner';
+import { ReactElement, useEffect, useState } from 'react';
+import { css } from '@emotion/core';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 import FormRadio from '@icgc-argo/uikit/form/FormRadio';
@@ -8,24 +8,58 @@ import Link from '@icgc-argo/uikit/Link';
 import RadioCheckboxGroup from '@icgc-argo/uikit/form/RadioCheckboxGroup';
 import Typography from '@icgc-argo/uikit/Typography';
 
+import StaticEthics from 'components/pages/Applications/PDF/StaticEthics';
+import FORM_TEXT from 'components/pages/Applications/PDF/textConstants';
+
 import {
   FormFieldValidationTriggerFunction,
   FormSectionValidationState_EthicsLetter,
-} from './types';
-import { isRequired } from './validations';
-import { css } from '@emotion/core';
-import StaticEthics from '../../PDF/StaticEthics';
-import FORM_TEXT from '../../PDF/textConstants';
+  FormValidationAction,
+} from '../types';
+import { isRequired } from '../validations';
+import UploadsTable from './UploadsTable';
 
 const EthicsLetter = ({
+  appId,
   isSectionDisabled,
   localState,
+  refetchAllData,
   validateFieldTouched,
 }: {
+  appId: string;
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_EthicsLetter;
+  refetchAllData: (action: Partial<FormValidationAction>) => void;
   validateFieldTouched: FormFieldValidationTriggerFunction;
 }): ReactElement => {
+  const [selectedRadioValue, setSelectedRadioValue] = useState(
+    localState.declaredAsRequired?.value || null,
+  );
+
+  // this handler was customised to handle things that ought be handled by the RadioCheckboxGroup itself
+  // TODO: improve that, as well as implement the component's focus/blur
+  // which will be needed to implement "required field" error behaviours
+  const handleSelectedRadioValueChange = (value: boolean) => {
+    validateFieldTouched({
+      // faking event values to keep scope limited
+      target: {
+        id: 'declaredAsRequired',
+        tagName: 'INPUT',
+        type: 'radio',
+        value,
+      },
+      type: 'change',
+    });
+
+    setSelectedRadioValue(value);
+  };
+
+  const isChecked = (radioValue: boolean) => radioValue === selectedRadioValue;
+
+  useEffect(() => {
+    setSelectedRadioValue(localState.declaredAsRequired?.value);
+  }, [localState.declaredAsRequired?.value]);
+
   return (
     <article>
       <StaticEthics />
@@ -39,8 +73,7 @@ const EthicsLetter = ({
           className="vertical"
           disabled={isSectionDisabled}
           error={!!localState.declaredAsRequired?.error}
-          required={true}
-          // required={isRequired(localState.declaredAsRequired)}
+          required={isRequired(localState.declaredAsRequired)}
         >
           <InputLabel htmlFor="declaredAsRequired">
             {FORM_TEXT.ethics.inputLabel.declaration}
@@ -50,13 +83,12 @@ const EthicsLetter = ({
             css={css`
               margin-top: 15px;
             `}
-            isChecked={localState.declaredAsRequired?.value}
-            onChange={validateFieldTouched}
+            id="declaredAsRequired"
+            isChecked={isChecked}
+            onChange={handleSelectedRadioValueChange}
           >
-            <FormRadio disabled={isSectionDisabled} value="false" checked>
-              {FORM_TEXT.ethics.declarationOptions.notRequired}
-            </FormRadio>
-            <FormRadio disabled value="true">
+            <FormRadio value={false}>{FORM_TEXT.ethics.declarationOptions.notRequired}</FormRadio>
+            <FormRadio value={true}>
               {FORM_TEXT.ethics.declarationOptions.required.a}{' '}
               <Typography bold component="span">
                 {FORM_TEXT.ethics.declarationOptions.required.b}{' '}
@@ -70,6 +102,16 @@ const EthicsLetter = ({
 
           <FormHelperText onErrorOnly>{localState.declaredAsRequired?.error?.[0]}</FormHelperText>
         </FormControl>
+
+        {selectedRadioValue && (
+          <UploadsTable
+            appId={appId}
+            isSectionDisabled={isSectionDisabled}
+            localState={localState}
+            refetchAllData={refetchAllData}
+            required={isRequired(localState.approvalLetterDocs)}
+          />
+        )}
       </section>
     </article>
   );

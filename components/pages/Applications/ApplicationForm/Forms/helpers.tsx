@@ -9,6 +9,7 @@ import {
   FormSectionValidationState_Sections,
   FormSectionValidatorFunction_Origin,
   FormValidationStateParameters,
+  FormSectionValidationState_SectionBase,
 } from './types';
 import { useLocalValidation } from './validations';
 
@@ -35,11 +36,12 @@ export const sectionSelector = ({
 }) => {
   const SectionComponent = sectionsData[selectedSection]?.component;
   const {
-    fields: storedFields = {},
+    fields: storedFields,
     meta: { overall },
-  } = formState.sections[selectedSection] || {};
+  }: FormSectionValidationState_SectionBase = formState.sections[selectedSection] || {};
 
-  const isSectionDisabled = [FORM_STATES.DISABLED, FORM_STATES.LOCKED].includes(overall);
+  const isSectionDisabled =
+    !overall || [FORM_STATES.DISABLED, FORM_STATES.LOCKED].includes(overall);
 
   const {
     localState,
@@ -55,6 +57,7 @@ export const sectionSelector = ({
     <SectionComponent
       isSectionDisabled={isSectionDisabled}
       localState={localState}
+      refetchAllData={formState.__refetchAllData}
       state={formState.state}
       validateFieldTouched={validateFieldTouched}
       appId={appId}
