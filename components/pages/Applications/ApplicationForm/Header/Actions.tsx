@@ -4,27 +4,13 @@ import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import { UikitTheme } from '@icgc-argo/uikit/index';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
-import { Document, pdf } from '@react-pdf/renderer';
 import urlJoin from 'url-join';
-import { saveAs } from 'file-saver';
 import { isEqual } from 'lodash';
-
-import StaticIntroduction from 'components/pages/Applications/PDF/StaticIntroduction';
-import StaticApplicant from '../../PDF/StaticApplicant';
 import { useAuthContext } from 'global/hooks';
 import { API } from 'global/constants';
 import { AxiosError } from 'axios';
-import StaticRepresentative from '../../PDF/StaticRepresentative';
-import StaticCollaborators from '../../PDF/StaticCollaborators';
-import StaticProjectInfo from '../../PDF/StaticProjectInfo';
-import StaticEthics from '../../PDF/StaticEthics';
-import StaticDataAccessAgreement from '../../PDF/StaticDataAccessAgreement';
-import StaticAppendices from '../../PDF/StaticAppendices';
-import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
-import { FILE_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
-import Cover from '../../PDF/Cover';
-import Signatures from '../../PDF/Signatures';
 import { ApplicationState } from '../../types';
+import { CustomLoadingButton, generatePDFDocument } from '../Forms/common';
 
 // EXPIRED and RENEWING handling is tbd, CLOSED excludes Action buttons
 const getPdfButtonText: (state: ApplicationState) => string = (state) => {
@@ -47,31 +33,6 @@ const getPdfButtonText: (state: ApplicationState) => string = (state) => {
 
 const PDF_BUTTON_WIDTH = 130;
 
-const CustomLoadingButton = ({ text }: { text: string }) => {
-  const theme = useTheme();
-  return (
-    <div
-      css={css`
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: ${theme.colors.accent2_dark};
-        width: ${PDF_BUTTON_WIDTH}px;
-      `}
-    >
-      <Icon
-        name="spinner"
-        width="12px"
-        height="12px"
-        fill={theme.colors.accent2_dark}
-        css={css`
-          margin-right: 9px;
-        `}
-      />
-      {text}
-    </div>
-  );
-};
 const HeaderActions = ({
   appId,
   state,
@@ -82,30 +43,6 @@ const HeaderActions = ({
   const theme: UikitTheme = useTheme();
   const { fetchWithAuth } = useAuthContext();
   const [pdfIsLoading, setPdfIsLoading] = useState<boolean>(false);
-
-  // generate the PDF on request, so that app data is most recent (not when page is loaded)
-  const generatePDFDocument = async (data: any) => {
-    const blob = await pdf(
-      <Document>
-        {/* Cover is PDF only */}
-        <Cover data={data} />
-        <StaticIntroduction isPdf data={data} />
-        <StaticApplicant isPdf data={data} />
-        <StaticRepresentative isPdf data={data} />
-        <StaticCollaborators isPdf data={data} />
-        <StaticProjectInfo isPdf data={data} />
-        <StaticEthics isPdf data={data} />
-        <StaticDataAccessAgreement isPdf data={data} />
-        <StaticAppendices isPdf data={data} />
-        {/* Signatures is PDF only */}
-        <Signatures data={data} />
-      </Document>,
-    ).toBlob();
-
-    const dateCreated = getFormattedDate(Date.now(), FILE_DATE_FORMAT);
-    saveAs(blob, `${data.appId}-${dateCreated}`);
-    setPdfIsLoading(false);
-  };
 
   const pdfButtonText = getPdfButtonText(state);
 

@@ -18,6 +18,8 @@ import { useAuthContext } from 'global/hooks';
 import Modal from '@icgc-argo/uikit/Modal';
 import { ModalPortal } from 'components/Root';
 import Link from '@icgc-argo/uikit/Link';
+import { CustomLoadingButton, generatePDFDocument } from './common';
+import urlJoin from 'url-join';
 
 const FormControl = styled(Control)`
   display: flex;
@@ -39,6 +41,7 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
   const dismissModal = () => setModalVisible(false);
 
   const { fetchWithAuth } = useAuthContext();
+  const [pdfIsLoading, setPdfIsLoading] = useState(false);
 
   const fileInputRef = React.createRef<HTMLInputElement>();
 
@@ -117,6 +120,25 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
                     line-height: 12px;
                     margin-left: 6px;
                   `}
+                  Loader={CustomLoadingButton}
+                  isLoading={pdfIsLoading}
+                  onClick={async () => {
+                    if (pdfIsLoading) return false;
+                    setPdfIsLoading(true);
+                    const data = await fetchWithAuth({ url: urlJoin(API.APPLICATIONS, appId) })
+                      .then((res: any) => res.data)
+                      .catch((err: AxiosError) => {
+                        console.error('Application fetch failed, pdf not generated.', err);
+                        setPdfIsLoading(true);
+                        false;
+                        return null;
+                      });
+                    // if data fetch fails, do not proceed to pdf generation
+                    if (data) {
+                      await generatePDFDocument(data);
+                      setPdfIsLoading(false);
+                    }
+                  }}
                 >
                   <span
                     css={css`
