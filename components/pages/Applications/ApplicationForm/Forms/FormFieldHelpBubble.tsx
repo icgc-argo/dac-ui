@@ -5,10 +5,12 @@ import Typography from '@icgc-argo/uikit/Typography';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 
 const HelpBubble = ({
+  className,
   tail,
   text,
   width = '100%',
 }: {
+  className?: string;
   tail?: 'left' | 'right';
   text: ReactNode | ReactElement;
   width?: string;
@@ -20,6 +22,7 @@ const HelpBubble = ({
   return (
     <Typography
       as="figure"
+      className={className}
       css={css`
         background: ${theme.colors.secondary_4};
         border-radius: 2px;

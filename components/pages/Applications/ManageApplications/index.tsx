@@ -177,7 +177,7 @@ const ManageApplications = (): ReactElement => {
                         justify-content: flex-end;
                       `}>
                       {/* TODO search */}
-                      <Button
+                      {/* <Button
                         size="sm"
                         variant="secondary"
                       >
@@ -191,7 +191,7 @@ const ManageApplications = (): ReactElement => {
                           />
                           Export Table
                         </span>
-                      </Button>
+                      </Button> */}
                     </Col>
                   </Row>
                   <Row>
