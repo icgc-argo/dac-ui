@@ -131,11 +131,7 @@ export type FormSectionValidationState_EthicsLetter = FormSectionValidationState
   declaredAsRequired: { value: boolean | null };
   approvalLetterDocs: { value: [] };
 }>;
-export type FormSectionValidationState_ITAgreements = FormSectionValidationState_SectionsGenericType<{
-  agreements: {
-    fields: {};
-  };
-}>;
+
 export type FormSectionValidationState_ProjectInfo = FormSectionValidationState_SectionsGenericType<{
   aims: { value: string };
   background: { value: string };
@@ -175,7 +171,6 @@ export type FormSectionValidationState_Sections =
   | FormSectionValidationState_Collaborators
   | FormSectionValidationState_DataAccessAgreements
   | FormSectionValidationState_EthicsLetter
-  | FormSectionValidationState_ITAgreements
   | FormSectionValidationState_ProjectInfo
   | FormSectionValidationState_Representative
   | FormSectionValidationState_Signature
