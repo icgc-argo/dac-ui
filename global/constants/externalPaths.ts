@@ -31,6 +31,12 @@ export const ADOBE_ACROBAT_LINK = 'https://acrobat.adobe.com/us/en/sign.html';
 export const ICGC_ARGO_FAQS = 'https://docs.icgc-argo.org/docs/data-access/daco/daco-faq';
 export const DACO_APPLYING_DOCS = 'https://docs.icgc-argo.org/docs/data-access/daco/applying';
 
+const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
+const egoLoginUrl = new URL(urlJoin(NEXT_PUBLIC_EGO_API_ROOT, 'oauth/login/google'));
+egoLoginUrl.searchParams.append('client_id', NEXT_PUBLIC_EGO_CLIENT_ID);
+
+export const EGO_LOGIN_URL = egoLoginUrl.href;
+
 // API
 export const API = {
   APP_PACKAGE: '/assets/APP_PACKAGE',

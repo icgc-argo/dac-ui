@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { css, styled } from '@icgc-argo/uikit';
 import Typography from '@icgc-argo/uikit/Typography';
 import Button from '@icgc-argo/uikit/Button';
@@ -7,6 +8,7 @@ import { Col, Row } from 'react-grid-system';
 
 import DefaultPageLayout from 'components/DefaultPageLayout';
 import { HOMEPAGE_ARGO_LINK, ICGC_DCC_LINK, ICGC_PCAWG_LINK, ICGC_ARGO_FAQS, DACO_APPLYING_DOCS } from 'global/constants/externalPaths';
+import ApplyForAccessModal from 'components/ApplyForAccessModal';
 
 const LinkWhite = ({ children, href }: { children: any; href: string }) => (
   <Link href={href} style={{ color: '#fff' }} target="_blank">
@@ -165,6 +167,7 @@ const HeroDiv = styled('div')`
 `;
 
 const Home = () => {
+  const [isAccessModalVisible, setAccessModalVisible] = useState<boolean>(false);
   return (
     <DefaultPageLayout title={'Homepage'}>
       <HeroDiv>
@@ -201,6 +204,7 @@ const Home = () => {
               `}
               size="md"
               variant="secondary"
+              onClick={() => setAccessModalVisible(true)}
             >
               Get Started: Apply for Access
             </Button>
@@ -275,6 +279,9 @@ const Home = () => {
           </PaddedColumn>
         </PaddedRow>
       </div>
+      {isAccessModalVisible && (
+        <ApplyForAccessModal dismissModal={() => setAccessModalVisible(false)} />
+      )}
     </DefaultPageLayout>
   );
 };
