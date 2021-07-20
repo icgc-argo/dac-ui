@@ -75,9 +75,10 @@ export const AuthProvider = ({
   const cancelFetchWithAuth = cancelTokenSource.cancel;
   const fetchWithAuth = ({
     data,
-    params = {},
     headers = {},
     method = 'GET' as Method,
+    params = {},
+    responseType,
     url,
   }: AxiosRequestConfig) => {
     setLoading(true);
@@ -102,6 +103,7 @@ export const AuthProvider = ({
       },
       method,
       params,
+      ...responseType ? { responseType } : {},
       url,
     };
 
