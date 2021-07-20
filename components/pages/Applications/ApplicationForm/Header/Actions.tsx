@@ -18,7 +18,6 @@ import StaticRepresentative from '../../PDF/StaticRepresentative';
 import StaticCollaborators from '../../PDF/StaticCollaborators';
 import StaticProjectInfo from '../../PDF/StaticProjectInfo';
 import StaticEthics from '../../PDF/StaticEthics';
-import StaticITAgreements from '../../PDF/StaticITAgreements';
 import StaticDataAccessAgreement from '../../PDF/StaticDataAccessAgreement';
 import StaticAppendices from '../../PDF/StaticAppendices';
 import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
@@ -96,7 +95,6 @@ const HeaderActions = ({
         <StaticCollaborators isPdf data={data} />
         <StaticProjectInfo isPdf data={data} />
         <StaticEthics isPdf data={data} />
-        <StaticITAgreements isPdf data={data} />
         <StaticDataAccessAgreement isPdf data={data} />
         <StaticAppendices isPdf data={data} />
         {/* Signatures is PDF only */}
@@ -121,7 +119,7 @@ const HeaderActions = ({
         }
       `}
     >
-      <Button onClick={function noRefCheck() { }} size="sm" variant="secondary">
+      <Button onClick={function noRefCheck() {}} size="sm" variant="secondary">
         Close Application
       </Button>
       <Button
@@ -135,9 +133,18 @@ const HeaderActions = ({
         isLoading={pdfIsLoading}
         onClick={async () => {
           setPdfIsLoading(true);
-          const isDownloadZip = [ApplicationState.REVIEW, ApplicationState.APPROVED].includes(state);
-          const downloadUrl = urlJoin(API.APPLICATIONS, appId, isDownloadZip ? API.APP_PACKAGE : '');
-          const data = await fetchWithAuth({ url: downloadUrl, ...isDownloadZip ? { responseType: 'blob' } : {} })
+          const isDownloadZip = [ApplicationState.REVIEW, ApplicationState.APPROVED].includes(
+            state,
+          );
+          const downloadUrl = urlJoin(
+            API.APPLICATIONS,
+            appId,
+            isDownloadZip ? API.APP_PACKAGE : '',
+          );
+          const data = await fetchWithAuth({
+            url: downloadUrl,
+            ...(isDownloadZip ? { responseType: 'blob' } : {}),
+          })
             .then((res: any) => {
               if (res.data && isDownloadZip) {
                 const downloadUrl = window.URL.createObjectURL(new Blob([res.data]));
