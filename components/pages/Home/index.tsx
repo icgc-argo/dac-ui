@@ -270,7 +270,7 @@ const Home = () => {
               review.
             </IconParagraphRow>
             <IconParagraphRow img="/icons-brand-review.svg">
-              The ICGC DACO will review the application and <Link href={DACO_APPLYING_DOCS}>eligible project teams</Link> will be granted 2 years of access to ICGC Controlled Data.
+              The ICGC DACO will review the application and <Link href={DACO_APPLYING_DOCS} target="_blank">eligible project teams</Link> will be granted 2 years of access to ICGC Controlled Data.
             </IconParagraphRow>
           </PaddedColumn>
         </PaddedRow>
