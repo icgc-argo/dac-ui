@@ -28,6 +28,9 @@ export const ICGC_PCAWG_LINK = urlJoin(ICGC_DCC_LINK, 'pcawg');
 export const DOCUSIGN_LINK = 'https://www.docusign.ca';
 export const ADOBE_ACROBAT_LINK = 'https://acrobat.adobe.com/us/en/sign.html';
 
+export const ICGC_ARGO_FAQS = 'https://docs.icgc-argo.org/docs/data-access/daco/daco-faq';
+export const DACO_APPLYING_DOCS = 'https://docs.icgc-argo.org/docs/data-access/daco/applying';
+
 // API
 export const API = {
   APPLICATIONS: '/applications',

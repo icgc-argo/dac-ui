@@ -6,7 +6,7 @@ import Link from '@icgc-argo/uikit/Link';
 import { Col, Row } from 'react-grid-system';
 
 import DefaultPageLayout from 'components/DefaultPageLayout';
-import { HOMEPAGE_ARGO_LINK, ICGC_DCC_LINK, ICGC_PCAWG_LINK } from 'global/constants/externalPaths';
+import { HOMEPAGE_ARGO_LINK, ICGC_DCC_LINK, ICGC_PCAWG_LINK, ICGC_ARGO_FAQS, DACO_APPLYING_DOCS } from 'global/constants/externalPaths';
 
 const LinkWhite = ({ children, href }: { children: any; href: string }) => (
   <Link href={href} style={{ color: '#fff' }} target="_blank">
@@ -230,10 +230,10 @@ const Home = () => {
               Img={<img src="/icgc-argo-logo-white.svg" width={'145px'} height={'23px'} />}
               imageLink={HOMEPAGE_ARGO_LINK}
             >
-              <LinkWhite href={HOMEPAGE_ARGO_LINK}>ICGC ARGO</LinkWhite> plans to uniformly analyze specimens from 100,000 cancer patients with high quality clinical data. Learn more about the ICGC ARGO project.
+              <LinkWhite href={HOMEPAGE_ARGO_LINK}>ICGC ARGO</LinkWhite> plans to uniformly analyze specimens from 100,000 cancer patients with high quality clinical data. Learn more about the <LinkWhite href={HOMEPAGE_ARGO_LINK}>ICGC ARGO project</LinkWhite>.
             </LogoParagraphRow>
             <LogoParagraphRow
-              Img={<img src="/icgc-logo-rgb-divided.svg" width={'140px'} height={'46px'} />}
+              Img={<img src="/logo-ICGC-25k.svg" width={'140px'} height={'46px'} />}
               imageLink={ICGC_DCC_LINK}
             >
               <LinkWhite href={ICGC_DCC_LINK}>ICGC 25K Data Portal</LinkWhite> has produced &gt;20,000 tumour genomes for 26 cancer types (including{' '}
@@ -252,16 +252,11 @@ const Home = () => {
           <PaddedColumn>
             <PrimaryH2>Overview</PrimaryH2>
             <ParagraphBlack>
-              While there is great potential of data sharing for scientific research, caution is
-              required when sharing data about individuals participating in genomic research because
-              genomic data, like other types of medical data, can contain personal and identifying
-              information. The ICGC DACO has been created to ensure that potentially identifying
-              data from the ICGC will only be used by qualified scientists for public health
-              objectives.
+              The International Cancer Genome Consortium has tiered levels of access to donor data with strict data access policies. Authorization for access to controlled data is project based and is reviewed for compliance with <Link href="TODO" target="_blank">ICGC Policies and Guidelines</Link>. The ICGC DACO has been created as an independent body to ensure that data from the ICGC will only be used by qualified individuals for public health objectives with no undue risks to donors.
             </ParagraphBlack>
             <ParagraphBlack bold>
-              Before starting your application, please review our{' '}
-              <Link href="TODO">frequently asked questions</Link>.
+              Before starting your application, learn more about <Link href="TODO" target="_blank">Data Access and Use Policies</Link> and review{' '}
+              <Link href={ICGC_ARGO_FAQS} target="_blank">frequently asked questions</Link>.
             </ParagraphBlack>
           </PaddedColumn>
           <PaddedColumn>
@@ -275,9 +270,7 @@ const Home = () => {
               review.
             </IconParagraphRow>
             <IconParagraphRow img="/icons-brand-review.svg">
-              The ICGC DACO will review the application and{' '}
-              <Link href="TODO">eligible project teams</Link> will be granted 1 year of access to
-              ICGC Controlled Data.
+              The ICGC DACO will review the application and <Link href={DACO_APPLYING_DOCS}>eligible project teams</Link> will be granted 2 years of access to ICGC Controlled Data.
             </IconParagraphRow>
           </PaddedColumn>
         </PaddedRow>
