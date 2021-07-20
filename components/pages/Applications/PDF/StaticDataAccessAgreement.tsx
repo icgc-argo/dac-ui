@@ -14,7 +14,7 @@ const PdfDataAccessFormData = ({ data }: { data?: DataAccessAgreement }) => {
   const CheckboxText = ({ text }: { text: string }) => (
     <Text>
       <Text style={{ fontWeight: 'semibold' }}>{FORM_TEXT.dataAccessAgreements.yes}</Text>
-      {FORM_TEXT.itAgreements.commaSeparator}
+      {FORM_TEXT.dataAccessAgreements.commaSeparator}
       {text}
     </Text>
   );
@@ -23,6 +23,7 @@ const PdfDataAccessFormData = ({ data }: { data?: DataAccessAgreement }) => {
       {data?.agreements.map((agreement) => (
         <View key={agreement.name} style={{ marginBottom: '10pt' }} wrap={false}>
           <Checkbox
+            style={{ paddingBottom: '2pt' }}
             checked={agreement.accepted}
             TextComponent={
               <CheckboxText text={FORM_TEXT.dataAccessAgreements.declarations[agreement.name]} />
@@ -40,8 +41,9 @@ export const StaticDataAgreementsFormSection = ({ isPdf = false }: { isPdf?: boo
     <GenericContainer>
       <SectionTitle>{FORM_TEXT.dataAccessAgreements.agreements}</SectionTitle>
 
-      <TextComponent bold style={{ fontWeight: 600 }}>
-        In signing this Agreement:
+      <TextComponent bold style={{ fontWeight: 600, marginBottom: 10 }}>
+        You MUST agree to the following procedures in order to have access to the ICGC Controlled
+        Data:
       </TextComponent>
     </GenericContainer>
   );
@@ -179,7 +181,7 @@ const StaticDataAccessAgreement = ({
       state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
-      <TitleComponent>G. Data Access Agreement</TitleComponent>
+      <TitleComponent>F. Data Access Agreement</TitleComponent>
 
       <SectionComponent>
         <TextComponent>

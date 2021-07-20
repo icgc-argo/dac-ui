@@ -128,7 +128,7 @@ export interface ProjectInfo {
   [FieldAccessor.SUMMARY]: string;
 }
 
-export enum ITAgreementEnum {
+export enum DataAccessAgreementEnum {
   IT_AGREEMENT_CONTACT_DACO_FRAUD = 'it_agreement_contact_daco_fraud',
   IT_AGREEMENT_PROVIDE_INSTITUTIONAL_POLICIES = 'it_agreement_provide_institutional_policies',
   IT_AGREEMENT_ONBOARD_TRAINING = 'it_agreement_onboard_training',
@@ -136,23 +136,12 @@ export enum ITAgreementEnum {
   IT_AGREEMENT_MONITOR_ACCESS = 'it_agreement_monitor_access',
   IT_AGREEMENT_PROTECT_DATA = 'it_agreement_protect_data',
   IT_AGREEMENT_SOFTWARE_UPDATES = 'it_agreement_software_updates',
-}
-
-export enum DataAccessAgreementEnum {
   DAA_CORRECT_APPLICATION_CONTENT = 'daa_correct_application_content',
   DAA_AGREE_TO_TERMS = 'daa_agree_to_terms',
 }
 
-interface ITAgreement extends Agreement {
-  name: ITAgreementEnum;
-}
-
 export interface DataAccessAgreement extends Agreement {
   name: DataAccessAgreementEnum;
-}
-
-export interface ITAgreements {
-  agreements: ITAgreement[];
 }
 
 export enum CollaboratorType {
@@ -214,7 +203,6 @@ export interface ApplicationData {
     collaborators: Collaborators;
     projectInfo: ProjectInfo;
     ethicsLetter: EthicsLetter;
-    ITAgreements: ITAgreements;
     dataAccessAgreement: DataAccessAgreement;
     appendices: Appendices;
   };
