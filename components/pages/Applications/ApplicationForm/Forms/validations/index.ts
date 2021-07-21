@@ -264,8 +264,6 @@ export const validator: FormSectionValidatorFunction_Main =
 
             return data;
           });
-
-          console.log('after', stateAfter);
         }
         // dispatch(results);
       }
@@ -410,7 +408,7 @@ export const useLocalValidation = (
                 : {
                     error,
                     value:
-                      typeof oldValue === 'object'
+                      oldValue && typeof oldValue === 'object'
                         ? {
                             ...oldValue,
                             ...([fieldOverride, type].includes('remove')

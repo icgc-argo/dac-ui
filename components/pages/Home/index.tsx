@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { css, styled } from '@icgc-argo/uikit';
 import Typography from '@icgc-argo/uikit/Typography';
 import Button from '@icgc-argo/uikit/Button';
@@ -7,6 +8,8 @@ import { Col, Row } from 'react-grid-system';
 
 import DefaultPageLayout from 'components/DefaultPageLayout';
 import { HOMEPAGE_ARGO_LINK, ICGC_DCC_LINK, ICGC_PCAWG_LINK, ICGC_ARGO_FAQS, DACO_APPLYING_DOCS } from 'global/constants/externalPaths';
+import { getConfig } from 'global/config';
+import ApplyForAccessModal from 'components/ApplyForAccessModal';
 
 const LinkWhite = ({ children, href }: { children: any; href: string }) => (
   <Link href={href} style={{ color: '#fff' }} target="_blank">
@@ -165,6 +168,8 @@ const HeroDiv = styled('div')`
 `;
 
 const Home = () => {
+  const [isAccessModalVisible, setAccessModalVisible] = useState<boolean>(false);
+  const { NEXT_PUBLIC_ARGO_PLATFORM_ROOT } = getConfig();
   return (
     <DefaultPageLayout title={'Homepage'}>
       <HeroDiv>
@@ -201,6 +206,7 @@ const Home = () => {
               `}
               size="md"
               variant="secondary"
+              onClick={() => setAccessModalVisible(true)}
             >
               Get Started: Apply for Access
             </Button>
@@ -228,9 +234,9 @@ const Home = () => {
             </Typography>
             <LogoParagraphRow
               Img={<img src="/icgc-argo-logo-white.svg" width={'145px'} height={'23px'} />}
-              imageLink={HOMEPAGE_ARGO_LINK}
+              imageLink={NEXT_PUBLIC_ARGO_PLATFORM_ROOT}
             >
-              <LinkWhite href={HOMEPAGE_ARGO_LINK}>ICGC ARGO</LinkWhite> plans to uniformly analyze specimens from 100,000 cancer patients with high quality clinical data. Learn more about the <LinkWhite href={HOMEPAGE_ARGO_LINK}>ICGC ARGO project</LinkWhite>.
+              <LinkWhite href={NEXT_PUBLIC_ARGO_PLATFORM_ROOT}>ICGC ARGO</LinkWhite> plans to uniformly analyze specimens from 100,000 cancer patients with high quality clinical data. Learn more about the <LinkWhite href={HOMEPAGE_ARGO_LINK}>ICGC ARGO project</LinkWhite>.
             </LogoParagraphRow>
             <LogoParagraphRow
               Img={<img src="/logo-ICGC-25k.svg" width={'140px'} height={'46px'} />}
@@ -255,7 +261,7 @@ const Home = () => {
               The International Cancer Genome Consortium has tiered levels of access to donor data with strict data access policies. Authorization for access to controlled data is project based and is reviewed for compliance with <Link href="TODO" target="_blank">ICGC Policies and Guidelines</Link>. The ICGC DACO has been created as an independent body to ensure that data from the ICGC will only be used by qualified individuals for public health objectives with no undue risks to donors.
             </ParagraphBlack>
             <ParagraphBlack bold>
-              Before starting your application, learn more about <Link href="TODO" target="_blank">Data Access and Use Policies</Link> and review{' '}
+              Before starting your application, learn more about <Link href="TODO" target="_blank">Data Access and Use Policies</Link> and review our{' '}
               <Link href={ICGC_ARGO_FAQS} target="_blank">frequently asked questions</Link>.
             </ParagraphBlack>
           </PaddedColumn>
@@ -275,6 +281,9 @@ const Home = () => {
           </PaddedColumn>
         </PaddedRow>
       </div>
+      {isAccessModalVisible && (
+        <ApplyForAccessModal dismissModal={() => setAccessModalVisible(false)} />
+      )}
     </DefaultPageLayout>
   );
 };

@@ -105,7 +105,9 @@ const HeaderActions = ({
             });
           // if data fetch fails, do not proceed to pdf generation
           if (data && !isDownloadZip) {
-            generatePDFDocument(data);
+            // reset loading state after generate is done
+            await generatePDFDocument(data);
+            setPdfIsLoading(false);
           }
         }}
       >

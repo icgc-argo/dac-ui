@@ -1,5 +1,5 @@
 import { pdf, Document } from '@react-pdf/renderer';
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { FILE_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
 import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
 import Cover from '../../PDF/Cover';
@@ -16,9 +16,10 @@ import { saveAs } from 'file-saver';
 import { css } from '@icgc-argo/uikit';
 import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import { ApplicationData } from '../../types';
 
 // generate the PDF on request, so that app data is most recent (not when page is loaded)
-export const generatePDFDocument = async (data: any) => {
+export const generatePDFDocument = async (data: ApplicationData) => {
   const blob = await pdf(
     <Document>
       {/* Cover is PDF only */}

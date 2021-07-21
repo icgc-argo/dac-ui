@@ -19,15 +19,16 @@ import useClickAway from '@icgc-argo/uikit/utils/useClickAway';
 
 import {
   CONTROLLED_DATA_USERS_PAGE,
+  EGO_LOGIN_URL,
   HELP_PAGE,
   POLICIES_PAGE,
 } from 'global/constants/externalPaths';
 import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
-import { getConfig } from 'global/config';
 import { useAuthContext } from 'global/hooks';
 import { UserWithId } from 'global/types';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
 import { ADMIN_APPLICATIONS_LABEL, APPLICANT_APPLICATIONS_LABEL } from 'global/constants';
+import ApplyForAccessModal from 'components/ApplyForAccessModal';
 
 const StyledMenuItem = styled(MenuItem)`
   ${({ theme }: { theme: UikitTheme }) => `
@@ -120,12 +121,9 @@ const UserDisplayName = ({ user, dropdownOpen }: { user: UserWithId; dropdownOpe
 
 const LoginButton = () => {
   const router = useRouter();
-  const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
-  const egoLoginUrl = new URL(urlJoin(NEXT_PUBLIC_EGO_API_ROOT, 'oauth/login/google'));
-  egoLoginUrl.searchParams.append('client_id', NEXT_PUBLIC_EGO_CLIENT_ID);
   return (
     <Button
-      onClick={(e) => router.push(egoLoginUrl.href)}
+      onClick={() => router.push(EGO_LOGIN_URL)}
       css={(theme: UikitTheme) =>
         css`
           background-color: ${theme.colors.accent2};
@@ -157,6 +155,7 @@ const NavBar = () => {
   const { user, logout, permissions } = useAuthContext();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = createRef() as React.RefObject<HTMLDivElement>;
+  const [isAccessModalVisible, setAccessModalVisible] = useState<boolean>(false);
 
   useClickAway({
     domElementRef: dropdownRef,
@@ -235,18 +234,25 @@ const NavBar = () => {
               </StyledMenuItem>
             </Link>
           ) : (
-            <StyledMenuItem>
-              <Typography
-                css={(theme) => css`
+            <Link
+              css={css`
+                text-decoration: none;
+              `}
+              onClick={() => setAccessModalVisible(true)}
+            >
+              <StyledMenuItem>
+                <Typography
+                  css={(theme) => css`
                   ${theme.typography.data};
                   text-transform: uppercase;
                   font-weight: bold;
                   color: ${theme.colors.accent2_dark};
                 `}
-              >
-                Apply for Access
-              </Typography>
-            </StyledMenuItem>
+                >
+                  Apply for Access
+                </Typography>
+              </StyledMenuItem>
+            </Link>
           )}
           {user ? (
             <StyledMenuItem
@@ -291,6 +297,9 @@ const NavBar = () => {
           )}
         </MenuGroup>
       </Section>
+      {isAccessModalVisible && (
+        <ApplyForAccessModal dismissModal={() => setAccessModalVisible(false)} />
+      )}
     </AppBar>
   );
 };
