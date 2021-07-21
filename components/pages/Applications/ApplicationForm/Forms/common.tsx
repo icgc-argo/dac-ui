@@ -29,7 +29,6 @@ export const generatePDFDocument = async (data: any) => {
       <StaticCollaborators isPdf data={data} />
       <StaticProjectInfo isPdf data={data} />
       <StaticEthics isPdf data={data} />
-      <StaticITAgreements isPdf data={data} />
       <StaticDataAccessAgreement isPdf data={data} />
       <StaticAppendices isPdf data={data} />
       {/* Signatures is PDF only */}
