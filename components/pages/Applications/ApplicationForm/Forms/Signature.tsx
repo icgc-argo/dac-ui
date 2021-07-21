@@ -49,7 +49,7 @@ const Signature = ({
 }): ReactElement => {
   console.log('local', localState);
   const theme = useTheme();
-  const selectedFile = localState.signedApp.fields;
+  const { signedAppDocObjId, signedDocName, uploadedAtUtc } = localState;
 
   const [isModalVisible, setModalVisible] = useState(false);
   const dismissModal = () => setModalVisible(false);
@@ -65,6 +65,20 @@ const Signature = ({
     if (fp) {
       fp.click();
     }
+  };
+
+  const submit = () => {
+    fetchWithAuth({
+      data: {
+        state: 'REVIEW',
+      },
+      method: 'PATCH',
+      url: urlJoin(API.APPLICATIONS, appId),
+    })
+      .catch((err: AxiosError) => {
+        console.error('Failed to submit.', err);
+      })
+      .finally(() => setModalVisible(false));
   };
 
   const handleFileUpload = (e: any) => {
@@ -93,24 +107,26 @@ const Signature = ({
   };
 
   const deleteDocument = () => {
-    const documentId = selectedFile?.objectId;
-    if (!documentId) {
+    const docId = signedAppDocObjId.value;
+    if (!docId) {
       return false;
     }
 
     fetchWithAuth({
       method: 'DELETE',
-      url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/assetId/${documentId}`,
+      url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/assetId/${docId}`,
     })
       .catch((err: AxiosError) => {
         console.error('Document delete request failed.', err);
       })
-      .finally(({ data }: { data: FormValidationStateParameters }) =>
+      .finally((data) => {
+        console.log('d', data);
+
         refetchAllData({
           type: 'updating',
           value: data,
-        }),
-      );
+        });
+      });
   };
 
   return (
@@ -258,7 +274,7 @@ const Signature = ({
             Signed Application:
           </InputLabel>
 
-          {selectedFile.name.value ? (
+          {signedDocName.value ? (
             <Typography
               variant="data"
               css={css`
@@ -281,10 +297,10 @@ const Signature = ({
                     margin-right: 6px;
                   `}
                 />
-                {selectedFile.name.value}
-                {selectedFile.uploadedAtUtc.value &&
-                  `| Uploaded on: ${getFormattedDate(
-                    selectedFile.uploadedAtUtc.value,
+                {signedDocName.value}
+                {uploadedAtUtc.value &&
+                  `     | Uploaded on: ${getFormattedDate(
+                    uploadedAtUtc.value,
                     UPLOAD_DATE_FORMAT,
                   )}`}
                 <Icon
@@ -342,7 +358,7 @@ const Signature = ({
           css={css`
             margin-top: 40px;
           `}
-          disabled={!selectedFile}
+          disabled={!signedAppDocObjId.value}
           onClick={() => setModalVisible(true)}
         >
           Submit Application
@@ -355,7 +371,7 @@ const Signature = ({
             onCancelClick={dismissModal}
             onCloseClick={dismissModal}
             actionButtonText="Yes, Submit"
-            onActionClick={() => null}
+            onActionClick={submit}
           >
             <div
               css={css`
