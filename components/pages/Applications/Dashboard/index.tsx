@@ -5,7 +5,7 @@ import { Container, Row } from 'react-grid-system';
 import Applications from './Applications';
 import AccessBox from './AccessBox';
 
-const Dashboard = ({ hasDacoAccess }: { hasDacoAccess: true }) => (
+const Dashboard = ({ hasDacoAccess }: { hasDacoAccess: boolean }) => (
   <>
     <PageHeader>My Applications</PageHeader>
     <Container
