@@ -32,3 +32,6 @@ export const getPermissionsFromToken: (egoJwt: string) => string[] = (egoJwt) =>
   isValidJwt(egoJwt) ? TokenUtils.getPermissionsFromToken(egoJwt) : [];
 
 export const isDacoAdmin = (permissions: string[]): boolean => TokenUtils.isDacoAdmin(permissions);
+
+export const hasDacoScope = (permissions: string[]): boolean =>
+  permissions.includes(`DACO.WRITE`) || permissions.includes(`DACO.READ`);

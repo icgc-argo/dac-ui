@@ -35,7 +35,6 @@ const EthicsLetter = ({
   const [selectedRadioValue, setSelectedRadioValue] = useState(
     localState.declaredAsRequired?.value || null,
   );
-
   // this handler was customised to handle things that ought be handled by the RadioCheckboxGroup itself
   // TODO: improve that, as well as implement the component's focus/blur
   // which will be needed to implement "required field" error behaviours

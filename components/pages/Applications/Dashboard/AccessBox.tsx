@@ -1,9 +1,7 @@
 import { css } from '@icgc-argo/uikit';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
-import Icon from '@icgc-argo/uikit/Icon';
 import { styled } from '@icgc-argo/uikit';
 import Link from '@icgc-argo/uikit/Link';
-import Image from 'next/image';
 import Typography from '@icgc-argo/uikit/Typography';
 
 const IconWithText = styled('div')`
@@ -65,13 +63,9 @@ const AccessBox = ({ hasAccess = false }: { hasAccess?: boolean }) => {
             font-size: 13px;
           `}
         >
-          {hasAccess ? (
-            <>
-              You have access to <Link>ICGC Controlled Data »</Link>
-            </>
-          ) : (
-            'You do not have access to ICGC Controlled Data.'
-          )}
+          {hasAccess
+            ? 'You have access to ICGC Controlled Data.'
+            : 'You do not have access to ICGC Controlled Data.'}
         </Typography>
       </div>
     </div>

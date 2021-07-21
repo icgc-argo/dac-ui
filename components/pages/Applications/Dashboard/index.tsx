@@ -5,46 +5,44 @@ import { Container, Row } from 'react-grid-system';
 import Applications from './Applications';
 import AccessBox from './AccessBox';
 
-const Dashboard = () => {
-  return (
-    <>
-      <PageHeader>My Applications</PageHeader>
-      <Container
+const Dashboard = ({ hasDacoAccess }: { hasDacoAccess: boolean }) => (
+  <>
+    <PageHeader>My Applications</PageHeader>
+    <Container
+      css={css`
+        margin-top: 24px;
+      `}
+    >
+      <Row
         css={css`
-          margin-top: 24px;
+          justify-content: space-between;
+          margin-bottom: 57px;
         `}
+        nogutter
       >
-        <Row
+        <div
           css={css`
+            display: flex;
             justify-content: space-between;
-            margin-bottom: 57px;
+            align-items: center;
           `}
-          nogutter
         >
-          <div
+          <Typography
+            variant="paragraph2"
             css={css`
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
+              margin-right: 80px;
             `}
           >
-            <Typography
-              variant="paragraph2"
-              css={css`
-                margin-right: 80px;
-              `}
-            >
-              This is where you can manage your Applications for Access to ICGC Controlled Data.
-              Access will be granted for a <b>one year period</b>, starting from the date of
-              approval by the ICGC DACO.
-            </Typography>
-            <AccessBox />
-          </div>
-        </Row>
-        <Applications />
-      </Container>
-    </>
-  );
-};
+            This is where you can manage your Applications for Access to ICGC Controlled Data.
+            Access will be granted for a <b>one year period</b>, starting from the date of approval
+            by the ICGC DACO.
+          </Typography>
+          <AccessBox hasAccess={hasDacoAccess} />
+        </div>
+      </Row>
+      <Applications />
+    </Container>
+  </>
+);
 
 export default Dashboard;

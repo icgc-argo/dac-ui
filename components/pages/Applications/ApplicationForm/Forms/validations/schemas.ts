@@ -13,7 +13,8 @@ yup.setLocale({
   },
   string: {
     email: 'Please enter a valid email address.',
-    url: 'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
+    url:
+      'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
     min: '${label} must be at least ${min} characters.',
   },
   number: {
@@ -112,6 +113,17 @@ export const dataAccessAgreementSchema = yup.object().shape({
     .object()
     .meta({ shape: 'collection', type: 'boolean' })
     .shape({
+      it_agreement_software_updates: yup.boolean().default(false).oneOf([true]).required(),
+      it_agreement_protect_data: yup.boolean().default(false).oneOf([true]).required(),
+      it_agreement_monitor_access: yup.boolean().default(false).oneOf([true]).required(),
+      it_agreement_destroy_copies: yup.boolean().default(false).oneOf([true]).required(),
+      it_agreement_onboard_training: yup.boolean().default(false).oneOf([true]).required(),
+      it_agreement_provide_institutional_policies: yup
+        .boolean()
+        .default(false)
+        .oneOf([true])
+        .required(),
+      it_agreement_contact_daco_fraud: yup.boolean().default(false).oneOf([true]).required(),
       daa_correct_application_content: yup.boolean().default(false).oneOf([true]).required(),
       daa_agree_to_terms: yup.boolean().default(false).oneOf([true]).required(),
     }),
@@ -133,26 +145,6 @@ export const ethicsLetterSchema = yup.object().shape({
       otherwise: yup.array().max(0),
     })
     .required(),
-});
-
-export const itAgreementsSchema = yup.object().shape({
-  agreements: yup
-    .object()
-    .meta({ shape: 'collection', type: 'boolean' })
-    .shape({
-      it_agreement_software_updates: yup.boolean().default(false).oneOf([true]).required(),
-      it_agreement_protect_data: yup.boolean().default(false).oneOf([true]).required(),
-      it_agreement_monitor_access: yup.boolean().default(false).oneOf([true]).required(),
-      it_agreement_destroy_copies: yup.boolean().default(false).oneOf([true]).required(),
-      it_agreement_onboard_training: yup.boolean().default(false).oneOf([true]).required(),
-      it_agreement_provide_institutional_policies: yup
-        .boolean()
-        .default(false)
-        .oneOf([true])
-        .required(),
-      it_agreement_contact_daco_fraud: yup.boolean().default(false).oneOf([true]).required(),
-    }),
-  // agreements: yup.array(yup.boolean().default(false).oneOf([true]).required()),
 });
 
 export const projectInfoSchema = yup.object().shape({
@@ -207,7 +199,13 @@ export const representativeSchema = yup.object().shape({
   info_title: yup.string().default(''),
 });
 
-export const signatureSchema = yup.object().shape({});
+export const signatureSchema = yup.object().shape({
+  signedApp: yup.object().shape({
+    name: yup.string(),
+    objectId: yup.string(),
+    uploadedAtUtc: yup.string(),
+  }),
+});
 
 export const termsSchema = yup.object().shape({
   agreement: yup
@@ -224,7 +222,6 @@ export const combinedSchema = {
   collaborators: collaboratorSchema,
   dataAccessAgreement: dataAccessAgreementSchema,
   ethicsLetter: ethicsLetterSchema,
-  ITAgreements: itAgreementsSchema,
   projectInfo: projectInfoSchema,
   representative: representativeSchema,
   signature: signatureSchema,

@@ -55,7 +55,7 @@ const StaticAppendices = ({ isPdf = false, data }: { isPdf?: boolean; data?: App
       state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
-      <TitleComponent>H. Appendices</TitleComponent>
+      <TitleComponent>G. Appendices</TitleComponent>
 
       <SectionComponent>
         <TextComponent>Please review and agree to the following Appendices.</TextComponent>

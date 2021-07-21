@@ -31,6 +31,185 @@ const DataAccessAgreement = ({
         <StaticDataAgreementsFormSection />
         <FormControl
           disabled={isSectionDisabled}
+          error={!!localState.agreements?.fields?.it_agreement_software_updates?.error}
+          required={isRequired(localState.agreements?.fields?.it_agreement_software_updates)}
+        >
+          <FormCheckbox
+            aria-label={FORM_TEXT.dataAccessAgreements.declarations.it_agreement_software_updates}
+            checked={localState.agreements?.fields?.it_agreement_software_updates?.value}
+            onBlur={validateFieldTouched}
+            onChange={validateFieldTouched}
+            value="agreements--it_agreement_software_updates"
+          >
+            <Typography bold component="span">
+              {FORM_TEXT.dataAccessAgreements.yes}
+            </Typography>
+            {FORM_TEXT.dataAccessAgreements.commaSeparator}
+            {FORM_TEXT.dataAccessAgreements.declarations.it_agreement_software_updates}
+          </FormCheckbox>
+
+          <FormHelperText onErrorOnly>
+            {localState.agreements?.fields?.it_agreement_software_updates?.error?.[0]}
+          </FormHelperText>
+        </FormControl>
+
+        <FormControl
+          disabled={isSectionDisabled}
+          error={!!localState.agreements?.fields?.it_agreement_protect_data?.error}
+          required={isRequired(localState.agreements?.fields?.it_agreement_protect_data)}
+        >
+          <FormCheckbox
+            aria-label={FORM_TEXT.dataAccessAgreements.declarations.it_agreement_protect_data}
+            checked={localState.agreements?.fields?.it_agreement_protect_data?.value}
+            onBlur={validateFieldTouched}
+            onChange={validateFieldTouched}
+            value="agreements--it_agreement_protect_data"
+          >
+            <Typography bold component="span">
+              {FORM_TEXT.dataAccessAgreements.yes}
+            </Typography>
+            {FORM_TEXT.dataAccessAgreements.commaSeparator}
+            {FORM_TEXT.dataAccessAgreements.declarations.it_agreement_protect_data}
+          </FormCheckbox>
+
+          <FormHelperText onErrorOnly>
+            {localState.agreements?.fields?.it_agreement_protect_data?.error?.[0]}
+          </FormHelperText>
+        </FormControl>
+
+        <FormControl
+          disabled={isSectionDisabled}
+          error={!!localState.agreements?.fields?.it_agreement_monitor_access?.error}
+          required={isRequired(localState.agreements?.fields?.it_agreement_monitor_access)}
+        >
+          <FormCheckbox
+            aria-label={FORM_TEXT.dataAccessAgreements.declarations.it_agreement_monitor_access}
+            checked={localState.agreements?.fields?.it_agreement_monitor_access?.value}
+            onBlur={validateFieldTouched}
+            onChange={validateFieldTouched}
+            value="agreements--it_agreement_monitor_access"
+          >
+            <Typography bold component="span">
+              {FORM_TEXT.dataAccessAgreements.yes}
+            </Typography>
+            {FORM_TEXT.dataAccessAgreements.commaSeparator}
+            {FORM_TEXT.dataAccessAgreements.declarations.it_agreement_monitor_access}
+          </FormCheckbox>
+
+          <FormHelperText onErrorOnly>
+            {localState.agreements?.fields?.it_agreement_monitor_access?.error?.[0]}
+          </FormHelperText>
+        </FormControl>
+
+        <FormControl
+          disabled={isSectionDisabled}
+          error={!!localState.agreements?.fields?.it_agreement_destroy_copies?.error}
+          required={isRequired(localState.agreements?.fields?.it_agreement_destroy_copies)}
+        >
+          <FormCheckbox
+            aria-label={FORM_TEXT.dataAccessAgreements.declarations.it_agreement_destroy_copies}
+            checked={localState.agreements?.fields?.it_agreement_destroy_copies?.value}
+            onBlur={validateFieldTouched}
+            onChange={validateFieldTouched}
+            value="agreements--it_agreement_destroy_copies"
+          >
+            <Typography bold component="span">
+              {FORM_TEXT.dataAccessAgreements.yes}
+            </Typography>
+            {FORM_TEXT.dataAccessAgreements.commaSeparator}
+            {FORM_TEXT.dataAccessAgreements.declarations.it_agreement_destroy_copies}
+          </FormCheckbox>
+
+          <FormHelperText onErrorOnly>
+            {localState.agreements?.fields?.it_agreement_destroy_copies?.error?.[0]}
+          </FormHelperText>
+        </FormControl>
+
+        <FormControl
+          disabled={isSectionDisabled}
+          error={!!localState.agreements?.fields?.it_agreement_onboard_training?.error}
+          required={isRequired(localState.agreements?.fields?.it_agreement_onboard_training)}
+        >
+          <FormCheckbox
+            aria-label={FORM_TEXT.dataAccessAgreements.declarations.it_agreement_onboard_training}
+            checked={localState.agreements?.fields?.it_agreement_onboard_training?.value}
+            onBlur={validateFieldTouched}
+            onChange={validateFieldTouched}
+            value="agreements--it_agreement_onboard_training"
+          >
+            <Typography bold component="span">
+              {FORM_TEXT.dataAccessAgreements.yes}
+            </Typography>
+            {FORM_TEXT.dataAccessAgreements.commaSeparator}
+            {FORM_TEXT.dataAccessAgreements.declarations.it_agreement_onboard_training}
+          </FormCheckbox>
+
+          <FormHelperText onErrorOnly>
+            {localState.agreements?.fields?.it_agreement_onboard_training?.error?.[0]}
+          </FormHelperText>
+        </FormControl>
+
+        <FormControl
+          disabled={isSectionDisabled}
+          error={
+            !!localState.agreements?.fields?.it_agreement_provide_institutional_policies?.error
+          }
+          required={isRequired(
+            localState.agreements?.fields?.it_agreement_provide_institutional_policies,
+          )}
+        >
+          <FormCheckbox
+            aria-label={
+              FORM_TEXT.dataAccessAgreements.declarations
+                .it_agreement_provide_institutional_policies
+            }
+            checked={
+              localState.agreements?.fields?.it_agreement_provide_institutional_policies?.value
+            }
+            onBlur={validateFieldTouched}
+            onChange={validateFieldTouched}
+            value="agreements--it_agreement_provide_institutional_policies"
+          >
+            <Typography bold component="span">
+              {FORM_TEXT.dataAccessAgreements.yes}
+            </Typography>
+            {FORM_TEXT.dataAccessAgreements.commaSeparator}
+            {
+              FORM_TEXT.dataAccessAgreements.declarations
+                .it_agreement_provide_institutional_policies
+            }
+          </FormCheckbox>
+
+          <FormHelperText onErrorOnly>
+            {localState.agreements?.fields?.it_agreement_provide_institutional_policies?.error?.[0]}
+          </FormHelperText>
+        </FormControl>
+
+        <FormControl
+          disabled={isSectionDisabled}
+          error={!!localState.agreements?.fields?.it_agreement_contact_daco_fraud?.error}
+          required={isRequired(localState.agreements?.fields?.it_agreement_contact_daco_fraud)}
+        >
+          <FormCheckbox
+            aria-label={FORM_TEXT.dataAccessAgreements.declarations.it_agreement_contact_daco_fraud}
+            checked={localState.agreements?.fields?.it_agreement_contact_daco_fraud?.value}
+            onBlur={validateFieldTouched}
+            onChange={validateFieldTouched}
+            value="agreements--it_agreement_contact_daco_fraud"
+          >
+            <Typography bold component="span">
+              {FORM_TEXT.dataAccessAgreements.yes}
+            </Typography>
+            {FORM_TEXT.dataAccessAgreements.commaSeparator}
+            {FORM_TEXT.dataAccessAgreements.declarations.it_agreement_contact_daco_fraud}
+          </FormCheckbox>
+
+          <FormHelperText onErrorOnly>
+            {localState.agreements?.fields?.it_agreement_contact_daco_fraud?.error?.[0]}
+          </FormHelperText>
+        </FormControl>
+        <FormControl
+          disabled={isSectionDisabled}
           error={!!localState.agreements?.fields?.daa_correct_application_content?.error}
           required={isRequired(localState.agreements?.fields?.daa_correct_application_content)}
         >

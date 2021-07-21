@@ -107,23 +107,11 @@ export type FormSectionValidationState_Applicant = FormSectionValidationState_Se
   address_streetAddress: { value: string };
   address_postalCode: { value: string };
 }>;
+
 export type FormSectionValidationState_Collaborators =
   FormSectionValidationState_SectionsGenericType<{}>;
+
 export type FormSectionValidationState_DataAccessAgreements =
-  FormSectionValidationState_SectionsGenericType<{
-    agreements: {
-      fields: {
-        daa_correct_application_content: FormFieldType;
-        daa_agree_to_terms: FormFieldType;
-      };
-    };
-  }>;
-export type FormSectionValidationState_EthicsLetter =
-  FormSectionValidationState_SectionsGenericType<{
-    declaredAsRequired: { value: boolean | null };
-    approvalLetterDocs: { value: [] };
-  }>;
-export type FormSectionValidationState_ITAgreements =
   FormSectionValidationState_SectionsGenericType<{
     agreements: {
       fields: {
@@ -134,9 +122,18 @@ export type FormSectionValidationState_ITAgreements =
         it_agreement_onboard_training: FormFieldType;
         it_agreement_provide_institutional_policies: FormFieldType;
         it_agreement_contact_daco_fraud: FormFieldType;
+        daa_correct_application_content: FormFieldType;
+        daa_agree_to_terms: FormFieldType;
       };
     };
   }>;
+
+export type FormSectionValidationState_EthicsLetter =
+  FormSectionValidationState_SectionsGenericType<{
+    approvalLetterDocs: { value: [] };
+    declaredAsRequired: { value: boolean | null };
+  }>;
+
 export type FormSectionValidationState_ProjectInfo =
   FormSectionValidationState_SectionsGenericType<{
     aims: { value: string };
@@ -167,8 +164,17 @@ export type FormSectionValidationState_Representative =
     address_streetAddress: { value: string };
     address_postalCode: { value: string };
   }>;
-export type FormSectionValidationState_Signature =
-  FormSectionValidationState_SectionsGenericType<{}>;
+
+export type FormSectionValidationState_Signature = FormSectionValidationState_SectionsGenericType<{
+  signedApp: {
+    fields: {
+      name: string;
+      objectId: string;
+      uploadedAtUtc: string;
+    };
+  };
+}>;
+
 export type FormSectionValidationState_Terms = FormSectionValidationState_SectionsGenericType<{
   agreement: { value: boolean };
 }>;
@@ -179,7 +185,6 @@ export type FormSectionValidationState_Sections =
   | FormSectionValidationState_Collaborators
   | FormSectionValidationState_DataAccessAgreements
   | FormSectionValidationState_EthicsLetter
-  | FormSectionValidationState_ITAgreements
   | FormSectionValidationState_ProjectInfo
   | FormSectionValidationState_Representative
   | FormSectionValidationState_Signature
@@ -279,7 +284,7 @@ export type FormSectionValidatorFunction_Main = (
   apiFetcher: AuthAPIFetchFunction,
 ) => FormSectionValidatorFunction_Origin;
 
-export enum UPLOAD_TYPES {
+export enum DOCUMENT_TYPES {
   SIGNED_APP = 'SIGNED_APP',
   ETHICS = 'ETHICS',
 }
