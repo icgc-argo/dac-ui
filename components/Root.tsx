@@ -44,6 +44,21 @@ export const ModalPortal = ({ children }: { children: React.ReactElement }) => {
         css={css`
           transition: all 0.2s;
           opacity: ${mounted ? 1 : 0};
+          #modal-action-btn_google-logo {
+            position: relative;
+            padding-left: 34px;
+            &::before {
+              position: absolute;
+              display: block;
+              content: ' ';
+              background-image: url('/icons-google.svg');
+              background-size: 18px 19px;
+              background-repeat: no-repeat;
+              height: 18px;
+              width: 19px;
+              left: 11px;
+            }
+          }
         `}
       >
         <Modal.Overlay
