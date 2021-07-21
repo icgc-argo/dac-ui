@@ -67,6 +67,9 @@ export const getFieldDataFromEvent: FormFieldDataFromEvent = (event) => {
   return {};
 };
 
+export const getInternalFieldSchema = (fieldParent?: FormFieldType) =>
+  fieldParent?.innerType?.fields || {};
+
 export const getMin = (fieldData?: FormFieldType) =>
   (fieldData?.tests?.find((test) => test.name === 'min')?.params?.min as number) || 0;
 
@@ -96,7 +99,7 @@ const getSeedValueByFieldType = (fieldType: string, fieldBase: any, seedValue: a
       const valueFiller = fieldBase.innerType?.type === 'string' ? '' : null;
       const baseArray = Array.from({ length: getMin(fieldBase) }, () => ({ value: valueFiller }));
 
-      const seedObj = {
+      return {
         value: isPublicationURLsArray
           ? seedValue.reduce(
               (acc: Record<number, any>, value: unknown, index: number) => ({
@@ -109,8 +112,6 @@ const getSeedValueByFieldType = (fieldType: string, fieldBase: any, seedValue: a
             )
           : seedValue,
       };
-
-      return seedObj;
     }
 
     case 'boolean': {

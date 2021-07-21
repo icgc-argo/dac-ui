@@ -22,12 +22,12 @@ type T_AuthContext = {
 };
 
 const AuthContext = createContext<T_AuthContext>({
-  cancelFetchWithAuth: () => { },
+  cancelFetchWithAuth: () => {},
   token: '',
   isLoading: false,
-  logout: () => { },
+  logout: () => {},
   user: undefined,
-  fetchWithAuth: () => { },
+  fetchWithAuth: () => {},
   permissions: [],
 });
 
@@ -103,14 +103,16 @@ export const AuthProvider = ({
       },
       method,
       params,
-      ...responseType ? { responseType } : {},
+      ...(responseType ? { responseType } : {}),
       url,
     };
 
     return axios(config)
       .catch((error) => {
-        // TODO log errors somewhere?
-        console.error({ error });
+        // TODO: log errors somewhere not visible to the user?
+        // Leaving this log here pre-release, for troubleshooting
+        console.error('Error in fetchWithAuth', { error });
+        throw error;
       })
       .finally(() => {
         setLoading(false);
