@@ -19,7 +19,7 @@ enum PROGRESS_LABELS {
   APPROVED = 'Approved',
   REJECTED = 'Rejected',
   CLOSED = 'Closed',
-  REVISIONS_NEEDED = 'Revisions Needed',
+  REVISIONS_REQUESTED = 'Revisions Requested',
 }
 
 const progressStates: ProgressStates = {
@@ -44,7 +44,7 @@ const progressStates: ProgressStates = {
     { label: PROGRESS_LABELS.APPROVED, state: 'success', completed: true },
   ],
   [ApplicationState.REVISIONS_REQUESTED]: [
-    { label: PROGRESS_LABELS.REVISIONS_NEEDED, state: 'pending', completed: true },
+    { label: PROGRESS_LABELS.REVISIONS_REQUESTED, state: 'pending', completed: true },
     { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'disabled', completed: false },
     { label: PROGRESS_LABELS.DACO_REVIEW, state: 'disabled', completed: false },
   ],

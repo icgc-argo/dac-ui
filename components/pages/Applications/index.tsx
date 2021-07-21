@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import DefaultPageLayout from 'components/DefaultPageLayout';
 import Loader from 'components/Loader';
 import { useAuthContext } from 'global/hooks';
-import { isDacoAdmin } from 'global/utils/egoTokenUtils';
+import { hasDacoScope, isDacoAdmin } from 'global/utils/egoTokenUtils';
 
 const ApplicationForm = dynamic(() => import('./ApplicationForm'), { loading: Loader });
 const ManageApplications = dynamic(() => import('./ManageApplications'), { loading: Loader });
@@ -24,6 +24,8 @@ const Application = (): ReactElement => {
   const { isLoading, permissions } = useAuthContext();
 
   const isAdmin = permissions.length > 0 && isDacoAdmin(permissions);
+
+  const hasDacoAccess = hasDacoScope(permissions);
   const normalisedAppId = appId.toUpperCase();
   const pageTitle = normalisedAppId || 'Application page';
 
@@ -36,7 +38,7 @@ const Application = (): ReactElement => {
       ) : isAdmin ? (
         <ManageApplications />
       ) : (
-        <Dashboard />
+        <Dashboard hasDacoAccess={hasDacoAccess} />
       )}
     </DefaultPageLayout>
   );
