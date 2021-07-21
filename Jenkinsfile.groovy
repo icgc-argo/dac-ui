@@ -119,6 +119,7 @@ spec:
             anyOf {
               branch 'master'
               branch 'main'
+              branch 'hf-0.15.1'
             }
           }
           steps {
@@ -130,9 +131,8 @@ spec:
                   withCredentials([usernamePassword(credentialsId:'argoContainers', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                       sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
                   }
-                  sh "docker  build --build-arg COMMIT_ID=${commit} --build-arg VERSION=${version} --network=host -f Dockerfile . -t ${dockerRepo}:latest -t ${dockerRepo}:${version}"
+                  sh "docker  build --build-arg COMMIT_ID=${commit} --build-arg VERSION=${version} --network=host -f Dockerfile . -t ${dockerRepo}:${version}"
                   sh "docker push ${dockerRepo}:${version}"
-                  sh "docker push ${dockerRepo}:latest"
              }
           }
         }
