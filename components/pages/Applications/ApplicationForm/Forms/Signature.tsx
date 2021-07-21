@@ -46,10 +46,8 @@ const Signature = ({
   refetchAllData: any;
 }): ReactElement => {
   const theme = useTheme();
-
-  const [selectedFile, setSelectedFile] = useState(localState.signedApp.fields || null);
-
-  const [signedFormData, setSignedFormData] = useState<null | FormData>(null);
+  const selectedFile = localState.signedApp.fields;
+  console.log('selected fiel', selectedFile);
 
   const [isModalVisible, setModalVisible] = useState(false);
   const dismissModal = () => setModalVisible(false);
@@ -67,31 +65,26 @@ const Signature = ({
     }
   };
 
-  const confirmFileUpload = () => {
-    fetchWithAuth({
-      data: signedFormData,
-      method: 'POST',
-      url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/upload`,
-    })
-      .then(({ data }: { data: FormValidationStateParameters }) =>
-        refetchAllData({
-          type: 'updating',
-          value: data,
-        }),
-      )
-      .catch((err: AxiosError) => {
-        console.error('File failed to upload.', err);
-      });
-  };
-
   const handleFileUpload = (e: any) => {
     const file = e.target.files?.[0];
 
     if (file && file.size <= MAX_FILE_SIZE && VALID_FILE_TYPE.includes(file.type)) {
       const formData = new FormData();
       formData.append('file', file);
-      setSignedFormData(formData);
-      setSelectedFile({ name: file.name, objectId: '', uploadedAtUtc: '' });
+      fetchWithAuth({
+        data: formData,
+        method: 'POST',
+        url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/upload`,
+      })
+        .then(({ data }: { data: FormValidationStateParameters }) =>
+          refetchAllData({
+            type: 'updating',
+            value: data,
+          }),
+        )
+        .catch((err: AxiosError) => {
+          console.error('File failed to upload.', err);
+        });
     } else {
       console.warn('invalid file');
     }
@@ -168,7 +161,6 @@ const Signature = ({
                       .catch((err: AxiosError) => {
                         console.error('Application fetch failed, pdf not generated.', err);
                         setPdfIsLoading(true);
-                        false;
                         return null;
                       });
                     // if data fetch fails, do not proceed to pdf generation
@@ -264,7 +256,7 @@ const Signature = ({
             Signed Application:
           </InputLabel>
 
-          {selectedFile ? (
+          {selectedFile.name.value ? (
             <Typography
               variant="data"
               css={css`
@@ -287,10 +279,10 @@ const Signature = ({
                     margin-right: 6px;
                   `}
                 />
-                {selectedFile.name || ''}
-                {selectedFile.uploadedAtUtc &&
+                {selectedFile.name.value}
+                {selectedFile.uploadedAtUtc.value &&
                   `| Uploaded on: ${getFormattedDate(
-                    selectedFile.uploadedAtUtc,
+                    selectedFile.uploadedAtUtc.value,
                     UPLOAD_DATE_FORMAT,
                   )}`}
                 <Icon
@@ -361,7 +353,7 @@ const Signature = ({
             onCancelClick={dismissModal}
             onCloseClick={dismissModal}
             actionButtonText="Yes, Submit"
-            onActionClick={confirmFileUpload}
+            onActionClick={() => null}
           >
             <div
               css={css`
