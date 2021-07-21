@@ -1,5 +1,5 @@
 import { pdf, Document } from '@react-pdf/renderer';
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { FILE_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
 import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
 import Cover from '../../PDF/Cover';
@@ -18,7 +18,10 @@ import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 
 // generate the PDF on request, so that app data is most recent (not when page is loaded)
-export const generatePDFDocument = async (data: any) => {
+export const generatePDFDocument = async (
+  data: any,
+  setIsLoading: Dispatch<SetStateAction<boolean>>,
+) => {
   const blob = await pdf(
     <Document>
       {/* Cover is PDF only */}
@@ -38,6 +41,7 @@ export const generatePDFDocument = async (data: any) => {
 
   const dateCreated = getFormattedDate(Date.now(), FILE_DATE_FORMAT);
   saveAs(blob, `${data.appId}-${dateCreated}`);
+  setIsLoading(false);
 };
 
 export const CustomLoadingButton = ({ text }: { text: string }) => {
