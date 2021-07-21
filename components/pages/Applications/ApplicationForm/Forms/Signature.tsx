@@ -165,8 +165,7 @@ const Signature = ({
                       });
                     // if data fetch fails, do not proceed to pdf generation
                     if (data) {
-                      await generatePDFDocument(data);
-                      setPdfIsLoading(false);
+                      await generatePDFDocument(data, setPdfIsLoading);
                     }
                   }}
                 >
