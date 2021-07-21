@@ -10,11 +10,20 @@ import FormFieldHelpBubble from './FormFieldHelpBubble';
 import { RequiredStar } from './RequiredFieldsMessage';
 import { styled } from '@icgc-argo/uikit';
 import { AxiosError } from 'axios';
-import { UPLOAD_TYPES } from './types';
+import {
+  DOCUMENT_TYPES,
+  FormSectionValidationState_Signature,
+  FormValidationStateParameters,
+} from './types';
 import { UPLOAD_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
 import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
 import { API } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
+import Modal from '@icgc-argo/uikit/Modal';
+import { ModalPortal } from 'components/Root';
+import Link from '@icgc-argo/uikit/Link';
+import { CustomLoadingButton, generatePDFDocument } from './common';
+import urlJoin from 'url-join';
 
 const FormControl = styled(Control)`
   display: flex;
@@ -27,12 +36,24 @@ const FormControl = styled(Control)`
 const VALID_FILE_TYPE = ['application/pdf'];
 const MAX_FILE_SIZE = 5242880;
 
-const Signature = ({ appId }: { appId: string }): ReactElement => {
+const Signature = ({
+  appId,
+  localState,
+  refetchAllData,
+}: {
+  appId: string;
+  localState: FormSectionValidationState_Signature;
+  refetchAllData: any;
+}): ReactElement => {
   const theme = useTheme();
-  const [selectedFile, setSelectedFile] =
-    useState<{ name: string; uploadDate: string } | undefined>(undefined);
+  const selectedFile = localState.signedApp.fields;
+  console.log('selected fiel', selectedFile);
+
+  const [isModalVisible, setModalVisible] = useState(false);
+  const dismissModal = () => setModalVisible(false);
 
   const { fetchWithAuth } = useAuthContext();
+  const [pdfIsLoading, setPdfIsLoading] = useState(false);
 
   const fileInputRef = React.createRef<HTMLInputElement>();
 
@@ -50,25 +71,44 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
     if (file && file.size <= MAX_FILE_SIZE && VALID_FILE_TYPE.includes(file.type)) {
       const formData = new FormData();
       formData.append('file', file);
-
       fetchWithAuth({
         data: formData,
         method: 'POST',
-        url: `${API.APPLICATIONS}/${appId}/assets/${UPLOAD_TYPES.SIGNED_APP}/upload`,
+        url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/upload`,
       })
-        .then(() => {
-          const fileDetails = {
-            name: file.name,
-            uploadDate: getFormattedDate(Date.now(), UPLOAD_DATE_FORMAT),
-          };
-          setSelectedFile(fileDetails);
-        })
+        .then(({ data }: { data: FormValidationStateParameters }) =>
+          refetchAllData({
+            type: 'updating',
+            value: data,
+          }),
+        )
         .catch((err: AxiosError) => {
           console.error('File failed to upload.', err);
         });
     } else {
       console.warn('invalid file');
     }
+  };
+
+  const deleteDocument = () => {
+    const documentId = selectedFile?.objectId;
+    if (!documentId) {
+      return false;
+    }
+
+    fetchWithAuth({
+      method: 'DELETE',
+      url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/assetId/${documentId}`,
+    })
+      .catch((err: AxiosError) => {
+        console.error('Document delete request failed.', err);
+      })
+      .finally(({ data }: { data: FormValidationStateParameters }) =>
+        refetchAllData({
+          type: 'updating',
+          value: data,
+        }),
+      );
   };
 
   return (
@@ -111,6 +151,24 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
                     line-height: 12px;
                     margin-left: 6px;
                   `}
+                  Loader={CustomLoadingButton}
+                  isLoading={pdfIsLoading}
+                  onClick={async () => {
+                    if (pdfIsLoading) return false;
+                    setPdfIsLoading(true);
+                    const data = await fetchWithAuth({ url: urlJoin(API.APPLICATIONS, appId) })
+                      .then((res: any) => res.data)
+                      .catch((err: AxiosError) => {
+                        console.error('Application fetch failed, pdf not generated.', err);
+                        setPdfIsLoading(true);
+                        return null;
+                      });
+                    // if data fetch fails, do not proceed to pdf generation
+                    if (data) {
+                      await generatePDFDocument(data);
+                      setPdfIsLoading(false);
+                    }
+                  }}
                 >
                   <span
                     css={css`
@@ -148,8 +206,13 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
                 a) You can print this page, collect the written signatures, scan the signed page and
                 add it back to the finalized application pdf. <br />
                 b) Or you can add the proper signatures using electronic methods, such as{' '}
-                <a href="https://www.docusign.ca/">DocuSign</a> or{' '}
-                <a href="https://acrobat.adobe.com/us/en/sign.html">AdobeSign.</a>
+                <Link href="https://www.docusign.ca/" target="_blank">
+                  DocuSign
+                </Link>{' '}
+                or{' '}
+                <Link href="https://acrobat.adobe.com/us/en/sign.html" target="_blank">
+                  AdobeSign.
+                </Link>
               </div>
             </li>
             <li>Upload the signed application below.</li>
@@ -193,7 +256,7 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
             Signed Application:
           </InputLabel>
 
-          {selectedFile ? (
+          {selectedFile.name.value ? (
             <Typography
               variant="data"
               css={css`
@@ -216,13 +279,20 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
                     margin-right: 6px;
                   `}
                 />
-                {`${selectedFile.name} | Uploaded on: ${selectedFile.uploadDate}`}
+                {selectedFile.name.value}
+                {selectedFile.uploadedAtUtc.value &&
+                  `| Uploaded on: ${getFormattedDate(
+                    selectedFile.uploadedAtUtc.value,
+                    UPLOAD_DATE_FORMAT,
+                  )}`}
                 <Icon
                   name="trash"
                   fill={theme.colors.accent2}
                   css={css`
                     margin-left: auto;
+                    cursor: pointer;
                   `}
+                  onClick={deleteDocument}
                 />
               </div>
             </Typography>
@@ -271,10 +341,33 @@ const Signature = ({ appId }: { appId: string }): ReactElement => {
             margin-top: 40px;
           `}
           disabled={!selectedFile}
+          onClick={() => setModalVisible(true)}
         >
           Submit Application
         </Button>
       </section>
+      {isModalVisible && (
+        <ModalPortal>
+          <Modal
+            title="Are you sure you want to submit this application?"
+            onCancelClick={dismissModal}
+            onCloseClick={dismissModal}
+            actionButtonText="Yes, Submit"
+            onActionClick={() => null}
+          >
+            <div
+              css={css`
+                max-width: 600px !important;
+              `}
+            >
+              Are you sure you want to submit{' '}
+              <b>Application: DACO-12344 (Ontario Institute for Cancer Research)?</b> If so, the
+              application will be locked for editing and the ICGC DACO will be notified to begin the
+              review process.
+            </div>
+          </Modal>
+        </ModalPortal>
+      )}
     </article>
   );
 };
