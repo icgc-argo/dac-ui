@@ -40,14 +40,16 @@ const Signature = ({
   appId,
   localState,
   refetchAllData,
+  primaryAffiliation,
 }: {
   appId: string;
   localState: FormSectionValidationState_Signature;
   refetchAllData: any;
+  primaryAffiliation: string;
 }): ReactElement => {
+  console.log('local', localState);
   const theme = useTheme();
   const selectedFile = localState.signedApp.fields;
-  console.log('selected fiel', selectedFile);
 
   const [isModalVisible, setModalVisible] = useState(false);
   const dismissModal = () => setModalVisible(false);
@@ -361,9 +363,11 @@ const Signature = ({
               `}
             >
               Are you sure you want to submit{' '}
-              <b>Application: DACO-12344 (Ontario Institute for Cancer Research)?</b> If so, the
-              application will be locked for editing and the ICGC DACO will be notified to begin the
-              review process.
+              <b>
+                Application: {appId} ({primaryAffiliation})?
+              </b>{' '}
+              If so, the application will be locked for editing and the ICGC DACO will be notified
+              to begin the review process.
             </div>
           </Modal>
         </ModalPortal>
