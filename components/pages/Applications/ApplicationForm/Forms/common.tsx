@@ -10,7 +10,6 @@ import StaticCollaborators from '../../PDF/StaticCollaborators';
 import StaticDataAccessAgreement from '../../PDF/StaticDataAccessAgreement';
 import StaticEthics from '../../PDF/StaticEthics';
 import StaticIntroduction from '../../PDF/StaticIntroduction';
-import StaticITAgreements from '../../PDF/StaticITAgreements';
 import StaticProjectInfo from '../../PDF/StaticProjectInfo';
 import StaticRepresentative from '../../PDF/StaticRepresentative';
 import { saveAs } from 'file-saver';
