@@ -16,12 +16,10 @@ import { saveAs } from 'file-saver';
 import { css } from '@icgc-argo/uikit';
 import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import { ApplicationData } from '../../types';
 
 // generate the PDF on request, so that app data is most recent (not when page is loaded)
-export const generatePDFDocument = async (
-  data: any,
-  setIsLoading: Dispatch<SetStateAction<boolean>>,
-) => {
+export const generatePDFDocument = async (data: ApplicationData) => {
   const blob = await pdf(
     <Document>
       {/* Cover is PDF only */}
@@ -41,7 +39,6 @@ export const generatePDFDocument = async (
 
   const dateCreated = getFormattedDate(Date.now(), FILE_DATE_FORMAT);
   saveAs(blob, `${data.appId}-${dateCreated}`);
-  setIsLoading(false);
 };
 
 export const CustomLoadingButton = ({ text }: { text: string }) => {

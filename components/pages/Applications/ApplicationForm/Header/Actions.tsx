@@ -106,7 +106,8 @@ const HeaderActions = ({
           // if data fetch fails, do not proceed to pdf generation
           if (data && !isDownloadZip) {
             // reset loading state after generate is done
-            generatePDFDocument(data, setPdfIsLoading);
+            await generatePDFDocument(data);
+            setPdfIsLoading(false);
           }
         }}
       >
