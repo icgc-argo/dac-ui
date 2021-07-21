@@ -108,10 +108,20 @@ export type FormSectionValidationState_Applicant = FormSectionValidationState_Se
   address_streetAddress: { value: string };
   address_postalCode: { value: string };
 }>;
-
 export type FormSectionValidationState_Collaborators = FormSectionValidationState_SectionsGenericType<{}>;
-
 export type FormSectionValidationState_DataAccessAgreements = FormSectionValidationState_SectionsGenericType<{
+  agreements: {
+    fields: {
+      daa_correct_application_content: FormFieldType;
+      daa_agree_to_terms: FormFieldType;
+    };
+  };
+}>;
+export type FormSectionValidationState_EthicsLetter = FormSectionValidationState_SectionsGenericType<{
+  declaredAsRequired: { value: boolean | null };
+  approvalLetterDocs: { value: [] };
+}>;
+export type FormSectionValidationState_ITAgreements = FormSectionValidationState_SectionsGenericType<{
   agreements: {
     fields: {
       it_agreement_software_updates: FormFieldType;
@@ -121,17 +131,9 @@ export type FormSectionValidationState_DataAccessAgreements = FormSectionValidat
       it_agreement_onboard_training: FormFieldType;
       it_agreement_provide_institutional_policies: FormFieldType;
       it_agreement_contact_daco_fraud: FormFieldType;
-      daa_correct_application_content: FormFieldType;
-      daa_agree_to_terms: FormFieldType;
     };
   };
 }>;
-
-export type FormSectionValidationState_EthicsLetter = FormSectionValidationState_SectionsGenericType<{
-  declaredAsRequired: { value: boolean | null };
-  approvalLetterDocs: { value: [] };
-}>;
-
 export type FormSectionValidationState_ProjectInfo = FormSectionValidationState_SectionsGenericType<{
   aims: { value: string };
   background: { value: string };
@@ -160,7 +162,16 @@ export type FormSectionValidationState_Representative = FormSectionValidationSta
   address_streetAddress: { value: string };
   address_postalCode: { value: string };
 }>;
-export type FormSectionValidationState_Signature = FormSectionValidationState_SectionsGenericType<{}>;
+export type FormSectionValidationState_Signature = FormSectionValidationState_SectionsGenericType<{
+  signedApp: {
+    fields: {
+      name: string;
+      objectId: string;
+      uploadedAtUtc: string;
+    };
+  };
+}>;
+
 export type FormSectionValidationState_Terms = FormSectionValidationState_SectionsGenericType<{
   agreement: { value: boolean };
 }>;
@@ -271,7 +282,6 @@ export type FormSectionValidatorFunction_Main = (
   dispatch: Dispatch<Partial<FormValidationAction>>,
   apiFetcher: AuthAPIFetchFunction,
 ) => FormSectionValidatorFunction_Origin;
-
 
 export enum DOCUMENT_TYPES {
   SIGNED_APP = 'SIGNED_APP',

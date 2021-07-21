@@ -45,10 +45,10 @@ const Signature = ({
   localState: FormSectionValidationState_Signature;
   refetchAllData: any;
 }): ReactElement => {
-  console.log('sig local state', localState);
   const theme = useTheme();
 
-  const [selectedFile, setSelectedFile] = useState(localState.fields || null);
+  const [selectedFile, setSelectedFile] = useState(localState.signedApp.fields || null);
+
   const [signedFormData, setSignedFormData] = useState<null | FormData>(null);
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -91,14 +91,17 @@ const Signature = ({
       const formData = new FormData();
       formData.append('file', file);
       setSignedFormData(formData);
-      setSelectedFile({ name: file.name });
+      setSelectedFile({ name: file.name, objectId: '', uploadedAtUtc: '' });
     } else {
       console.warn('invalid file');
     }
   };
 
   const deleteDocument = () => {
-    const documentId = selectedFile.objectId;
+    const documentId = selectedFile?.objectId;
+    if (!documentId) {
+      return false;
+    }
 
     fetchWithAuth({
       method: 'DELETE',

@@ -111,6 +111,7 @@ const Collaborators = ({
   state: ApplicationState;
   validateFieldTouched: FormFieldValidationTriggerFunction;
 }): ReactElement => {
+  console.log('localState', localState);
   const [isModalVisible, setModalVisible] = useState(false);
   const [collaboratorType, setCollaboratorType] = useState(CollaboratorType.PERSONNEL);
 
