@@ -57,14 +57,13 @@ export const sectionSelector = ({
     <Loader />
   ) : SectionComponent && isValidElement(<SectionComponent />) ? (
     <SectionComponent
+      appId={appId}
+      applicationState={formState.state}
       isSectionDisabled={isSectionDisabled}
       localState={localState}
-      refetchAllData={formState.__refetchAllData}
-      state={formState.state}
-      validateFieldTouched={validateFieldTouched}
-      appId={appId}
       primaryAffiliation={primaryAffiliation}
-      applicationState={formState.state}
+      refetchAllData={formState.__refetchAllData}
+      validateFieldTouched={validateFieldTouched}
     />
   ) : (
     `Section not implemented: "${selectedSection}"`
