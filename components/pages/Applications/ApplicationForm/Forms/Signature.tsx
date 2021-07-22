@@ -116,16 +116,14 @@ const Signature = ({
       method: 'DELETE',
       url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/assetId/${docId}`,
     })
-      .catch((err: AxiosError) => {
-        console.error('Document delete request failed.', err);
-      })
-      .finally((data) => {
-        console.log('d', data);
-
+      .then(({ data }: { data: FormValidationStateParameters }) =>
         refetchAllData({
           type: 'updating',
           value: data,
-        });
+        }),
+      )
+      .catch((err: AxiosError) => {
+        console.error('File could not be deleted.', err);
       });
   };
 
