@@ -10,11 +10,11 @@ import { ApplicationState, CollaboratorType } from 'components/pages/Application
 const Actions = ({
   editCollaborator,
   removeCollaborator,
-  status,
+  applicationState,
 }: {
   editCollaborator: () => void;
   removeCollaborator: () => void;
-  status: ApplicationState;
+  applicationState: ApplicationState;
 }) => {
   const theme = useTheme();
 
@@ -31,7 +31,7 @@ const Actions = ({
         }
       `}
     >
-      {!['APPROVED'].includes(status) && (
+      {!['APPROVED'].includes(applicationState) && (
         <Icon
           name="edit"
           width="20px"
@@ -49,12 +49,12 @@ const TableComponent = ({
   containerRef,
   data = [],
   handleActions,
-  status,
+  applicationState,
 }: {
   containerRef: RefObject<HTMLDivElement>;
   data: [];
   handleActions: (action: 'edit' | 'remove', collaboratorId: string) => () => void;
-  status: ApplicationState;
+  applicationState: ApplicationState;
 }) => (
   <Table
     css={css`
@@ -96,7 +96,7 @@ const TableComponent = ({
             <Actions
               editCollaborator={handleActions('edit', value)}
               removeCollaborator={handleActions('remove', value)}
-              status={status}
+              applicationState={applicationState}
             />
           );
         },

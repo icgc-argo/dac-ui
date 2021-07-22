@@ -48,14 +48,14 @@ const Collaborators = ({
   isSectionDisabled,
   localState,
   refetchAllData,
-  status,
+  applicationState,
   validateFieldTouched,
 }: {
   appId: string;
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_Applicant;
   refetchAllData: (action?: Partial<FormValidationAction>) => void;
-  status: ApplicationState;
+  applicationState: ApplicationState;
   validateFieldTouched: FormFieldValidationTriggerFunction;
 }): ReactElement => {
   const [collaboratorCount, setCollaboratorCount] = useState(0);
@@ -246,7 +246,7 @@ const Collaborators = ({
                 containerRef={containerRef}
                 data={localState.list?.value}
                 handleActions={handleTableActions}
-                status={status}
+                applicationState={applicationState}
               />
             ) : (
               <ContentPlaceholder
