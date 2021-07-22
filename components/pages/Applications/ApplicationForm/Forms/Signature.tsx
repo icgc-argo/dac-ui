@@ -24,6 +24,7 @@ import { ModalPortal } from 'components/Root';
 import Link from '@icgc-argo/uikit/Link';
 import { CustomLoadingButton, generatePDFDocument } from './common';
 import urlJoin from 'url-join';
+import { ApplicationState } from '../../types';
 
 const FormControl = styled(Control)`
   display: flex;
@@ -41,13 +42,14 @@ const Signature = ({
   localState,
   refetchAllData,
   primaryAffiliation,
+  applicationState,
 }: {
   appId: string;
   localState: FormSectionValidationState_Signature;
   refetchAllData: any;
   primaryAffiliation: string;
+  applicationState: ApplicationState;
 }): ReactElement => {
-  console.log('local', localState);
   const theme = useTheme();
   const { signedAppDocObjId, signedDocName, uploadedAtUtc } = localState;
 
@@ -58,6 +60,8 @@ const Signature = ({
   const [pdfIsLoading, setPdfIsLoading] = useState(false);
 
   const fileInputRef = React.createRef<HTMLInputElement>();
+
+  const isApplicationInReview = applicationState === ApplicationState.REVIEW;
 
   // make button work as input
   const selectFile = () => {
@@ -286,6 +290,7 @@ const Signature = ({
                   width: 100%;
                   display: flex;
                   align-items: center;
+                  background: ${isApplicationInReview && '#f6f6f7'};
                 `}
               >
                 <Icon
@@ -308,15 +313,17 @@ const Signature = ({
                     Uploaded on: {getFormattedDate(uploadedAtUtc.value, UPLOAD_DATE_FORMAT)}
                   </>
                 )}
-                <Icon
-                  name="trash"
-                  fill={theme.colors.accent2}
-                  css={css`
-                    margin-left: auto;
-                    cursor: pointer;
-                  `}
-                  onClick={deleteDocument}
-                />
+                {!isApplicationInReview && (
+                  <Icon
+                    name="trash"
+                    fill={theme.colors.accent2}
+                    css={css`
+                      margin-left: auto;
+                      cursor: pointer;
+                    `}
+                    onClick={deleteDocument}
+                  />
+                )}
               </div>
             </Typography>
           ) : (
@@ -363,7 +370,7 @@ const Signature = ({
           css={css`
             margin-top: 40px;
           `}
-          disabled={!signedAppDocObjId.value}
+          disabled={isApplicationInReview || !signedAppDocObjId.value}
           onClick={() => setModalVisible(true)}
         >
           Submit Application

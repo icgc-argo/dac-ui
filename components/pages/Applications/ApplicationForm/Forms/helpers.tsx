@@ -64,6 +64,7 @@ export const sectionSelector = ({
       validateFieldTouched={validateFieldTouched}
       appId={appId}
       primaryAffiliation={primaryAffiliation}
+      applicationState={formState.state}
     />
   ) : (
     `Section not implemented: "${selectedSection}"`
