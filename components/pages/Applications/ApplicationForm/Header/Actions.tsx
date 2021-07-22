@@ -56,9 +56,10 @@ const HeaderActions = ({
         }
       `}
     >
+      {/*
       <Button onClick={function noRefCheck() {}} size="sm" variant="secondary">
         Close Application
-      </Button>
+      </Button>*/}
       <Button
         // setting width on button & CustomLoadingButton to prevent resize on loading state
         css={css`
