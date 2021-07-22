@@ -298,11 +298,18 @@ const Signature = ({
                   `}
                 />
                 {signedDocName.value}
-                {uploadedAtUtc.value &&
-                  `     | Uploaded on: ${getFormattedDate(
-                    uploadedAtUtc.value,
-                    UPLOAD_DATE_FORMAT,
-                  )}`}
+                {uploadedAtUtc.value && (
+                  <>
+                    <span
+                      css={css`
+                        padding: 0 7px;
+                      `}
+                    >
+                      |
+                    </span>{' '}
+                    Uploaded on: {getFormattedDate(uploadedAtUtc.value, UPLOAD_DATE_FORMAT)}
+                  </>
+                )}
                 <Icon
                   name="trash"
                   fill={theme.colors.accent2}
