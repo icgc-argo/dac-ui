@@ -24,6 +24,7 @@ import { ModalPortal } from 'components/Root';
 import Link from '@icgc-argo/uikit/Link';
 import { CustomLoadingButton, generatePDFDocument } from './common';
 import urlJoin from 'url-join';
+import { ApplicationState } from '../../types';
 
 const FormControl = styled(Control)`
   display: flex;
@@ -40,14 +41,17 @@ const Signature = ({
   appId,
   localState,
   refetchAllData,
+  primaryAffiliation,
+  applicationState,
 }: {
   appId: string;
   localState: FormSectionValidationState_Signature;
   refetchAllData: any;
+  primaryAffiliation: string;
+  applicationState: ApplicationState;
 }): ReactElement => {
   const theme = useTheme();
-  const selectedFile = localState.signedApp.fields;
-  console.log('selected fiel', selectedFile);
+  const { signedAppDocObjId, signedDocName, uploadedAtUtc } = localState;
 
   const [isModalVisible, setModalVisible] = useState(false);
   const dismissModal = () => setModalVisible(false);
@@ -57,12 +61,28 @@ const Signature = ({
 
   const fileInputRef = React.createRef<HTMLInputElement>();
 
+  const isApplicationInReview = applicationState === ApplicationState.REVIEW;
+
   // make button work as input
   const selectFile = () => {
     const fp = fileInputRef.current;
     if (fp) {
       fp.click();
     }
+  };
+
+  const submit = () => {
+    fetchWithAuth({
+      data: {
+        state: 'REVIEW',
+      },
+      method: 'PATCH',
+      url: urlJoin(API.APPLICATIONS, appId),
+    })
+      .catch((err: AxiosError) => {
+        console.error('Failed to submit.', err);
+      })
+      .finally(() => setModalVisible(false));
   };
 
   const handleFileUpload = (e: any) => {
@@ -91,24 +111,24 @@ const Signature = ({
   };
 
   const deleteDocument = () => {
-    const documentId = selectedFile?.objectId;
-    if (!documentId) {
+    const docId = signedAppDocObjId.value;
+    if (!docId) {
       return false;
     }
 
     fetchWithAuth({
       method: 'DELETE',
-      url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/assetId/${documentId}`,
+      url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/assetId/${docId}`,
     })
-      .catch((err: AxiosError) => {
-        console.error('Document delete request failed.', err);
-      })
-      .finally(({ data }: { data: FormValidationStateParameters }) =>
+      .then(({ data }: { data: FormValidationStateParameters }) =>
         refetchAllData({
           type: 'updating',
           value: data,
         }),
-      );
+      )
+      .catch((err: AxiosError) => {
+        console.error('File could not be deleted.', err);
+      });
   };
 
   return (
@@ -256,7 +276,7 @@ const Signature = ({
             Signed Application:
           </InputLabel>
 
-          {selectedFile.name.value ? (
+          {signedDocName.value ? (
             <Typography
               variant="data"
               css={css`
@@ -270,6 +290,7 @@ const Signature = ({
                   width: 100%;
                   display: flex;
                   align-items: center;
+                  background: ${isApplicationInReview && '#f6f6f7'};
                 `}
               >
                 <Icon
@@ -279,21 +300,30 @@ const Signature = ({
                     margin-right: 6px;
                   `}
                 />
-                {selectedFile.name.value}
-                {selectedFile.uploadedAtUtc.value &&
-                  `| Uploaded on: ${getFormattedDate(
-                    selectedFile.uploadedAtUtc.value,
-                    UPLOAD_DATE_FORMAT,
-                  )}`}
-                <Icon
-                  name="trash"
-                  fill={theme.colors.accent2}
-                  css={css`
-                    margin-left: auto;
-                    cursor: pointer;
-                  `}
-                  onClick={deleteDocument}
-                />
+                {signedDocName.value}
+                {uploadedAtUtc.value && (
+                  <>
+                    <span
+                      css={css`
+                        padding: 0 7px;
+                      `}
+                    >
+                      |
+                    </span>{' '}
+                    Uploaded on: {getFormattedDate(uploadedAtUtc.value, UPLOAD_DATE_FORMAT)}
+                  </>
+                )}
+                {!isApplicationInReview && (
+                  <Icon
+                    name="trash"
+                    fill={theme.colors.accent2}
+                    css={css`
+                      margin-left: auto;
+                      cursor: pointer;
+                    `}
+                    onClick={deleteDocument}
+                  />
+                )}
               </div>
             </Typography>
           ) : (
@@ -340,7 +370,7 @@ const Signature = ({
           css={css`
             margin-top: 40px;
           `}
-          disabled={!selectedFile}
+          disabled={isApplicationInReview || !signedAppDocObjId.value}
           onClick={() => setModalVisible(true)}
         >
           Submit Application
@@ -353,7 +383,7 @@ const Signature = ({
             onCancelClick={dismissModal}
             onCloseClick={dismissModal}
             actionButtonText="Yes, Submit"
-            onActionClick={() => null}
+            onActionClick={submit}
           >
             <div
               css={css`
@@ -361,9 +391,11 @@ const Signature = ({
               `}
             >
               Are you sure you want to submit{' '}
-              <b>Application: DACO-12344 (Ontario Institute for Cancer Research)?</b> If so, the
-              application will be locked for editing and the ICGC DACO will be notified to begin the
-              review process.
+              <b>
+                Application: {appId} ({primaryAffiliation})?
+              </b>{' '}
+              If so, the application will be locked for editing and the ICGC DACO will be notified
+              to begin the review process.
             </div>
           </Modal>
         </ModalPortal>
