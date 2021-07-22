@@ -39,7 +39,7 @@ const StyledMenuItem = styled(MenuItem)`
       color: ${theme.colors.secondary};
     }
     > span {
-      font-size: 14px !important;
+      font-size: 14px;
     }
   `}
 `;
