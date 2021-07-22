@@ -29,7 +29,7 @@ const EthicsLetter = ({
   appId: string;
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_EthicsLetter;
-  refetchAllData: (action: Partial<FormValidationAction>) => void;
+  refetchAllData: (action?: Partial<FormValidationAction>) => void;
   validateFieldTouched: FormFieldValidationTriggerFunction;
 }): ReactElement => {
   const [selectedRadioValue, setSelectedRadioValue] = useState(

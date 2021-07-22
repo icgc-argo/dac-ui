@@ -18,4 +18,4 @@ RUN npm ci
 RUN npm run build
 
 EXPOSE 3000
-CMD npm start
+CMD ["node", "/usr/src/node_modules/.bin/next", "start"]

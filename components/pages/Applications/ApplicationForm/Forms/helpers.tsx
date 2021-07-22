@@ -51,16 +51,19 @@ export const sectionSelector = ({
     validateFieldTouched: (event: any) => void;
   } = useLocalValidation(selectedSection, storedFields, validator(selectedSection));
 
+  const primaryAffiliation = formState.sections.applicant.fields.info_primaryAffiliation.value;
+
   return isLoading || !formState.__seeded ? (
     <Loader />
   ) : SectionComponent && isValidElement(<SectionComponent />) ? (
     <SectionComponent
+      appId={appId}
+      applicationState={formState.state}
       isSectionDisabled={isSectionDisabled}
       localState={localState}
+      primaryAffiliation={primaryAffiliation}
       refetchAllData={formState.__refetchAllData}
-      state={formState.state}
       validateFieldTouched={validateFieldTouched}
-      appId={appId}
     />
   ) : (
     `Section not implemented: "${selectedSection}"`

@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 
 import { UikitTheme } from '@icgc-argo/uikit/index';
 import Button from '@icgc-argo/uikit/Button';
+import ContentPlaceholder from '@icgc-argo/uikit/ContentPlaceholder';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import Icon from '@icgc-argo/uikit/Icon';
@@ -17,7 +18,6 @@ import { useAuthContext } from 'global/hooks';
 
 import DoubleFieldRow from '../DoubleFieldRow';
 import FormFieldHelpBubble from '../FormFieldHelpBubble';
-import NoFilesMessage from './NoFilesMessage';
 import {
   FormSectionValidationState_EthicsLetter,
   FormValidationAction,
@@ -42,7 +42,7 @@ const UploadsTable = ({
   appId: string;
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_EthicsLetter;
-  refetchAllData: (action: Partial<FormValidationAction>) => void;
+  refetchAllData: (action?: Partial<FormValidationAction>) => void;
   required: boolean;
 }): ReactElement => {
   const containerRef = createRef<HTMLDivElement>();
@@ -281,7 +281,24 @@ const UploadsTable = ({
             withOutsideBorder
           />
         ) : (
-          <NoFilesMessage fileType="Ethics Letters" />
+          <ContentPlaceholder
+            title="You have not added any Ethics Letters."
+            subtitle="To get started, click the “Upload a File” button above."
+            css={css`
+              padding: 15px 0 26px;
+
+              p {
+                font-size: 12px;
+                margin: 6px 0 0 0 !important;
+
+                &:first-of-type {
+                  margin-top: 15px !important;
+                }
+              }
+            `}
+          >
+            <Icon fill={theme.colors.grey_1} name="file" height="30px" width="30px" />
+          </ContentPlaceholder>
         )}
       </div>
     </>
