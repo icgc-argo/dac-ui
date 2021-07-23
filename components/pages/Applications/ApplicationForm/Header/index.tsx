@@ -16,11 +16,19 @@ const ApplicationHeader = ({ data }: { data: any }): ReactElement => {
     appId,
     createdAtUtc,
     lastUpdatedAtUtc,
-    sections: { applicant: { info: { displayName = '', primaryAffiliation = '' } = {} } = {} } = {},
+    sections: {
+      applicant: {
+        fields: {
+          info_firstName: { value: info_firstName = '' } = {},
+          info_lastName: { value: info_lastName = '' } = {},
+          info_primaryAffiliation: { value: info_primaryAffiliation = '' } = {},
+        } = {},
+      } = {},
+    },
     state,
   } = data;
 
-  const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
+  const applicant = `${info_firstName} ${info_lastName}${info_primaryAffiliation ? `. ${info_primaryAffiliation}` : ''}`;
 
   return (
     <PageHeader>
