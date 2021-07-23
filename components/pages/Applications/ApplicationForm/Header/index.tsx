@@ -16,14 +16,7 @@ const ApplicationHeader = ({ data }: { data: any }): ReactElement => {
     appId,
     createdAtUtc,
     lastUpdatedAtUtc,
-    sections: {
-      applicant: {
-        info: {
-          displayName = '',
-          primaryAffiliation = '',
-        } = {},
-      } = {},
-    },
+    sections: { applicant: { info: { displayName = '', primaryAffiliation = '' } = {} } = {} } = {},
     state,
   } = data;
 
