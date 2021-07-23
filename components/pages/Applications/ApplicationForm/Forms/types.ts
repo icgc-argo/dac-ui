@@ -215,8 +215,13 @@ export type FormSectionValidationState_Sections =
 export type FormSectionValidationState_SectionBase = {
   fields: Partial<FormSectionValidationState_Sections>;
   meta: {
+    errorsList: {
+      field: string;
+      message: string;
+    }[];
     overall: FORM_STATES;
     tooltips: Partial<Record<FormSectionOverallState, ReactNode>>;
+    validated: boolean;
   };
 } & Partial<SchemaObjectDescription>;
 

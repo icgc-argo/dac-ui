@@ -173,7 +173,10 @@ export const validationReducer = (
           ...formState.sections,
           [action.section]: {
             ...formState.sections[action.section],
-            overall: action.overall,
+            meta: {
+              ...formState.sections[action.section].meta,
+              validated: true,
+            },
           },
         },
       };
@@ -227,32 +230,47 @@ export const validator: FormSectionValidatorFunction_Main =
   (origin, validateSection) =>
   async (field, value, shouldPersistResults) => {
     if (validateSection) {
-      const { error } = await schemaValidator(
-        combinedSchema[origin],
-        Object.entries(formState.sections[origin]?.fields as object).reduce(
-          (acc, [field, data]) => ({
+      const sectionErrorsListFromBackEnd = formState.sections[origin].meta.errorsList || [];
+      if (sectionErrorsListFromBackEnd.length > 0) {
+        // WIP: marks the section as validated, so this is only done only once after seeding.
+        dispatch({
+          section: origin,
+          type: 'overall',
+        });
+
+        const errorsFromBackEnd = sectionErrorsListFromBackEnd.reduce(
+          (acc, error) => ({
             ...acc,
-            [field]: data.value,
+            [error.field]: (acc[error.field] || []).concat(error.message),
           }),
-          {},
-        ),
-      );
+          {} as Record<string, any>,
+        );
 
-      const results = {
-        section: origin,
-        type: 'overall',
-        overall: error
-          ? FORM_STATES.INCOMPLETE
-          : !['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
-              formState.sections[origin]?.meta.overall || '',
-            )
-          ? FORM_STATES.COMPLETE
-          : undefined,
-        ...(error && { error }),
-      } as FormValidationAction;
-      dispatch(results);
+        Object.entries(formState.sections[origin]?.fields as object).forEach(
+          async ([field, data]) => {
+            if (
+              Object.keys(errorsFromBackEnd).some((offendingFieldName) =>
+                field.includes(offendingFieldName),
+              )
+            ) {
+              const { error } = await schemaValidator(combinedSchema[origin], {
+                [field]: data.value,
+              });
 
-      return results;
+              const results = {
+                field,
+                section: origin,
+                type: data.type,
+                ...(error && { error }),
+              } as FormValidationAction;
+
+              dispatch(results);
+            }
+          },
+        );
+        // });
+      }
+      // return results;
     } else if (field) {
       const [fieldName, fieldIndex, fieldOverride] = field.split('--');
       const fieldIsArray = !Number.isNaN(Number(fieldIndex));
