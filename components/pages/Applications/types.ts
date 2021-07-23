@@ -232,6 +232,3 @@ export type AuthAPIFetchFunction = (options?: {
   data?: any;
   method?: Method;
 }) => Promise<AxiosResponse<any>>;
-
-export type AppDataRefresh = { state: string; lastUpdatedAtUtc?: string };
-export type SetAppDataRefresh = (arg: AppDataRefresh) => void;

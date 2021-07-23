@@ -10,13 +10,12 @@ import ContentError from 'components/placeholders/ContentError';
 import ApplicationHeader from './Header';
 import ApplicationFormsBase from './Forms';
 import RequestRevisionsBar from './RequestRevisionsBar';
-import { AppDataRefresh } from '../types';
 
 const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
   const [data, setData] = useState<AxiosResponse | undefined>(undefined);
   const [error, setError] = useState<AxiosError | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [appDataRefresh, setAppDataRefresh] = useState<AppDataRefresh>({ state: '', lastUpdatedAtUtc: '' });
+  const [lastUpdated, setLastUpdated] = useState<string | undefined>(undefined);
 
   const { fetchWithAuth } = useAuthContext();
 
@@ -35,7 +34,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [appDataRefresh.state, appDataRefresh.lastUpdatedAtUtc]);
+  }, [lastUpdated]);
 
   return error
     ? <ContentError />
@@ -45,7 +44,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
       <>
         <ApplicationHeader data={data} />
         {isAdmin && <RequestRevisionsBar data={data} />}
-        <ApplicationFormsBase appId={appId} setAppDataRefresh={setAppDataRefresh} />
+        <ApplicationFormsBase appId={appId} setLastUpdated={setLastUpdated} />
       </>
     );
 };
