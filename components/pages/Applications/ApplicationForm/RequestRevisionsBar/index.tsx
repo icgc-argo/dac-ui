@@ -17,8 +17,19 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
   const [isRequestRevisionsModalVisible, setRequestRevisionsModalVisible] = useState(false);
   const [isApproveModalVisible, setApproveModalVisible] = useState(false);
 
-  const { appId, state } = data;
-  const { primaryAffiliation } = data.sections.applicant.info;
+  const {
+    appId,
+    sections: {
+      applicant: {
+        fields: {
+          info_primaryAffiliation: {
+            value: info_primaryAffiliation = ''
+          } = {},
+        } = {},
+      } = {}
+    },
+    state
+  } = data;
 
   const buttonsDisabled = ['APPROVED'].includes(state);
   const buttonsVisible = !['REVISIONS REQUESTED'].includes(state);
@@ -38,7 +49,7 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
           <ApproveModal
             appId={appId}
             dismissModal={() => setApproveModalVisible(false)}
-            primaryAffiliation={primaryAffiliation}
+            primaryAffiliation={info_primaryAffiliation}
           />
         </ModalPortal>
       )}
