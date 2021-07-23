@@ -21,7 +21,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
     <>
       <ApplicationHeader data={appData} />
       {isAdmin && <RequestRevisionsBar data={appData} />}
-      <ApplicationFormsBase appId={appId} />
+      <ApplicationFormsBase appId={appId} setAppData={setAppData} />
     </>
   );
 };
