@@ -145,11 +145,11 @@ export interface DataAccessAgreement extends Agreement {
 }
 
 export enum CollaboratorType {
-  STUDENT = 'student',
   PERSONNEL = 'personnel',
+  STUDENT = 'student',
 }
 
-interface Collaborator {
+export interface Collaborator {
   info: IndividualInfo;
   type: CollaboratorType;
   id: string;

@@ -18,6 +18,7 @@ export type HonorificsListTypes = typeof honorificsList[number];
 export enum EVENT_TARGET_TAGS {
   INPUT = 'INPUT',
   MULTISELECT = 'MULTISELECT',
+  MODAL = 'MODAL',
   REMOVE = 'REMOVE',
   SELECT = 'SELECT',
   TEXTAREA = 'TEXTAREA',
@@ -58,19 +59,20 @@ export type ValidationConfigType = {
 export { TAG_VARIANTS };
 
 export type FormFieldType = Partial<
-  SchemaInnerTypeDescription &
-    SchemaDescription & {
-      error: string[];
-      fields: any;
-      touched: boolean;
-      value: any;
-    } & {
-      // WIP: this handles shape mutations (validation vs persistence)
-      meta: {
-        shape: 'collection';
-        type: 'boolean';
-      };
-    }
+  SchemaDescription & {
+    innerType: FormFieldType;
+    error: string[];
+    fields: any;
+    touched: boolean;
+    value: any;
+  } & {
+    // WIP: this handles shape mutations (validation vs persistence)
+    meta: {
+      filler?: '';
+      shape: 'collection' | 'modal' | 'publicationURLsArray' | 'singleAcceptance';
+      type: 'boolean' | 'string';
+    };
+  }
 >;
 
 type FormSectionValidationState_SectionsGenericType<T extends Record<string, FormFieldType>> =
@@ -90,6 +92,7 @@ export type FormSectionValidationState_Appendices = FormSectionValidationState_S
     };
   };
 }>;
+
 export type FormSectionValidationState_Applicant = FormSectionValidationState_SectionsGenericType<{
   info_firstName: { value: string };
   info_googleEmail: { value: string };
@@ -109,7 +112,26 @@ export type FormSectionValidationState_Applicant = FormSectionValidationState_Se
 }>;
 
 export type FormSectionValidationState_Collaborators =
-  FormSectionValidationState_SectionsGenericType<{}>;
+  FormSectionValidationState_SectionsGenericType<{
+    list: {
+      value: [
+        {
+          id: { value: string };
+          info_firstName: { value: string };
+          info_googleEmail: { value: string };
+          info_institutionEmail: { value: string };
+          info_lastName: { value: string };
+          info_middleName: { value: string };
+          info_positionTitle: { value: string };
+          info_primaryAffiliation: { value: string };
+          info_suffix: { value: string };
+          info_title: { value: string };
+          info_website: { value: string };
+          type: { value: string };
+        },
+      ];
+    };
+  }>;
 
 export type FormSectionValidationState_DataAccessAgreements =
   FormSectionValidationState_SectionsGenericType<{
@@ -193,14 +215,21 @@ export type FormSectionValidationState_Sections =
 export type FormSectionValidationState_SectionBase = {
   fields: Partial<FormSectionValidationState_Sections>;
   meta: {
+    errorsList: {
+      field: string;
+      message: string;
+    }[];
     overall: FORM_STATES;
     tooltips: Partial<Record<FormSectionOverallState, ReactNode>>;
+    validated: boolean;
   };
 } & Partial<SchemaObjectDescription>;
 
 export type FormValidationActionTypes =
   | 'array'
   | 'boolean'
+  | 'clearModal'
+  | 'feedModal'
   | 'string'
   | 'object'
   | 'overall'

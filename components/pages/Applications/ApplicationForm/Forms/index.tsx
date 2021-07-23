@@ -36,16 +36,24 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
   const theme: UikitTheme = useTheme();
 
   useEffect(() => {
-    // This adds the selected section to the history
-    // without the initial switch when it's not in the query
-    (sectionFromQuery ? router.push : router.replace)(
-      `/applications/${appId}?section=${selectedSection}`,
-      undefined,
-      {
-        shallow: true,
-      },
-    );
-  }, [selectedSection]);
+    if (sectionFromQuery !== selectedSection) {
+      // This adds the selected section to the history
+      // without the initial switch when it's not in the query
+      (sectionFromQuery ? router.push : router.replace)(
+        `/applications/${appId}?section=${selectedSection}`,
+        undefined,
+        {
+          shallow: true,
+        },
+      );
+    }
+
+    formState.sections[selectedSection]?.meta.validated ||
+      ['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
+        formState.sections[selectedSection]?.meta.overall || '',
+      ) ||
+      validateSection(selectedSection, !!'validateSelectedSection')();
+  }, [formState.sections[selectedSection], selectedSection]);
 
   const sectionIndex = sectionsOrder.indexOf(selectedSection);
   const sectionsAfter = enabledSections(sectionsOrder.slice(sectionIndex + 1), formState);

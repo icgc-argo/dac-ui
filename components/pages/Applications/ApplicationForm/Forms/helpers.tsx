@@ -55,18 +55,20 @@ export const sectionSelector = ({
   const applicantAddress = selectedSection === 'representative' && !!localState.addressSameAsApplicant?.value
     ? pickBy(formState.sections.applicant?.fields || {}, (value, key) => key.startsWith('address_'))
     : undefined; // undefined prop won't be passed down
+  const primaryAffiliation = formState.sections.applicant.fields.info_primaryAffiliation.value;
 
   return isLoading || !formState.__seeded ? (
     <Loader />
   ) : SectionComponent && isValidElement(<SectionComponent />) ? (
     <SectionComponent
       applicantAddress={applicantAddress}
+      appId={appId}
+      applicationState={formState.state}
       isSectionDisabled={isSectionDisabled}
       localState={localState}
+      primaryAffiliation={primaryAffiliation}
       refetchAllData={formState.__refetchAllData}
-      state={formState.state}
       validateFieldTouched={validateFieldTouched}
-      appId={appId}
     />
   ) : (
     `Section not implemented: "${selectedSection}"`

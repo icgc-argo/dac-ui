@@ -13,8 +13,7 @@ yup.setLocale({
   },
   string: {
     email: 'Please enter a valid email address.',
-    url:
-      'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
+    url: 'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
     min: '${label} must be at least ${min} characters.',
   },
   number: {
@@ -78,34 +77,38 @@ export const applicantSchema = yup.object().shape({
 });
 
 export const collaboratorSchema = yup.object().shape({
-  info_collaboratorType: yup
-    .string()
-    .required()
-    .oneOf(['Authorized Personnel', 'Authorized Student']),
-  info_firstName: yup.string().default('').required(),
-  info_googleEmail: yup
-    .string()
-    .default('')
-    .email('Please enter a valid email address.')
-    .required(),
-  info_institutionEmail: yup
-    .string()
-    .default('')
-    .email('Please enter a valid email address.')
-    .required(),
-  info_lastName: yup.string().default('').required(),
-  info_middleName: yup.string().default(''),
-  info_primaryAffiliation: yup.string().default('').required(),
-  info_positionTitle: yup.string().default('').required(),
-  info_suffix: yup.string().default(''),
-  info_title: yup.string().default(''),
-  info_website: yup
-    .string()
-    .default('')
-    .url(
-      'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
+  list: yup
+    .array(
+      yup.object().shape({
+        id: yup.string().default(''),
+        info_firstName: yup.string().default('').required(),
+        info_googleEmail: yup
+          .string()
+          .default('')
+          .email('Please enter a valid email address.')
+          .required(),
+        info_institutionEmail: yup
+          .string()
+          .default('')
+          .email('Please enter a valid email address.')
+          .required(),
+        info_lastName: yup.string().default('').required(),
+        info_middleName: yup.string().default(''),
+        info_primaryAffiliation: yup.string().default('').required(),
+        info_positionTitle: yup.string().default('').required(),
+        info_suffix: yup.string().default(''),
+        info_title: yup.string().default(''),
+        info_website: yup
+          .string()
+          .default('')
+          .url(
+            'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
+          )
+          .required(),
+        type: yup.string().oneOf(['personnel', 'student']).required(),
+      }),
     )
-    .required(),
+    .meta({ shape: 'modal', type: 'object' }),
 });
 
 export const dataAccessAgreementSchema = yup.object().shape({
@@ -200,11 +203,9 @@ export const representativeSchema = yup.object().shape({
 });
 
 export const signatureSchema = yup.object().shape({
-  signedApp: yup.object().shape({
-    name: yup.string(),
-    objectId: yup.string(),
-    uploadedAtUtc: yup.string(),
-  }),
+  signedDocName: yup.string(),
+  signedAppDocObjId: yup.string(),
+  uploadedAtUtc: yup.string(),
 });
 
 export const termsSchema = yup.object().shape({

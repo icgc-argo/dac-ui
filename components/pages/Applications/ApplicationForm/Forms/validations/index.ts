@@ -19,6 +19,7 @@ import {
   FormValidationState_AllSectionsObj,
   FORM_STATES,
   SECTION_STATUS,
+  FormValidationActionTypes,
 } from '../types';
 import {
   getFieldDataFromEvent,
@@ -44,7 +45,8 @@ export const validationReducer = (
       const [fieldName, fieldIndex] = action.field.split('--');
 
       const value =
-        action.type === 'array'
+        action.type === 'array' &&
+        formState.sections[action.section]?.fields?.[fieldName]?.meta?.shape !== 'modal'
           ? errorValue
             ? Object.entries({
                 ...formState.sections[action.section]?.fields?.[fieldName]?.value,
@@ -84,7 +86,23 @@ export const validationReducer = (
               ...formState.sections[action.section]?.fields,
               [fieldName]: {
                 ...formState.sections[action.section]?.fields?.[fieldName],
-                ...(action.type === 'object'
+                ...(formState.sections[action.section]?.fields?.[fieldName]?.meta?.shape === 'modal'
+                  ? {
+                      innerType: {
+                        ...formState.sections[action.section]?.fields?.[fieldName].innerType,
+                        fields: {
+                          ...formState.sections[action.section]?.fields?.[fieldName].innerType
+                            ?.fields,
+                          [fieldIndex]: {
+                            ...formState.sections[action.section]?.fields?.[fieldName].innerType
+                              ?.fields[fieldIndex],
+                            error: action.error || undefined,
+                            value,
+                          },
+                        },
+                      },
+                    }
+                  : action.type === 'object'
                   ? {
                       fields: {
                         ...formState.sections[action.section]?.fields?.[fieldName]?.fields,
@@ -108,6 +126,46 @@ export const validationReducer = (
       };
     }
 
+    case 'clearModal':
+    case 'feedModal': {
+      return {
+        ...formState,
+        sections: {
+          ...formState.sections,
+          [action.section]: {
+            ...formState.sections[action.section],
+            fields: {
+              ...formState.sections[action.section].fields,
+              [action.field]: {
+                ...formState.sections[action.section].fields[action.field],
+                innerType: {
+                  ...formState.sections[action.section].fields[action.field].innerType,
+                  fields: Object.entries(
+                    formState.sections[action.section].fields[action.field].innerType?.fields,
+                  ).reduce((acc, innerField) => {
+                    const [fieldNamePrefix, fieldNameSuffix] = innerField[0].split('_');
+
+                    return {
+                      ...acc,
+                      [innerField[0]]:
+                        action.type === 'clearModal'
+                          ? omit(innerField[1] as FormFieldType, ['error', 'value'])
+                          : {
+                              ...(innerField[1] as FormFieldType),
+                              value: fieldNameSuffix
+                                ? action.value[fieldNamePrefix][fieldNameSuffix]
+                                : action.value[innerField[0]],
+                            },
+                    };
+                  }, {}),
+                },
+              },
+            },
+          },
+        },
+      };
+    }
+
     case 'overall': {
       return {
         ...formState,
@@ -115,7 +173,10 @@ export const validationReducer = (
           ...formState.sections,
           [action.section]: {
             ...formState.sections[action.section],
-            overall: action.overall,
+            meta: {
+              ...formState.sections[action.section].meta,
+              validated: true,
+            },
           },
         },
       };
@@ -169,106 +230,128 @@ export const validator: FormSectionValidatorFunction_Main =
   (origin, validateSection) =>
   async (field, value, shouldPersistResults) => {
     if (validateSection) {
-      const { error } = await schemaValidator(
-        combinedSchema[origin],
-        Object.entries(formState.sections[origin]?.fields as object).reduce(
-          (acc, [field, data]) => ({
+      const sectionErrorsListFromBackEnd = formState.sections[origin].meta.errorsList || [];
+      if (sectionErrorsListFromBackEnd.length > 0) {
+        // WIP: marks the section as validated, so this is only done only once after seeding.
+        dispatch({
+          section: origin,
+          type: 'overall',
+        });
+
+        const errorsFromBackEnd = sectionErrorsListFromBackEnd.reduce(
+          (acc, error) => ({
             ...acc,
-            [field]: data.value,
+            [error.field]: (acc[error.field] || []).concat(error.message),
           }),
-          {},
-        ),
-      );
+          {} as Record<string, any>,
+        );
 
-      const results = {
-        section: origin,
-        type: 'overall',
-        overall: error
-          ? FORM_STATES.INCOMPLETE
-          : !['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
-              formState.sections[origin]?.meta.overall || '',
-            )
-          ? FORM_STATES.COMPLETE
-          : undefined,
-        ...(error && { error }),
-      } as FormValidationAction;
-      dispatch(results);
+        Object.entries(formState.sections[origin]?.fields as object).forEach(
+          async ([field, data]) => {
+            if (
+              Object.keys(errorsFromBackEnd).some((offendingFieldName) =>
+                field.includes(offendingFieldName),
+              )
+            ) {
+              const { error } = await schemaValidator(combinedSchema[origin], {
+                [field]: data.value,
+              });
 
-      return results;
+              const results = {
+                field,
+                section: origin,
+                type: data.type,
+                ...(error && { error }),
+              } as FormValidationAction;
+
+              dispatch(results);
+            }
+          },
+        );
+        // });
+      }
+      // return results;
     } else if (field) {
       const [fieldName, fieldIndex, fieldOverride] = field.split('--');
       const fieldIsArray = !Number.isNaN(Number(fieldIndex));
 
-      const { error } = fieldOverride
-        ? { error: null } // TODO: this validation will be handled in ticket #138
-        : await schemaValidator(
-            yup.reach(
-              combinedSchema[origin],
-              fieldIndex && fieldOverride !== 'overall' ? `${fieldName}[${fieldIndex}]` : fieldName,
-            ),
-            fieldOverride === 'overall'
-              ? Object.values<FormFieldType>(formState.sections[origin]?.fields[fieldName]?.value)
-                  .filter(({ value }) => value !== null)
-                  .map(({ value }) => value)
-              : value,
-          );
+      if (fieldOverride?.includes('Modal')) {
+        dispatch({
+          field: fieldName,
+          section: origin,
+          type: fieldOverride as FormValidationActionTypes,
+          value,
+        });
+      } else {
+        const { error } = fieldOverride
+          ? { error: null } // TODO: this validation will be handled in ticket #138
+          : await schemaValidator(
+              yup.reach(
+                combinedSchema[origin],
+                fieldIndex && fieldOverride !== 'overall'
+                  ? `${fieldName}.${fieldIndex}`
+                  : fieldName,
+              ),
+              fieldOverride === 'overall'
+                ? Object.values<FormFieldType>(formState.sections[origin]?.fields[fieldName]?.value)
+                    .filter(({ value }) => value !== null)
+                    .map(({ value }) => value)
+                : value,
+            );
 
-      const nextValue = {
-        ...(error && { error }),
-        value,
-      };
+        const nextValue = {
+          ...(error && { error }),
+          value,
+        };
 
-      const results = {
-        field,
-        section: origin,
-        type: formState.sections[origin]?.fields?.[fieldName]?.type,
-        ...(fieldIsArray
-          ? {
-              error,
-              value: {
-                [fieldIndex]: nextValue,
+        const results = {
+          field,
+          section: origin,
+          type: formState.sections[origin]?.fields?.[fieldName]?.type,
+          ...(fieldIsArray
+            ? {
+                error,
+                value: {
+                  [fieldIndex]: nextValue,
+                },
+              }
+            : nextValue),
+        } as FormValidationAction;
+
+        if (shouldPersistResults) {
+          dispatch(results);
+
+          if (formState.sections[origin]?.fields?.[fieldName]?.meta?.shape !== 'modal') {
+            const stateAfter = await apiFetcher({
+              method: 'PATCH',
+              data: {
+                sections: {
+                  [origin]: getValueByFieldTypeToPublish(
+                    results,
+                    formState.sections[origin]?.fields?.[fieldName]?.meta,
+                    formState.sections[origin]?.fields?.[fieldName]?.value,
+                  ),
+                },
+                // __v: formState.__v,
               },
-            }
-          : nextValue),
-      } as FormValidationAction;
+            }).then(({ data, ...response } = {} as AxiosResponse<any>) => {
+              data
+                ? dispatch({
+                    type: 'updating',
+                    value: data,
+                  })
+                : console.error(
+                    'Something went wrong updating the application form',
+                    response || 'no data in response',
+                  );
 
-      if (shouldPersistResults) {
-        dispatch(results);
-        // const stateBefore = await apiFetcher().then(({ data }) => data);
-        // console.log('before', stateBefore);
-
-        // WIP: this condition is temporary, to allow partial persistence implementation
-        if (['array', 'boolean', 'object', 'string'].includes(results.type)) {
-          const stateAfter = await apiFetcher({
-            method: 'PATCH',
-            data: {
-              sections: {
-                [origin]: getValueByFieldTypeToPublish(
-                  results,
-                  formState.sections[origin]?.fields?.[fieldName]?.meta,
-                  formState.sections[origin]?.fields?.[fieldName]?.value,
-                ),
-              },
-              // __v: formState.__v,
-            },
-          }).then(({ data, ...response } = {} as AxiosResponse<any>) => {
-            data
-              ? dispatch({
-                  type: 'updating',
-                  value: data,
-                })
-              : console.error(
-                  'Something went wrong updating the application form',
-                  response || 'no data in response',
-                );
-
-            return data;
-          });
+              return data;
+            });
+          }
         }
-        // dispatch(results);
-      }
 
-      return results;
+        return results;
+      }
     }
   };
 
@@ -302,7 +385,7 @@ export const useFormValidation = (appId: string) => {
           {},
         ),
       },
-      __refetchAllData: (action: FormValidationAction) => {
+      __refetchAllData: (action?: FormValidationAction) => {
         action ? validationDispatch(action) : setTriggerFetch(true);
       },
       __seeded: false,
@@ -364,7 +447,7 @@ export const useLocalValidation = (
           ...prev[sectionName],
           fields: merge(currentFields, storedFields, {
             customMerge: (key) => {
-              if (key === 'value') {
+              if (key !== 'error') {
                 return (oldValue, newValue) => newValue;
               }
             },
@@ -392,36 +475,54 @@ export const useLocalValidation = (
           ...currentSectionData,
           fields: {
             ...currentSectionFields,
-            [fieldName]: {
-              ...currentField,
-              ...(type === 'object'
-                ? {
-                    fields: {
-                      ...currentField.fields,
-                      [fieldIndex]: {
-                        ...currentField.fields[fieldIndex],
-                        error,
-                        value,
-                      },
-                    },
-                  }
+            [fieldName]:
+              type === 'remove'
+                ? storedFields[fieldName]
                 : {
-                    error,
-                    value:
-                      oldValue && typeof oldValue === 'object'
-                        ? {
-                            ...oldValue,
-                            ...([fieldOverride, type].includes('remove')
+                    ...currentField,
+                    ...((type === 'array' && currentField.innerType?.type === 'object') ||
+                    currentField.meta?.shape === 'modal'
+                      ? {
+                          innerType: {
+                            ...currentField.innerType,
+                            fields: {
+                              ...currentField.innerType?.fields,
+                              [fieldIndex]: {
+                                ...currentField.innerType?.fields[fieldIndex],
+                                ...(value[fieldIndex] || { value }),
+                                error,
+                              },
+                            },
+                          },
+                        }
+                      : type === 'object'
+                      ? {
+                          fields: {
+                            ...currentField.fields,
+                            [fieldIndex]: {
+                              ...currentField.fields[fieldIndex],
+                              error,
+                              value,
+                            },
+                          },
+                        }
+                      : {
+                          error,
+                          value:
+                            oldValue && typeof oldValue === 'object'
                               ? {
-                                  [fieldIndex]: {
-                                    value: null,
-                                  },
+                                  ...oldValue,
+                                  ...([fieldOverride, type].includes('remove')
+                                    ? {
+                                        [fieldIndex]: {
+                                          value: null,
+                                        },
+                                      }
+                                    : value),
                                 }
-                              : value),
-                          }
-                        : value,
-                  }),
-            },
+                              : value,
+                        }),
+                  },
           },
         },
       } as FormValidationState_AllSectionsObj;
@@ -484,6 +585,8 @@ export const useLocalValidation = (
             const changes = await fieldValidator(field, null, !!'remove');
 
             changes && updateLocalState(changes);
+          } else if (fieldType.includes('Modal')) {
+            fieldValidator(field, value);
           } else {
             const shouldPersistData = ['checkbox', 'radio', 'select-one'].includes(fieldType);
             const checkMultiSelectValue =
