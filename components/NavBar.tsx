@@ -38,6 +38,9 @@ const StyledMenuItem = styled(MenuItem)`
       background-color: ${theme.colors.grey_4};
       color: ${theme.colors.secondary};
     }
+    > span {
+      font-size: 14px;
+    }
   `}
 `;
 
