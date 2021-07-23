@@ -47,7 +47,7 @@ const Signature = ({
 }): ReactElement => {
   const theme = useTheme();
   const selectedFile = localState.signedApp.fields;
-  console.log('selected fiel', selectedFile);
+  console.log('selected file', selectedFile);
 
   const [isModalVisible, setModalVisible] = useState(false);
   const dismissModal = () => setModalVisible(false);

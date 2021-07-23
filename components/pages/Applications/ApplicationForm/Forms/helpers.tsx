@@ -12,6 +12,7 @@ import {
   FormSectionValidationState_SectionBase,
 } from './types';
 import { useLocalValidation } from './validations';
+import { pickBy } from 'lodash';
 
 export const enabledSections = (
   sections: FormSectionNames[],
@@ -51,10 +52,15 @@ export const sectionSelector = ({
     validateFieldTouched: (event: any) => void;
   } = useLocalValidation(selectedSection, storedFields, validator(selectedSection));
 
+  const applicantAddress = selectedSection === 'representative' && !!localState.addressSameAsApplicant?.value
+    ? pickBy(formState.sections.applicant?.fields || {}, (value, key) => key.startsWith('address_'))
+    : undefined; // undefined prop won't be passed down
+
   return isLoading || !formState.__seeded ? (
     <Loader />
   ) : SectionComponent && isValidElement(<SectionComponent />) ? (
     <SectionComponent
+      applicantAddress={applicantAddress}
       isSectionDisabled={isSectionDisabled}
       localState={localState}
       refetchAllData={formState.__refetchAllData}
