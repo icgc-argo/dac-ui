@@ -21,10 +21,8 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
     appId,
     sections: {
       applicant: {
-        fields: {
-          info_primaryAffiliation: {
-            value: info_primaryAffiliation = ''
-          } = {},
+        info: {
+          primaryAffiliation = ''
         } = {},
       } = {}
     },
@@ -49,7 +47,7 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
           <ApproveModal
             appId={appId}
             dismissModal={() => setApproveModalVisible(false)}
-            primaryAffiliation={info_primaryAffiliation}
+            primaryAffiliation={primaryAffiliation}
           />
         </ModalPortal>
       )}

@@ -18,17 +18,16 @@ const ApplicationHeader = ({ data }: { data: any }): ReactElement => {
     lastUpdatedAtUtc,
     sections: {
       applicant: {
-        fields: {
-          info_firstName: { value: info_firstName = '' } = {},
-          info_lastName: { value: info_lastName = '' } = {},
-          info_primaryAffiliation: { value: info_primaryAffiliation = '' } = {},
+        info: {
+          displayName = '',
+          primaryAffiliation = '',
         } = {},
       } = {},
     },
     state,
   } = data;
 
-  const applicant = `${info_firstName} ${info_lastName}${info_primaryAffiliation ? `. ${info_primaryAffiliation}` : ''}`;
+  const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
 
   return (
     <PageHeader>
