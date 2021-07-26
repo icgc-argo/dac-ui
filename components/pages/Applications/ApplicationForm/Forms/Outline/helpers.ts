@@ -45,6 +45,12 @@ export const getValidationUIConfig = (status: FormSectionOverallState): Validati
         tagVariant: TAG_VARIANTS.DISABLED,
       };
 
+    case FORM_STATES.REVISIONS_MADE:
+      return {
+        iconName: 'edit',
+        tagVariant: TAG_VARIANTS.SUCCESS,
+      };
+
     default:
       return {
         iconName: 'question',
