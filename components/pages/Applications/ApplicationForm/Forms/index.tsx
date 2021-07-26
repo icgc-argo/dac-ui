@@ -20,7 +20,10 @@ type QueryType = {
   };
 };
 
-const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
+type SetLastUpdated = (lastUpdatedAtUtc: string) => void;
+
+const ApplicationFormsBase = ({ appId = 'none', setLastUpdated }:
+  { appId: string; setLastUpdated: SetLastUpdated }): ReactElement => {
   const {
     query: { section: sectionFromQuery = '' as FormSectionNames },
   }: QueryType = useRouter();
@@ -29,7 +32,7 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
     isValidSectionFromQuery
       ? sectionFromQuery
       : (sectionFromQuery &&
-          console.info('Section initially queried was not found', sectionFromQuery),
+        console.info('Section initially queried was not found', sectionFromQuery),
         sectionsOrder[0] as FormSectionNames),
   );
   const { isLoading, formState, validateSection } = useFormValidation(appId);
@@ -54,6 +57,12 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
       ) ||
       validateSection(selectedSection, !!'validateSelectedSection')();
   }, [formState.sections[selectedSection], selectedSection]);
+
+  useEffect(() => {
+    if (formState.lastUpdatedAtUtc) {
+      setLastUpdated(formState.lastUpdatedAtUtc);
+    }
+  }, [formState.lastUpdatedAtUtc]);
 
   const sectionIndex = sectionsOrder.indexOf(selectedSection);
   const sectionsAfter = enabledSections(sectionsOrder.slice(sectionIndex + 1), formState);

@@ -17,8 +17,17 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
   const [isRequestRevisionsModalVisible, setRequestRevisionsModalVisible] = useState(false);
   const [isApproveModalVisible, setApproveModalVisible] = useState(false);
 
-  const { appId, state } = data;
-  const { primaryAffiliation } = data.sections.applicant.info;
+  const {
+    appId,
+    sections: {
+      applicant: {
+        info: {
+          primaryAffiliation = ''
+        } = {},
+      } = {}
+    },
+    state
+  } = data;
 
   const buttonsDisabled = ['APPROVED'].includes(state);
   const buttonsVisible = !['REVISIONS REQUESTED'].includes(state);
