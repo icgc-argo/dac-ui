@@ -34,6 +34,7 @@ export const getValidationUIConfig = (status: FormSectionOverallState): Validati
       };
 
     case FORM_STATES.MUST_EDIT:
+    case FORM_STATES.REVISIONS_REQUESTED_DISABLED:
       return {
         iconName: 'edit',
         tagVariant: TAG_VARIANTS.WARNING,

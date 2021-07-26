@@ -307,5 +307,5 @@ export const sectionStatusMapping: SectionStatusMapping = {
   PRISTINE: 'pristine',
   'REVISIONS MADE': 'revisionsMade',
   'REVISIONS REQUESTED': 'mustEdit',
-  'REVISIONS REQUESTED DISABLED': 'locked',
+  'REVISIONS REQUESTED DISABLED': 'revisionsRequestedDisabled',
 };
