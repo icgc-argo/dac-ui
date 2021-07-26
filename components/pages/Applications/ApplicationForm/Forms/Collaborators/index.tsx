@@ -70,7 +70,7 @@ const Collaborators = ({
     validateFieldTouched({
       // faking event values to keep scope limited
       target: {
-        id: 'list--all--clearModal',
+        id: 'list----clearModal',
         tagName: 'MODAL',
         type: 'clearModal',
       },
@@ -165,7 +165,7 @@ const Collaborators = ({
     validateFieldTouched({
       // faking event values to keep scope limited
       target: {
-        id: 'list--all--feedModal',
+        id: 'list----feedModal',
         tagName: 'MODAL',
         type: 'feedModal',
         value: localState.list.value.find(({ id }: Collaborator) => collaboratorId === id),
