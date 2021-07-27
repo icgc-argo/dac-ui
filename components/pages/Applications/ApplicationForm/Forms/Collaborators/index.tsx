@@ -97,9 +97,9 @@ const Collaborators = ({
         ...dataAcc,
         [prefix]: suffix
           ? {
-              ...dataAcc[prefix],
-              [suffix]: fieldData.value,
-            }
+            ...dataAcc[prefix],
+            [suffix]: fieldData.value,
+          }
           : fieldData.value,
       };
     }, {} as Record<string, any>);
@@ -202,6 +202,7 @@ const Collaborators = ({
       <section
         css={css`
           margin-top: 43px;
+          border-top: 1px solid ${theme.colors.grey_2};
         `}
       >
         <div
