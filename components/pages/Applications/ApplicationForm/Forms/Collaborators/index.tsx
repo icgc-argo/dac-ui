@@ -272,7 +272,7 @@ const Collaborators = ({
         (modalVisible === 'collaborator' ? (
           <ModalPortal>
             <Modal
-              actionButtonText={`${modalFields.id ? 'Edit' : 'Add'} Collaborator`}
+              actionButtonText={`${modalFields.id.value ? 'Edit' : 'Add'} Collaborator`}
               actionDisabled={modalHasErrors}
               onActionClick={handleCollaboratorCreateOrEdit}
               onCancelClick={dismissCollaboratorModal}
@@ -571,7 +571,11 @@ const Collaborators = ({
                         onBlur={validateFieldTouched}
                         onChange={validateFieldTouched}
                         value={modalFields.info_positionTitle?.value}
-                        placeholder="e.g. Bioinformatician"
+                        placeholder={
+                          modalFields.type.value === CollaboratorType.STUDENT
+                            ? 'e.g. Doctoral'
+                            : 'e.g. Bioinformatician'
+                        }
                       />
 
                       <FormHelperText onErrorOnly>
