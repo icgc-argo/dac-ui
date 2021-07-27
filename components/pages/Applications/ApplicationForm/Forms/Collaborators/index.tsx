@@ -221,6 +221,7 @@ const Collaborators = ({
               align-items: center;
             `}
             onClick={newCollaboratorModal}
+            disabled={isSectionDisabled}
           >
             <Icon
               name="plus_circle"
@@ -247,6 +248,7 @@ const Collaborators = ({
                 data={localState.list?.value}
                 handleActions={handleTableActions}
                 applicationState={applicationState}
+                isSectionDisabled={isSectionDisabled}
               />
             ) : (
               <ContentPlaceholder
@@ -370,6 +372,7 @@ const Collaborators = ({
                           margin-left: 15px;
                         }
                       `}
+                      disabled={isSectionDisabled}
                     >
                       <FormRadio value={CollaboratorType.PERSONNEL}>Authorized Personnel</FormRadio>
                       <FormRadio value={CollaboratorType.STUDENT}>Authorized Student</FormRadio>

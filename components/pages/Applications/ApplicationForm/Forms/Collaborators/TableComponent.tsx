@@ -11,10 +11,12 @@ const Actions = ({
   editCollaborator,
   removeCollaborator,
   applicationState,
+  isSectionDisabled,
 }: {
   editCollaborator: () => void;
   removeCollaborator: () => void;
   applicationState: ApplicationState;
+  isSectionDisabled: boolean;
 }) => {
   const theme = useTheme();
 
@@ -27,7 +29,7 @@ const Actions = ({
         justify-content: space-between;
 
         svg:hover {
-          cursor: pointer;
+          cursor: ${isSectionDisabled ? 'not-allowed' : 'pointer'};
         }
       `}
     >
@@ -36,11 +38,21 @@ const Actions = ({
           name="edit"
           width="20px"
           height="20px"
-          fill={theme.colors.accent2}
-          onClick={editCollaborator}
+          css={css`
+            &:hover {
+            }
+          `}
+          fill={theme.colors[isSectionDisabled ? 'grey_disabled' : 'accent2']}
+          onClick={(e) => (isSectionDisabled ? null : editCollaborator())}
         />
       )}
-      <Icon name="trash" width="19px" height="20px" onClick={removeCollaborator} />
+      <Icon
+        name="trash"
+        width="19px"
+        height="20px"
+        fill={theme.colors[isSectionDisabled ? 'grey_disabled' : 'accent2']}
+        onClick={(e) => (isSectionDisabled ? null : removeCollaborator())}
+      />
     </div>
   );
 };
@@ -50,11 +62,13 @@ const TableComponent = ({
   data = [],
   handleActions,
   applicationState,
+  isSectionDisabled,
 }: {
   containerRef: RefObject<HTMLDivElement>;
   data: [];
   handleActions: (action: 'edit' | 'remove', collaboratorId: string) => () => void;
   applicationState: ApplicationState;
+  isSectionDisabled: boolean;
 }) => (
   <Table
     css={css`
@@ -94,6 +108,7 @@ const TableComponent = ({
         Cell: ({ value }: { value: string }) => {
           return (
             <Actions
+              isSectionDisabled={isSectionDisabled}
               editCollaborator={handleActions('edit', value)}
               removeCollaborator={handleActions('remove', value)}
               applicationState={applicationState}
