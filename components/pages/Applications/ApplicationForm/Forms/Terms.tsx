@@ -9,6 +9,7 @@ import StaticIntroduction from 'components/pages/Applications/PDF/StaticIntroduc
 import { FormFieldValidationTriggerFunction, FormSectionValidationState_Terms } from './types';
 import { isRequired } from './validations';
 import FORM_TEXT from '../../PDF/textConstants';
+import { getStaticComponents } from '../../PDF/common';
 
 const Introduction = ({
   isSectionDisabled,
@@ -19,15 +20,17 @@ const Introduction = ({
   localState: FormSectionValidationState_Terms;
   validateFieldTouched: FormFieldValidationTriggerFunction;
 }): ReactElement => {
+  const { SectionTitle } = getStaticComponents(false);
+
   return (
     <article>
       <section>
         <StaticIntroduction />
       </section>
       <section>
-        <Typography bold component="h3" color="secondary">
+        <SectionTitle>
           {FORM_TEXT.introduction.title}
-        </Typography>
+        </SectionTitle>
 
         <FormControl
           disabled={isSectionDisabled}

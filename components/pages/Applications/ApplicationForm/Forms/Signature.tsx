@@ -26,6 +26,7 @@ import Link from '@icgc-argo/uikit/Link';
 import { CustomLoadingButton, generatePDFDocument } from './common';
 import urlJoin from 'url-join';
 import { ApplicationState } from '../../types';
+import { getStaticComponents } from '../../PDF/common';
 
 const FormControl = styled(Control)`
   display: flex;
@@ -134,6 +135,8 @@ const Signature = ({
         console.error('File could not be deleted.', err);
       });
   };
+
+  const { SectionTitle } = getStaticComponents(false);
 
   return (
     <article>
@@ -261,15 +264,9 @@ const Signature = ({
       </section>
 
       <section>
-        <Typography
-          bold
-          component="h3"
-          css={css`
-            color: #0774d3;
-          `}
-        >
+        <SectionTitle>
           UPLOAD SIGNED APPLICATION
-        </Typography>
+        </SectionTitle>
         <FormControl required>
           <InputLabel
             htmlFor="signedApplication"
