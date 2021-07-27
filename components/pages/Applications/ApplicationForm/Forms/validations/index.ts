@@ -238,29 +238,26 @@ export const validator: FormSectionValidatorFunction_Main =
           type: 'overall',
         });
 
-        const errorsFromBackEnd = sectionErrorsListFromBackEnd.reduce(
-          (acc, error) => ({
-            ...acc,
-            [error.field]: (acc[error.field] || []).concat(error.message),
-          }),
-          {} as Record<string, any>,
-        );
-
         Object.entries(formState.sections[origin]?.fields as object).forEach(
           async ([field, data]) => {
-            if (
-              Object.keys(errorsFromBackEnd).some((offendingFieldName) =>
-                field.includes(offendingFieldName),
-              )
-            ) {
-              const { error } = await schemaValidator(combinedSchema[origin], {
-                [field]: data.value,
-              });
+            if (data.value) {
+              const [fieldName, fieldIndex, fieldOverride] = field.split('--');
+
+              const { error } = await schemaValidator(
+                yup.reach(
+                  combinedSchema[origin],
+                  fieldIndex && fieldOverride !== 'overall'
+                    ? `${fieldName}.${fieldIndex}`
+                    : fieldName,
+                ),
+                data.value,
+              );
 
               const results = {
                 field,
                 section: origin,
                 type: data.type,
+                value: data.value,
                 ...(error && { error }),
               } as FormValidationAction;
 
