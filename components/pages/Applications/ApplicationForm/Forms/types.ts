@@ -45,6 +45,8 @@ export enum FORM_STATES {
   MUST_EDIT = 'mustEdit',
   TOUCHED = 'touched',
   PRISTINE = 'pristine',
+  REVISIONS_MADE = 'revisionsMade',
+  REVISIONS_REQUESTED_DISABLED = 'revisionsRequestedDisabled',
 }
 
 export type SectionStatusMapping = Record<SECTION_STATUS, FormSectionOverallState>;
