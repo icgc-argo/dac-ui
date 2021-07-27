@@ -6,7 +6,6 @@ import Input from '@icgc-argo/uikit/form/Input';
 import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import MultiSelect, { Option } from '@icgc-argo/uikit/form/MultiSelect';
 import Select from '@icgc-argo/uikit/form/Select';
-import Typography from '@icgc-argo/uikit/Typography';
 
 import StaticApplicant from 'components/pages/Applications/PDF/StaticApplicant';
 import FORM_TEXT from 'components/pages/Applications/PDF/textConstants';
@@ -16,6 +15,7 @@ import DoubleFieldRow from './DoubleFieldRow';
 import { FormFieldValidationTriggerFunction, FormSectionValidationState_Applicant } from './types';
 import { isRequired } from './validations';
 import { transformToSelectOptions } from './validations/helpers';
+import { getStaticComponents } from '../../PDF/common';
 
 const Applicant = ({
   isSectionDisabled,
@@ -26,13 +26,14 @@ const Applicant = ({
   localState: FormSectionValidationState_Applicant;
   validateFieldTouched: FormFieldValidationTriggerFunction;
 }): ReactElement => {
+  const { SectionTitle } = getStaticComponents(false);
   return (
     <article>
       <StaticApplicant />
       <section>
-        <Typography bold component="h3" color="secondary">
+        <SectionTitle>
           {FORM_TEXT.applicant.title}
-        </Typography>
+        </SectionTitle>
 
         <DoubleFieldRow>
           <FormControl
@@ -238,9 +239,9 @@ const Applicant = ({
       </section>
 
       <section>
-        <Typography bold component="h3" color="secondary">
-          INSTITUTION/COMPANY MAILING ADDRESS
-        </Typography>
+        <SectionTitle>
+          INSTITUTION /COMPANY MAILING ADDRESS
+        </SectionTitle>
 
         <FormControl
           disabled={isSectionDisabled}
