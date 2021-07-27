@@ -43,13 +43,14 @@ const Signature = ({
   localState,
   refetchAllData,
   primaryAffiliation,
-  applicationState,
+  isSectionDisabled,
 }: {
   appId: string;
   localState: FormSectionValidationState_Signature;
   refetchAllData: any;
   primaryAffiliation: string;
   applicationState: ApplicationState;
+  isSectionDisabled: boolean;
 }): ReactElement => {
   const theme = useTheme();
   const { signedAppDocObjId, signedDocName, uploadedAtUtc } = localState;
@@ -61,8 +62,6 @@ const Signature = ({
   const [pdfIsLoading, setPdfIsLoading] = useState(false);
 
   const fileInputRef = React.createRef<HTMLInputElement>();
-
-  const isApplicationInReview = applicationState === ApplicationState.REVIEW;
 
   // make button work as input
   const selectFile = () => {
@@ -294,7 +293,7 @@ const Signature = ({
                   width: 100%;
                   display: flex;
                   align-items: center;
-                  background: ${isApplicationInReview && '#f6f6f7'};
+                  background: ${isSectionDisabled && '#f6f6f7'};
                 `}
               >
                 <Icon
@@ -317,7 +316,7 @@ const Signature = ({
                     Uploaded on: {getFormattedDate(uploadedAtUtc.value, UPLOAD_DATE_FORMAT)}
                   </>
                 )}
-                {!isApplicationInReview && (
+                {!isSectionDisabled && (
                   <Icon
                     name="trash"
                     fill={theme.colors.accent2}
@@ -374,7 +373,7 @@ const Signature = ({
           css={css`
             margin-top: 40px;
           `}
-          disabled={isApplicationInReview || !signedAppDocObjId.value}
+          disabled={isSectionDisabled || !signedAppDocObjId.value}
           onClick={() => setModalVisible(true)}
         >
           Submit Application
