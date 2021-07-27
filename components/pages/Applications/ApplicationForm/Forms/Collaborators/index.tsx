@@ -213,7 +213,7 @@ const Collaborators = ({
           `}
         >
           <Typography variant="data">
-            {collaboratorCount} {pluralize('Collaborators', collaboratorCount)}
+            {pluralize('Collaborators', collaboratorCount, true)}
           </Typography>
           <Button
             size="sm"
