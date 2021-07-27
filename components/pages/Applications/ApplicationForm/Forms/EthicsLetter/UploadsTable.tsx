@@ -24,6 +24,7 @@ import {
   FormValidationStateParameters,
   DOCUMENT_TYPES,
 } from '../types';
+import pluralize from 'pluralize';
 
 const VALID_FILE_TYPE = [
   'application/msword',
@@ -104,7 +105,7 @@ const UploadsTable = ({
   };
 
   useEffect(() => {
-    const newLetterCount = localState.approvalLetterDocs?.value.length;
+    const newLetterCount = localState.approvalLetterDocs?.value.length || 0;
 
     letterCount === newLetterCount || setLetterCount(newLetterCount);
     setLetterError(letterCount > 0 && newLetterCount === 0);
@@ -162,7 +163,7 @@ const UploadsTable = ({
           `}
         >
           <Typography color={theme.colors.grey} variant="data">
-            {`${letterCount} Ethics Letter${letterCount === 0 || letterCount > 0 ? 's' : ''}`}
+            {pluralize('Ethics Letter', letterCount, true)}
           </Typography>
 
           <div
