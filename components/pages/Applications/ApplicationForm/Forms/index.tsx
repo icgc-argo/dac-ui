@@ -13,6 +13,7 @@ import { enabledSections, sectionSelector } from './helpers';
 import Outline from './Outline';
 import { FormSectionNames, FORM_STATES } from './types';
 import { useFormValidation } from './validations';
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
 type QueryType = {
   query: {
@@ -22,8 +23,8 @@ type QueryType = {
 
 type SetLastUpdated = (lastUpdatedAtUtc: string) => void;
 
-const ApplicationFormsBase = ({ appId = 'none', setLastUpdated }:
-  { appId: string; setLastUpdated: SetLastUpdated }): ReactElement => {
+const ApplicationFormsBase = ({ appId = 'none', applicationState, setLastUpdated }:
+  { appId: string; applicationState: ApplicationState; setLastUpdated: SetLastUpdated }): ReactElement => {
   const {
     query: { section: sectionFromQuery = '' as FormSectionNames },
   }: QueryType = useRouter();
@@ -96,6 +97,7 @@ const ApplicationFormsBase = ({ appId = 'none', setLastUpdated }:
         `}
       >
         <Outline
+          applicationState={applicationState}
           sections={sectionsOrder}
           selectedSection={selectedSection}
           setSelectedSection={handleSectionChange}

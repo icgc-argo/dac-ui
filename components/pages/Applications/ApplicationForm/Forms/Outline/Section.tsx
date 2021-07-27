@@ -4,22 +4,30 @@ import Typography from '@icgc-argo/uikit/Typography';
 import VerticalTabs from '@icgc-argo/uikit/VerticalTabs';
 
 import ValidationIcon from './ValidationIcon';
-import { FORM_STATES } from '../types';
+import { FormSectionNames, FORM_STATES } from '../types';
+import { ApplicationState } from 'components/pages/Applications/types';
 
 const FormSection = ({
+  applicationState,
   active = false,
   label = 'unnamed',
   status = FORM_STATES.PRISTINE,
+  sectionName,
   switchSection,
   tooltip = '',
 }: {
+  applicationState: ApplicationState;
   active?: boolean;
   label?: string;
+  sectionName: FormSectionNames;
   status?: FORM_STATES;
   switchSection?: MouseEventHandler<HTMLButtonElement>;
   tooltip?: string;
 }): ReactElement => {
-  const isDisabled = [FORM_STATES.DISABLED, FORM_STATES.REVISIONS_REQUESTED_DISABLED].includes(status);
+  const isEthicsDisabled = sectionName === 'ethicsLetter' &&
+    applicationState === ApplicationState.APPROVED &&
+    status === FORM_STATES.LOCKED;
+  const isDisabled = isEthicsDisabled || [FORM_STATES.DISABLED, FORM_STATES.REVISIONS_REQUESTED_DISABLED].includes(status);
 
   return (
     <VerticalTabs.Item

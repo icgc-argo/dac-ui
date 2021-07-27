@@ -12,7 +12,7 @@ import ApplicationFormsBase from './Forms';
 import RequestRevisionsBar from './RequestRevisionsBar';
 
 const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
-  const [data, setData] = useState<AxiosResponse | undefined>(undefined);
+  const [data, setData] = useState<any>(undefined);
   const [error, setError] = useState<AxiosError | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [lastUpdated, setLastUpdated] = useState<string | undefined>(undefined);
@@ -44,7 +44,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
       <>
         <ApplicationHeader data={data} />
         {isAdmin && <RequestRevisionsBar data={data} />}
-        <ApplicationFormsBase appId={appId} setLastUpdated={setLastUpdated} />
+        <ApplicationFormsBase appId={appId} applicationState={data.state} setLastUpdated={setLastUpdated} />
       </>
     );
 };
