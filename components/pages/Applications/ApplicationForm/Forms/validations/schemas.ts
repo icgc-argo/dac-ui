@@ -94,17 +94,10 @@ export const collaboratorSchema = yup.object().shape({
           .required(),
         info_lastName: yup.string().default('').required(),
         info_middleName: yup.string().default(''),
-        info_primaryAffiliation: yup.string().default('').required(),
         info_positionTitle: yup.string().default('').required(),
+        info_primaryAffiliation: yup.string().default('').required(),
         info_suffix: yup.string().default(''),
         info_title: yup.string().default(''),
-        info_website: yup
-          .string()
-          .default('')
-          .url(
-            'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
-          )
-          .required(),
         type: yup.string().oneOf(['personnel', 'student']).required(),
       }),
     )
