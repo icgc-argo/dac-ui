@@ -24,10 +24,7 @@ const FormSection = ({
   switchSection?: MouseEventHandler<HTMLButtonElement>;
   tooltip?: string;
 }): ReactElement => {
-  const isEthicsDisabled = sectionName === 'ethicsLetter' &&
-    applicationState === ApplicationState.APPROVED &&
-    status === FORM_STATES.LOCKED;
-  const isDisabled = isEthicsDisabled || [FORM_STATES.DISABLED, FORM_STATES.REVISIONS_REQUESTED_DISABLED].includes(status);
+  const isDisabled = [FORM_STATES.DISABLED, FORM_STATES.REVISIONS_REQUESTED_DISABLED].includes(status);
 
   return (
     <VerticalTabs.Item

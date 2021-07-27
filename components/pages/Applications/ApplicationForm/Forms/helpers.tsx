@@ -55,11 +55,7 @@ export const sectionSelector = ({
     : undefined; // undefined prop won't be passed down
   const primaryAffiliation = formState.sections.applicant.fields.info_primaryAffiliation.value;
 
-  const isEthicsDisabled = selectedSection === 'ethicsLetter' &&
-    overall === FORM_STATES.LOCKED &&
-    formState.state === ApplicationState.APPROVED;
-
-  const isSectionDisabled = !overall || isEthicsDisabled ||
+  const isSectionDisabled = !overall ||
     [FORM_STATES.DISABLED, FORM_STATES.LOCKED, FORM_STATES.REVISIONS_REQUESTED_DISABLED].includes(overall);
 
   return isLoading || !formState.__seeded ? (
