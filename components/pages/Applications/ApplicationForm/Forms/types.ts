@@ -128,7 +128,6 @@ export type FormSectionValidationState_Collaborators =
           info_primaryAffiliation: { value: string };
           info_suffix: { value: string };
           info_title: { value: string };
-          info_website: { value: string };
           type: { value: string };
         },
       ];
@@ -240,7 +239,7 @@ export type FormValidationActionTypes =
   | 'updating';
 
 export type FormValidationAction = {
-  error?: string[];
+  error?: any;
   field: string;
   overall: FormSectionOverallState;
   section: FormSectionNames;
