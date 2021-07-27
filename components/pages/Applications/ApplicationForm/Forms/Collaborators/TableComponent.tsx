@@ -38,10 +38,6 @@ const Actions = ({
           name="edit"
           width="20px"
           height="20px"
-          css={css`
-            &:hover {
-            }
-          `}
           fill={theme.colors[isSectionDisabled ? 'grey_disabled' : 'accent2']}
           onClick={(e) => (isSectionDisabled ? null : editCollaborator())}
         />
