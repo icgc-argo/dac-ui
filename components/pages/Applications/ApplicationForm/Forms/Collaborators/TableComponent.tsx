@@ -13,12 +13,16 @@ const Actions = ({
   editCollaborator,
   removeCollaborator,
   applicationState,
+  disabled,
 }: {
   editCollaborator: () => void;
   removeCollaborator: () => void;
   applicationState: ApplicationState;
+  disabled: boolean;
 }) => {
   const theme: UikitTheme = useTheme();
+
+  const iconColor = theme.colors[disabled ? 'grey_disabled' : 'accent2'];
 
   return (
     <div
@@ -29,7 +33,7 @@ const Actions = ({
         justify-content: space-between;
 
         svg:hover {
-          cursor: pointer;
+          cursor: ${disabled ? 'not-allowed' : 'pointer'};
         }
       `}
     >
@@ -38,11 +42,17 @@ const Actions = ({
           name="edit"
           width="20px"
           height="20px"
-          fill={theme.colors.accent2}
-          onClick={editCollaborator}
+          fill={iconColor}
+          onClick={() => (disabled ? null : editCollaborator())}
         />
       )}
-      <Icon name="trash" width="19px" height="20px" onClick={removeCollaborator} />
+      <Icon
+        name="trash"
+        width="19px"
+        height="20px"
+        fill={iconColor}
+        onClick={() => (disabled ? null : removeCollaborator())}
+      />
     </div>
   );
 };
@@ -52,14 +62,15 @@ const TableComponent = ({
   data = [],
   handleActions,
   applicationState,
+  disableActions,
 }: {
   containerRef: RefObject<HTMLDivElement>;
   data: [];
   handleActions: (action: 'edit' | 'remove', collaboratorId: string) => () => void;
   applicationState: ApplicationState;
+  disableActions: boolean;
 }) => {
   const theme: UikitTheme = useTheme();
-
   return (
     <Table
       columns={[
@@ -94,6 +105,7 @@ const TableComponent = ({
           Cell: ({ value }: { value: string }) => {
             return (
               <Actions
+                disabled={disableActions}
                 editCollaborator={handleActions('edit', value)}
                 removeCollaborator={handleActions('remove', value)}
                 applicationState={applicationState}
