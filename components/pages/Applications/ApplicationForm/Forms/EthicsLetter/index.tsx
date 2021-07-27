@@ -86,8 +86,8 @@ const EthicsLetter = ({
             isChecked={isChecked}
             onChange={handleSelectedRadioValueChange}
           >
-            <FormRadio value={false}>{FORM_TEXT.ethics.declarationOptions.notRequired}</FormRadio>
-            <FormRadio value={true}>
+            <FormRadio disabled={isSectionDisabled} value={false}>{FORM_TEXT.ethics.declarationOptions.notRequired}</FormRadio>
+            <FormRadio disabled={isSectionDisabled} value={true}>
               {FORM_TEXT.ethics.declarationOptions.required.a}{' '}
               <Typography bold component="span">
                 {FORM_TEXT.ethics.declarationOptions.required.b}{' '}
