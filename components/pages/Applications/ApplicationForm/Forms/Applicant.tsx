@@ -240,7 +240,7 @@ const Applicant = ({
 
       <section>
         <SectionTitle>
-          INSTITUTION /COMPANY MAILING ADDRESS
+          INSTITUTION/COMPANY MAILING ADDRESS
         </SectionTitle>
 
         <FormControl
