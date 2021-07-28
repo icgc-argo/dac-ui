@@ -39,12 +39,14 @@ const UploadsTable = ({
   localState,
   refetchAllData,
   required,
+  isRequiredPostApproval,
 }: {
   appId: string;
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_EthicsLetter;
   refetchAllData: (action?: Partial<FormValidationAction>) => void;
   required: boolean;
+  isRequiredPostApproval: boolean;
 }): ReactElement => {
   const containerRef = createRef<HTMLDivElement>();
   const fileInputRef = createRef<HTMLInputElement>();
@@ -243,33 +245,34 @@ const UploadsTable = ({
                   format(new Date(value), DATE_RANGE_DISPLAY_FORMAT),
                 Header: 'Uploaded On',
               },
-              {
-                accessor: 'objectId',
-                Cell: ({ value }: { value: string }) => (
-                  <Button
-                    css={css`
-                      label: action_delete;
-                      height: 30px;
-                      margin: 0 auto;
-                      width: 30px;
-                    `}
-                    disabled={isSectionDisabled}
-                    onClick={handleFileDelete(value)}
-                    size="sm"
-                    variant="text"
-                  >
-                    <Icon
+              ...(isRequiredPostApproval ? [] :
+                [{
+                  accessor: 'objectId',
+                  Cell: ({ value }: { value: string }) => (
+                    <Button
                       css={css`
+                        label: action_delete;
+                        height: 30px;
+                        margin: 0 auto;
+                        width: 30px;
+                      `}
+                      disabled={isSectionDisabled}
+                      onClick={handleFileDelete(value)}
+                      size="sm"
+                      variant="text"
+                    >
+                      <Icon
+                        css={css`
                         margin-bottom: -3px;
                       `}
-                      fill={isSectionDisabled ? 'grey_1' : 'accent2'}
-                      name="trash"
-                    />
-                  </Button>
-                ),
-                Header: 'Actions',
-                width: 60,
-              },
+                        fill={isSectionDisabled ? 'grey_1' : 'accent2'}
+                        name="trash"
+                      />
+                    </Button>
+                  ),
+                  Header: 'Actions',
+                  width: 60,
+                }]),
             ]}
             css={css`
               margin-top: 10px;
