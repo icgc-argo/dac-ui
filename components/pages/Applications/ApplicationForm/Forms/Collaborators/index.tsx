@@ -402,6 +402,7 @@ const Collaborators = ({
                         disabled={isSectionDisabled}
                         id="list--info_title"
                         onBlur={validateFieldTouched}
+                        onFocus={validateFieldTouched}
                         eventOnChange={validateFieldTouched}
                         options={transformToSelectOptions(honorificsList)}
                         value={modalFields.info_title?.value}
