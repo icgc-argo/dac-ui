@@ -522,6 +522,7 @@ export const useLocalValidation = (
 
   const updateLocalState = useCallback(
     ({ error, field, value, type }: FormValidationAction) => {
+      const validatingPrimaryAffiliation = field.includes('info_primaryAffiliation');
       const [fieldName, fieldIndex, fieldOverride] = field.split('--');
       const currentSectionData = localState[sectionName];
       const currentSectionFields = currentSectionData?.fields;
@@ -553,7 +554,8 @@ export const useLocalValidation = (
                               [fieldIndex]: {
                                 ...currentField.innerType?.fields[fieldIndex],
                                 ...(value[fieldIndex] || { value }),
-                                error,
+                                // ensure affiliation validation is applied before allowing "save"
+                                error: validatingPrimaryAffiliation ? error || [''] : error,
                               },
                             },
                           },
