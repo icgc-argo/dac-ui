@@ -42,6 +42,7 @@ import {
   FormValidationAction,
 } from '../types';
 import TableComponent from './TableComponent';
+import { isDacoAdmin } from 'global/utils/egoTokenUtils';
 
 const Collaborators = ({
   appId,
@@ -63,8 +64,11 @@ const Collaborators = ({
   const [modalFields, setModalFields] = useState(getInternalFieldSchema(localState.list));
   const [modalHasErrors, setModalHasErrors] = useState(true);
   const containerRef = createRef<HTMLDivElement>();
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth, permissions } = useAuthContext();
   const theme = useTheme();
+
+  const isAdmin = permissions.length > 0 && isDacoAdmin(permissions);
+  const disableActions = isAdmin && applicationState === ApplicationState.APPROVED;
 
   const clearCollaboratorModalData = () => {
     validateFieldTouched({
@@ -222,6 +226,7 @@ const Collaborators = ({
               align-items: center;
             `}
             onClick={newCollaboratorModal}
+            disabled={disableActions || isSectionDisabled}
           >
             <Icon
               name="plus_circle"
@@ -248,6 +253,7 @@ const Collaborators = ({
                 data={localState.list?.value}
                 handleActions={handleTableActions}
                 applicationState={applicationState}
+                disableActions={disableActions}
               />
             ) : (
               <ContentPlaceholder
