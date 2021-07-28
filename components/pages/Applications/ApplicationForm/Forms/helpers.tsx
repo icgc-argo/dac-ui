@@ -42,7 +42,7 @@ export const sectionSelector = ({
   }: FormSectionValidationState_SectionBase = formState.sections[selectedSection] || {};
 
   const isSectionDisabled =
-    !overall || [FORM_STATES.DISABLED, FORM_STATES.LOCKED].includes(overall);
+    !overall || [FORM_STATES.DISABLED, FORM_STATES.LOCKED, FORM_STATES.REVISIONS_REQUESTED_DISABLED].includes(overall);
 
   const {
     localState,

@@ -231,7 +231,16 @@ export const UITitle = ({ children }: { children: ReactNode }) => (
 
 export const UISectionTitle = ({ children }: { children: ReactNode }) => {
   return (
-    <Typography bold component="h3" color="secondary">
+    <Typography
+      bold
+      component="h3"
+      color="secondary"
+      css={css`
+        border-top: 1px solid ${defaultTheme.colors.grey_2};
+        margin-top: 32px;
+        padding-top: 12px;
+      `}
+    >
       {children}
     </Typography>
   );

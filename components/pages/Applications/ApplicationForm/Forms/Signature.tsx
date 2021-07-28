@@ -10,6 +10,7 @@ import FormFieldHelpBubble from './FormFieldHelpBubble';
 import { RequiredStar } from './RequiredFieldsMessage';
 import { styled } from '@icgc-argo/uikit';
 import { AxiosError } from 'axios';
+import router from 'next/router';
 import {
   DOCUMENT_TYPES,
   FormSectionValidationState_Signature,
@@ -25,6 +26,7 @@ import Link from '@icgc-argo/uikit/Link';
 import { CustomLoadingButton, generatePDFDocument } from './common';
 import urlJoin from 'url-join';
 import { ApplicationState } from '../../types';
+import { getStaticComponents } from '../../PDF/common';
 
 const FormControl = styled(Control)`
   display: flex;
@@ -42,13 +44,14 @@ const Signature = ({
   localState,
   refetchAllData,
   primaryAffiliation,
-  applicationState,
+  isSectionDisabled,
 }: {
   appId: string;
   localState: FormSectionValidationState_Signature;
   refetchAllData: any;
   primaryAffiliation: string;
   applicationState: ApplicationState;
+  isSectionDisabled: boolean;
 }): ReactElement => {
   const theme = useTheme();
   const { signedAppDocObjId, signedDocName, uploadedAtUtc } = localState;
@@ -60,8 +63,6 @@ const Signature = ({
   const [pdfIsLoading, setPdfIsLoading] = useState(false);
 
   const fileInputRef = React.createRef<HTMLInputElement>();
-
-  const isApplicationInReview = applicationState === ApplicationState.REVIEW;
 
   // make button work as input
   const selectFile = () => {
@@ -79,6 +80,9 @@ const Signature = ({
       method: 'PATCH',
       url: urlJoin(API.APPLICATIONS, appId),
     })
+      .then(() => {
+        router.reload();
+      })
       .catch((err: AxiosError) => {
         console.error('Failed to submit.', err);
       })
@@ -130,6 +134,8 @@ const Signature = ({
         console.error('File could not be deleted.', err);
       });
   };
+
+  const { SectionTitle } = getStaticComponents(false);
 
   return (
     <article>
@@ -257,15 +263,9 @@ const Signature = ({
       </section>
 
       <section>
-        <Typography
-          bold
-          component="h3"
-          css={css`
-            color: #0774d3;
-          `}
-        >
+        <SectionTitle>
           UPLOAD SIGNED APPLICATION
-        </Typography>
+        </SectionTitle>
         <FormControl required>
           <InputLabel
             htmlFor="signedApplication"
@@ -290,7 +290,7 @@ const Signature = ({
                   width: 100%;
                   display: flex;
                   align-items: center;
-                  background: ${isApplicationInReview && '#f6f6f7'};
+                  background: ${isSectionDisabled && '#f6f6f7'};
                 `}
               >
                 <Icon
@@ -313,7 +313,7 @@ const Signature = ({
                     Uploaded on: {getFormattedDate(uploadedAtUtc.value, UPLOAD_DATE_FORMAT)}
                   </>
                 )}
-                {!isApplicationInReview && (
+                {!isSectionDisabled && (
                   <Icon
                     name="trash"
                     fill={theme.colors.accent2}
@@ -370,7 +370,7 @@ const Signature = ({
           css={css`
             margin-top: 40px;
           `}
-          disabled={isApplicationInReview || !signedAppDocObjId.value}
+          disabled={isSectionDisabled || !signedAppDocObjId.value}
           onClick={() => setModalVisible(true)}
         >
           Submit Application

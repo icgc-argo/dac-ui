@@ -20,6 +20,7 @@ import { isRequired } from './validations';
 import { transformToSelectOptions } from './validations/helpers';
 import StaticRepresentative from '../../PDF/StaticRepresentative';
 import FORM_TEXT from '../../PDF/textConstants';
+import { getStaticComponents } from '../../PDF/common';
 
 const Representative = ({
   applicantAddress,
@@ -36,14 +37,16 @@ const Representative = ({
   const isAddressDisabled = isSectionDisabled || addressSameAsApplicant;
   const addressState = addressSameAsApplicant && applicantAddress ? applicantAddress : localState;
 
+  const { SectionTitle } = getStaticComponents(false);
+
   return (
     <article>
       <StaticRepresentative />
 
       <section>
-        <Typography bold component="h3" color="secondary">
+        <SectionTitle>
           {FORM_TEXT.representative.title}
-        </Typography>
+        </SectionTitle>
 
         <DoubleFieldRow>
           <FormControl
@@ -209,9 +212,9 @@ const Representative = ({
       </section>
 
       <section>
-        <Typography bold component="h3" color="secondary">
+        <SectionTitle>
           {FORM_TEXT.representative.address}
-        </Typography>
+        </SectionTitle>
 
         <FormControl disabled={isSectionDisabled}>
           <FormCheckbox

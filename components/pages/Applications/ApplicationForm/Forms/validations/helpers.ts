@@ -261,3 +261,15 @@ export const uniquePublicationURLs = {
     });
   },
 };
+
+export const checkMatchingPrimaryAffiliation = (
+  value: string,
+  applicantPrimaryAffiliation: string,
+) =>
+  value &&
+  applicantPrimaryAffiliation &&
+  value.trim() !== applicantPrimaryAffiliation && {
+    error: [
+      `Primary Affiliation must be the same as the Applicant: ${applicantPrimaryAffiliation}`,
+    ],
+  };

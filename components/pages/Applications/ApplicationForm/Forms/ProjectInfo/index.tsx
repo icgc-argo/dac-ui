@@ -5,7 +5,6 @@ import Input from '@icgc-argo/uikit/form/Input';
 import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import Link from '@icgc-argo/uikit/Link';
 import Textarea from '@icgc-argo/uikit/form/Textarea';
-import Typography from '@icgc-argo/uikit/Typography';
 
 import FormFieldHelpBubble from '../FormFieldHelpBubble';
 import RequiredFieldsMessage from '../RequiredFieldsMessage';
@@ -24,7 +23,7 @@ import StaticProjectInfo, {
   StaticResearchSummary,
 } from '../../../PDF/StaticProjectInfo';
 import FORM_TEXT from 'components/pages/Applications/PDF/textConstants';
-import { css } from '@icgc-argo/uikit';
+import { getStaticComponents } from '../../../PDF/common';
 
 const ProjectInfo = ({
   isSectionDisabled,
@@ -35,14 +34,15 @@ const ProjectInfo = ({
   localState: FormSectionValidationState_ProjectInfo;
   validateFieldTouched: FormFieldValidationTriggerFunction;
 }): ReactElement => {
+  const { SectionTitle } = getStaticComponents(false);
   return (
     <article>
       <StaticProjectInfo />
 
       <section>
-        <Typography bold component="h3" color="secondary">
+        <SectionTitle>
           {FORM_TEXT.project_info.basic_info}
-        </Typography>
+        </SectionTitle>
 
         <FormControl
           disabled={isSectionDisabled}

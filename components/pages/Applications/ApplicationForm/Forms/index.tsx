@@ -123,13 +123,6 @@ const ApplicationFormsBase = ({ appId = 'none', setLastUpdated }:
               }
 
               > section {
-                &:not(:first-of-type) {
-                  border-top: 1px solid ${theme.colors.grey_2};
-
-                  &:not(:last-of-type) {
-                    padding-bottom: 25px;
-                  }
-                }
 
                 p {
                   margin: 0;
