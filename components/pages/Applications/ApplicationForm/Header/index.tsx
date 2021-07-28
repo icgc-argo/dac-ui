@@ -11,7 +11,7 @@ import Details from './Details';
 import Progress from './Progress';
 import { ApplicationState } from '../../types';
 
-const ApplicationHeader = ({ data }: { data: any }): ReactElement => {
+const ApplicationHeader = ({ data = {} }: { data: any }): ReactElement => {
   const {
     appId,
     createdAtUtc,
