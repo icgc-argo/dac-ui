@@ -40,18 +40,20 @@ const EthicsLetter = ({
   // TODO: improve that, as well as implement the component's focus/blur
   // which will be needed to implement "required field" error behaviours
   const handleSelectedRadioValueChange = (value: boolean) => {
-    validateFieldTouched({
-      // faking event values to keep scope limited
-      target: {
-        id: 'declaredAsRequired',
-        tagName: 'INPUT',
-        type: 'radio',
-        value,
-      },
-      type: 'change',
-    });
+    if (!isSectionDisabled) {
+      validateFieldTouched({
+        // faking event values to keep scope limited
+        target: {
+          id: 'declaredAsRequired',
+          tagName: 'INPUT',
+          type: 'radio',
+          value,
+        },
+        type: 'change',
+      });
 
-    setSelectedRadioValue(value);
+      setSelectedRadioValue(value);
+    }
   };
 
   const isChecked = (radioValue: boolean) => radioValue === selectedRadioValue;
