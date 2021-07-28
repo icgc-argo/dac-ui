@@ -1,7 +1,8 @@
-import { createRef, ReactElement, useEffect, useState } from 'react';
+import { createRef, ReactElement, SyntheticEvent, useEffect, useState } from 'react';
 import { css } from '@emotion/core';
 import { AxiosError } from 'axios';
 import { format } from 'date-fns';
+import router from 'next/router';
 
 import { UikitTheme } from '@icgc-argo/uikit/index';
 import Button from '@icgc-argo/uikit/Button';
@@ -12,9 +13,11 @@ import Icon from '@icgc-argo/uikit/Icon';
 import Table from '@icgc-argo/uikit/Table';
 import Typography from '@icgc-argo/uikit/Typography';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import Modal from '@icgc-argo/uikit/Modal';
 
 import { API, DATE_RANGE_DISPLAY_FORMAT } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
+import { ModalPortal } from 'components/Root';
 
 import DoubleFieldRow from '../DoubleFieldRow';
 import FormFieldHelpBubble from '../FormFieldHelpBubble';
@@ -56,6 +59,9 @@ const UploadsTable = ({
   const [letterCount, setLetterCount] = useState(localState.approvalLetterDocs?.value.length || 0);
   const [letterError, setLetterError] = useState(false); // !!localState.approvalLetterDocs?.error
 
+  const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   // make button work as input
   const selectFile = () => {
     const fp = fileInputRef.current;
@@ -63,6 +69,29 @@ const UploadsTable = ({
       fp.click();
     }
   };
+
+  const submitFile = () => {
+    const formData = new FormData();
+    formData.append('file', selectedFile as File);
+
+    fetchWithAuth({
+      data: formData,
+      method: 'POST',
+      url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.ETHICS}/upload`,
+    })
+      .then(({ data }: { data: FormValidationStateParameters }) =>
+        refetchAllData({
+          type: 'updating',
+          value: data,
+        }),
+      )
+      .catch((err: AxiosError) => {
+        console.error('File failed to upload.', err);
+      })
+      .finally(() => {
+        setSelectedFile(undefined);
+      });
+  }
 
   const handleFileDelete = (fileId: string) => (event: any) => {
     fetchWithAuth({
@@ -82,28 +111,21 @@ const UploadsTable = ({
 
   const handleFileUpload = (event: any) => {
     const file = event.target.files?.[0];
-
     if (file && file.size <= MAX_FILE_SIZE && VALID_FILE_TYPE.includes(file.type)) {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      fetchWithAuth({
-        data: formData,
-        method: 'POST',
-        url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.ETHICS}/upload`,
-      })
-        .then(({ data }: { data: FormValidationStateParameters }) =>
-          refetchAllData({
-            type: 'updating',
-            value: data,
-          }),
-        )
-        .catch((err: AxiosError) => {
-          console.error('File failed to upload.', err);
-        });
+      setSelectedFile(file);
+      if (isRequiredPostApproval) {
+        setIsModalVisible(true);
+      } else {
+        submitFile();
+      }
     } else {
       console.warn('invalid file', file);
     }
+  };
+
+  const dismissModal = () => {
+    setSelectedFile(undefined);
+    setIsModalVisible(false);
   };
 
   useEffect(() => {
@@ -305,6 +327,26 @@ const UploadsTable = ({
           </ContentPlaceholder>
         )}
       </div>
+      {isModalVisible && (
+        <ModalPortal>
+          <Modal
+            title="Are you sure you want to upload?"
+            onActionClick={() => {
+              submitFile();
+              dismissModal();
+            }}
+            onCancelClick={dismissModal}
+            onCloseClick={dismissModal}
+            actionButtonText="Yes, upload"
+          >
+            <Typography>
+              Are you sure you want to upload <strong>{selectedFile?.name}</strong> to this application? If so,
+              the ICGC DACO will be notified to review the new ethics letter and they will contact you
+              if there are any concerns.
+            </Typography>
+          </Modal>
+        </ModalPortal>
+      )}
     </>
   );
 };
