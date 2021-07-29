@@ -337,7 +337,7 @@ export const validator: FormSectionValidatorFunction_Main =
         if (
           validatingApplicant &&
           validatingPrimaryAffiliation &&
-          checkMatchingPrimaryAffiliation(value, applicantPrimaryAffiliation)
+          applicantPrimaryAffiliation !== value
         ) {
           dispatch({
             section: 'representative',
