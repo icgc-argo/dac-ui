@@ -32,7 +32,7 @@ export const countWordsInString = (value: string) => {
 export const getFieldDataFromEvent: FormFieldDataFromEvent = (event) => {
   if (
     Object.values(EVENT_TARGET_TAGS).includes(
-      event?.target?.tagName as unknown as EVENT_TARGET_TAGS,
+      (event?.target?.tagName as unknown) as EVENT_TARGET_TAGS,
     )
   ) {
     switch (event?.target?.type) {
@@ -240,7 +240,7 @@ export const transformContriesToValidationOptions = (
 ) => countriesList.map(({ name }: CountryNamesAndAbbreviations) => name);
 
 export const transformToSelectOptions = (list: Array<string | number>) => [
-  { content: '-- Select an option --', value: '' },
+  { content: '-- Select an option --', value: ' ' },
   ...list.map((value: string | number) => ({
     content: value,
     value: value,
