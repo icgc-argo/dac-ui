@@ -20,7 +20,10 @@ type QueryType = {
   };
 };
 
-const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
+type SetLastUpdated = (lastUpdatedAtUtc: string) => void;
+
+const ApplicationFormsBase = ({ appId = 'none', setLastUpdated }:
+  { appId: string; setLastUpdated: SetLastUpdated }): ReactElement => {
   const {
     query: { section: sectionFromQuery = '' as FormSectionNames },
   }: QueryType = useRouter();
@@ -29,23 +32,37 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
     isValidSectionFromQuery
       ? sectionFromQuery
       : (sectionFromQuery &&
-          console.info('Section initially queried was not found', sectionFromQuery),
+        console.info('Section initially queried was not found', sectionFromQuery),
         sectionsOrder[0] as FormSectionNames),
   );
   const { isLoading, formState, validateSection } = useFormValidation(appId);
   const theme: UikitTheme = useTheme();
 
   useEffect(() => {
-    // This adds the selected section to the history
-    // without the initial switch when it's not in the query
-    (sectionFromQuery ? router.push : router.replace)(
-      `/applications/${appId}?section=${selectedSection}`,
-      undefined,
-      {
-        shallow: true,
-      },
-    );
-  }, [selectedSection]);
+    if (sectionFromQuery !== selectedSection) {
+      // This adds the selected section to the history
+      // without the initial switch when it's not in the query
+      (sectionFromQuery ? router.push : router.replace)(
+        `/applications/${appId}?section=${selectedSection}`,
+        undefined,
+        {
+          shallow: true,
+        },
+      );
+    }
+
+    formState.sections[selectedSection]?.meta.validated ||
+      ['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
+        formState.sections[selectedSection]?.meta.overall || '',
+      ) ||
+      validateSection(selectedSection, !!'validateSelectedSection')();
+  }, [formState.sections[selectedSection], selectedSection]);
+
+  useEffect(() => {
+    if (formState.lastUpdatedAtUtc) {
+      setLastUpdated(formState.lastUpdatedAtUtc);
+    }
+  }, [formState.lastUpdatedAtUtc]);
 
   const sectionIndex = sectionsOrder.indexOf(selectedSection);
   const sectionsAfter = enabledSections(sectionsOrder.slice(sectionIndex + 1), formState);
@@ -106,13 +123,6 @@ const ApplicationFormsBase = ({ appId = 'none' }): ReactElement => {
               }
 
               > section {
-                &:not(:first-of-type) {
-                  border-top: 1px solid ${theme.colors.grey_2};
-
-                  &:not(:last-of-type) {
-                    padding-bottom: 25px;
-                  }
-                }
 
                 p {
                   margin: 0;

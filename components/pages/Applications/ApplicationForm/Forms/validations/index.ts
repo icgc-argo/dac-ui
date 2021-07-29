@@ -24,6 +24,7 @@ import {
 import {
   getFieldDataFromEvent,
   getValueByFieldTypeToPublish,
+  checkMatchingPrimaryAffiliation,
   schemaValidator,
   sectionFieldsSeeder,
 } from './helpers';
@@ -86,7 +87,8 @@ export const validationReducer = (
               ...formState.sections[action.section]?.fields,
               [fieldName]: {
                 ...formState.sections[action.section]?.fields?.[fieldName],
-                ...(formState.sections[action.section]?.fields?.[fieldName]?.meta?.shape === 'modal'
+                ...(formState.sections[action.section]?.fields?.[fieldName]?.meta?.shape ===
+                  'modal' && fieldIndex
                   ? {
                       innerType: {
                         ...formState.sections[action.section]?.fields?.[fieldName].innerType,
@@ -145,6 +147,8 @@ export const validationReducer = (
                   ).reduce((acc, innerField) => {
                     const [fieldNamePrefix, fieldNameSuffix] = innerField[0].split('_');
 
+                    const error = action.error?.[innerField[0]];
+
                     return {
                       ...acc,
                       [innerField[0]]:
@@ -152,6 +156,7 @@ export const validationReducer = (
                           ? omit(innerField[1] as FormFieldType, ['error', 'value'])
                           : {
                               ...(innerField[1] as FormFieldType),
+                              ...error,
                               value: fieldNameSuffix
                                 ? action.value[fieldNamePrefix][fieldNameSuffix]
                                 : action.value[innerField[0]],
@@ -173,7 +178,10 @@ export const validationReducer = (
           ...formState.sections,
           [action.section]: {
             ...formState.sections[action.section],
-            overall: action.overall,
+            meta: {
+              ...formState.sections[action.section].meta,
+              validated: action.value,
+            },
           },
         },
       };
@@ -226,45 +234,118 @@ export const validator: FormSectionValidatorFunction_Main =
   (formState, dispatch, apiFetcher) =>
   (origin, validateSection) =>
   async (field, value, shouldPersistResults) => {
-    if (validateSection) {
-      const { error } = await schemaValidator(
-        combinedSchema[origin],
-        Object.entries(formState.sections[origin]?.fields as object).reduce(
-          (acc, [field, data]) => ({
-            ...acc,
-            [field]: data.value,
-          }),
-          {},
-        ),
-      );
+    const applicantPrimaryAffiliation =
+      formState.sections.applicant.fields.info_primaryAffiliation.value;
+    const validatingApplicant = origin === 'applicant';
 
-      const results = {
+    if (validateSection) {
+      dispatch({
         section: origin,
         type: 'overall',
-        overall: error
-          ? FORM_STATES.INCOMPLETE
-          : !['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
-              formState.sections[origin]?.meta.overall || '',
-            )
-          ? FORM_STATES.COMPLETE
-          : undefined,
-        ...(error && { error }),
-      } as FormValidationAction;
-      dispatch(results);
+        value: true,
+      });
 
-      return results;
+      Object.entries(formState.sections[origin]?.fields as object).forEach(
+        async ([field, data]) => {
+          if (data.value) {
+            const validatingPrimaryAffiliation = field.includes('info_primaryAffiliation');
+            const [fieldName, fieldIndex, fieldOverride] = field.split('--');
+
+            const { error } = await schemaValidator(
+              yup.reach(
+                combinedSchema[origin],
+                fieldIndex && fieldOverride !== 'overall'
+                  ? `${fieldName}.${fieldIndex}`
+                  : fieldName,
+              ),
+              data.meta?.shape === 'modal'
+                ? data.value.map((modalItem: any) =>
+                    Object.entries(data.innerType?.fields).reduce((acc, innerField) => {
+                      const [fieldNamePrefix, fieldNameSuffix] = innerField[0].split('_');
+
+                      return {
+                        ...acc,
+                        [innerField[0]]: fieldNameSuffix
+                          ? modalItem[fieldNamePrefix][fieldNameSuffix]
+                          : modalItem[innerField[0]],
+                      };
+                    }, {}),
+                  )
+                : data.value,
+            );
+
+            const results = {
+              field,
+              section: origin,
+              type: data.type,
+              value: data.value,
+              ...(error
+                ? { error }
+                : !validatingApplicant &&
+                  validatingPrimaryAffiliation &&
+                  checkMatchingPrimaryAffiliation(data.value, applicantPrimaryAffiliation)),
+            } as FormValidationAction;
+
+            dispatch(results);
+          }
+        },
+      );
     } else if (field) {
       const [fieldName, fieldIndex, fieldOverride] = field.split('--');
       const fieldIsArray = !Number.isNaN(Number(fieldIndex));
 
       if (fieldOverride?.includes('Modal')) {
+        const error =
+          value &&
+          Object.keys(formState.sections[origin].fields[fieldName].innerType?.fields).reduce(
+            (acc, innerField) => {
+              const validatingPrimaryAffiliation = innerField.includes('primaryAffiliation');
+              const [fieldNamePrefix, fieldNameSuffix] = innerField.split('_');
+              const innerValue = fieldNameSuffix
+                ? value[fieldNamePrefix][fieldNameSuffix]
+                : value[innerField];
+
+              const { error } = schemaValidator(
+                yup.reach(combinedSchema[origin], `${fieldName}.${innerField}`),
+                innerValue,
+              );
+
+              const validationResult = error
+                ? { error }
+                : !validatingApplicant &&
+                  validatingPrimaryAffiliation &&
+                  checkMatchingPrimaryAffiliation(innerValue, applicantPrimaryAffiliation);
+
+              return {
+                ...acc,
+                ...(validationResult && { [innerField]: validationResult }),
+              };
+            },
+            {},
+          );
+
         dispatch({
           field: fieldName,
           section: origin,
           type: fieldOverride as FormValidationActionTypes,
           value,
+          error,
         });
       } else {
+        const validatingPrimaryAffiliation = field.includes('info_primaryAffiliation');
+
+        if (
+          validatingApplicant &&
+          validatingPrimaryAffiliation &&
+          applicantPrimaryAffiliation !== value
+        ) {
+          dispatch({
+            section: 'representative',
+            type: 'overall',
+            value: false,
+          });
+        }
+
         const { error } = fieldOverride
           ? { error: null } // TODO: this validation will be handled in ticket #138
           : await schemaValidator(
@@ -274,15 +355,15 @@ export const validator: FormSectionValidatorFunction_Main =
                   ? `${fieldName}.${fieldIndex}`
                   : fieldName,
               ),
-              fieldOverride === 'overall'
-                ? Object.values<FormFieldType>(formState.sections[origin]?.fields[fieldName]?.value)
-                    .filter(({ value }) => value !== null)
-                    .map(({ value }) => value)
-                : value,
+              value,
             );
 
         const nextValue = {
-          ...(error && { error }),
+          ...(error
+            ? { error }
+            : !validatingApplicant &&
+              validatingPrimaryAffiliation &&
+              checkMatchingPrimaryAffiliation(value, applicantPrimaryAffiliation)),
           value,
         };
 
@@ -441,6 +522,7 @@ export const useLocalValidation = (
 
   const updateLocalState = useCallback(
     ({ error, field, value, type }: FormValidationAction) => {
+      const validatingPrimaryAffiliation = field.includes('info_primaryAffiliation');
       const [fieldName, fieldIndex, fieldOverride] = field.split('--');
       const currentSectionData = localState[sectionName];
       const currentSectionFields = currentSectionData?.fields;
@@ -472,7 +554,8 @@ export const useLocalValidation = (
                               [fieldIndex]: {
                                 ...currentField.innerType?.fields[fieldIndex],
                                 ...(value[fieldIndex] || { value }),
-                                error,
+                                // ensure affiliation validation is applied before allowing "save"
+                                error: validatingPrimaryAffiliation ? error || [''] : error,
                               },
                             },
                           },

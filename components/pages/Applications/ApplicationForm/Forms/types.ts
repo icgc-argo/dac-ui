@@ -45,6 +45,8 @@ export enum FORM_STATES {
   MUST_EDIT = 'mustEdit',
   TOUCHED = 'touched',
   PRISTINE = 'pristine',
+  REVISIONS_MADE = 'revisionsMade',
+  REVISIONS_REQUESTED_DISABLED = 'revisionsRequestedDisabled',
 }
 
 export type SectionStatusMapping = Record<SECTION_STATUS, FormSectionOverallState>;
@@ -126,7 +128,6 @@ export type FormSectionValidationState_Collaborators =
           info_primaryAffiliation: { value: string };
           info_suffix: { value: string };
           info_title: { value: string };
-          info_website: { value: string };
           type: { value: string };
         },
       ];
@@ -215,8 +216,13 @@ export type FormSectionValidationState_Sections =
 export type FormSectionValidationState_SectionBase = {
   fields: Partial<FormSectionValidationState_Sections>;
   meta: {
+    errorsList: {
+      field: string;
+      message: string;
+    }[];
     overall: FORM_STATES;
     tooltips: Partial<Record<FormSectionOverallState, ReactNode>>;
+    validated: boolean;
   };
 } & Partial<SchemaObjectDescription>;
 
@@ -233,7 +239,7 @@ export type FormValidationActionTypes =
   | 'updating';
 
 export type FormValidationAction = {
-  error?: string[];
+  error?: any;
   field: string;
   overall: FormSectionOverallState;
   section: FormSectionNames;

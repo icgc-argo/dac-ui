@@ -42,6 +42,7 @@ import {
   FormValidationAction,
 } from '../types';
 import TableComponent from './TableComponent';
+import { isDacoAdmin } from 'global/utils/egoTokenUtils';
 
 const Collaborators = ({
   appId,
@@ -63,14 +64,17 @@ const Collaborators = ({
   const [modalFields, setModalFields] = useState(getInternalFieldSchema(localState.list));
   const [modalHasErrors, setModalHasErrors] = useState(true);
   const containerRef = createRef<HTMLDivElement>();
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth, permissions } = useAuthContext();
   const theme = useTheme();
+
+  const isAdmin = permissions.length > 0 && isDacoAdmin(permissions);
+  const disableActions = isAdmin && applicationState === ApplicationState.APPROVED;
 
   const clearCollaboratorModalData = () => {
     validateFieldTouched({
       // faking event values to keep scope limited
       target: {
-        id: 'list--all--clearModal',
+        id: 'list----clearModal',
         tagName: 'MODAL',
         type: 'clearModal',
       },
@@ -165,7 +169,7 @@ const Collaborators = ({
     validateFieldTouched({
       // faking event values to keep scope limited
       target: {
-        id: 'list--all--feedModal',
+        id: 'list----feedModal',
         tagName: 'MODAL',
         type: 'feedModal',
         value: localState.list.value.find(({ id }: Collaborator) => collaboratorId === id),
@@ -191,7 +195,12 @@ const Collaborators = ({
     const newModalFields = getInternalFieldSchema(localState.list);
 
     collaboratorCount === newCollaboratorCount || setCollaboratorCount(newCollaboratorCount);
-    setModalHasErrors(Object.values(newModalFields).some((field: any) => field?.error?.length > 0));
+    setModalHasErrors(
+      Object.values(newModalFields).some((field: any) => field?.error?.length > 0) ||
+        !Object.entries(newModalFields)
+          .filter(([fieldName, fieldData]) => fieldName !== 'type' && isRequired(fieldData))
+          .every(([fieldName, fieldData]) => fieldData.value),
+    );
     setModalFields(newModalFields);
   }, [localState]);
 
@@ -202,6 +211,7 @@ const Collaborators = ({
       <section
         css={css`
           margin-top: 43px;
+          border-top: 1px solid ${theme.colors.grey_2};
         `}
       >
         <div
@@ -212,7 +222,7 @@ const Collaborators = ({
           `}
         >
           <Typography variant="data">
-            {collaboratorCount} {pluralize('Collaborators', collaboratorCount)}
+            {pluralize('Collaborators', collaboratorCount, true)}
           </Typography>
           <Button
             size="sm"
@@ -221,7 +231,7 @@ const Collaborators = ({
               align-items: center;
             `}
             onClick={newCollaboratorModal}
-            disabled={isSectionDisabled}
+            disabled={disableActions || isSectionDisabled}
           >
             <Icon
               name="plus_circle"
@@ -248,7 +258,7 @@ const Collaborators = ({
                 data={localState.list?.value}
                 handleActions={handleTableActions}
                 applicationState={applicationState}
-                isSectionDisabled={isSectionDisabled}
+                disableActions={disableActions}
               />
             ) : (
               <ContentPlaceholder
@@ -274,7 +284,7 @@ const Collaborators = ({
         (modalVisible === 'collaborator' ? (
           <ModalPortal>
             <Modal
-              actionButtonText={`${modalFields.id ? 'Edit' : 'Add'} Collaborator`}
+              actionButtonText={`${modalFields.id.value ? 'Edit' : 'Add'} Collaborator`}
               actionDisabled={modalHasErrors}
               onActionClick={handleCollaboratorCreateOrEdit}
               onCancelClick={dismissCollaboratorModal}
@@ -393,6 +403,7 @@ const Collaborators = ({
                         disabled={isSectionDisabled}
                         id="list--info_title"
                         onBlur={validateFieldTouched}
+                        onFocus={validateFieldTouched}
                         eventOnChange={validateFieldTouched}
                         options={transformToSelectOptions(honorificsList)}
                         value={modalFields.info_title?.value}
@@ -492,7 +503,11 @@ const Collaborators = ({
 
                   <DoubleFieldRow helpText="This must match the applicant’s primary affiliation exactly.">
                     <FormControl
-                      error={!!modalFields.info_primaryAffiliation?.error}
+                      error={
+                        // additional logic to quietly ensure validation is applied before allowing save
+                        !!modalFields.info_primaryAffiliation?.error?.filter((e: string) => e)
+                          .length
+                      }
                       required={isRequired(modalFields.info_primaryAffiliation)}
                     >
                       <InputLabel htmlFor="info_primaryAffiliation">Primary Affiliation</InputLabel>
@@ -574,7 +589,11 @@ const Collaborators = ({
                         onBlur={validateFieldTouched}
                         onChange={validateFieldTouched}
                         value={modalFields.info_positionTitle?.value}
-                        placeholder="e.g. Bioinformatician"
+                        placeholder={
+                          modalFields.type.value === CollaboratorType.STUDENT
+                            ? 'e.g. Doctoral'
+                            : 'e.g. Bioinformatician'
+                        }
                       />
 
                       <FormHelperText onErrorOnly>

@@ -42,34 +42,38 @@ export const appendicesSchema = yup.object().shape({
 
 export const applicantSchema = yup.object().shape({
   address_building: yup.string().default(''),
-  address_cityAndProvince: yup.string().default('').required(),
+  address_cityAndProvince: yup.string().default('').trim().required(),
   address_country: yup
     .string()
     .default('')
+    .trim()
     .oneOf(transformContriesToValidationOptions(countriesList))
     .required(),
-  address_postalCode: yup.string().default('').required(),
-  address_streetAddress: yup.string().default('').required(),
-  info_firstName: yup.string().default('').required(),
+  address_postalCode: yup.string().default('').trim().required(),
+  address_streetAddress: yup.string().default('').trim().required(),
+  info_firstName: yup.string().default('').trim().required(),
   info_googleEmail: yup
     .string()
     .default('')
+    .trim()
     .email('Please enter a valid email address.')
     .required(),
   info_institutionEmail: yup
     .string()
     .default('')
+    .trim()
     .email('Please enter a valid email address.')
     .required(),
-  info_lastName: yup.string().default('').required(),
+  info_lastName: yup.string().default('').trim().required(),
   info_middleName: yup.string().default(''),
-  info_positionTitle: yup.string().default('').required(),
-  info_primaryAffiliation: yup.string().default('').required(),
+  info_positionTitle: yup.string().default('').trim().required(),
+  info_primaryAffiliation: yup.string().default('').trim().required(),
   info_suffix: yup.string().default(''),
   info_title: yup.string().default(''),
   info_website: yup
     .string()
     .default('')
+    .trim()
     .url(
       'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
     )
@@ -81,30 +85,25 @@ export const collaboratorSchema = yup.object().shape({
     .array(
       yup.object().shape({
         id: yup.string().default(''),
-        info_firstName: yup.string().default('').required(),
+        info_firstName: yup.string().default('').trim().required(),
         info_googleEmail: yup
           .string()
           .default('')
+          .trim()
           .email('Please enter a valid email address.')
           .required(),
         info_institutionEmail: yup
           .string()
           .default('')
+          .trim()
           .email('Please enter a valid email address.')
           .required(),
-        info_lastName: yup.string().default('').required(),
+        info_lastName: yup.string().default('').trim().required(),
         info_middleName: yup.string().default(''),
-        info_primaryAffiliation: yup.string().default('').required(),
-        info_positionTitle: yup.string().default('').required(),
+        info_positionTitle: yup.string().default('').trim().required(),
+        info_primaryAffiliation: yup.string().default('').trim().required(),
         info_suffix: yup.string().default(''),
         info_title: yup.string().default(''),
-        info_website: yup
-          .string()
-          .default('')
-          .url(
-            'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
-          )
-          .required(),
         type: yup.string().oneOf(['personnel', 'student']).required(),
       }),
     )
@@ -151,14 +150,15 @@ export const ethicsLetterSchema = yup.object().shape({
 });
 
 export const projectInfoSchema = yup.object().shape({
-  aims: yup.string().default('').test(maxWords(200)).required(),
-  background: yup.string().default('').test(maxWords(200)).required(),
-  methodology: yup.string().default('').test(maxWords(200)).required(),
+  aims: yup.string().default('').trim().test(maxWords(200)).required(),
+  background: yup.string().default('').trim().test(maxWords(200)).required(),
+  methodology: yup.string().default('').trim().test(maxWords(200)).required(),
   publicationsURLs: yup
     .array(
       yup
         .string()
         .default('')
+        .trim()
         .url(
           'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
         )
@@ -167,11 +167,12 @@ export const projectInfoSchema = yup.object().shape({
     .meta({ shape: 'publicationURLsArray', filler: '', type: 'string' })
     .test(uniquePublicationURLs)
     .min(3),
-  summary: yup.string().default('').test(maxWords(200)).required(),
-  title: yup.string().default('').required(),
+  summary: yup.string().default('').trim().test(maxWords(200)).required(),
+  title: yup.string().default('').trim().required(),
   website: yup
     .string()
     .default('')
+    .trim()
     .url(
       'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
     ),
@@ -179,25 +180,27 @@ export const projectInfoSchema = yup.object().shape({
 
 export const representativeSchema = yup.object().shape({
   address_building: yup.string().default(''),
-  address_cityAndProvince: yup.string().default('').required(),
+  address_cityAndProvince: yup.string().default('').trim().required(),
   address_country: yup
     .string()
     .default('')
+    .trim()
     .oneOf(transformContriesToValidationOptions(countriesList))
     .required(),
-  address_postalCode: yup.string().default('').required(),
-  address_streetAddress: yup.string().default('').required(),
+  address_postalCode: yup.string().default('').trim().required(),
+  address_streetAddress: yup.string().default('').trim().required(),
   addressSameAsApplicant: yup.boolean().default(false),
-  info_firstName: yup.string().default('').required(),
+  info_firstName: yup.string().default('').trim().required(),
   info_institutionEmail: yup
     .string()
     .default('')
+    .trim()
     .email('Please enter a valid email address.')
     .required(),
-  info_lastName: yup.string().default('').required(),
+  info_lastName: yup.string().default('').trim().required(),
   info_middleName: yup.string().default(''),
-  info_positionTitle: yup.string().default('').required(),
-  info_primaryAffiliation: yup.string().default('').required(),
+  info_positionTitle: yup.string().default('').trim().required(),
+  info_primaryAffiliation: yup.string().default('').trim().required(),
   info_suffix: yup.string().default(''),
   info_title: yup.string().default(''),
 });

@@ -12,6 +12,7 @@ import {
   FormSectionValidationState_SectionBase,
 } from './types';
 import { useLocalValidation } from './validations';
+import { pickBy } from 'lodash';
 
 export const enabledSections = (
   sections: FormSectionNames[],
@@ -41,7 +42,7 @@ export const sectionSelector = ({
   }: FormSectionValidationState_SectionBase = formState.sections[selectedSection] || {};
 
   const isSectionDisabled =
-    !overall || [FORM_STATES.DISABLED, FORM_STATES.LOCKED].includes(overall);
+    !overall || [FORM_STATES.DISABLED, FORM_STATES.LOCKED, FORM_STATES.REVISIONS_REQUESTED_DISABLED].includes(overall);
 
   const {
     localState,
@@ -51,12 +52,16 @@ export const sectionSelector = ({
     validateFieldTouched: (event: any) => void;
   } = useLocalValidation(selectedSection, storedFields, validator(selectedSection));
 
+  const applicantAddress = selectedSection === 'representative' && !!localState.addressSameAsApplicant?.value
+    ? pickBy(formState.sections.applicant?.fields || {}, (value, key) => key.startsWith('address_'))
+    : undefined; // undefined prop won't be passed down
   const primaryAffiliation = formState.sections.applicant.fields.info_primaryAffiliation.value;
 
   return isLoading || !formState.__seeded ? (
     <Loader />
   ) : SectionComponent && isValidElement(<SectionComponent />) ? (
     <SectionComponent
+      applicantAddress={applicantAddress}
       appId={appId}
       applicationState={formState.state}
       isSectionDisabled={isSectionDisabled}

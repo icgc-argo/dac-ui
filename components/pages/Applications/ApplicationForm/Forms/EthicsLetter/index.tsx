@@ -18,6 +18,7 @@ import {
 } from '../types';
 import { isRequired } from '../validations';
 import UploadsTable from './UploadsTable';
+import { getStaticComponents } from 'components/pages/Applications/PDF/common';
 
 const EthicsLetter = ({
   appId,
@@ -59,14 +60,16 @@ const EthicsLetter = ({
     setSelectedRadioValue(localState.declaredAsRequired?.value);
   }, [localState.declaredAsRequired?.value]);
 
+  const { SectionTitle } = getStaticComponents(false);
+
   return (
     <article>
       <StaticEthics />
 
       <section>
-        <Typography bold component="h3" color="secondary">
+        <SectionTitle>
           {FORM_TEXT.ethics.title}
-        </Typography>
+        </SectionTitle>
 
         <FormControl
           className="vertical"

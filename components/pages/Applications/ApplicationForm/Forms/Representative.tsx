@@ -13,30 +13,40 @@ import { countriesList, honorificsList } from './constants';
 import DoubleFieldRow from './DoubleFieldRow';
 import {
   FormFieldValidationTriggerFunction,
+  FormSectionValidationState_Applicant,
   FormSectionValidationState_Representative,
 } from './types';
 import { isRequired } from './validations';
 import { transformToSelectOptions } from './validations/helpers';
 import StaticRepresentative from '../../PDF/StaticRepresentative';
 import FORM_TEXT from '../../PDF/textConstants';
+import { getStaticComponents } from '../../PDF/common';
 
 const Representative = ({
+  applicantAddress,
   isSectionDisabled,
   localState,
   validateFieldTouched,
 }: {
+  applicantAddress?: FormSectionValidationState_Applicant;
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_Representative;
   validateFieldTouched: FormFieldValidationTriggerFunction;
 }): ReactElement => {
+  const addressSameAsApplicant = !!localState.addressSameAsApplicant?.value;
+  const isAddressDisabled = isSectionDisabled || addressSameAsApplicant;
+  const addressState = addressSameAsApplicant && applicantAddress ? applicantAddress : localState;
+
+  const { SectionTitle } = getStaticComponents(false);
+
   return (
     <article>
       <StaticRepresentative />
 
       <section>
-        <Typography bold component="h3" color="secondary">
+        <SectionTitle>
           {FORM_TEXT.representative.title}
-        </Typography>
+        </SectionTitle>
 
         <DoubleFieldRow>
           <FormControl
@@ -202,16 +212,16 @@ const Representative = ({
       </section>
 
       <section>
-        <Typography bold component="h3" color="secondary">
+        <SectionTitle>
           {FORM_TEXT.representative.address}
-        </Typography>
+        </SectionTitle>
 
         <FormControl disabled={isSectionDisabled}>
           <FormCheckbox
             aria-label="Address is the same as the Applicant."
             checked={localState.addressSameAsApplicant?.value}
-            onChange={() => {}}
-            value="copyApplicantMailing"
+            onChange={validateFieldTouched}
+            value="addressSameAsApplicant"
           >
             Address is the same as the Applicant.
           </FormCheckbox>
@@ -220,8 +230,8 @@ const Representative = ({
         </FormControl>
 
         <FormControl
-          disabled={isSectionDisabled}
-          error={!!localState.address_country?.error}
+          disabled={isAddressDisabled}
+          error={!addressSameAsApplicant && !!localState.address_country?.error}
           required={isRequired(localState.address_country)}
         >
           <InputLabel htmlFor="address_country">Country</InputLabel>
@@ -239,7 +249,7 @@ const Representative = ({
             onChange={validateFieldTouched}
             onBlur={validateFieldTouched}
             single
-            value={localState.address_country?.value ? [localState.address_country?.value] : []}
+            value={addressState.address_country?.value ? [addressState.address_country?.value] : []}
           >
             {countriesList.map(({ name }) => (
               <Option key={name} value={name}>
@@ -252,8 +262,8 @@ const Representative = ({
         </FormControl>
 
         <FormControl
-          disabled={isSectionDisabled}
-          error={!!localState.address_building?.error}
+          disabled={isAddressDisabled}
+          error={!addressSameAsApplicant && !!localState.address_building?.error}
           required={isRequired(localState.address_building)}
         >
           <InputLabel htmlFor="address_building">Building</InputLabel>
@@ -264,15 +274,15 @@ const Representative = ({
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             placeholder="e.g. MaRS Centre, South Tower"
-            value={localState.address_building?.value}
+            value={addressState.address_building?.value}
           />
 
           <FormHelperText onErrorOnly>{localState.address_building?.error?.[0]}</FormHelperText>
         </FormControl>
 
         <FormControl
-          disabled={isSectionDisabled}
-          error={!!localState.address_streetAddress?.error}
+          disabled={isAddressDisabled}
+          error={!addressSameAsApplicant && !!localState.address_streetAddress?.error}
           required={isRequired(localState.address_streetAddress)}
         >
           <InputLabel htmlFor="address_streetAddress">Street Address</InputLabel>
@@ -283,7 +293,7 @@ const Representative = ({
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             placeholder="e.g. 101 College Street, Suite 800"
-            value={localState.address_streetAddress?.value}
+            value={addressState.address_streetAddress?.value}
           />
 
           <FormHelperText onErrorOnly>
@@ -292,8 +302,8 @@ const Representative = ({
         </FormControl>
 
         <FormControl
-          disabled={isSectionDisabled}
-          error={!!localState.address_cityAndProvince?.error}
+          disabled={isAddressDisabled}
+          error={!addressSameAsApplicant && !!localState.address_cityAndProvince?.error}
           required={isRequired(localState.address_cityAndProvince)}
         >
           <InputLabel htmlFor="address_cityAndProvince">City and Province/State</InputLabel>
@@ -304,7 +314,7 @@ const Representative = ({
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             placeholder="e.g. Toronto, Ontario"
-            value={localState.address_cityAndProvince?.value}
+            value={addressState.address_cityAndProvince?.value}
           />
 
           <FormHelperText onErrorOnly>
@@ -313,8 +323,8 @@ const Representative = ({
         </FormControl>
 
         <FormControl
-          disabled={isSectionDisabled}
-          error={!!localState.address_postalCode?.error}
+          disabled={isAddressDisabled}
+          error={!addressSameAsApplicant && !!localState.address_postalCode?.error}
           required={isRequired(localState.address_postalCode)}
         >
           <InputLabel htmlFor="address_postalCode">Postal/Zip Code</InputLabel>
@@ -324,7 +334,7 @@ const Representative = ({
             id="address_postalCode"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
-            value={localState.address_postalCode?.value}
+            value={addressState.address_postalCode?.value}
           />
 
           <FormHelperText onErrorOnly>{localState.address_postalCode?.error?.[0]}</FormHelperText>
