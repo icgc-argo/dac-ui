@@ -19,6 +19,7 @@ import {
 import { isRequired } from '../validations';
 import UploadsTable from './UploadsTable';
 import { getStaticComponents } from 'components/pages/Applications/PDF/common';
+import { ApplicationState } from 'components/pages/Applications/types';
 
 const EthicsLetter = ({
   appId,
@@ -26,13 +27,20 @@ const EthicsLetter = ({
   localState,
   refetchAllData,
   validateFieldTouched,
+  applicationState,
 }: {
   appId: string;
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_EthicsLetter;
   refetchAllData: (action?: Partial<FormValidationAction>) => void;
   validateFieldTouched: FormFieldValidationTriggerFunction;
+  applicationState: ApplicationState;
 }): ReactElement => {
+  // applicant made ethics letter required (option 2)
+  // and application has been approved
+  const isRequiredPostApproval = !isSectionDisabled &&
+    applicationState === ApplicationState.APPROVED;
+
   const [selectedRadioValue, setSelectedRadioValue] = useState(
     localState.declaredAsRequired?.value || null,
   );
@@ -85,12 +93,15 @@ const EthicsLetter = ({
             css={css`
               margin-top: 15px;
             `}
+            disabled={isSectionDisabled || isRequiredPostApproval}
             id="declaredAsRequired"
             isChecked={isChecked}
             onChange={handleSelectedRadioValueChange}
             disabled={isSectionDisabled}
           >
-            <FormRadio value={false}>{FORM_TEXT.ethics.declarationOptions.notRequired}</FormRadio>
+            <FormRadio value={false}>
+              {FORM_TEXT.ethics.declarationOptions.notRequired}
+            </FormRadio>
             <FormRadio value={true}>
               {FORM_TEXT.ethics.declarationOptions.required.a}{' '}
               <Typography bold component="span">
@@ -113,6 +124,7 @@ const EthicsLetter = ({
             localState={localState}
             refetchAllData={refetchAllData}
             required={isRequired(localState.approvalLetterDocs)}
+            isRequiredPostApproval={isRequiredPostApproval}
           />
         )}
       </section>
