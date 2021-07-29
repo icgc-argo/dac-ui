@@ -4,22 +4,17 @@ import Typography from '@icgc-argo/uikit/Typography';
 import VerticalTabs from '@icgc-argo/uikit/VerticalTabs';
 
 import ValidationIcon from './ValidationIcon';
-import { FormSectionNames, FORM_STATES } from '../types';
-import { ApplicationState } from 'components/pages/Applications/types';
+import { FORM_STATES } from '../types';
 
 const FormSection = ({
-  applicationState,
   active = false,
   label = 'unnamed',
   status = FORM_STATES.PRISTINE,
-  sectionName,
   switchSection,
   tooltip = '',
 }: {
-  applicationState: ApplicationState;
   active?: boolean;
   label?: string;
-  sectionName: FormSectionNames;
   status?: FORM_STATES;
   switchSection?: MouseEventHandler<HTMLButtonElement>;
   tooltip?: string;

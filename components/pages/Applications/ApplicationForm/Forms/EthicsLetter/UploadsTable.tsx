@@ -1,4 +1,4 @@
-import { createRef, ReactElement, SyntheticEvent, useEffect, useState } from 'react';
+import { createRef, ReactElement, useEffect, useState } from 'react';
 import { css } from '@emotion/core';
 import { AxiosError } from 'axios';
 import { format } from 'date-fns';
