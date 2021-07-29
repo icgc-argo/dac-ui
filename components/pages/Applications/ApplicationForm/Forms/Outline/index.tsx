@@ -8,16 +8,13 @@ import VerticalTabs from '@icgc-argo/uikit/VerticalTabs';
 import { sectionsData } from '../constants';
 import FormSection from './Section';
 import { FormSectionNames, FormValidationStateParameters } from '../types';
-import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
 const Outline = ({
-  applicationState,
   sections,
   selectedSection,
   setSelectedSection,
   formState,
 }: {
-  applicationState: ApplicationState,
   sections: readonly FormSectionNames[];
   selectedSection: FormSectionNames;
   setSelectedSection: (section: FormSectionNames) => void;
@@ -54,10 +51,8 @@ const Outline = ({
         return (
           <FormSection
             active={selectedSection === name}
-            applicationState={applicationState}
             key={name}
             label={sectionsData[name]?.description || name}
-            sectionName={name}
             status={status}
             switchSection={() => setSelectedSection(name)}
             tooltip={sectionsData[name].tooltips?.[status] || ''}

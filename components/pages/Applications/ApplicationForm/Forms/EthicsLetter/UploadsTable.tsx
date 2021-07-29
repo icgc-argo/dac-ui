@@ -2,7 +2,6 @@ import { createRef, ReactElement, useEffect, useState } from 'react';
 import { css } from '@emotion/core';
 import { AxiosError } from 'axios';
 import { format } from 'date-fns';
-import router from 'next/router';
 
 import { UikitTheme } from '@icgc-argo/uikit/index';
 import Button from '@icgc-argo/uikit/Button';
