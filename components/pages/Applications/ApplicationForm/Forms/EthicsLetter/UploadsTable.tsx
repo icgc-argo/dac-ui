@@ -35,11 +35,13 @@ const VALID_FILE_TYPE = [
 ];
 const MAX_FILE_SIZE = 5242880;
 
+// ethics letters are in an object on initial load.
+// after the user uploads a new letter it becomes an array.
 const getEthicsLetters = (value: any) => Array.isArray(value)
   ? value
   : typeof value === 'undefined'
-    ? [] // handle undefined approvalLetterDocs
-    : Object.values(value); // ethics letters first load as an object.
+    ? [] // handle undefined approvalLetterDocs just in case
+    : Object.values(value);
 
 const UploadsTable = ({
   appId,
