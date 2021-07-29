@@ -239,11 +239,13 @@ export const transformContriesToValidationOptions = (
   countriesList: CountryNamesAndAbbreviations[],
 ) => countriesList.map(({ name }: CountryNamesAndAbbreviations) => name);
 
-export const transformToSelectOptions = (list: Array<string | number>) =>
-  list.map((value: string | number) => ({
+export const transformToSelectOptions = (list: Array<string | number>) => [
+  { content: '-- Select an option --', value: '' },
+  ...list.map((value: string | number) => ({
     content: value,
     value: value,
-  }));
+  })),
+];
 
 export const uniquePublicationURLs = {
   name: `uniquePublicationURLs`,
