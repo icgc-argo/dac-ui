@@ -70,9 +70,10 @@ const UploadsTable = ({
     }
   };
 
-  const submitFile = () => {
+  const submitFile = (file?: File) => {
     const formData = new FormData();
-    formData.append('file', selectedFile as File);
+    const fileToUpload = file || selectedFile;
+    formData.append('file', fileToUpload as File);
 
     fetchWithAuth({
       data: formData,
@@ -116,7 +117,8 @@ const UploadsTable = ({
       if (isRequiredPostApproval) {
         setIsModalVisible(true);
       } else {
-        submitFile();
+        // state doesn't update fast enough so pass file as an argument
+        submitFile(file);
       }
     } else {
       console.warn('invalid file', file);
