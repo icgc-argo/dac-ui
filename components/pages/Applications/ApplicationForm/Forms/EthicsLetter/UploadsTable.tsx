@@ -36,6 +36,12 @@ const VALID_FILE_TYPE = [
 ];
 const MAX_FILE_SIZE = 5242880;
 
+const getEthicsLetters = (value: any) => Array.isArray(value)
+  ? value
+  : typeof value === 'undefined'
+    ? [] // handle undefined approvalLetterDocs
+    : Object.values(value); // ethics letters first load as an object.
+
 const UploadsTable = ({
   appId,
   isSectionDisabled,
@@ -56,7 +62,8 @@ const UploadsTable = ({
   const { fetchWithAuth } = useAuthContext();
   const theme: UikitTheme = useTheme();
 
-  const [letterCount, setLetterCount] = useState(localState.approvalLetterDocs?.value.length || 0);
+  const [ethicsLetters, setEthicsLetters] = useState<any[]>(getEthicsLetters(localState.approvalLetterDocs?.value));
+  const [letterCount, setLetterCount] = useState(ethicsLetters.length);
   const [letterError, setLetterError] = useState(false); // !!localState.approvalLetterDocs?.error
 
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
@@ -131,11 +138,13 @@ const UploadsTable = ({
   };
 
   useEffect(() => {
-    const newLetterCount = localState.approvalLetterDocs?.value.length || 0;
+    const newEthicsLetters = getEthicsLetters(localState.approvalLetterDocs?.value);
+    setEthicsLetters(newEthicsLetters);
+    const newLetterCount = newEthicsLetters.length;
 
     letterCount === newLetterCount || setLetterCount(newLetterCount);
     setLetterError(letterCount > 0 && newLetterCount === 0);
-  }, [localState]);
+  }, [localState.approvalLetterDocs?.value]);
 
   return (
     <>
@@ -301,7 +310,7 @@ const UploadsTable = ({
             css={css`
               margin-top: 10px;
             `}
-            data={localState.approvalLetterDocs?.value}
+            data={ethicsLetters}
             defaultSorted={[{ id: 'uploadedAtUtc', desc: true }]}
             parentRef={containerRef}
             showPagination={false}
