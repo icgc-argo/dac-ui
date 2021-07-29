@@ -71,6 +71,7 @@ const TableComponent = ({
   disableActions: boolean;
 }) => {
   const theme: UikitTheme = useTheme();
+
   return (
     <Table
       columns={[
