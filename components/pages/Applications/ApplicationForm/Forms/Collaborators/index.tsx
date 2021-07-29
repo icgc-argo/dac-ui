@@ -198,8 +198,11 @@ const Collaborators = ({
     setModalHasErrors(
       Object.values(newModalFields).some((field: any) => field?.error?.length > 0) ||
         !Object.entries(newModalFields)
-          .filter(([fieldName, fieldData]) => fieldName !== 'type' && isRequired(fieldData))
-          .every(([fieldName, fieldData]) => fieldData.value),
+          .filter(
+            ([fieldName, fieldData]) =>
+              fieldName !== 'type' && isRequired(fieldData as FormFieldType),
+          )
+          .every(([fieldName, fieldData]) => (fieldData as FormFieldType).value),
     );
     setModalFields(newModalFields);
   }, [localState]);
