@@ -101,9 +101,9 @@ const Collaborators = ({
         ...dataAcc,
         [prefix]: suffix
           ? {
-            ...dataAcc[prefix],
-            [suffix]: fieldData.value,
-          }
+              ...dataAcc[prefix],
+              [suffix]: fieldData.value,
+            }
           : fieldData.value,
       };
     }, {} as Record<string, any>);
@@ -195,7 +195,15 @@ const Collaborators = ({
     const newModalFields = getInternalFieldSchema(localState.list);
 
     collaboratorCount === newCollaboratorCount || setCollaboratorCount(newCollaboratorCount);
-    setModalHasErrors(Object.values(newModalFields).some((field: any) => field?.error?.length > 0));
+    setModalHasErrors(
+      Object.values(newModalFields).some((field: any) => field?.error?.length > 0) ||
+        !Object.entries(newModalFields)
+          .filter(
+            ([fieldName, fieldData]) =>
+              fieldName !== 'type' && isRequired(fieldData as FormFieldType),
+          )
+          .every(([fieldName, fieldData]) => (fieldData as FormFieldType).value),
+    );
     setModalFields(newModalFields);
   }, [localState]);
 
@@ -377,6 +385,7 @@ const Collaborators = ({
                           margin-left: 15px;
                         }
                       `}
+                      disabled={isSectionDisabled}
                     >
                       <FormRadio value={CollaboratorType.PERSONNEL}>Authorized Personnel</FormRadio>
                       <FormRadio value={CollaboratorType.STUDENT}>Authorized Student</FormRadio>
@@ -397,6 +406,7 @@ const Collaborators = ({
                         disabled={isSectionDisabled}
                         id="list--info_title"
                         onBlur={validateFieldTouched}
+                        onFocus={validateFieldTouched}
                         eventOnChange={validateFieldTouched}
                         options={transformToSelectOptions(honorificsList)}
                         value={modalFields.info_title?.value}
@@ -496,7 +506,11 @@ const Collaborators = ({
 
                   <DoubleFieldRow helpText="This must match the applicant’s primary affiliation exactly.">
                     <FormControl
-                      error={!!modalFields.info_primaryAffiliation?.error}
+                      error={
+                        // additional logic to quietly ensure validation is applied before allowing save
+                        !!modalFields.info_primaryAffiliation?.error?.filter((e: string) => e)
+                          .length
+                      }
                       required={isRequired(modalFields.info_primaryAffiliation)}
                     >
                       <InputLabel htmlFor="info_primaryAffiliation">Primary Affiliation</InputLabel>

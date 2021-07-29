@@ -12,9 +12,11 @@ import Icon from '@icgc-argo/uikit/Icon';
 import Table from '@icgc-argo/uikit/Table';
 import Typography from '@icgc-argo/uikit/Typography';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import Modal from '@icgc-argo/uikit/Modal';
 
 import { API, DATE_RANGE_DISPLAY_FORMAT } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
+import { ModalPortal } from 'components/Root';
 
 import DoubleFieldRow from '../DoubleFieldRow';
 import FormFieldHelpBubble from '../FormFieldHelpBubble';
@@ -24,6 +26,7 @@ import {
   FormValidationStateParameters,
   DOCUMENT_TYPES,
 } from '../types';
+import pluralize from 'pluralize';
 
 const VALID_FILE_TYPE = [
   'application/msword',
@@ -32,26 +35,40 @@ const VALID_FILE_TYPE = [
 ];
 const MAX_FILE_SIZE = 5242880;
 
+// ethics letters are in an object on initial load.
+// after the user uploads a new letter it becomes an array.
+const getEthicsLetters = (value: any) => Array.isArray(value)
+  ? value
+  : typeof value === 'undefined'
+    ? [] // handle undefined approvalLetterDocs just in case
+    : Object.values(value);
+
 const UploadsTable = ({
   appId,
   isSectionDisabled,
   localState,
   refetchAllData,
   required,
+  isRequiredPostApproval,
 }: {
   appId: string;
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_EthicsLetter;
   refetchAllData: (action?: Partial<FormValidationAction>) => void;
   required: boolean;
+  isRequiredPostApproval: boolean;
 }): ReactElement => {
   const containerRef = createRef<HTMLDivElement>();
   const fileInputRef = createRef<HTMLInputElement>();
   const { fetchWithAuth } = useAuthContext();
   const theme: UikitTheme = useTheme();
 
-  const [letterCount, setLetterCount] = useState(localState.approvalLetterDocs?.value.length || 0);
+  const [ethicsLetters, setEthicsLetters] = useState<any[]>(getEthicsLetters(localState.approvalLetterDocs?.value));
+  const [letterCount, setLetterCount] = useState(ethicsLetters.length);
   const [letterError, setLetterError] = useState(false); // !!localState.approvalLetterDocs?.error
+
+  const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   // make button work as input
   const selectFile = () => {
@@ -60,6 +77,30 @@ const UploadsTable = ({
       fp.click();
     }
   };
+
+  const submitFile = (file?: File) => {
+    const formData = new FormData();
+    const fileToUpload = file || selectedFile;
+    formData.append('file', fileToUpload as File);
+
+    fetchWithAuth({
+      data: formData,
+      method: 'POST',
+      url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.ETHICS}/upload`,
+    })
+      .then(({ data }: { data: FormValidationStateParameters }) =>
+        refetchAllData({
+          type: 'updating',
+          value: data,
+        }),
+      )
+      .catch((err: AxiosError) => {
+        console.error('File failed to upload.', err);
+      })
+      .finally(() => {
+        setSelectedFile(undefined);
+      });
+  }
 
   const handleFileDelete = (fileId: string) => (event: any) => {
     fetchWithAuth({
@@ -79,36 +120,32 @@ const UploadsTable = ({
 
   const handleFileUpload = (event: any) => {
     const file = event.target.files?.[0];
-
     if (file && file.size <= MAX_FILE_SIZE && VALID_FILE_TYPE.includes(file.type)) {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      fetchWithAuth({
-        data: formData,
-        method: 'POST',
-        url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.ETHICS}/upload`,
-      })
-        .then(({ data }: { data: FormValidationStateParameters }) =>
-          refetchAllData({
-            type: 'updating',
-            value: data,
-          }),
-        )
-        .catch((err: AxiosError) => {
-          console.error('File failed to upload.', err);
-        });
+      setSelectedFile(file);
+      if (isRequiredPostApproval) {
+        setIsModalVisible(true);
+      } else {
+        // state doesn't update fast enough so pass file as an argument
+        submitFile(file);
+      }
     } else {
       console.warn('invalid file', file);
     }
   };
 
+  const dismissModal = () => {
+    setSelectedFile(undefined);
+    setIsModalVisible(false);
+  };
+
   useEffect(() => {
-    const newLetterCount = localState.approvalLetterDocs?.value.length;
+    const newEthicsLetters = getEthicsLetters(localState.approvalLetterDocs?.value);
+    setEthicsLetters(newEthicsLetters);
+    const newLetterCount = newEthicsLetters.length;
 
     letterCount === newLetterCount || setLetterCount(newLetterCount);
     setLetterError(letterCount > 0 && newLetterCount === 0);
-  }, [localState]);
+  }, [localState.approvalLetterDocs?.value]);
 
   return (
     <>
@@ -162,7 +199,7 @@ const UploadsTable = ({
           `}
         >
           <Typography color={theme.colors.grey} variant="data">
-            {`${letterCount} Ethics Letter${letterCount === 0 || letterCount > 0 ? 's' : ''}`}
+            {pluralize('Ethics Letter', letterCount, true)}
           </Typography>
 
           <div
@@ -242,38 +279,39 @@ const UploadsTable = ({
                   format(new Date(value), DATE_RANGE_DISPLAY_FORMAT),
                 Header: 'Uploaded On',
               },
-              {
-                accessor: 'objectId',
-                Cell: ({ value }: { value: string }) => (
-                  <Button
-                    css={css`
-                      label: action_delete;
-                      height: 30px;
-                      margin: 0 auto;
-                      width: 30px;
-                    `}
-                    disabled={isSectionDisabled}
-                    onClick={handleFileDelete(value)}
-                    size="sm"
-                    variant="text"
-                  >
-                    <Icon
+              ...(isRequiredPostApproval ? [] :
+                [{
+                  accessor: 'objectId',
+                  Cell: ({ value }: { value: string }) => (
+                    <Button
                       css={css`
+                        label: action_delete;
+                        height: 30px;
+                        margin: 0 auto;
+                        width: 30px;
+                      `}
+                      disabled={isSectionDisabled}
+                      onClick={handleFileDelete(value)}
+                      size="sm"
+                      variant="text"
+                    >
+                      <Icon
+                        css={css`
                         margin-bottom: -3px;
                       `}
-                      fill={isSectionDisabled ? 'grey_1' : 'accent2'}
-                      name="trash"
-                    />
-                  </Button>
-                ),
-                Header: 'Actions',
-                width: 60,
-              },
+                        fill={isSectionDisabled ? 'grey_1' : 'accent2'}
+                        name="trash"
+                      />
+                    </Button>
+                  ),
+                  Header: 'Actions',
+                  width: 60,
+                }]),
             ]}
             css={css`
               margin-top: 10px;
             `}
-            data={localState.approvalLetterDocs?.value}
+            data={ethicsLetters}
             defaultSorted={[{ id: 'uploadedAtUtc', desc: true }]}
             parentRef={containerRef}
             showPagination={false}
@@ -301,6 +339,26 @@ const UploadsTable = ({
           </ContentPlaceholder>
         )}
       </div>
+      {isModalVisible && (
+        <ModalPortal>
+          <Modal
+            title="Are you sure you want to upload?"
+            onActionClick={() => {
+              submitFile();
+              dismissModal();
+            }}
+            onCancelClick={dismissModal}
+            onCloseClick={dismissModal}
+            actionButtonText="Yes, upload"
+          >
+            <Typography>
+              Are you sure you want to upload <strong>{selectedFile?.name}</strong> to this application? If so,
+              the ICGC DACO will be notified to review the new ethics letter and they will contact you
+              if there are any concerns.
+            </Typography>
+          </Modal>
+        </ModalPortal>
+      )}
     </>
   );
 };
