@@ -95,14 +95,15 @@ const EthicsLetter = ({
             css={css`
               margin-top: 15px;
             `}
+            disabled={isSectionDisabled || isRequiredPostApproval}
             id="declaredAsRequired"
             isChecked={isChecked}
             onChange={handleSelectedRadioValueChange}
           >
-            <FormRadio disabled={isSectionDisabled || isRequiredPostApproval} value={false}>
+            <FormRadio value={false}>
               {FORM_TEXT.ethics.declarationOptions.notRequired}
             </FormRadio>
-            <FormRadio disabled={isSectionDisabled} value={true}>
+            <FormRadio value={true}>
               {FORM_TEXT.ethics.declarationOptions.required.a}{' '}
               <Typography bold component="span">
                 {FORM_TEXT.ethics.declarationOptions.required.b}{' '}
