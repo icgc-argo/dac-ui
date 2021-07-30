@@ -192,6 +192,26 @@ const Representative = ({
           </FormControl>
         </DoubleFieldRow>
 
+        <DoubleFieldRow helpText="Must be the Gmail or G Suite email address of the Institutional Representative.">
+          <FormControl
+            disabled={isSectionDisabled}
+            error={!!localState.info_googleEmail?.error}
+            required={isRequired(localState.info_googleEmail)}
+          >
+            <InputLabel htmlFor="info_googleEmail">Google Email</InputLabel>
+
+            <Input
+              aria-label="Google Email"
+              id="info_googleEmail"
+              onBlur={validateFieldTouched}
+              onChange={validateFieldTouched}
+              value={localState.info_googleEmail?.value}
+            />
+
+            <FormHelperText onErrorOnly>{localState.info_googleEmail?.error?.[0]}</FormHelperText>
+          </FormControl>
+        </DoubleFieldRow>
+
         <FormControl
           disabled={isSectionDisabled}
           error={!!localState.info_positionTitle?.error}

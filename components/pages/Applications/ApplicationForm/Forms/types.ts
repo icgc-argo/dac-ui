@@ -77,8 +77,9 @@ export type FormFieldType = Partial<
   }
 >;
 
-type FormSectionValidationState_SectionsGenericType<T extends Record<string, FormFieldType>> =
-  Record<string, Partial<T[keyof T] & FormFieldType>>;
+type FormSectionValidationState_SectionsGenericType<
+  T extends Record<string, FormFieldType>
+> = Record<string, Partial<T[keyof T] & FormFieldType>>;
 
 export type FormSectionValidationState_Appendices = FormSectionValidationState_SectionsGenericType<{
   agreements: {
@@ -113,80 +114,76 @@ export type FormSectionValidationState_Applicant = FormSectionValidationState_Se
   address_postalCode: { value: string };
 }>;
 
-export type FormSectionValidationState_Collaborators =
-  FormSectionValidationState_SectionsGenericType<{
-    list: {
-      value: [
-        {
-          id: { value: string };
-          info_firstName: { value: string };
-          info_googleEmail: { value: string };
-          info_institutionEmail: { value: string };
-          info_lastName: { value: string };
-          info_middleName: { value: string };
-          info_positionTitle: { value: string };
-          info_primaryAffiliation: { value: string };
-          info_suffix: { value: string };
-          info_title: { value: string };
-          type: { value: string };
-        },
-      ];
+export type FormSectionValidationState_Collaborators = FormSectionValidationState_SectionsGenericType<{
+  list: {
+    value: [
+      {
+        id: { value: string };
+        info_firstName: { value: string };
+        info_googleEmail: { value: string };
+        info_institutionEmail: { value: string };
+        info_lastName: { value: string };
+        info_middleName: { value: string };
+        info_positionTitle: { value: string };
+        info_primaryAffiliation: { value: string };
+        info_suffix: { value: string };
+        info_title: { value: string };
+        type: { value: string };
+      },
+    ];
+  };
+}>;
+
+export type FormSectionValidationState_DataAccessAgreements = FormSectionValidationState_SectionsGenericType<{
+  agreements: {
+    fields: {
+      it_agreement_software_updates: FormFieldType;
+      it_agreement_protect_data: FormFieldType;
+      it_agreement_monitor_access: FormFieldType;
+      it_agreement_destroy_copies: FormFieldType;
+      it_agreement_onboard_training: FormFieldType;
+      it_agreement_provide_institutional_policies: FormFieldType;
+      it_agreement_contact_daco_fraud: FormFieldType;
+      daa_correct_application_content: FormFieldType;
+      daa_agree_to_terms: FormFieldType;
     };
-  }>;
+  };
+}>;
 
-export type FormSectionValidationState_DataAccessAgreements =
-  FormSectionValidationState_SectionsGenericType<{
-    agreements: {
-      fields: {
-        it_agreement_software_updates: FormFieldType;
-        it_agreement_protect_data: FormFieldType;
-        it_agreement_monitor_access: FormFieldType;
-        it_agreement_destroy_copies: FormFieldType;
-        it_agreement_onboard_training: FormFieldType;
-        it_agreement_provide_institutional_policies: FormFieldType;
-        it_agreement_contact_daco_fraud: FormFieldType;
-        daa_correct_application_content: FormFieldType;
-        daa_agree_to_terms: FormFieldType;
-      };
-    };
-  }>;
+export type FormSectionValidationState_EthicsLetter = FormSectionValidationState_SectionsGenericType<{
+  approvalLetterDocs: { value: [] };
+  declaredAsRequired: { value: boolean | null };
+}>;
 
-export type FormSectionValidationState_EthicsLetter =
-  FormSectionValidationState_SectionsGenericType<{
-    approvalLetterDocs: { value: [] };
-    declaredAsRequired: { value: boolean | null };
-  }>;
+export type FormSectionValidationState_ProjectInfo = FormSectionValidationState_SectionsGenericType<{
+  aims: { value: string };
+  background: { value: string };
+  methodology: { value: string };
+  publicationsURLs: {
+    hasThreeValidURLs: boolean;
+    value: Record<number, FormFieldType>;
+  };
+  summary: { value: string };
+  title: { value: string };
+  website: { value: string };
+}>;
 
-export type FormSectionValidationState_ProjectInfo =
-  FormSectionValidationState_SectionsGenericType<{
-    aims: { value: string };
-    background: { value: string };
-    methodology: { value: string };
-    publicationsURLs: {
-      hasThreeValidURLs: boolean;
-      value: Record<number, FormFieldType>;
-    };
-    summary: { value: string };
-    title: { value: string };
-    website: { value: string };
-  }>;
-
-export type FormSectionValidationState_Representative =
-  FormSectionValidationState_SectionsGenericType<{
-    info_firstName: { value: string };
-    info_institutionEmail: { value: string };
-    info_lastName: { value: string };
-    info_middleName: { value: string };
-    info_positionTitle: { value: string };
-    info_primaryAffiliation: { value: string };
-    info_suffix: { value: string };
-    info_title: { value: string };
-    address_building: { value: string };
-    address_cityAndProvince: { value: string };
-    address_country: { value: string };
-    address_streetAddress: { value: string };
-    address_postalCode: { value: string };
-  }>;
+export type FormSectionValidationState_Representative = FormSectionValidationState_SectionsGenericType<{
+  info_firstName: { value: string };
+  info_googleEmail: { value: string };
+  info_institutionEmail: { value: string };
+  info_lastName: { value: string };
+  info_middleName: { value: string };
+  info_positionTitle: { value: string };
+  info_primaryAffiliation: { value: string };
+  info_suffix: { value: string };
+  info_title: { value: string };
+  address_building: { value: string };
+  address_cityAndProvince: { value: string };
+  address_country: { value: string };
+  address_streetAddress: { value: string };
+  address_postalCode: { value: string };
+}>;
 
 export type FormSectionValidationState_Signature = FormSectionValidationState_SectionsGenericType<{
   signedApp: {
@@ -276,7 +273,9 @@ export type FormValidationStateParameters = FormValidationState_Base & {
 
 export type FormSectionUpdateLocalStateFunction = (fieldData: FormValidationAction) => void;
 
-export type FormFieldDataFromEvent = (event: ChangeEvent<HTMLInputElement>) =>
+export type FormFieldDataFromEvent = (
+  event: ChangeEvent<HTMLInputElement>,
+) =>
   | {
       eventType: string;
       field: string;

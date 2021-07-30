@@ -13,7 +13,8 @@ yup.setLocale({
   },
   string: {
     email: 'Please enter a valid email address.',
-    url: 'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
+    url:
+      'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
     min: '${label} must be at least ${min} characters.',
   },
   number: {
@@ -191,6 +192,12 @@ export const representativeSchema = yup.object().shape({
   address_streetAddress: yup.string().default('').trim().required(),
   addressSameAsApplicant: yup.boolean().default(false),
   info_firstName: yup.string().default('').trim().required(),
+  info_googleEmail: yup
+    .string()
+    .default('')
+    .trim()
+    .email('Please enter a valid email address.')
+    .required(),
   info_institutionEmail: yup
     .string()
     .default('')
