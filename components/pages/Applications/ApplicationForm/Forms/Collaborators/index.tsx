@@ -357,8 +357,9 @@ const Collaborators = ({
                 <section>
                   <Typography>
                     Please fill out the following information for the collaborator, including a
-                    valid Google email address that they will use to log in to ICGC ARGO and ICGC
-                    25K and will be the email address associated with ICGC Controlled Data access.
+                    valid Google or GSuite email address that they will use to log in to ICGC ARGO
+                    and ICGC 25K and will be the email address associated with ICGC Controlled Data
+                    access.
                   </Typography>
                 </section>
 
