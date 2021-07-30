@@ -94,10 +94,7 @@ const StaticRepresentative = ({
           An Institutional Representative is a qualified representative of a legal entity{' '}
           <TextComponent as="span" bold style={{ fontWeight: 600 }}>
             who has the administrative power to legally commit that entity to the terms and
-            conditions of the{' '}
-            <LinkComponent href="#" target="_blank">
-              Data Access Agreement
-            </LinkComponent>
+            conditions in Section F: Data Access Agreement
           </TextComponent>{' '}
           (e.g. Vice-President Research, a Research Director, or a Contracts Officer for the
           entity).
