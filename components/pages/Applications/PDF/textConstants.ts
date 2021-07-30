@@ -26,7 +26,7 @@ const FORM_TEXT = {
     inputLabel: {
       background: `Background (max. 200 words)`,
       aims: 'Aims (max. 200 words)',
-      dataUse: 'Use for Data and Methodology (max. 200 words)',
+      dataUse: 'Use of Data and Methodology (max. 200 words)',
       laySummary: 'Lay Summary (max. 200 words)',
     },
   },

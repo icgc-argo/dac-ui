@@ -118,12 +118,9 @@ export const DataUseBubble = ({ isPdf = false }: { isPdf?: boolean }) => {
           <TextComponent as="span" bold style={{ fontWeight: 600 }}>
             Please note:
           </TextComponent>{' '}
-          If you are planning on combining ICGC controlled data with other datasets, as per{' '}
-          <LinkComponent href="#" rel="noopener noreferrer" target="_blank">
-            Term 5 of the Data Access Agreement (DAA)
-          </LinkComponent>
-          , you agree not to link or combine the ICGC Controlled Data to other data available in a
-          way that could re-identify the Research Participants.{' '}
+          If you are planning on combining ICGC controlled data with other datasets, you agree not
+          to link or combine the ICGC Controlled Data to other data available in a way that could
+          re-identify the donors.{' '}
           <TextComponent as="span" bold style={{ fontWeight: 600 }}>
             Please confirm how the methods you intend to use to combine datasets will minimize the
             risk for re-identification of the ICGC data donors
