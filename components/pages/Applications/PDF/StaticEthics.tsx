@@ -58,9 +58,7 @@ const PdfEthicsFormData = ({ data }: { data?: ApplicationData }) => {
       {FORM_TEXT.ethics.declarationOptions.required.a}{' '}
       <PDFText>
         {FORM_TEXT.ethics.declarationOptions.required.b}{' '}
-        <PDFLink href="daco-section-link">
-          {FORM_TEXT.ethics.declarationOptions.required.link}
-        </PDFLink>
+        {FORM_TEXT.ethics.declarationOptions.required.link}
         {FORM_TEXT.ethics.declarationOptions.required.c}
       </PDFText>
     </View>
@@ -114,9 +112,9 @@ const StaticEthics = ({ isPdf = false, data }: { isPdf?: boolean; data?: Applica
       <SectionComponent>
         <TextComponent>
           ICGC is aware that some countries/regions do not require ethics approval for use of coded
-          data (i.e. use of the ICGC Controlled Data). Depending on the nature of your Research
-          Project, it is possible, however, that such approval is needed in your country. If you are
-          uncertain as to whether your Research Project needs ethics approval to use ICGC Controlled
+          data (i.e. use of the ICGC Controlled Data). Depending on the nature of your research
+          project, it is possible, however, that such approval is needed in your country. If you are
+          uncertain as to whether your research project needs ethics approval to use ICGC Controlled
           Data, we suggest you contact your local institutional review board / research ethics
           committee (IRB/REC) to clarify the matter.
         </TextComponent>
@@ -130,8 +128,8 @@ const StaticEthics = ({ isPdf = false, data }: { isPdf?: boolean; data?: Applica
               <TextComponent bold component="span" style={{ fontWeight: 600 }}>
                 Please note:
               </TextComponent>{' '}
-              The DACO and the ICGC are not responsible for the ethics approval/monitoring of
-              individual Research Projects and bear no responsibility for the applicant's failure to
+              The ICGC DACO and the ICGC are not responsible for the ethics approval/monitoring of
+              individual research projects and bear no responsibility for the applicant's failure to
               comply with local/national ethical requirements.
             </TextComponent>
           }
