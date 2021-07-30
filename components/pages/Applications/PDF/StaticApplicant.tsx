@@ -83,8 +83,9 @@ const StaticApplicant = ({ isPdf = false, data }: { isPdf?: boolean; data?: Appl
         </TextComponent>
 
         <TextComponent>
-          Please include a valid Google email address that will be used to log in to ICGC ARGO and
-          ICGC 25K and will be the email address associated with ICGC Controlled Data access.
+          Please include a valid Google or G Suite enabled email address that will be used to log in
+          to ICGC ARGO and ICGC 25K and will be the email address associated with ICGC Controlled
+          Data access.
         </TextComponent>
         {!isPdf && <RequiredFieldsMessage />}
       </SectionComponent>

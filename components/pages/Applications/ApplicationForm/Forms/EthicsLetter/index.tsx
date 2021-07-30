@@ -105,9 +105,7 @@ const EthicsLetter = ({
               {FORM_TEXT.ethics.declarationOptions.required.a}{' '}
               <Typography bold component="span">
                 {FORM_TEXT.ethics.declarationOptions.required.b}{' '}
-                <Link href="#" rel="noopener noreferrer" target="_blank">
-                  {FORM_TEXT.ethics.declarationOptions.required.link}
-                </Link>
+                {FORM_TEXT.ethics.declarationOptions.required.link}
                 {FORM_TEXT.ethics.declarationOptions.required.c}
               </Typography>
             </FormRadio>
