@@ -265,8 +265,8 @@ export const StaticPublications = ({ isPdf = false }: { isPdf?: boolean }) => {
         <TextComponent as="span" bold>
           Please provide at least three links to relevant publications
         </TextComponent>
-        , of which you, the applicant, were an author or a co-author. These should be links (URLs)
-        to publication websites such as{' '}
+        , of which the applicant is an author or a co-author. These should be links (URLs) to
+        publication websites such as{' '}
         <LinkComponent href="https://pubmed.gov" rel="noopener noreferrer" target="_blank">
           pubmed.gov
         </LinkComponent>

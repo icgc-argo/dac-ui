@@ -30,6 +30,7 @@ const Applicant = ({
   return (
     <article>
       <StaticApplicant />
+
       <section>
         <SectionTitle>
           {FORM_TEXT.applicant.title}

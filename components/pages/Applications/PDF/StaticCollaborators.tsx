@@ -122,15 +122,15 @@ const StaticCollaborators = ({
           Please include the names of all{' '}
           <TextComponent as="span" bold style={{ fontWeight: 600 }}>
             investigators, collaborators, research staff (including post-docs) and students
-            (including graduate students),
-          </TextComponent>{' '}
-          who will have access to the ICGC Controlled Data in order to work on the project (see
-          "Research Project" under Section D).
+            (including graduate students)
+          </TextComponent>
+          , who will have access to the ICGC Controlled Data in order to work on the Research
+          Summary as outlined in Section D of this application.
         </TextComponent>
         <TextComponent>
-          * Please note: Co-investigators, collaborators or students at other institutions should
-          not be included in this list. They will have to submit a separate Application for
-          Controlled Data Access.
+          * Please note: co-investigators, collaborators or students at other institutions should
+          not be included in this list. They will have to submit a separate application for access
+          to controlled data.
         </TextComponent>
       </SectionComponent>
       {isPdf && <PdfCollaboratorsFormData data={data} />}
