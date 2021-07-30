@@ -35,7 +35,7 @@ const LogoParagraphRow = ({
   >
     <div
       css={css`
-        flex: 0 0 170px;
+        flex: 0 0 240px;
       `}
     >
       <Link href={imageLink} target="_blank">
@@ -233,13 +233,13 @@ const Home = () => {
               While all ICGC data sources contain open data, sensitive genomic and clinical data is controlled access data.
             </Typography>
             <LogoParagraphRow
-              Img={<img src="/icgc-argo-logo-white.svg" width={'145px'} height={'23px'} />}
+              Img={<img src="/ICGC-ARGO-logo-FULL-white.svg" width={'200px'} />}
               imageLink={NEXT_PUBLIC_ARGO_PLATFORM_ROOT}
             >
               <LinkWhite href={NEXT_PUBLIC_ARGO_PLATFORM_ROOT}>ICGC ARGO</LinkWhite> plans to uniformly analyze specimens from 100,000 cancer patients with high quality clinical data. Learn more about the <LinkWhite href={HOMEPAGE_ARGO_LINK}>ICGC ARGO project</LinkWhite>.
             </LogoParagraphRow>
             <LogoParagraphRow
-              Img={<img src="/logo-ICGC-25k.svg" width={'140px'} height={'46px'} />}
+              Img={<img src="/logo-ICGC-25k.svg" width={'165px'} />}
               imageLink={ICGC_DCC_LINK}
             >
               <LinkWhite href={ICGC_DCC_LINK}>ICGC 25K Data Portal</LinkWhite> has produced &gt;20,000 tumour genomes for 26 cancer types (including{' '}
