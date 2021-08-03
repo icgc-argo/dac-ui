@@ -1,5 +1,5 @@
 import { Dispatch, useCallback, useEffect, useReducer, useState } from 'react';
-import { isEqual, omit } from 'lodash';
+import { isEqual, isNull, omit } from 'lodash';
 import merge from 'deepmerge';
 
 import { AuthAPIFetchFunction } from 'components/pages/Applications/types';
@@ -27,6 +27,7 @@ import {
   checkMatchingPrimaryAffiliation,
   schemaValidator,
   sectionFieldsSeeder,
+  getValueByFieldTypeToValidate,
 } from './helpers';
 import yup, { combinedSchema } from './schemas';
 import { AxiosResponse } from 'axios';
@@ -146,7 +147,6 @@ export const validationReducer = (
                     formState.sections[action.section].fields[action.field].innerType?.fields,
                   ).reduce((acc, innerField) => {
                     const [fieldNamePrefix, fieldNameSuffix] = innerField[0].split('_');
-
                     const error = action.error?.[innerField[0]];
 
                     return {
@@ -171,7 +171,7 @@ export const validationReducer = (
       };
     }
 
-    case 'overall': {
+    case 'sectionOverall': {
       return {
         ...formState,
         sections: {
@@ -180,7 +180,7 @@ export const validationReducer = (
             ...formState.sections[action.section],
             meta: {
               ...formState.sections[action.section].meta,
-              validated: action.value,
+              [action.field]: action.value,
             },
           },
         },
@@ -199,6 +199,11 @@ export const validationReducer = (
         revisionRequest,
         sections: sectionsOrder.reduce((seededSectionsData, sectionName) => {
           const seedData = sections[sectionName] || {};
+          const overall = sectionStatusMapping[seedData?.meta?.status as SECTION_STATUS];
+          const showOverall = !formState.__seeded &&
+            overall !== FORM_STATES.PRISTINE && {
+              showOverall: true,
+            };
           const validationData =
             formState.sections[sectionName] ||
             (console.error(`Seeding for "${sectionName}" hasn't been implemented yet`), {});
@@ -212,7 +217,8 @@ export const validationReducer = (
                   meta: {
                     ...validationData.meta,
                     ...seedData.meta,
-                    overall: sectionStatusMapping[seedData?.meta?.status as SECTION_STATUS],
+                    ...showOverall,
+                    overall,
                   },
                 },
               }
@@ -232,64 +238,73 @@ export const validationReducer = (
 
 export const validator: FormSectionValidatorFunction_Main =
   (formState, dispatch, apiFetcher) =>
-  (origin, validateSection) =>
+  (origin, reasonToValidate) =>
   async (field, value, shouldPersistResults) => {
     const applicantPrimaryAffiliation =
       formState.sections.applicant.fields.info_primaryAffiliation.value;
     const validatingApplicant = origin === 'applicant';
 
-    if (validateSection) {
+    if (reasonToValidate) {
       dispatch({
+        field: 'validated',
         section: origin,
-        type: 'overall',
+        type: 'sectionOverall',
         value: true,
       });
 
-      Object.entries(formState.sections[origin]?.fields as object).forEach(
-        async ([field, data]) => {
-          if (data.value) {
-            const validatingPrimaryAffiliation = field.includes('info_primaryAffiliation');
-            const [fieldName, fieldIndex, fieldOverride] = field.split('--');
+      Object.entries(formState.sections[origin]?.fields as object).map(async ([field, data]) => {
+        const fieldValue = getValueByFieldTypeToValidate(data, field || origin);
 
-            const { error } = await schemaValidator(
-              yup.reach(
-                combinedSchema[origin],
-                fieldIndex && fieldOverride !== 'overall'
-                  ? `${fieldName}.${fieldIndex}`
-                  : fieldName,
-              ),
-              data.meta?.shape === 'modal'
-                ? data.value.map((modalItem: any) =>
-                    Object.entries(data.innerType?.fields).reduce((acc, innerField) => {
-                      const [fieldNamePrefix, fieldNameSuffix] = innerField[0].split('_');
+        if (!isNull(fieldValue)) {
+          if (reasonToValidate === 'notShowingOverall') return fieldValue;
 
-                      return {
-                        ...acc,
-                        [innerField[0]]: fieldNameSuffix
-                          ? modalItem[fieldNamePrefix][fieldNameSuffix]
-                          : modalItem[innerField[0]],
-                      };
-                    }, {}),
-                  )
-                : data.value,
-            );
+          const validatingPrimaryAffiliation = field.includes('info_primaryAffiliation');
+          const [fieldName, fieldIndex, fieldOverride] = field.split('--');
 
-            const results = {
-              field,
-              section: origin,
-              type: data.type,
-              value: data.value,
-              ...(error
-                ? { error }
-                : !validatingApplicant &&
-                  validatingPrimaryAffiliation &&
-                  checkMatchingPrimaryAffiliation(data.value, applicantPrimaryAffiliation)),
-            } as FormValidationAction;
+          const { error } = await schemaValidator(
+            yup.reach(
+              combinedSchema[origin],
+              fieldIndex && fieldOverride !== 'overall' ? `${fieldName}.${fieldIndex}` : fieldName,
+            ),
+            data.meta?.shape === 'modal'
+              ? fieldValue.map((modalItem: any) =>
+                  Object.entries(data.innerType?.fields).reduce((acc, innerField) => {
+                    const [fieldNamePrefix, fieldNameSuffix] = innerField[0].split('_');
 
-            dispatch(results);
-          }
-        },
-      );
+                    return {
+                      ...acc,
+                      [innerField[0]]: fieldNameSuffix
+                        ? modalItem[fieldNamePrefix][fieldNameSuffix]
+                        : modalItem[innerField[0]],
+                    };
+                  }, {}),
+                )
+              : fieldValue,
+          );
+
+          const results = {
+            field,
+            section: origin,
+            type: data.type,
+            value: data.value,
+            ...(error
+              ? { error }
+              : !validatingApplicant &&
+                validatingPrimaryAffiliation &&
+                checkMatchingPrimaryAffiliation(data.value, applicantPrimaryAffiliation)),
+          } as FormValidationAction;
+
+          dispatch(results);
+        }
+      });
+
+      reasonToValidate === 'notShowingOverall' &&
+        dispatch({
+          field: 'showOverall',
+          section: origin,
+          type: 'sectionOverall',
+          value: true,
+        });
     } else if (field) {
       const [fieldName, fieldIndex, fieldOverride] = field.split('--');
       const fieldIsArray = !Number.isNaN(Number(fieldIndex));
@@ -340,8 +355,9 @@ export const validator: FormSectionValidatorFunction_Main =
           applicantPrimaryAffiliation !== value
         ) {
           dispatch({
+            field: 'validated',
             section: 'representative',
-            type: 'overall',
+            type: 'sectionOverall',
             value: false,
           });
         }
@@ -442,6 +458,7 @@ export const useFormValidation = (appId: string) => {
               ...(schema?.describe?.() || schema),
               meta: {
                 overall: FORM_STATES.PRISTINE,
+                showOverall: false,
               },
             },
           }),
