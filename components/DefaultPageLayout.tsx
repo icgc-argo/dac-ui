@@ -14,15 +14,13 @@ const ThreeRowPageContainer = styled(PageContainer)`
 const DefaultPageLayout = ({
   className = '',
   children,
-  title = '',
 }: {
   className?: string;
   children: ReactNode;
-  title?: string;
 }): ReactElement => {
   return (
     <ThreeRowPageContainer>
-      <PageHead title={title} />
+      <PageHead />
       <NavBar />
       <main className={className}>{children}</main>
       <Footer />

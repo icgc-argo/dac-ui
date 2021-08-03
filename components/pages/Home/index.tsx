@@ -6,7 +6,7 @@ import Link from '@icgc-argo/uikit/Link';
 
 import { Col, Row } from 'react-grid-system';
 
-import DefaultPageLayout from 'components/DefaultPageLayout';
+import { PageHead } from 'components/Head';
 import { HOMEPAGE_ARGO_LINK, ICGC_DCC_LINK, ICGC_PCAWG_LINK, ICGC_ARGO_FAQS, DACO_APPLYING_DOCS } from 'global/constants/externalPaths';
 import { getConfig } from 'global/config';
 import ApplyForAccessModal from 'components/ApplyForAccessModal';
@@ -171,7 +171,8 @@ const Home = () => {
   const [isAccessModalVisible, setAccessModalVisible] = useState<boolean>(false);
   const { NEXT_PUBLIC_ARGO_PLATFORM_ROOT } = getConfig();
   return (
-    <DefaultPageLayout title={'Homepage'}>
+    <>
+      <PageHead title={'Homepage'} />
       <HeroDiv>
         <PaddedRow
           isVerticallyCentered
@@ -284,7 +285,7 @@ const Home = () => {
       {isAccessModalVisible && (
         <ApplyForAccessModal dismissModal={() => setAccessModalVisible(false)} />
       )}
-    </DefaultPageLayout>
+    </>
   );
 };
 
