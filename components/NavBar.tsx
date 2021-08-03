@@ -155,7 +155,7 @@ const LoginButton = () => {
 };
 
 const NavBar = () => {
-  const { user, logout, permissions } = useAuthContext();
+  const { user, isLoading, logout, permissions } = useAuthContext();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = createRef() as React.RefObject<HTMLDivElement>;
   const [isAccessModalVisible, setAccessModalVisible] = useState<boolean>(false);
@@ -236,7 +236,7 @@ const NavBar = () => {
                 {applicationsTitle}
               </StyledMenuItem>
             </Link>
-          ) : (
+          ) : !isLoading && (
             <Link
               css={css`
                 text-decoration: none;
@@ -286,7 +286,7 @@ const NavBar = () => {
             >
               <UserDisplayName dropdownOpen={dropdownOpen} user={user} />
             </StyledMenuItem>
-          ) : (
+          ) : !isLoading && (
             <StyledMenuItem
               css={(theme: UikitTheme) => css`
                 cursor: auto;
