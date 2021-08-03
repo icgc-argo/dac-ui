@@ -1,4 +1,4 @@
-import { createRef, ReactElement, useCallback, useEffect, useState } from 'react';
+import React, { createRef, ReactElement, useCallback, useEffect, useState } from 'react';
 import { Col, Row } from 'react-grid-system';
 import { css } from '@emotion/core';
 import { AxiosError } from 'axios';
@@ -43,6 +43,7 @@ import {
 } from '../types';
 import TableComponent from './TableComponent';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
+import ErrorBanner, { AddCollaboratorError } from './ErrorBanner';
 
 const Collaborators = ({
   appId,
@@ -294,6 +295,7 @@ const Collaborators = ({
               onCloseClick={dismissCollaboratorModal}
               title="Add a Collaborator"
             >
+              <ErrorBanner error={AddCollaboratorError.CollaboratorExists} />
               <article
                 css={css`
                   [class*='FormControl'] {
