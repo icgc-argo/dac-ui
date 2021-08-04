@@ -43,6 +43,7 @@ import {
 } from '../types';
 import TableComponent from './TableComponent';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
+import ErrorBanner, { AddCollaboratorError, CollaboratorErrorCodes } from './ErrorBanner';
 
 const Collaborators = ({
   appId,
@@ -63,6 +64,9 @@ const Collaborators = ({
   const [modalVisible, setModalVisible] = useState<'collaborator' | string | null>(null);
   const [modalFields, setModalFields] = useState(getInternalFieldSchema(localState.list));
   const [modalHasErrors, setModalHasErrors] = useState(true);
+  const [modalBannerError, setModalBannerError] = useState<
+    keyof typeof AddCollaboratorError | null
+  >(null);
   const containerRef = createRef<HTMLDivElement>();
   const { fetchWithAuth, permissions } = useAuthContext();
   const theme = useTheme();
@@ -120,16 +124,26 @@ const Collaborators = ({
         if (res.status === 200) {
           refetchAllData();
           dismissCollaboratorModal();
+          setModalBannerError(null);
         } else {
           // TODO: troubleshooting log, remove upon release
           console.error('response', res);
         }
       })
-      .catch((err: AxiosError) => {
-        if (err?.response?.data?.message) {
-          const responseErrors = JSON.parse(err.response.data.message)?.errors;
-          console.error('Failed to create collaborator.', responseErrors);
+      .catch((err: any) => {
+        const errorCode = err?.error?.response?.data?.code;
+
+        if (errorCode) {
+          setModalBannerError(
+            errorCode === CollaboratorErrorCodes.COLLABORATOR_EXISTS
+              ? AddCollaboratorError.CollaboratorExists
+              : errorCode === CollaboratorErrorCodes.COLLABORATOR_SAME_AS_APPLICANT
+              ? AddCollaboratorError.CollaboratorIsApplicant
+              : AddCollaboratorError.GenericError,
+          );
+          console.error('Failed to create collaborator.', errorCode);
         } else {
+          setModalBannerError(AddCollaboratorError.GenericError);
           console.error('Failed to create collaborator.', err);
         }
       });
@@ -294,6 +308,7 @@ const Collaborators = ({
               onCloseClick={dismissCollaboratorModal}
               title="Add a Collaborator"
             >
+              {modalBannerError && <ErrorBanner error={modalBannerError} />}
               <article
                 css={css`
                   [class*='FormControl'] {
