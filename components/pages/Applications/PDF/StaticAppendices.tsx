@@ -6,6 +6,7 @@ import { Checkbox, getStaticComponents, PDFLink, styles } from './common';
 import FORM_TEXT from './textConstants';
 import { View, Text } from '@react-pdf/renderer';
 import { AppendixAgreement, ApplicationData } from '../types';
+import { appendicesLinks } from 'global/constants';
 
 export const ICGCPolicies = ({ isPdf = false }: { isPdf?: boolean }) => {
   const { SectionTitle } = getStaticComponents(isPdf);
@@ -29,8 +30,8 @@ const Appendix = ({ agreement }: { agreement: AppendixAgreement }) => {
         <Checkbox
           TextComponent={
             <Text>
-              {FORM_TEXT.appendices[agreement.name].text} {/* TODO: get correct urls */}
-              <PDFLink style={styles.text}>({'https://www.some_url.com'})</PDFLink>
+              {FORM_TEXT.appendices[agreement.name].text}
+              <PDFLink style={styles.text}> ({appendicesLinks[agreement.name]})</PDFLink>
             </Text>
           }
           checked={agreement.accepted}
@@ -45,7 +46,6 @@ const StaticAppendices = ({ isPdf = false, data }: { isPdf?: boolean; data?: App
     ContainerComponent,
     SectionComponent,
     TextComponent,
-    LinkComponent,
     TitleComponent,
   } = getStaticComponents(isPdf);
 

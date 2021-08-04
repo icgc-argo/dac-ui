@@ -13,7 +13,8 @@ yup.setLocale({
   },
   string: {
     email: 'Please enter a valid email address.',
-    url: 'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
+    url:
+      'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
     min: '${label} must be at least ${min} characters.',
   },
   number: {
@@ -30,13 +31,8 @@ export const appendicesSchema = yup.object().shape({
     .meta({ shape: 'collection', type: 'boolean' })
     .shape({
       appendix_icgc_goals_policies: yup.boolean().default(false).oneOf([true]).required(),
-      appendix_large_scale_data_sharing: yup.boolean().default(false).oneOf([true]).required(),
-      appendix_prepublication_policy: yup.boolean().default(false).oneOf([true]).required(),
-      appendix_publication_policy: yup.boolean().default(false).oneOf([true]).required(),
-      appendix_nih_genomic_inventions: yup.boolean().default(false).oneOf([true]).required(),
-      appendix_oecd_genetic_inventions: yup.boolean().default(false).oneOf([true]).required(),
-      appendix_cloud_security: yup.boolean().default(false).oneOf([true]).required(),
-      appendix_ga4gh_framework: yup.boolean().default(false).oneOf([true]).required(),
+      appendix_data_access_policy: yup.boolean().default(false).oneOf([true]).required(),
+      appendix_ip_policy: yup.boolean().default(false).oneOf([true]).required(),
     }),
 });
 

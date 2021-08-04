@@ -1,3 +1,4 @@
+import { AppendixEnum } from 'components/pages/Applications/types';
 import { getConfig } from 'global/config';
 import urlJoin from 'url-join';
 
@@ -30,6 +31,19 @@ export const ADOBE_ACROBAT_LINK = 'https://acrobat.adobe.com/us/en/sign.html';
 
 export const ICGC_ARGO_FAQS = 'https://docs.icgc-argo.org/docs/data-access/daco/daco-faq';
 export const DACO_APPLYING_DOCS = 'https://docs.icgc-argo.org/docs/data-access/daco/applying';
+
+const ICGC_ARGO_INTRO_AND_GOALS = urlJoin(HOMEPAGE_ARGO_LINK, 'page/72/introduction-and-goals');
+const ICGC_ARGO_DATA_ACCESS_POLICIES = urlJoin(
+  HOMEPAGE_ARGO_LINK,
+  'page/132/data-access-and-data-use-policies-and-guidelines',
+);
+const ICGC_ARGO_IP_POLICIES = urlJoin(HOMEPAGE_ARGO_LINK, 'page/78/e4-intellectual-property');
+
+export const appendicesLinks = {
+  [AppendixEnum.ICGC_GOALS_POLICIES]: ICGC_ARGO_INTRO_AND_GOALS,
+  [AppendixEnum.DATA_ACCESS_POLICY]: ICGC_ARGO_DATA_ACCESS_POLICIES,
+  [AppendixEnum.IP_POLICY]: ICGC_ARGO_IP_POLICIES,
+};
 
 const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
 const egoLoginUrl = new URL(urlJoin(NEXT_PUBLIC_EGO_API_ROOT, 'oauth/login/google'));
