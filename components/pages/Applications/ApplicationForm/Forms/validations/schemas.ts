@@ -160,6 +160,7 @@ export const projectInfoSchema = yup.object().shape({
         )
         .required(),
     )
+    .default(['', '', ''])
     .meta({ shape: 'publicationURLsArray', filler: '', type: 'string' })
     .test(uniquePublicationURLs)
     .min(3),
@@ -185,7 +186,7 @@ export const representativeSchema = yup.object().shape({
     .required(),
   address_postalCode: yup.string().default('').trim().required(),
   address_streetAddress: yup.string().default('').trim().required(),
-  addressSameAsApplicant: yup.boolean().default(false),
+  addressSameAsApplicant: yup.boolean().default(false).meta({ skipValidation: true }),
   info_firstName: yup.string().default('').trim().required(),
   info_institutionEmail: yup
     .string()

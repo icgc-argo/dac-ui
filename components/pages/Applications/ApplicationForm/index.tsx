@@ -36,17 +36,17 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
       });
   }, [lastUpdated]);
 
-  return error
-    ? <ContentError />
-    : isLoading || data && Object.values(data).length < 1 ? (
-      <Loader />
-    ) : (
-      <>
-        <ApplicationHeader data={data} />
-        {isAdmin && <RequestRevisionsBar data={data} />}
-        <ApplicationFormsBase appId={appId} setLastUpdated={setLastUpdated} />
-      </>
-    );
+  return error ? (
+    (console.error('Application form error', error), (<ContentError />))
+  ) : isLoading || (data && Object.values(data).length < 1) ? (
+    <Loader />
+  ) : (
+    <>
+      <ApplicationHeader data={data} />
+      {isAdmin && <RequestRevisionsBar data={data} />}
+      <ApplicationFormsBase appId={appId} setLastUpdated={setLastUpdated} />
+    </>
+  );
 };
 
 export default ApplicationForm;

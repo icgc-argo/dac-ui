@@ -71,6 +71,7 @@ export type FormFieldType = Partial<
     // WIP: this handles shape mutations (validation vs persistence)
     meta: {
       filler?: '';
+      skipValidation: boolean;
       shape: 'collection' | 'modal' | 'publicationURLsArray' | 'singleAcceptance';
       type: 'boolean' | 'string';
     };
@@ -212,6 +213,7 @@ export type FormSectionValidationState_SectionBase = {
       message: string;
     }[];
     overall: FORM_STATES;
+    showOverall: boolean;
     tooltips: Partial<Record<FormSectionOverallState, ReactNode>>;
     validated: boolean;
   };
@@ -222,17 +224,16 @@ export type FormValidationActionTypes =
   | 'boolean'
   | 'clearModal'
   | 'feedModal'
-  | 'string'
   | 'object'
-  | 'overall'
   | 'remove'
+  | 'sectionOverall'
   | 'seeding'
+  | 'string'
   | 'updating';
 
 export type FormValidationAction = {
   error?: any;
   field: string;
-  overall: FormSectionOverallState;
   section: FormSectionNames;
   type: FormValidationActionTypes;
   value?: any;
@@ -290,15 +291,18 @@ export type FormFieldDataFromEvent = (
     };
 
 export type FormFieldValidationTriggerFunction = (event: any) => Promise<void>;
+
 export type FormFieldValidatorFunction = (
   field?: string,
   value?: any,
   shouldPersistData?: Boolean,
 ) => Promise<FormValidationAction | void>;
 
+export type FormSectionValidationTriggerReasons = 'initialValidation' | 'notShowingOverall';
+
 export type FormSectionValidatorFunction_Origin = (
   origin: FormSectionNames,
-  validateSection?: boolean,
+  reasonToValidate?: FormSectionValidationTriggerReasons,
 ) => FormFieldValidatorFunction;
 
 export type FormSectionValidatorFunction_Main = (
