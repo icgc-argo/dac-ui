@@ -11,6 +11,7 @@ export enum AddCollaboratorError {
 
 export enum CollaboratorErrorCodes {
   COLLABORATOR_EXISTS = 'COLLABORATOR_EXISTS',
+  COLLABORATOR_SAME_AS_APPLICANT = 'COLLABORATOR_SAME_AS_APPLICANT',
 }
 
 const getErrorContent = (error: keyof typeof AddCollaboratorError) => {

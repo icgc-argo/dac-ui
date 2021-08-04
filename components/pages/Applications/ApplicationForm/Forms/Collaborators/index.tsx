@@ -97,12 +97,6 @@ const Collaborators = ({
   };
 
   const handleCollaboratorCreateOrEdit = useCallback(() => {
-    const collaboratorEmail = modalFields.info_institutionEmail.value;
-
-    if (collaboratorEmail === user?.email) {
-      return setModalBannerError(AddCollaboratorError.CollaboratorIsApplicant);
-    }
-
     const newCollaboratorData = Object.entries(modalFields).reduce((dataAcc, field) => {
       const [fieldName, fieldData] = field as [string, FormFieldType];
       const [prefix, suffix] = fieldName.split('_');
@@ -142,6 +136,8 @@ const Collaborators = ({
           setModalBannerError(
             errorCode === CollaboratorErrorCodes.COLLABORATOR_EXISTS
               ? AddCollaboratorError.CollaboratorExists
+              : errorCode === CollaboratorErrorCodes.COLLABORATOR_SAME_AS_APPLICANT
+              ? AddCollaboratorError.CollaboratorIsApplicant
               : AddCollaboratorError.GenericError,
           );
           console.error('Failed to create collaborator.', errorCode);
