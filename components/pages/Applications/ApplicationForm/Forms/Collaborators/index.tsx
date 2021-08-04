@@ -64,8 +64,11 @@ const Collaborators = ({
   const [modalVisible, setModalVisible] = useState<'collaborator' | string | null>(null);
   const [modalFields, setModalFields] = useState(getInternalFieldSchema(localState.list));
   const [modalHasErrors, setModalHasErrors] = useState(true);
+  const [modalBannerError, setModalBannerError] = useState<
+    keyof typeof AddCollaboratorError | null
+  >(null);
   const containerRef = createRef<HTMLDivElement>();
-  const { fetchWithAuth, permissions } = useAuthContext();
+  const { fetchWithAuth, permissions, user } = useAuthContext();
   const theme = useTheme();
 
   const isAdmin = permissions.length > 0 && isDacoAdmin(permissions);
@@ -94,6 +97,12 @@ const Collaborators = ({
   };
 
   const handleCollaboratorCreateOrEdit = useCallback(() => {
+    const collaboratorEmail = modalFields.info_institutionEmail.value;
+
+    if (collaboratorEmail === user?.email) {
+      return setModalBannerError(AddCollaboratorError.CollaboratorIsApplicant);
+    }
+
     const newCollaboratorData = Object.entries(modalFields).reduce((dataAcc, field) => {
       const [fieldName, fieldData] = field as [string, FormFieldType];
       const [prefix, suffix] = fieldName.split('_');
@@ -108,6 +117,7 @@ const Collaborators = ({
           : fieldData.value,
       };
     }, {} as Record<string, any>);
+    console.log('new collab data', newCollaboratorData);
 
     fetchWithAuth({
       data: {
@@ -295,7 +305,7 @@ const Collaborators = ({
               onCloseClick={dismissCollaboratorModal}
               title="Add a Collaborator"
             >
-              <ErrorBanner error={AddCollaboratorError.CollaboratorExists} />
+              {modalBannerError && <ErrorBanner error={modalBannerError} />}
               <article
                 css={css`
                   [class*='FormControl'] {
