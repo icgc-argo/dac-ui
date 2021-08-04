@@ -112,9 +112,6 @@ export const AuthProvider = ({
         // TODO: log errors somewhere not visible to the user?
         // Leaving this log here pre-release, for troubleshooting
         console.error('Error in fetchWithAuth', { error });
-        let err: any = new Error(error);
-        err.resp = error.response;
-        console.log('er', err);
         throw { error };
       })
       .finally(() => {
