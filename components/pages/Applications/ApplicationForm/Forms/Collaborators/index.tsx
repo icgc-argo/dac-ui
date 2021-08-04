@@ -117,7 +117,6 @@ const Collaborators = ({
           : fieldData.value,
       };
     }, {} as Record<string, any>);
-    console.log('new collab data', newCollaboratorData);
 
     fetchWithAuth({
       data: {
@@ -143,6 +142,7 @@ const Collaborators = ({
         } else {
           console.error('Failed to create collaborator.', err);
         }
+        setModalBannerError(AddCollaboratorError.GenericError);
       });
   }, [modalFields]);
 
