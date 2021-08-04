@@ -124,6 +124,7 @@ const Collaborators = ({
         if (res.status === 200) {
           refetchAllData();
           dismissCollaboratorModal();
+          setModalBannerError(null);
         } else {
           // TODO: troubleshooting log, remove upon release
           console.error('response', res);
