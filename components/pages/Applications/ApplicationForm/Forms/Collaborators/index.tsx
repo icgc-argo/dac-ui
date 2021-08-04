@@ -68,7 +68,7 @@ const Collaborators = ({
     keyof typeof AddCollaboratorError | null
   >(null);
   const containerRef = createRef<HTMLDivElement>();
-  const { fetchWithAuth, permissions, user } = useAuthContext();
+  const { fetchWithAuth, permissions } = useAuthContext();
   const theme = useTheme();
 
   const isAdmin = permissions.length > 0 && isDacoAdmin(permissions);
