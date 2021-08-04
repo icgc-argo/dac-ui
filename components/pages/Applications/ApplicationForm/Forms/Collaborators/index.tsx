@@ -72,7 +72,9 @@ const Collaborators = ({
   const theme = useTheme();
 
   const isAdmin = permissions.length > 0 && isDacoAdmin(permissions);
-  const disableActions = isAdmin && applicationState === ApplicationState.APPROVED;
+  const disableActions =
+    (isAdmin && applicationState === ApplicationState.APPROVED) ||
+    applicationState === ApplicationState.REVIEW;
 
   const clearCollaboratorModalData = () => {
     validateFieldTouched({
@@ -89,6 +91,7 @@ const Collaborators = ({
   const dismissCollaboratorModal = () => {
     clearCollaboratorModalData();
     setModalVisible(null);
+    setModalBannerError(null);
   };
 
   const newCollaboratorModal = () => {
