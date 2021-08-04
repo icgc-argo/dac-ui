@@ -11,7 +11,7 @@ import Typography from '@icgc-argo/uikit/Typography';
 import { sectionsOrder } from './constants';
 import { enabledSections, sectionSelector } from './helpers';
 import Outline from './Outline';
-import { FormSectionNames, FORM_STATES } from './types';
+import { FormSectionNames, FormSectionValidationTriggerReasons, FORM_STATES } from './types';
 import { useFormValidation } from './validations';
 
 type QueryType = {
@@ -22,8 +22,13 @@ type QueryType = {
 
 type SetLastUpdated = (lastUpdatedAtUtc: string) => void;
 
-const ApplicationFormsBase = ({ appId = 'none', setLastUpdated }:
-  { appId: string; setLastUpdated: SetLastUpdated }): ReactElement => {
+const ApplicationFormsBase = ({
+  appId = 'none',
+  setLastUpdated,
+}: {
+  appId: string;
+  setLastUpdated: SetLastUpdated;
+}): ReactElement => {
   const {
     query: { section: sectionFromQuery = '' as FormSectionNames },
   }: QueryType = useRouter();
@@ -32,11 +37,19 @@ const ApplicationFormsBase = ({ appId = 'none', setLastUpdated }:
     isValidSectionFromQuery
       ? sectionFromQuery
       : (sectionFromQuery &&
-        console.info('Section initially queried was not found', sectionFromQuery),
+          console.info('Section initially queried was not found', sectionFromQuery),
         sectionsOrder[0] as FormSectionNames),
   );
   const { isLoading, formState, validateSection } = useFormValidation(appId);
   const theme: UikitTheme = useTheme();
+
+  const triggerSectionValidation = useCallback(
+    (trigger: FormSectionValidationTriggerReasons) =>
+      ['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
+        formState.sections[selectedSection]?.meta.overall || '',
+      ) || validateSection(selectedSection, trigger)(),
+    [formState, selectedSection],
+  );
 
   useEffect(() => {
     if (sectionFromQuery !== selectedSection) {
@@ -51,11 +64,9 @@ const ApplicationFormsBase = ({ appId = 'none', setLastUpdated }:
       );
     }
 
+    // avoid validating a section that has already been validated.
     formState.sections[selectedSection]?.meta.validated ||
-      ['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
-        formState.sections[selectedSection]?.meta.overall || '',
-      ) ||
-      validateSection(selectedSection, !!'validateSelectedSection')();
+      triggerSectionValidation('initialValidation');
   }, [formState.sections[selectedSection], selectedSection]);
 
   useEffect(() => {
@@ -70,7 +81,13 @@ const ApplicationFormsBase = ({ appId = 'none', setLastUpdated }:
 
   const handleSectionChange = useCallback(
     (section: FormSectionNames) => {
-      setSelectedSection(section);
+      if (section !== selectedSection) {
+        setSelectedSection(section);
+
+        // only validates a section that doesn't already show its overall status.
+        formState.sections[selectedSection]?.meta.showOverall ||
+          triggerSectionValidation('notShowingOverall');
+      }
     },
     [selectedSection, formState],
   );
@@ -123,7 +140,6 @@ const ApplicationFormsBase = ({ appId = 'none', setLastUpdated }:
               }
 
               > section {
-
                 p {
                   margin: 0;
 

@@ -176,13 +176,8 @@ export interface DataAccessAgreement {
 
 export enum AppendixEnum {
   ICGC_GOALS_POLICIES = 'appendix_icgc_goals_policies',
-  LARGE_SCALE_DATA_SHARING = 'appendix_large_scale_data_sharing',
-  PREPUBLICATION_POLICY = 'appendix_prepublication_policy',
-  PUBLICATION_POLICY = 'appendix_publication_policy',
-  NIH_GENOMIC_INVENTIONS = 'appendix_nih_genomic_inventions',
-  OECD_GENETIC_INVENTIONS = 'appendix_oecd_genetic_inventions',
-  CLOUD_SECURITY = 'appendix_cloud_security',
-  GA4GH_FRAMEWORK = 'appendix_ga4gh_framework',
+  DATA_ACCESS_POLICY = 'appendix_data_access_policy',
+  IP_POLICY = 'appendix_ip_policy',
 }
 
 export interface AppendixAgreement extends Agreement {
