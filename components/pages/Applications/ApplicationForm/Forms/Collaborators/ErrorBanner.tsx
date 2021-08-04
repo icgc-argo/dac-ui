@@ -9,6 +9,10 @@ export enum AddCollaboratorError {
   GenericError = 'GenericError',
 }
 
+export enum CollaboratorErrorCodes {
+  COLLABORATOR_EXISTS = 'COLLABORATOR_EXISTS',
+}
+
 const getErrorContent = (error: keyof typeof AddCollaboratorError) => {
   switch (error) {
     case AddCollaboratorError.CollaboratorExists:

@@ -43,7 +43,7 @@ import {
 } from '../types';
 import TableComponent from './TableComponent';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
-import ErrorBanner, { AddCollaboratorError } from './ErrorBanner';
+import ErrorBanner, { AddCollaboratorError, CollaboratorErrorCodes } from './ErrorBanner';
 
 const Collaborators = ({
   appId,
@@ -135,14 +135,20 @@ const Collaborators = ({
           console.error('response', res);
         }
       })
-      .catch((err: AxiosError) => {
-        if (err?.response?.data?.message) {
-          const responseErrors = JSON.parse(err.response.data.message)?.errors;
-          console.error('Failed to create collaborator.', responseErrors);
+      .catch((err: any) => {
+        const errorCode = err?.error?.response?.data?.code;
+
+        if (errorCode) {
+          setModalBannerError(
+            errorCode === CollaboratorErrorCodes.COLLABORATOR_EXISTS
+              ? AddCollaboratorError.CollaboratorExists
+              : AddCollaboratorError.GenericError,
+          );
+          console.error('Failed to create collaborator.', errorCode);
         } else {
+          setModalBannerError(AddCollaboratorError.GenericError);
           console.error('Failed to create collaborator.', err);
         }
-        setModalBannerError(AddCollaboratorError.GenericError);
       });
   }, [modalFields]);
 
