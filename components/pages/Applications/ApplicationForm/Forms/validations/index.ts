@@ -639,7 +639,9 @@ export const useLocalValidation = (
                   ? storedFields[fieldName]?.value?.[fieldIndex]
                   : storedFields[fieldName]?.value);
 
-            const changes = await fieldValidator(field, value, shouldPersistData);
+            const trimmedValue = ['text'].includes(fieldType) && value.trim();
+
+            const changes = await fieldValidator(field, trimmedValue || value, shouldPersistData);
 
             changes && updateLocalState(changes);
           }

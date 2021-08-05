@@ -188,7 +188,7 @@ export const getValueByFieldTypeToPublish = (
     }
 
     case 'string':
-      return { [fieldName]: fieldNameInner ? { [fieldNameInner]: value.trim() } : value.trim() };
+      return { [fieldName]: fieldNameInner ? { [fieldNameInner]: value } : value };
 
     default:
       console.info('unable to get value at getValueByFieldTypeToPublish', field, type);
