@@ -1,16 +1,17 @@
-import { css } from '@icgc-argo/uikit';
+import { useRouter } from 'next/router';
+import { css } from '@emotion/core';
+import urlJoin from 'url-join';
+
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import Link from '@icgc-argo/uikit/Link';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
+
+import { API, APPLICATIONS_PATH, DACO_APPLYING_DOCS } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
-import React from 'react';
-import urlJoin from 'url-join';
+
 import DashboardCard from '../Card';
-import { useRouter } from 'next/router';
-import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
-import { API } from 'global/constants/externalPaths';
 
 const StartApplication = () => {
   const theme = useTheme();
@@ -49,7 +50,9 @@ const StartApplication = () => {
         >
           Start a new application, fill out all required sections, then sign and submit the
           application. The ICGC DACO will review and grant access to{' '}
-          <Link>eligible project teams.</Link>
+          <Link href={DACO_APPLYING_DOCS} rel="noopener noreferrer" target="_blank">
+            eligible project teams.
+          </Link>
         </Typography>
 
         <Button onClick={createNewApplication} size="sm">

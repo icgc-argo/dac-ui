@@ -34,7 +34,7 @@ const Dashboard = ({ hasDacoAccess }: { hasDacoAccess: boolean }) => (
             `}
           >
             This is where you can manage your Applications for Access to ICGC Controlled Data.
-            Access will be granted for a <b>one year period</b>, starting from the date of approval
+            Access will be granted for a <b>two year period</b>, starting from the date of approval
             by the ICGC DACO.
           </Typography>
           <AccessBox hasAccess={hasDacoAccess} />
