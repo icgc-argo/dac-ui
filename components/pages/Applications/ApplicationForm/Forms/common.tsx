@@ -9,7 +9,7 @@ import StaticApplicant from '../../PDF/StaticApplicant';
 import StaticCollaborators from '../../PDF/StaticCollaborators';
 import StaticDataAccessAgreement from '../../PDF/StaticDataAccessAgreement';
 import StaticEthics from '../../PDF/StaticEthics';
-import StaticIntroduction from '../../PDF/StaticIntroduction';
+import StaticTerms from '../../PDF/StaticTerms';
 import StaticProjectInfo from '../../PDF/StaticProjectInfo';
 import StaticRepresentative from '../../PDF/StaticRepresentative';
 import { saveAs } from 'file-saver';
@@ -24,7 +24,7 @@ export const generatePDFDocument = async (data: ApplicationData) => {
     <Document>
       {/* Cover is PDF only */}
       <Cover data={data} />
-      <StaticIntroduction isPdf data={data} />
+      <StaticTerms isPdf data={data} />
       <StaticApplicant isPdf data={data} />
       <StaticRepresentative isPdf data={data} />
       <StaticCollaborators isPdf data={data} />
