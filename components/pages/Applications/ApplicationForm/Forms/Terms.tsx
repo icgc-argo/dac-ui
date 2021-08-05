@@ -4,14 +4,14 @@ import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 import Typography from '@icgc-argo/uikit/Typography';
 
-import StaticIntroduction from 'components/pages/Applications/PDF/StaticIntroduction';
+import StaticTerms from 'components/pages/Applications/PDF/StaticTerms';
 
 import { FormFieldValidationTriggerFunction, FormSectionValidationState_Terms } from './types';
 import { isRequired } from './validations';
 import FORM_TEXT from '../../PDF/textConstants';
 import { getStaticComponents } from '../../PDF/common';
 
-const Introduction = ({
+const Terms = ({
   isSectionDisabled,
   localState,
   validateFieldTouched,
@@ -25,12 +25,10 @@ const Introduction = ({
   return (
     <article>
       <section>
-        <StaticIntroduction />
+        <StaticTerms />
       </section>
       <section>
-        <SectionTitle>
-          {FORM_TEXT.introduction.title}
-        </SectionTitle>
+        <SectionTitle>{FORM_TEXT.terms.title}</SectionTitle>
 
         <FormControl
           disabled={isSectionDisabled}
@@ -57,4 +55,4 @@ const Introduction = ({
   );
 };
 
-export default Introduction;
+export default Terms;
