@@ -1,5 +1,4 @@
 import Banner from '@icgc-argo/uikit/notifications/Banner';
-import Notification from '@icgc-argo/uikit/notifications/Notification';
 
 const TITLE_COLLABORATOR_NOT_ADDED = 'Collaborator could not be added';
 const TITLE_GENERIC_ERROR = 'Something went wrong';
