@@ -32,7 +32,7 @@ export const countWordsInString = (value: string) => {
 export const getFieldDataFromEvent: FormFieldDataFromEvent = (event) => {
   if (
     Object.values(EVENT_TARGET_TAGS).includes(
-      (event?.target?.tagName as unknown) as EVENT_TARGET_TAGS,
+      event?.target?.tagName as unknown as EVENT_TARGET_TAGS,
     )
   ) {
     switch (event?.target?.type) {
@@ -124,7 +124,7 @@ const getSeedValueByFieldType = (fieldType: string, fieldBase: any, seedValue: a
       return { value: seedValue };
 
     default:
-      console.log('nope', fieldType);
+      console.info('unable to get value at getSeedValueByFieldType', fieldType);
   }
 };
 
@@ -188,10 +188,54 @@ export const getValueByFieldTypeToPublish = (
     }
 
     case 'string':
-      return { [fieldName]: fieldNameInner ? { [fieldNameInner]: value.trim() } : value.trim() };
+      return { [fieldName]: fieldNameInner ? { [fieldNameInner]: value } : value };
 
     default:
-      console.log('nope', type);
+      console.info('unable to get value at getValueByFieldTypeToPublish', field, type);
+  }
+};
+
+export const getValueByFieldTypeToValidate = (
+  { fields, meta, type, value }: FormFieldType,
+  field?: string,
+): any => {
+  if (meta?.skipValidation || value === undefined) return null;
+
+  switch (type) {
+    case 'array': {
+      const fieldValues =
+        meta?.shape !== 'modal' ? value?.map(getValueByFieldTypeToValidate) : value;
+
+      return fieldValues?.filter((item: any) => item).length > 0 ? fieldValues : null;
+    }
+
+    case 'boolean': {
+      return typeof value === 'boolean' ? value : null;
+    }
+
+    case 'object': {
+      const fieldValues = Object.entries(fields).reduce((acc, [innerName, innerData]) => {
+        const innerValue = getValueByFieldTypeToValidate(
+          innerData as FormFieldType,
+          innerName || 'innerField',
+        );
+
+        return {
+          ...acc,
+          ...(innerValue !== null && {
+            [innerName]: innerValue,
+          }),
+        };
+      }, {});
+
+      return Object.keys(fieldValues).length === 0 ? null : fieldValues;
+    }
+
+    case 'string':
+      return value?.length > 0 ? value : null;
+
+    default:
+      console.info('unable to get value at getValueByFieldTypeToValidate', field, type);
   }
 };
 

@@ -43,6 +43,7 @@ import {
 } from '../types';
 import TableComponent from './TableComponent';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
+import ErrorBanner, { AddCollaboratorError, CollaboratorErrorCodes } from './ErrorBanner';
 
 const Collaborators = ({
   appId,
@@ -61,14 +62,17 @@ const Collaborators = ({
 }): ReactElement => {
   const [collaboratorCount, setCollaboratorCount] = useState(0);
   const [modalVisible, setModalVisible] = useState<'collaborator' | string | null>(null);
-  const [modalFields, setModalFields] = useState(getInternalFieldSchema(localState.list));
   const [modalHasErrors, setModalHasErrors] = useState(true);
+  const [modalBannerError, setModalBannerError] =
+    useState<keyof typeof AddCollaboratorError | null>(null);
   const containerRef = createRef<HTMLDivElement>();
   const { fetchWithAuth, permissions } = useAuthContext();
   const theme = useTheme();
 
   const isAdmin = permissions.length > 0 && isDacoAdmin(permissions);
-  const disableActions = isAdmin && applicationState === ApplicationState.APPROVED;
+  const disableActions =
+    (isAdmin && applicationState === ApplicationState.APPROVED) ||
+    applicationState === ApplicationState.REVIEW;
 
   const clearCollaboratorModalData = () => {
     validateFieldTouched({
@@ -85,6 +89,7 @@ const Collaborators = ({
   const dismissCollaboratorModal = () => {
     clearCollaboratorModalData();
     setModalVisible(null);
+    setModalBannerError(null);
   };
 
   const newCollaboratorModal = () => {
@@ -93,20 +98,23 @@ const Collaborators = ({
   };
 
   const handleCollaboratorCreateOrEdit = useCallback(() => {
-    const newCollaboratorData = Object.entries(modalFields).reduce((dataAcc, field) => {
-      const [fieldName, fieldData] = field as [string, FormFieldType];
-      const [prefix, suffix] = fieldName.split('_');
+    const newCollaboratorData = Object.entries(localState.list?.innerType?.fields).reduce(
+      (dataAcc, field) => {
+        const [fieldName, fieldData] = field as [string, FormFieldType];
+        const [prefix, suffix] = fieldName.split('_');
 
-      return {
-        ...dataAcc,
-        [prefix]: suffix
-          ? {
-              ...dataAcc[prefix],
-              [suffix]: fieldData.value,
-            }
-          : fieldData.value,
-      };
-    }, {} as Record<string, any>);
+        return {
+          ...dataAcc,
+          [prefix]: suffix
+            ? {
+                ...dataAcc[prefix],
+                [suffix]: fieldData.value,
+              }
+            : fieldData.value,
+        };
+      },
+      {} as Record<string, any>,
+    );
 
     fetchWithAuth({
       data: {
@@ -120,20 +128,30 @@ const Collaborators = ({
         if (res.status === 200) {
           refetchAllData();
           dismissCollaboratorModal();
+          setModalBannerError(null);
         } else {
           // TODO: troubleshooting log, remove upon release
           console.error('response', res);
         }
       })
-      .catch((err: AxiosError) => {
-        if (err?.response?.data?.message) {
-          const responseErrors = JSON.parse(err.response.data.message)?.errors;
-          console.error('Failed to create collaborator.', responseErrors);
+      .catch((err: any) => {
+        const errorCode = err?.error?.response?.data?.code;
+
+        if (errorCode) {
+          setModalBannerError(
+            errorCode === CollaboratorErrorCodes.COLLABORATOR_EXISTS
+              ? AddCollaboratorError.CollaboratorExists
+              : errorCode === CollaboratorErrorCodes.COLLABORATOR_SAME_AS_APPLICANT
+              ? AddCollaboratorError.CollaboratorIsApplicant
+              : AddCollaboratorError.GenericError,
+          );
+          console.error('Failed to create collaborator.', errorCode);
         } else {
+          setModalBannerError(AddCollaboratorError.GenericError);
           console.error('Failed to create collaborator.', err);
         }
       });
-  }, [modalFields]);
+  }, [localState.list?.innerType?.fields]);
 
   const handleCollaboratorRemove = useCallback(
     (collaboratorID: string) => () => {
@@ -192,19 +210,19 @@ const Collaborators = ({
 
   useEffect(() => {
     const newCollaboratorCount = localState.list?.value?.length;
-    const newModalFields = getInternalFieldSchema(localState.list);
 
     collaboratorCount === newCollaboratorCount || setCollaboratorCount(newCollaboratorCount);
     setModalHasErrors(
-      Object.values(newModalFields).some((field: any) => field?.error?.length > 0) ||
-        !Object.entries(newModalFields)
+      Object.values(localState.list?.innerType?.fields).some(
+        (field: any) => field?.error?.length > 0,
+      ) ||
+        !Object.entries(localState.list?.innerType?.fields)
           .filter(
             ([fieldName, fieldData]) =>
               fieldName !== 'type' && isRequired(fieldData as FormFieldType),
           )
           .every(([fieldName, fieldData]) => (fieldData as FormFieldType).value),
     );
-    setModalFields(newModalFields);
   }, [localState]);
 
   return (
@@ -287,13 +305,16 @@ const Collaborators = ({
         (modalVisible === 'collaborator' ? (
           <ModalPortal>
             <Modal
-              actionButtonText={`${modalFields.id.value ? 'Edit' : 'Add'} Collaborator`}
-              actionDisabled={modalHasErrors}
+              actionButtonText={`${
+                localState.list?.innerType?.fields.id.value ? 'Edit' : 'Add'
+              } Collaborator`}
+              actionDisabled={isSectionDisabled || modalHasErrors}
               onActionClick={handleCollaboratorCreateOrEdit}
               onCancelClick={dismissCollaboratorModal}
               onCloseClick={dismissCollaboratorModal}
               title="Add a Collaborator"
             >
+              {modalBannerError && <ErrorBanner error={modalBannerError} />}
               <article
                 css={css`
                   [class*='FormControl'] {
@@ -365,15 +386,16 @@ const Collaborators = ({
 
                 <section>
                   <FormControl
-                    error={!!modalFields.type?.error}
-                    required={isRequired(modalFields.type)}
+                    error={!!localState.list?.innerType?.fields.type?.error}
+                    required={isRequired(localState.list?.innerType?.fields.type)}
                   >
                     <InputLabel htmlFor="info_collaboratorType">Collaborator Type</InputLabel>
                     <RadioCheckboxGroup
                       id="list--type"
                       aria-label="Collaborator Type"
                       isChecked={(item) =>
-                        (modalFields.type.value || CollaboratorType.PERSONNEL) === item
+                        (localState.list?.innerType?.fields.type.value ||
+                          CollaboratorType.PERSONNEL) === item
                       }
                       onChange={handleCollaboratorTypeChange}
                       css={css`
@@ -392,13 +414,15 @@ const Collaborators = ({
                       <FormRadio value={CollaboratorType.STUDENT}>Authorized Student</FormRadio>
                     </RadioCheckboxGroup>
 
-                    <FormHelperText onErrorOnly>{modalFields.type?.error?.[0]}</FormHelperText>
+                    <FormHelperText onErrorOnly>
+                      {localState.list?.innerType?.fields.type?.error?.[0]}
+                    </FormHelperText>
                   </FormControl>
 
                   <DoubleFieldRow>
                     <FormControl
-                      error={!!modalFields.info_title?.error}
-                      required={isRequired(modalFields.info_title)}
+                      error={!!localState.list?.innerType?.fields.info_title?.error}
+                      required={isRequired(localState.list?.innerType?.fields.info_title)}
                     >
                       <InputLabel htmlFor="info_title">Title</InputLabel>
 
@@ -410,11 +434,11 @@ const Collaborators = ({
                         onFocus={validateFieldTouched}
                         eventOnChange={validateFieldTouched}
                         options={transformToSelectOptions(honorificsList)}
-                        value={modalFields.info_title?.value}
+                        value={localState.list?.innerType?.fields.info_title?.value}
                       />
 
                       <FormHelperText onErrorOnly>
-                        {modalFields.info_title?.error?.[0]}
+                        {localState.list?.innerType?.fields.info_title?.error?.[0]}
                       </FormHelperText>
                     </FormControl>
                     &nbsp;
@@ -422,8 +446,8 @@ const Collaborators = ({
 
                   <DoubleFieldRow>
                     <FormControl
-                      error={!!modalFields.info_firstName?.error}
-                      required={isRequired(modalFields.info_firstName)}
+                      error={!!localState.list?.innerType?.fields.info_firstName?.error}
+                      required={isRequired(localState.list?.innerType?.fields.info_firstName)}
                     >
                       <InputLabel htmlFor="info_firstName">First Name</InputLabel>
 
@@ -433,17 +457,17 @@ const Collaborators = ({
                         id="list--info_firstName"
                         onBlur={validateFieldTouched}
                         onChange={validateFieldTouched}
-                        value={modalFields.info_firstName?.value}
+                        value={localState.list?.innerType?.fields.info_firstName?.value}
                       />
 
                       <FormHelperText onErrorOnly>
-                        {modalFields.info_firstName?.error?.[0]}
+                        {localState.list?.innerType?.fields.info_firstName?.error?.[0]}
                       </FormHelperText>
                     </FormControl>
 
                     <FormControl
-                      error={!!modalFields.info_middleName?.error}
-                      required={isRequired(modalFields.info_middleName)}
+                      error={!!localState.list?.innerType?.fields.info_middleName?.error}
+                      required={isRequired(localState.list?.innerType?.fields.info_middleName)}
                     >
                       <InputLabel htmlFor="info_middleName">Middle Name</InputLabel>
 
@@ -453,19 +477,19 @@ const Collaborators = ({
                         id="list--info_middleName"
                         onBlur={validateFieldTouched}
                         onChange={validateFieldTouched}
-                        value={modalFields.info_middleName?.value}
+                        value={localState.list?.innerType?.fields.info_middleName?.value}
                       />
 
                       <FormHelperText onErrorOnly>
-                        {modalFields.info_middleName?.error?.[0]}
+                        {localState.list?.innerType?.fields.info_middleName?.error?.[0]}
                       </FormHelperText>
                     </FormControl>
                   </DoubleFieldRow>
 
                   <DoubleFieldRow>
                     <FormControl
-                      error={!!modalFields.info_lastName?.error}
-                      required={isRequired(modalFields.info_lastName)}
+                      error={!!localState.list?.innerType?.fields.info_lastName?.error}
+                      required={isRequired(localState.list?.innerType?.fields.info_lastName)}
                     >
                       <InputLabel htmlFor="info_lastName">Last Name</InputLabel>
 
@@ -475,17 +499,17 @@ const Collaborators = ({
                         id="list--info_lastName"
                         onBlur={validateFieldTouched}
                         onChange={validateFieldTouched}
-                        value={modalFields.info_lastName?.value}
+                        value={localState.list?.innerType?.fields.info_lastName?.value}
                       />
 
                       <FormHelperText onErrorOnly>
-                        {modalFields.info_lastName?.error?.[0]}
+                        {localState.list?.innerType?.fields.info_lastName?.error?.[0]}
                       </FormHelperText>
                     </FormControl>
 
                     <FormControl
-                      error={!!modalFields.info_suffix?.error}
-                      required={isRequired(modalFields.info_suffix)}
+                      error={!!localState.list?.innerType?.fields.info_suffix?.error}
+                      required={isRequired(localState.list?.innerType?.fields.info_suffix)}
                     >
                       <InputLabel htmlFor="info_suffix">Suffix</InputLabel>
 
@@ -496,11 +520,11 @@ const Collaborators = ({
                         onBlur={validateFieldTouched}
                         onChange={validateFieldTouched}
                         placeholder="e.g. Jr., Sr., MD."
-                        value={modalFields.info_suffix?.value}
+                        value={localState.list?.innerType?.fields.info_suffix?.value}
                       />
 
                       <FormHelperText onErrorOnly>
-                        {modalFields.info_suffix?.error?.[0]}
+                        {localState.list?.innerType?.fields.info_suffix?.error?.[0]}
                       </FormHelperText>
                     </FormControl>
                   </DoubleFieldRow>
@@ -509,10 +533,13 @@ const Collaborators = ({
                     <FormControl
                       error={
                         // additional logic to quietly ensure validation is applied before allowing save
-                        !!modalFields.info_primaryAffiliation?.error?.filter((e: string) => e)
-                          .length
+                        !!localState.list?.innerType?.fields.info_primaryAffiliation?.error?.filter(
+                          (e: string) => e,
+                        ).length
                       }
-                      required={isRequired(modalFields.info_primaryAffiliation)}
+                      required={isRequired(
+                        localState.list?.innerType?.fields.info_primaryAffiliation,
+                      )}
                     >
                       <InputLabel htmlFor="info_primaryAffiliation">Primary Affiliation</InputLabel>
 
@@ -522,19 +549,21 @@ const Collaborators = ({
                         id="list--info_primaryAffiliation"
                         onBlur={validateFieldTouched}
                         onChange={validateFieldTouched}
-                        value={modalFields.info_primaryAffiliation?.value}
+                        value={localState.list?.innerType?.fields.info_primaryAffiliation?.value}
                       />
 
                       <FormHelperText onErrorOnly>
-                        {modalFields.info_primaryAffiliation?.error?.[0]}
+                        {localState.list?.innerType?.fields.info_primaryAffiliation?.error?.[0]}
                       </FormHelperText>
                     </FormControl>
                   </DoubleFieldRow>
 
                   <DoubleFieldRow helpText="Must be the institutional email address of the Collaborator.">
                     <FormControl
-                      error={!!modalFields.info_institutionEmail?.error}
-                      required={isRequired(modalFields.info_institutionEmail)}
+                      error={!!localState.list?.innerType?.fields.info_institutionEmail?.error}
+                      required={isRequired(
+                        localState.list?.innerType?.fields.info_institutionEmail,
+                      )}
                     >
                       <InputLabel htmlFor="info_institutionEmail">Institutional Email</InputLabel>
 
@@ -544,19 +573,19 @@ const Collaborators = ({
                         id="list--info_institutionEmail"
                         onBlur={validateFieldTouched}
                         onChange={validateFieldTouched}
-                        value={modalFields.info_institutionEmail?.value}
+                        value={localState.list?.innerType?.fields.info_institutionEmail?.value}
                       />
 
                       <FormHelperText onErrorOnly>
-                        {modalFields.info_institutionEmail?.error?.[0]}
+                        {localState.list?.innerType?.fields.info_institutionEmail?.error?.[0]}
                       </FormHelperText>
                     </FormControl>
                   </DoubleFieldRow>
 
                   <DoubleFieldRow helpText="Must be the Gmail or G Suite email address of the Collaborator.">
                     <FormControl
-                      error={!!modalFields.info_googleEmail?.error}
-                      required={isRequired(modalFields.info_googleEmail)}
+                      error={!!localState.list?.innerType?.fields.info_googleEmail?.error}
+                      required={isRequired(localState.list?.innerType?.fields.info_googleEmail)}
                     >
                       <InputLabel htmlFor="info_googleEmail">Google Email</InputLabel>
 
@@ -566,22 +595,22 @@ const Collaborators = ({
                         id="list--info_googleEmail"
                         onBlur={validateFieldTouched}
                         onChange={validateFieldTouched}
-                        value={modalFields.info_googleEmail?.value}
+                        value={localState.list?.innerType?.fields.info_googleEmail?.value}
                       />
 
                       <FormHelperText onErrorOnly>
-                        {modalFields.info_googleEmail?.error?.[0]}
+                        {localState.list?.innerType?.fields.info_googleEmail?.error?.[0]}
                       </FormHelperText>
                     </FormControl>
                   </DoubleFieldRow>
 
                   <DoubleFieldRow>
                     <FormControl
-                      error={!!modalFields.info_positionTitle?.error}
-                      required={isRequired(modalFields.info_positionTitle)}
+                      error={!!localState.list?.innerType?.fields.info_positionTitle?.error}
+                      required={isRequired(localState.list?.innerType?.fields.info_positionTitle)}
                     >
                       <InputLabel htmlFor="info_positionTitle">
-                        {modalFields.type.value === CollaboratorType.STUDENT
+                        {localState.list?.innerType?.fields.type.value === CollaboratorType.STUDENT
                           ? 'Pursuing Degree'
                           : 'Position Title'}
                       </InputLabel>
@@ -592,16 +621,16 @@ const Collaborators = ({
                         id="list--info_positionTitle"
                         onBlur={validateFieldTouched}
                         onChange={validateFieldTouched}
-                        value={modalFields.info_positionTitle?.value}
+                        value={localState.list?.innerType?.fields.info_positionTitle?.value}
                         placeholder={
-                          modalFields.type.value === CollaboratorType.STUDENT
+                          localState.list?.innerType?.fields.type.value === CollaboratorType.STUDENT
                             ? 'e.g. Doctoral'
                             : 'e.g. Bioinformatician'
                         }
                       />
 
                       <FormHelperText onErrorOnly>
-                        {modalFields.info_positionTitle?.error?.[0]}
+                        {localState.list?.innerType?.fields.info_positionTitle?.error?.[0]}
                       </FormHelperText>
                     </FormControl>
                     <div />
@@ -619,7 +648,7 @@ const Collaborators = ({
               onCloseClick={dismissCollaboratorModal}
               title="Remove Collaborator?"
             >
-              {`Are you sure you want to remove ${modalFields.info_firstName?.value} ${modalFields.info_lastName?.value} from this application?`}
+              {`Are you sure you want to remove ${localState.list?.innerType?.fields.info_firstName?.value} ${localState.list?.innerType?.fields.info_lastName?.value} from this application?`}
             </Modal>
           </ModalPortal>
         ))}

@@ -19,7 +19,9 @@ const FormSection = ({
   switchSection?: MouseEventHandler<HTMLButtonElement>;
   tooltip?: string;
 }): ReactElement => {
-  const isDisabled = [FORM_STATES.DISABLED, FORM_STATES.REVISIONS_REQUESTED_DISABLED].includes(status);
+  const isDisabled = [FORM_STATES.DISABLED, FORM_STATES.REVISIONS_REQUESTED_DISABLED].includes(
+    status,
+  );
 
   return (
     <VerticalTabs.Item

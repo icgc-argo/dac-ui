@@ -71,26 +71,23 @@ export type FormFieldType = Partial<
     // WIP: this handles shape mutations (validation vs persistence)
     meta: {
       filler?: '';
+      skipValidation: boolean;
       shape: 'collection' | 'modal' | 'publicationURLsArray' | 'singleAcceptance';
       type: 'boolean' | 'string';
     };
   }
 >;
 
-type FormSectionValidationState_SectionsGenericType<T extends Record<string, FormFieldType>> =
-  Record<string, Partial<T[keyof T] & FormFieldType>>;
+type FormSectionValidationState_SectionsGenericType<
+  T extends Record<string, FormFieldType>
+> = Record<string, Partial<T[keyof T] & FormFieldType>>;
 
 export type FormSectionValidationState_Appendices = FormSectionValidationState_SectionsGenericType<{
   agreements: {
     fields: {
       appendix_icgc_goals_policies: FormFieldType;
-      appendix_large_scale_data_sharing: FormFieldType;
-      appendix_prepublication_policy: FormFieldType;
-      appendix_publication_policy: FormFieldType;
-      appendix_nih_genomic_inventions: FormFieldType;
-      appendix_oecd_genetic_inventions: FormFieldType;
-      appendix_cloud_security: FormFieldType;
-      appendix_ga4gh_framework: FormFieldType;
+      appendix_data_access_policy: FormFieldType;
+      appendix_ip_policy: FormFieldType;
     };
   };
 }>;
@@ -113,80 +110,75 @@ export type FormSectionValidationState_Applicant = FormSectionValidationState_Se
   address_postalCode: { value: string };
 }>;
 
-export type FormSectionValidationState_Collaborators =
-  FormSectionValidationState_SectionsGenericType<{
-    list: {
-      value: [
-        {
-          id: { value: string };
-          info_firstName: { value: string };
-          info_googleEmail: { value: string };
-          info_institutionEmail: { value: string };
-          info_lastName: { value: string };
-          info_middleName: { value: string };
-          info_positionTitle: { value: string };
-          info_primaryAffiliation: { value: string };
-          info_suffix: { value: string };
-          info_title: { value: string };
-          type: { value: string };
-        },
-      ];
+export type FormSectionValidationState_Collaborators = FormSectionValidationState_SectionsGenericType<{
+  list: {
+    value: [
+      {
+        id: { value: string };
+        info_firstName: { value: string };
+        info_googleEmail: { value: string };
+        info_institutionEmail: { value: string };
+        info_lastName: { value: string };
+        info_middleName: { value: string };
+        info_positionTitle: { value: string };
+        info_primaryAffiliation: { value: string };
+        info_suffix: { value: string };
+        info_title: { value: string };
+        type: { value: string };
+      },
+    ];
+  };
+}>;
+
+export type FormSectionValidationState_DataAccessAgreements = FormSectionValidationState_SectionsGenericType<{
+  agreements: {
+    fields: {
+      it_agreement_software_updates: FormFieldType;
+      it_agreement_protect_data: FormFieldType;
+      it_agreement_monitor_access: FormFieldType;
+      it_agreement_destroy_copies: FormFieldType;
+      it_agreement_onboard_training: FormFieldType;
+      it_agreement_provide_institutional_policies: FormFieldType;
+      it_agreement_contact_daco_fraud: FormFieldType;
+      daa_correct_application_content: FormFieldType;
+      daa_agree_to_terms: FormFieldType;
     };
-  }>;
+  };
+}>;
 
-export type FormSectionValidationState_DataAccessAgreements =
-  FormSectionValidationState_SectionsGenericType<{
-    agreements: {
-      fields: {
-        it_agreement_software_updates: FormFieldType;
-        it_agreement_protect_data: FormFieldType;
-        it_agreement_monitor_access: FormFieldType;
-        it_agreement_destroy_copies: FormFieldType;
-        it_agreement_onboard_training: FormFieldType;
-        it_agreement_provide_institutional_policies: FormFieldType;
-        it_agreement_contact_daco_fraud: FormFieldType;
-        daa_correct_application_content: FormFieldType;
-        daa_agree_to_terms: FormFieldType;
-      };
-    };
-  }>;
+export type FormSectionValidationState_EthicsLetter = FormSectionValidationState_SectionsGenericType<{
+  approvalLetterDocs: { value: [] };
+  declaredAsRequired: { value: boolean | null };
+}>;
 
-export type FormSectionValidationState_EthicsLetter =
-  FormSectionValidationState_SectionsGenericType<{
-    approvalLetterDocs: { value: [] };
-    declaredAsRequired: { value: boolean | null };
-  }>;
+export type FormSectionValidationState_ProjectInfo = FormSectionValidationState_SectionsGenericType<{
+  aims: { value: string };
+  background: { value: string };
+  methodology: { value: string };
+  publicationsURLs: {
+    hasThreeValidURLs: boolean;
+    value: Record<number, FormFieldType>;
+  };
+  summary: { value: string };
+  title: { value: string };
+  website: { value: string };
+}>;
 
-export type FormSectionValidationState_ProjectInfo =
-  FormSectionValidationState_SectionsGenericType<{
-    aims: { value: string };
-    background: { value: string };
-    methodology: { value: string };
-    publicationsURLs: {
-      hasThreeValidURLs: boolean;
-      value: Record<number, FormFieldType>;
-    };
-    summary: { value: string };
-    title: { value: string };
-    website: { value: string };
-  }>;
-
-export type FormSectionValidationState_Representative =
-  FormSectionValidationState_SectionsGenericType<{
-    info_firstName: { value: string };
-    info_institutionEmail: { value: string };
-    info_lastName: { value: string };
-    info_middleName: { value: string };
-    info_positionTitle: { value: string };
-    info_primaryAffiliation: { value: string };
-    info_suffix: { value: string };
-    info_title: { value: string };
-    address_building: { value: string };
-    address_cityAndProvince: { value: string };
-    address_country: { value: string };
-    address_streetAddress: { value: string };
-    address_postalCode: { value: string };
-  }>;
+export type FormSectionValidationState_Representative = FormSectionValidationState_SectionsGenericType<{
+  info_firstName: { value: string };
+  info_institutionEmail: { value: string };
+  info_lastName: { value: string };
+  info_middleName: { value: string };
+  info_positionTitle: { value: string };
+  info_primaryAffiliation: { value: string };
+  info_suffix: { value: string };
+  info_title: { value: string };
+  address_building: { value: string };
+  address_cityAndProvince: { value: string };
+  address_country: { value: string };
+  address_streetAddress: { value: string };
+  address_postalCode: { value: string };
+}>;
 
 export type FormSectionValidationState_Signature = FormSectionValidationState_SectionsGenericType<{
   signedApp: {
@@ -221,6 +213,7 @@ export type FormSectionValidationState_SectionBase = {
       message: string;
     }[];
     overall: FORM_STATES;
+    showOverall: boolean;
     tooltips: Partial<Record<FormSectionOverallState, ReactNode>>;
     validated: boolean;
   };
@@ -231,17 +224,16 @@ export type FormValidationActionTypes =
   | 'boolean'
   | 'clearModal'
   | 'feedModal'
-  | 'string'
   | 'object'
-  | 'overall'
   | 'remove'
+  | 'sectionOverall'
   | 'seeding'
+  | 'string'
   | 'updating';
 
 export type FormValidationAction = {
   error?: any;
   field: string;
-  overall: FormSectionOverallState;
   section: FormSectionNames;
   type: FormValidationActionTypes;
   value?: any;
@@ -276,7 +268,9 @@ export type FormValidationStateParameters = FormValidationState_Base & {
 
 export type FormSectionUpdateLocalStateFunction = (fieldData: FormValidationAction) => void;
 
-export type FormFieldDataFromEvent = (event: ChangeEvent<HTMLInputElement>) =>
+export type FormFieldDataFromEvent = (
+  event: ChangeEvent<HTMLInputElement>,
+) =>
   | {
       eventType: string;
       field: string;
@@ -297,15 +291,18 @@ export type FormFieldDataFromEvent = (event: ChangeEvent<HTMLInputElement>) =>
     };
 
 export type FormFieldValidationTriggerFunction = (event: any) => Promise<void>;
+
 export type FormFieldValidatorFunction = (
   field?: string,
   value?: any,
   shouldPersistData?: Boolean,
 ) => Promise<FormValidationAction | void>;
 
+export type FormSectionValidationTriggerReasons = 'initialValidation' | 'notShowingOverall';
+
 export type FormSectionValidatorFunction_Origin = (
   origin: FormSectionNames,
-  validateSection?: boolean,
+  reasonToValidate?: FormSectionValidationTriggerReasons,
 ) => FormFieldValidatorFunction;
 
 export type FormSectionValidatorFunction_Main = (

@@ -7,7 +7,7 @@ import VerticalTabs from '@icgc-argo/uikit/VerticalTabs';
 
 import { sectionsData } from '../constants';
 import FormSection from './Section';
-import { FormSectionNames, FormValidationStateParameters } from '../types';
+import { FormSectionNames, FormValidationStateParameters, FORM_STATES } from '../types';
 
 const Outline = ({
   sections,
@@ -47,13 +47,14 @@ const Outline = ({
 
       {sections.map((name) => {
         const status = formState.sections[name]?.meta.overall;
+        const showStatus = formState.sections[name]?.meta.showOverall;
 
         return (
           <FormSection
             active={selectedSection === name}
             key={name}
             label={sectionsData[name]?.description || name}
-            status={status}
+            status={showStatus || status === FORM_STATES.DISABLED ? status : FORM_STATES.PRISTINE}
             switchSection={() => setSelectedSection(name)}
             tooltip={sectionsData[name].tooltips?.[status] || ''}
           />
