@@ -41,15 +41,16 @@ export const generatePDFDocument = async (data: ApplicationData) => {
   saveAs(blob, `${data.appId}-${dateCreated}`);
 };
 
-export const CustomLoadingButton = ({ text }: { text: string }) => {
+export const CustomLoadingButton = ({ text, variant }: { text: string; variant: string }) => {
   const theme = useTheme();
+  const color = theme.colors[variant === 'primary' ? 'white' : 'accent2_dark'];
   return (
     <div
       css={css`
         display: flex;
         align-items: center;
         justify-content: center;
-        color: ${theme.colors.accent2_dark};
+        color: ${color};
         width: 130px;
       `}
     >
@@ -57,7 +58,7 @@ export const CustomLoadingButton = ({ text }: { text: string }) => {
         name="spinner"
         width="12px"
         height="12px"
-        fill={theme.colors.accent2_dark}
+        fill={color}
         css={css`
           margin-right: 9px;
         `}

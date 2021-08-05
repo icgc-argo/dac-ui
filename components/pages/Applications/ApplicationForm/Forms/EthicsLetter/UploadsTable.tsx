@@ -27,6 +27,7 @@ import {
   DOCUMENT_TYPES,
 } from '../types';
 import pluralize from 'pluralize';
+import { CustomLoadingButton } from '../common';
 
 const VALID_FILE_TYPE = [
   'application/msword',
@@ -37,9 +38,10 @@ const MAX_FILE_SIZE = 5242880;
 
 // ethics letters are in an object on initial load.
 // after the user uploads a new letter it becomes an array.
-const getEthicsLetters = (value: any) => Array.isArray(value)
-  ? value
-  : typeof value === 'undefined'
+const getEthicsLetters = (value: any) =>
+  Array.isArray(value)
+    ? value
+    : typeof value === 'undefined'
     ? [] // handle undefined approvalLetterDocs just in case
     : Object.values(value);
 
@@ -63,12 +65,16 @@ const UploadsTable = ({
   const { fetchWithAuth } = useAuthContext();
   const theme: UikitTheme = useTheme();
 
-  const [ethicsLetters, setEthicsLetters] = useState<any[]>(getEthicsLetters(localState.approvalLetterDocs?.value));
+  const [ethicsLetters, setEthicsLetters] = useState<any[]>(
+    getEthicsLetters(localState.approvalLetterDocs?.value),
+  );
   const [letterCount, setLetterCount] = useState(ethicsLetters.length);
   const [letterError, setLetterError] = useState(false); // !!localState.approvalLetterDocs?.error
 
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const [isFileUploadInProgress, setFileUploadInProgress] = useState(false);
 
   // make button work as input
   const selectFile = () => {
@@ -99,6 +105,7 @@ const UploadsTable = ({
       })
       .finally(() => {
         setSelectedFile(undefined);
+        setFileUploadInProgress(false);
       });
   };
 
@@ -121,6 +128,7 @@ const UploadsTable = ({
   const handleFileUpload = (event: any) => {
     const file = event.target.files?.[0];
     if (file && file.size <= MAX_FILE_SIZE && VALID_FILE_TYPE.includes(file.type)) {
+      setFileUploadInProgress(true);
       setSelectedFile(file);
       if (isRequiredPostApproval) {
         setIsModalVisible(true);
@@ -239,6 +247,8 @@ const UploadsTable = ({
               size="sm"
               onClick={selectFile}
               aria-label="upload an Ethics letter"
+              isLoading={isFileUploadInProgress}
+              Loader={(props: any) => <CustomLoadingButton text="Upload a file" {...props} />}
             >
               <input
                 id="approvalLetterDocs"
