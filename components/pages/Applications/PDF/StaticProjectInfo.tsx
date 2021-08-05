@@ -1,5 +1,6 @@
-import React, { ReactNode } from 'react';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
+
+import { CONTROLLED_DATA_USERS_PAGE } from 'global/constants';
 
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
 import {
@@ -234,7 +235,7 @@ export const StaticLaySummary = ({ isPdf = false }: { isPdf?: boolean }) => {
 
       <TextComponent>
         The lay summaries of ICGC DACO approved projects are posted on the{' '}
-        <LinkComponent href="#" rel="noopener noreferrer" target="_blank">
+        <LinkComponent href={CONTROLLED_DATA_USERS_PAGE} rel="noopener noreferrer" target="_blank">
           ICGC ARGO website
         </LinkComponent>
         <TextComponent as="span" style={{ margin: 0 }}>
