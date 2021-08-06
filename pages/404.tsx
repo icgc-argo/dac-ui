@@ -1,3 +1,5 @@
-import Forbidden from 'components/pages/Error/Forbidden';
+import NotFound from 'components/pages/Error/NotFound';
 
-export default () => <Forbidden />;
+export default function Custom404() {
+  return <NotFound />;
+}

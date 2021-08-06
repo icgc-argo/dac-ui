@@ -18,18 +18,16 @@
  */
 
 import React from 'react';
-import ErrorLayout from 'components/pages/error';
-import Typography from 'uikit/Typography';
-import { css } from 'uikit';
-import HyperLink from 'uikit/Link';
+import ErrorLayout from '.';
 import { getConfig } from 'global/config';
 import Link from 'next/link';
 import { Row, Col } from 'react-grid-system';
-import image from 'static/dna-broken.svg';
-import logoMark from 'static/logomark.svg';
+import Typography from '@icgc-argo/uikit/Typography';
+import { css } from '@emotion/core';
+import Image from 'next/image';
 
 export default function NotFound() {
-  const { DOCS_URL_ROOT } = getConfig();
+  const { DOCS_URL_ROOT = '' } = getConfig();
   return (
     <ErrorLayout>
       <Row
@@ -48,12 +46,14 @@ export default function NotFound() {
             `}
           >
             4
-            <img
+            <Image
               css={css`
                 margin: 0 8px -2px;
               `}
               alt="Logo mark"
-              src={logoMark}
+              src="/logomark.svg"
+              width="70"
+              height="71"
             />
             4
           </Typography>
@@ -65,14 +65,10 @@ export default function NotFound() {
           </Typography>
           <Typography variant="subtitle2">
             Check out our{' '}
-            <HyperLink target="_blank" href={DOCS_URL_ROOT}>
+            <Link target="_blank" href={DOCS_URL_ROOT}>
               <a>Documentation</a>
-            </HyperLink>{' '}
-            or head back{' '}
-            <Link href="/">
-              <HyperLink>Home</HyperLink>
-            </Link>
-            .
+            </Link>{' '}
+            or head back <Link href="/">Home</Link>.
           </Typography>
         </Col>
         <Col
@@ -82,7 +78,7 @@ export default function NotFound() {
             text-align: center;
           `}
         >
-          <img alt="Broken dna" src={image} />
+          <Image alt="Broken dna" src="/dna-broken.svg" width="276" height="300" />
         </Col>
       </Row>
     </ErrorLayout>

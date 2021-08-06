@@ -42,7 +42,7 @@ const App = ({
 };
 
 App.getInitialProps = async ({ ctx, Component }: AppContext & { Component: PageWithConfig }) => {
-  const pageProps = await Component.getInitialProps({ ...ctx });
+  const pageProps = Component.getInitialProps && (await Component.getInitialProps({ ...ctx }));
   return {
     ctx: {
       pathname: ctx.pathname,

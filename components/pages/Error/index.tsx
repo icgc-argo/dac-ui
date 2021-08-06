@@ -19,21 +19,16 @@
 
 import * as React from 'react';
 import NavBar from 'components/NavBar';
-import { MenuItem } from 'uikit/AppBar';
-import Footer from '../Footer';
-import { css } from 'uikit';
-import Container from 'uikit/Container';
-import { PageContainer } from 'uikit/PageLayout';
+import Footer from 'components/Footer';
+import DefaultPageLayout from 'components/DefaultPageLayout';
+import Container from '@icgc-argo/uikit/Container';
+import { css } from '@emotion/core';
+import { PageContainer } from '@icgc-argo/uikit/PageLayout';
 
-export default function ErrorLayout({
-  children,
-  hideNavbarLinks = false,
-  hideInternalPaths = false,
-  hideApiVersion = false,
-}) {
+export default ({ children }) => {
   return (
     <PageContainer>
-      <NavBar hideLinks={hideNavbarLinks} disableLogoLink={hideInternalPaths} />
+      <NavBar />
       <div
         css={css`
           display: flex;
@@ -49,8 +44,7 @@ export default function ErrorLayout({
           {children}
         </Container>
       </div>
-
-      <Footer hideApiVersion={hideApiVersion} hideInternalPaths={hideInternalPaths} />
+      <Footer />
     </PageContainer>
   );
-}
+};
