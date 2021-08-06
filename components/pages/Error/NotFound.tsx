@@ -57,7 +57,7 @@ export default function NotFound() {
             />
             4
           </Typography>
-          <Typography as="div" variant="subtitle" color="secondary">
+          <Typography as="h2" variant="subtitle" color="secondary">
             Page not Found
           </Typography>
           <Typography variant="subtitle2">

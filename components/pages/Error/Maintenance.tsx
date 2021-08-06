@@ -19,15 +19,12 @@
 
 import React from 'react';
 import ErrorLayout from '.';
-import Link from 'next/link';
-import { getConfig } from 'global/config';
 import { Row, Col } from 'react-grid-system';
+import Typography from '@icgc-argo/uikit/Typography';
 import Image from 'next/image';
 import { css } from '@emotion/core';
-import Typography from '@icgc-argo/uikit/Typography';
 
-export default function NotAllowed() {
-  const { ARGO_DOCS_ROOT = '' } = getConfig();
+export default function Maintenance() {
   return (
     <ErrorLayout>
       <Row
@@ -36,44 +33,37 @@ export default function NotAllowed() {
           padding: 32px;
         `}
       >
-        <Col sm={12} md={6}>
+        <Col
+          sm={12}
+          md={6}
+          css={css`
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+          `}
+        >
           <Typography
             css={css`
-              font-size: 100px;
-              margin: 0;
-              font-weight: 600;
+              font-size: 44px;
+              margin: 10px 0;
               line-height: normal;
             `}
+            as="h1"
           >
-            4
-            <Image
-              css={css`
-                margin: 0 8px -2px;
-              `}
-              alt="Logo mark"
-              src="/logomark.svg"
-              width="70"
-              height="71"
-            />
-            3
-          </Typography>
-          <Typography as="h2" variant="subtitle" color="secondary">
-            Forbidden
+            Be back soon
           </Typography>
           <Typography
-            variant="subtitle2"
+            as="h2"
+            variant="subtitle"
+            color="secondary"
             css={css`
-              margin: 33px 0;
+              margin: 0;
             `}
           >
-            You do not have permission to access this page.
+            Down for Maintenance
           </Typography>
-          <Typography variant="subtitle2">
-            Check out our{' '}
-            <Link target="_blank" href={ARGO_DOCS_ROOT}>
-              Documentation
-            </Link>{' '}
-            or head back <Link href="/">Home</Link>.
+          <Typography variant="subtitle2" as="p">
+            We'll be back up and running as quickly as possible. We appreciate your patience.
           </Typography>
         </Col>
         <Col
@@ -83,7 +73,7 @@ export default function NotAllowed() {
             text-align: center;
           `}
         >
-          <Image alt="Broken dna" src="/dna-broken.svg" width="276" height="300" />
+          <Image alt="Maintenance worker" src="/maintenance.svg" width="367" height="300" />
         </Col>
       </Row>
     </ErrorLayout>
