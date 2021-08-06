@@ -19,7 +19,6 @@ const StaticTerms = ({ isPdf = false, data }: { isPdf?: boolean; data?: Applicat
     ContainerComponent,
     LinkComponent,
     ListComponent,
-    UnorderedListComponent,
   } = getStaticComponents(isPdf);
 
   const ListAsTypography = isPdf ? View : Typography;
