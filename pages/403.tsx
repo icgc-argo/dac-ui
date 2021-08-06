@@ -1,3 +1,5 @@
-import NotFound from 'components/pages/Error/NotFound';
+import NotAllowed from 'components/pages/Error/NotAllowed';
 
-export default () => <NotFound />;
+export default function Page403() {
+  return <NotAllowed />;
+}

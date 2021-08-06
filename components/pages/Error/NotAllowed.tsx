@@ -18,18 +18,16 @@
  */
 
 import React from 'react';
-import ErrorLayout from 'components/pages/error';
-import Typography from 'uikit/Typography';
-import { css } from 'uikit';
-import HyperLink from 'uikit/Link';
+import ErrorLayout from '.';
 import Link from 'next/link';
 import { getConfig } from 'global/config';
 import { Row, Col } from 'react-grid-system';
-import image from 'static/dna-locked.svg';
-import logoMark from 'static/logomark.svg';
+import Image from 'next/image';
+import { css } from '@emotion/core';
+import Typography from '@icgc-argo/uikit/Typography';
 
-export default function Forbidden() {
-  const { DOCS_URL_ROOT } = getConfig();
+export default function Error403Page() {
+  const { ARGO_DOCS_ROOT = '' } = getConfig();
   return (
     <ErrorLayout>
       <Row
@@ -48,12 +46,14 @@ export default function Forbidden() {
             `}
           >
             4
-            <img
+            <Image
               css={css`
                 margin: 0 8px -2px;
               `}
               alt="Logo mark"
-              src={logoMark}
+              src="/logomark.svg"
+              width="70"
+              height="71"
             />
             3
           </Typography>
@@ -70,14 +70,10 @@ export default function Forbidden() {
           </Typography>
           <Typography variant="subtitle2">
             Check out our{' '}
-            <HyperLink target="_blank" href={DOCS_URL_ROOT}>
+            <Link target="_blank" href={ARGO_DOCS_ROOT}>
               Documentation
-            </HyperLink>{' '}
-            or head back{' '}
-            <Link href="/">
-              <HyperLink>Home</HyperLink>
-            </Link>
-            .
+            </Link>{' '}
+            or head back <Link href="/">Home</Link>.
           </Typography>
         </Col>
         <Col
@@ -87,7 +83,7 @@ export default function Forbidden() {
             text-align: center;
           `}
         >
-          <img alt="Broken dna" src={image} />
+          <Image alt="Broken dna" src="/dna-broken.svg" width="276" height="300" />
         </Col>
       </Row>
     </ErrorLayout>

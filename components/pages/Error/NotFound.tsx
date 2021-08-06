@@ -27,7 +27,7 @@ import { css } from '@emotion/core';
 import Image from 'next/image';
 
 export default function NotFound() {
-  const { DOCS_URL_ROOT = '' } = getConfig();
+  const { ARGO_DOCS_ROOT = '' } = getConfig();
   return (
     <ErrorLayout>
       <Row
@@ -65,7 +65,7 @@ export default function NotFound() {
           </Typography>
           <Typography variant="subtitle2">
             Check out our{' '}
-            <Link target="_blank" href={DOCS_URL_ROOT}>
+            <Link target="_blank" href={ARGO_DOCS_ROOT}>
               <a>Documentation</a>
             </Link>{' '}
             or head back <Link href="/">Home</Link>.
