@@ -26,10 +26,10 @@ import { PageContainer } from '@icgc-argo/uikit/PageLayout';
 
 export default ({
   children,
-  hideNavbarLinks,
+  hideNavbarLinks = false,
 }: {
-  children: React.Component;
-  hideNavbarLinks: boolean;
+  children: React.ReactNode;
+  hideNavbarLinks?: boolean;
 }) => {
   return (
     <PageContainer>

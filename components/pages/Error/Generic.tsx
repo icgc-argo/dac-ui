@@ -21,7 +21,6 @@ import { css } from '@emotion/core';
 import Typography from '@icgc-argo/uikit/Typography';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
 import ErrorLayout from '.';
 
 export default function GenericError() {
