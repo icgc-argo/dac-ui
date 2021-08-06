@@ -21,13 +21,22 @@ type T_AuthContext = {
   user?: UserWithId | void;
 };
 
+const axiosInstance = axios.create({
+  headers: {
+    post: {
+      ['Content-Type']: 'application/json;charset=utf-8',
+      ['Access-Control-Allow-Origin']: '*'
+    }
+  }
+});
+
 const AuthContext = createContext<T_AuthContext>({
-  cancelFetchWithAuth: () => {},
+  cancelFetchWithAuth: () => { },
   token: '',
   isLoading: false,
-  logout: () => {},
+  logout: () => { },
   user: undefined,
-  fetchWithAuth: () => {},
+  fetchWithAuth: () => { },
   permissions: [],
 });
 
@@ -67,10 +76,6 @@ export const AuthProvider = ({
     setTokenState(egoJwt);
   }
 
-  // TODO: decide if we want these for all types of requests or only POST
-  axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
-  axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
-
   const cancelTokenSource = axios.CancelToken.source();
   const cancelFetchWithAuth = cancelTokenSource.cancel;
   const fetchWithAuth = ({
@@ -107,7 +112,7 @@ export const AuthProvider = ({
       url,
     };
 
-    return axios(config)
+    return axiosInstance(config)
       .catch((error) => {
         // TODO: log errors somewhere not visible to the user?
         // Leaving this log here pre-release, for troubleshooting
