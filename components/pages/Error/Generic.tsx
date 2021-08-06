@@ -17,75 +17,70 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React from 'react';
-import ErrorLayout from '.';
-import Link from 'next/link';
-import { getConfig } from 'global/config';
-import { Row, Col } from 'react-grid-system';
-import Image from 'next/image';
 import { css } from '@emotion/core';
 import Typography from '@icgc-argo/uikit/Typography';
+import Image from 'next/image';
+import Link from 'next/link';
+import React from 'react';
+import ErrorLayout from '.';
 
-export default function NotAllowed() {
-  const { ARGO_DOCS_ROOT = '' } = getConfig();
+export default function GenericError() {
+  const handleReloadClick = () => window.location.reload();
   return (
     <ErrorLayout>
-      <Row
-        nogutter
+      <div
         css={css`
-          padding: 32px;
+          display: flex;
+          justify-content: space-between;
+          padding: 23px 15px 23px 47px;
         `}
       >
-        <Col sm={12} md={6}>
+        <div
+          css={css`
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+          `}
+        >
           <Typography
+            as="h1"
             css={css`
-              font-size: 100px;
+              font-size: 40px;
               margin: 0;
-              font-weight: 600;
-              line-height: normal;
+              margin-bottom: 12px;
             `}
           >
-            4
-            <Image
-              css={css`
-                margin: 0 8px -2px;
-              `}
-              alt="Logo mark"
-              src="/logomark.svg"
-              width="70"
-              height="71"
-            />
-            3
+            Ooops!
           </Typography>
-          <Typography as="div" variant="subtitle" color="secondary">
-            Forbidden
+          <Typography
+            css={css`
+              margin-top: 0;
+              margin-bottom: 34px;
+            `}
+            variant="subtitle"
+            color="secondary"
+            as="h2"
+          >
+            Something went wrong
           </Typography>
           <Typography
             variant="subtitle2"
             css={css`
-              margin: 33px 0;
+              margin: 0;
             `}
+            as="p"
           >
-            You do not have permission to access this page.
+            We are working on fixing the problem and appreciate your patience.{' '}
+            <Link href="#" onClick={handleReloadClick}>
+              Reload this page
+            </Link>
+            .
           </Typography>
-          <Typography variant="subtitle2">
-            Check out our{' '}
-            <Link target="_blank" href={ARGO_DOCS_ROOT}>
-              Documentation
-            </Link>{' '}
-            or head back <Link href="/">Home</Link>.
-          </Typography>
-        </Col>
-        <Col
-          sm={12}
-          md={6}
-          css={css`
-            text-align: center;
-          `}
-        >
-          <Image alt="Broken dna" src="/dna-broken.svg" width="276" height="300" />
-        </Col>
-      </Row>
+        </div>
+        <div>
+          <Image alt="Bug in the code" src="/client-error.svg" width="514" height="350" />
+        </div>
+      </div>
     </ErrorLayout>
   );
 }
