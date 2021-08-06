@@ -26,7 +26,7 @@ import { css } from '@emotion/core';
 
 export default function Maintenance() {
   return (
-    <ErrorLayout>
+    <ErrorLayout hideNavbarLinks>
       <Row
         nogutter
         css={css`

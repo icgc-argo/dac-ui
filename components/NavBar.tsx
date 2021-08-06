@@ -154,7 +154,7 @@ const LoginButton = () => {
   );
 };
 
-const NavBar = () => {
+const NavBar = ({ hideLinks }: { hideLinks: boolean }) => {
   const { user, logout, permissions } = useAuthContext();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = createRef() as React.RefObject<HTMLDivElement>;
@@ -226,17 +226,17 @@ const NavBar = () => {
               <StyledMenuItem
                 css={(theme: UikitTheme) =>
                   css`
-                  color: ${theme.colors.secondary};
-                  border-left: 1px solid ${theme.colors.grey_2};
-                  border-right: 1px solid ${theme.colors.grey_2};
-                  border-bottom: 3px solid ${theme.colors.secondary};
-                `
+                    color: ${theme.colors.secondary};
+                    border-left: 1px solid ${theme.colors.grey_2};
+                    border-right: 1px solid ${theme.colors.grey_2};
+                    border-bottom: 3px solid ${theme.colors.secondary};
+                  `
                 }
               >
                 {applicationsTitle}
               </StyledMenuItem>
             </Link>
-          ) : (
+          ) : hideLinks ? null : (
             <Link
               css={css`
                 text-decoration: none;
@@ -246,11 +246,11 @@ const NavBar = () => {
               <StyledMenuItem>
                 <Typography
                   css={(theme) => css`
-                  ${theme.typography.data};
-                  text-transform: uppercase;
-                  font-weight: bold;
-                  color: ${theme.colors.accent2_dark};
-                `}
+                    ${theme.typography.data};
+                    text-transform: uppercase;
+                    font-weight: bold;
+                    color: ${theme.colors.accent2_dark};
+                  `}
                 >
                   Apply for Access
                 </Typography>
@@ -286,7 +286,7 @@ const NavBar = () => {
             >
               <UserDisplayName dropdownOpen={dropdownOpen} user={user} />
             </StyledMenuItem>
-          ) : (
+          ) : hideLinks ? null : (
             <StyledMenuItem
               css={(theme: UikitTheme) => css`
                 cursor: auto;

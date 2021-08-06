@@ -20,15 +20,20 @@
 import * as React from 'react';
 import NavBar from 'components/NavBar';
 import Footer from 'components/Footer';
-import DefaultPageLayout from 'components/DefaultPageLayout';
 import Container from '@icgc-argo/uikit/Container';
 import { css } from '@emotion/core';
 import { PageContainer } from '@icgc-argo/uikit/PageLayout';
 
-export default ({ children }) => {
+export default ({
+  children,
+  hideNavbarLinks,
+}: {
+  children: React.Component;
+  hideNavbarLinks: boolean;
+}) => {
   return (
     <PageContainer>
-      <NavBar />
+      <NavBar hideLinks={hideNavbarLinks} />
       <div
         css={css`
           display: flex;
