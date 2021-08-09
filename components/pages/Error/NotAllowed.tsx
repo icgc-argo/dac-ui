@@ -17,14 +17,13 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React from 'react';
 import ErrorLayout from '.';
-import Link from 'next/link';
 import { getConfig } from 'global/config';
 import { Row, Col } from 'react-grid-system';
 import Image from 'next/image';
 import { css } from '@emotion/core';
 import Typography from '@icgc-argo/uikit/Typography';
+import Link from '@icgc-argo/uikit/Link';
 
 export default function NotAllowed() {
   const { ARGO_DOCS_ROOT = '' } = getConfig();

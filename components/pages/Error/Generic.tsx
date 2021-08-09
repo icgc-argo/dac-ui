@@ -20,11 +20,9 @@
 import { css } from '@emotion/core';
 import Typography from '@icgc-argo/uikit/Typography';
 import Image from 'next/image';
-import Link from 'next/link';
 import ErrorLayout from '.';
 
 export default function GenericError() {
-  const handleReloadClick = () => window.location.reload();
   return (
     <ErrorLayout>
       <div
@@ -69,11 +67,7 @@ export default function GenericError() {
             `}
             as="p"
           >
-            We are working on fixing the problem and appreciate your patience.{' '}
-            <Link href="#" onClick={handleReloadClick}>
-              Reload this page
-            </Link>
-            .
+            We are working on fixing the problem and appreciate your patience.
           </Typography>
         </div>
         <div>

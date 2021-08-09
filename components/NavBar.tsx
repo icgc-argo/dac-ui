@@ -154,7 +154,7 @@ const LoginButton = () => {
   );
 };
 
-const NavBar = ({ hideLinks }: { hideLinks: boolean }) => {
+const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
   const { user, logout, permissions } = useAuthContext();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = createRef() as React.RefObject<HTMLDivElement>;
