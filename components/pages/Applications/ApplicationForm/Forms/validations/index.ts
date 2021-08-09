@@ -632,11 +632,7 @@ export const useLocalValidation = (
 
       switch (eventType) {
         case 'blur': {
-          const canBlur = !(
-            ['text'].includes(fieldType) &&
-            ['address_country'].includes(fieldName) &&
-            localState[sectionName]?.fields[fieldName]?.value
-          );
+          const canBlur = !['address_country'].includes(fieldName);
 
           if (canBlur) {
             const shouldPersistData =
@@ -658,7 +654,8 @@ export const useLocalValidation = (
         }
 
         case 'change':
-        case 'mousedown': {
+        case 'mousedown':
+        case 'keydown': {
           if ('text' === fieldType) {
             updateLocalState({
               field,

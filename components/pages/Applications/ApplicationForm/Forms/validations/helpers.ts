@@ -187,8 +187,11 @@ export const getValueByFieldTypeToPublish = (
       return null;
     }
 
-    case 'string':
-      return { [fieldName]: fieldNameInner ? { [fieldNameInner]: value } : value };
+    case 'string': {
+      const newStr = value || '';
+
+      return { [fieldName]: fieldNameInner ? { [fieldNameInner]: newStr } : newStr };
+    }
 
     default:
       console.info('unable to get value at getValueByFieldTypeToPublish', field, type);
