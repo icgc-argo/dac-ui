@@ -24,7 +24,7 @@ import Container from '@icgc-argo/uikit/Container';
 import { css } from '@emotion/core';
 import { PageContainer } from '@icgc-argo/uikit/PageLayout';
 
-export default ({
+const Error = ({
   children,
   hideNavbarLinks = false,
 }: {
@@ -53,3 +53,5 @@ export default ({
     </PageContainer>
   );
 };
+
+export default Error;
