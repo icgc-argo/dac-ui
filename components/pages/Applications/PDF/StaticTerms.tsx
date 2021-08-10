@@ -1,13 +1,15 @@
 import { Text, View } from '@react-pdf/renderer';
+import css from '@emotion/css';
 
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import Typography from '@icgc-argo/uikit/Typography';
+
+import { CONTROLLED_DATA_USERS_PAGE, POLICIES_PAGE } from 'global/constants';
 
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
 import { getStaticComponents, Checkbox, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
 import { ApplicationData } from '../types';
-import css from '@emotion/css';
 
 const StaticTerms = ({ isPdf = false, data }: { isPdf?: boolean; data?: ApplicationData }) => {
   const {
@@ -28,6 +30,7 @@ const StaticTerms = ({ isPdf = false, data }: { isPdf?: boolean; data?: Applicat
       applicant={data?.sections?.applicant.info}
     >
       <TitleComponent>Application Terms</TitleComponent>
+
       <SectionComponent>
         <TextComponent
           css={css`
@@ -48,19 +51,21 @@ const StaticTerms = ({ isPdf = false, data }: { isPdf?: boolean; data?: Applicat
             padding-left: 25px;
           `}
         >
-          <ListComponent>
+          <ListComponent asListItem>
             be an independent researcher affiliated with a legal entity (e.g. university professor,
             researcher in a private company, independent researchers able to apply for federal
             research grants, etc.)
           </ListComponent>
 
-          <ListComponent>have an institutional representative at your institution</ListComponent>
+          <ListComponent asListItem>
+            have an institutional representative at your institution
+          </ListComponent>
 
-          <ListComponent>
+          <ListComponent asListItem>
             have a scientific abstract outlining the desired use of the ICGC Controlled Data
           </ListComponent>
 
-          <ListComponent>
+          <ListComponent asListItem style={{ marginBottom: '10pt' }}>
             have at least 3 qualifying publications of which you were an author/co-author
           </ListComponent>
         </ListAsTypography>
@@ -82,17 +87,18 @@ const StaticTerms = ({ isPdf = false, data }: { isPdf?: boolean; data?: Applicat
             margin-top: 0;
             padding-left: 25px;
           `}
+          style={isPdf ? { width: '95%' } : {}}
         >
-          <ListComponent>
+          <ListComponent count={1} style={{ marginBottom: '2pt' }}>
             Complete all required sections on this application form and agree to its terms.
           </ListComponent>
 
-          <ListComponent>
+          <ListComponent count={2} style={{ marginBottom: '2pt' }}>
             Have the Principal Investigator and Institutional Representative who represents your
             institution’s legal entity sign the finalized application.
           </ListComponent>
 
-          <ListComponent>
+          <ListComponent count={3}>
             Submit the signed application for review by the Data Access Compliance Office (DACO) in
             the “Sign and Submit” section of this application.
           </ListComponent>
@@ -100,19 +106,23 @@ const StaticTerms = ({ isPdf = false, data }: { isPdf?: boolean; data?: Applicat
 
         <TextComponent>
           During the application process, you must submit a summary of your research project. Your
-          project will be checked for conformity with the goals and policies of ICGC including, but
-          not limited to, policies concerning the purpose and relevance of the research, the
-          protection of the donors and the security of the donors’ data. If your application is
-          approved, you agree that your applicant's name, institution, and scientific lay summary
-          may be included in a registry of all projects that have been granted access to ICGC
-          Controlled Data. The ICGC DACO approved projects are posted on the{' '}
+          project will be checked for conformity with the{' '}
+          <LinkComponent href={POLICIES_PAGE} rel="noopener noreferrer" target="_blank">
+            goals and policies of ICGC
+          </LinkComponent>{' '}
+          including, but not limited to, policies concerning the purpose and relevance of the
+          research, the protection of the donors and the security of the donors’ data. If your
+          application is approved, you agree that your applicant's name, institution, and scientific
+          lay summary may be included in a registry of all projects that have been granted access to
+          ICGC Controlled Data. The ICGC DACO approved projects are posted on the{' '}
           <LinkComponent
-            href="https://www.icgc-argo.org/page/139/controlled-data-users"
+            href={CONTROLLED_DATA_USERS_PAGE}
             rel="noopener noreferrer"
             target="_blank"
           >
             ICGC ARGO website
           </LinkComponent>
+          .
         </TextComponent>
 
         <TextComponent>
