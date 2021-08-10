@@ -249,6 +249,7 @@ const Representative = ({
             onChange={validateFieldTouched}
             onBlur={validateFieldTouched}
             single
+            size="sm"
             value={addressState.address_country?.value ? [addressState.address_country?.value] : []}
           >
             {countriesList.map(({ name }) => (
