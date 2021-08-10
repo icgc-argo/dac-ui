@@ -76,16 +76,17 @@ const LoginLoaderPage = createPage({
   }, []);
 
   return (
-    <DefaultPageLayout
+    <div
       css={css`
         align-items: center;
         display: flex;
         flex-direction: column;
         justify-content: center;
+        height: 100%;
       `}
     >
       <DnaLoader />
-    </DefaultPageLayout>
+    </div>
   );
 });
 

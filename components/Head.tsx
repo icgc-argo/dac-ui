@@ -16,7 +16,7 @@ const Head = () => {
 export const PageHead = ({ title = '' }: { title?: string }) => {
   return (
     <NextHead>
-      <title>ICGC-DACO{` ${title ? `| ${title}` : ''}`}</title>
+      <title>{`${title ? `${title} | ` : ''}ICGC-DACO`}</title>
     </NextHead>
   );
 };

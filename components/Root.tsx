@@ -7,6 +7,7 @@ import Modal from '@icgc-argo/uikit/Modal';
 
 import Head from 'components/Head';
 import { AuthProvider } from 'global/hooks/useAuthContext';
+import DefaultPageLayout from './DefaultPageLayout';
 
 /**
  * The global portal where modals will show up
@@ -122,7 +123,9 @@ const Root = ({
             `}
             ref={modalPortalRef}
           />
-          {children}
+          <DefaultPageLayout>
+            {children}
+          </DefaultPageLayout>
         </ThemeProvider>
       </AuthProvider>
     </React.Fragment>
