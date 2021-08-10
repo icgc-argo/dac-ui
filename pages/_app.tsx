@@ -52,7 +52,7 @@ const App = ({
         if (!Component.isPublic) {
           Router.push({
             pathname: '/',
-            query: { session_expired: true },
+            query: { app_session_expired: true },
           });
         }
       };
