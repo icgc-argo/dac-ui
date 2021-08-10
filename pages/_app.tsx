@@ -36,16 +36,17 @@ const App = ({
   const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
 
   useEffect(() => {
-    console.log('🏎 START USE EFFECT, initialJwt:', initialJwt.substring(0, 10));
+    console.log('🏎 _app - start useEffect - initialJwt:', initialJwt.substring(0, 10));
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
-    console.log('🎟 EGO JWT:', egoJwt.substring(0, 10))
+    console.log('🎟 _app - initial localStorage JWT:', egoJwt.substring(0, 10))
     if (isValidJwt(egoJwt)) {
-      console.log('✅ INITIAL EGO_JWT WAS VALID:', egoJwt.substring(0, 10));
+      console.log('✅ _app - initial localStorage JWT is valid:', egoJwt.substring(0, 10));
       setInitialJwt(egoJwt);
     } else if (egoJwt) {
-      console.log('❌ INITIAL EGO_JWT INVALID, ATTEMPTING REFRESH:', egoJwt.substring(0, 10));
+      console.log('❌ _app - initial localStorage JWT exists but is NOT valid, requesting refresh token:'
+        , egoJwt.substring(0, 10));
       const forceLogout = () => {
-        console.log('💀 FORCE LOGOUT');
+        console.log('💀 _app - force logout');
         setInitialJwt('');
         localStorage.removeItem(EGO_JWT_KEY);
         if (!Component.isPublic) {
@@ -68,21 +69,21 @@ const App = ({
           .then(res => res.text())
           .then(newJwt => {
             if (isValidJwt(newJwt)) {
-              console.log('🎉 REFRESH VALID:', newJwt.substring(0, 10));
+              console.log('🎉 _app - refresh token IS valid:', newJwt.substring(0, 10));
               setInitialJwt(newJwt);
               localStorage.setItem(EGO_JWT_KEY, newJwt);
             } else {
-              console.log('💥 REFRESH WASN\'T VALID:', newJwt.substring(0, 10));
+              console.log('💥 _app - refresh token NOT valid:', newJwt.substring(0, 10));
               forceLogout();
             }
           })
           .catch((err) => {
-            console.log('🧤 CATCH:', err);
+            console.log('🧤 _app - refresh token error:', err);
             forceLogout();
           })
       );
     } else {
-      console.log('💫 NO INITIAL EGO_JWT FOUND');
+      console.log('💫 _app - no JWT found in localStorage, redirect to homepage');
       if (!Component.isPublic) {
         Router.push({
           pathname: '/',
