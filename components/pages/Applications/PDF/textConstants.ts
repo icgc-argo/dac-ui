@@ -1,5 +1,5 @@
 const FORM_TEXT = {
-  introduction: {
+  terms: {
     title: 'ACKNOWLEDGEMENT',
   },
   applicant: {

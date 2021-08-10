@@ -415,10 +415,19 @@ export const validator: FormSectionValidatorFunction_Main =
               },
             }).then(({ data, ...response } = {} as AxiosResponse<any>) => {
               data
-                ? dispatch({
+                ? (!['', SECTION_STATUS.INCOMPLETE, SECTION_STATUS.PRISTINE].includes(
+                    data.sections[origin].meta.status || '',
+                  ) &&
+                    dispatch({
+                      field: 'showOverall',
+                      section: origin,
+                      type: 'sectionOverall',
+                      value: true,
+                    }),
+                  dispatch({
                     type: 'updating',
                     value: data,
-                  })
+                  }))
                 : console.error(
                     'Something went wrong updating the application form',
                     response || 'no data in response',
@@ -639,7 +648,9 @@ export const useLocalValidation = (
                   ? storedFields[fieldName]?.value?.[fieldIndex]
                   : storedFields[fieldName]?.value);
 
-            const changes = await fieldValidator(field, value, shouldPersistData);
+            const trimmedValue = ['text'].includes(fieldType) && value.trim();
+
+            const changes = await fieldValidator(field, trimmedValue || value, shouldPersistData);
 
             changes && updateLocalState(changes);
           }

@@ -15,6 +15,7 @@ export const getConfig = () => {
     NEXT_PUBLIC_ARGO_PLATFORM_ROOT:
       publicConfig.NEXT_PUBLIC_ARGO_PLATFORM_ROOT || 'https://platform.icgc-argo.org',
     USE_DAC_API_PROXY: publicConfig.USE_DAC_API_PROXY === 'true',
+    NEXT_PUBLIC_MAINTENANCE_MODE_ON: publicConfig.MAINTENANCE_MODE_ON === 'true',
   } as {
     NEXT_PUBLIC_EGO_API_ROOT: string;
     NEXT_PUBLIC_EGO_CLIENT_ID: string;
@@ -24,5 +25,6 @@ export const getConfig = () => {
     NEXT_PUBLIC_ARGO_DOCS_ROOT: string;
     NEXT_PUBLIC_ARGO_PLATFORM_ROOT: string;
     USE_DAC_API_PROXY: boolean;
+    NEXT_PUBLIC_MAINTENANCE_MODE_ON: boolean;
   };
 };

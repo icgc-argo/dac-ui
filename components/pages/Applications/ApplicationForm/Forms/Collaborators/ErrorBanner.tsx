@@ -1,4 +1,4 @@
-import Notification from '@icgc-argo/uikit/notifications/Notification';
+import Banner from '@icgc-argo/uikit/notifications/Banner';
 
 const TITLE_COLLABORATOR_NOT_ADDED = 'Collaborator could not be added';
 const TITLE_GENERIC_ERROR = 'Something went wrong';
@@ -35,7 +35,7 @@ const getErrorContent = (error: keyof typeof AddCollaboratorError) => {
 };
 
 const ErrorBanner = ({ error }: { error: keyof typeof AddCollaboratorError }) => (
-  <Notification variant="ERROR" {...getErrorContent(error)} />
+  <Banner variant="ERROR" {...getErrorContent(error)} />
 );
 
 export default ErrorBanner;

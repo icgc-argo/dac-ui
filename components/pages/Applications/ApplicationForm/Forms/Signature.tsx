@@ -61,6 +61,7 @@ const Signature = ({
 
   const { fetchWithAuth } = useAuthContext();
   const [pdfIsLoading, setPdfIsLoading] = useState(false);
+  const [isUploadInProgress, setUploadInProgress] = useState(false);
 
   const fileInputRef = React.createRef<HTMLInputElement>();
 
@@ -93,6 +94,7 @@ const Signature = ({
     const file = e.target.files?.[0];
 
     if (file && file.size <= MAX_FILE_SIZE && VALID_FILE_TYPE.includes(file.type)) {
+      setUploadInProgress(true);
       const formData = new FormData();
       formData.append('file', file);
       fetchWithAuth({
@@ -108,6 +110,9 @@ const Signature = ({
         )
         .catch((err: AxiosError) => {
           console.error('File failed to upload.', err);
+        })
+        .finally(() => {
+          setUploadInProgress(false);
         });
     } else {
       console.warn('invalid file');
@@ -263,9 +268,7 @@ const Signature = ({
       </section>
 
       <section>
-        <SectionTitle>
-          UPLOAD SIGNED APPLICATION
-        </SectionTitle>
+        <SectionTitle>UPLOAD SIGNED APPLICATION</SectionTitle>
         <FormControl required>
           <InputLabel
             htmlFor="signedApplication"
@@ -337,6 +340,8 @@ const Signature = ({
                   margin-right: 70px;
                   margin-left: 20px;
                 `}
+                isLoading={isUploadInProgress}
+                Loader={(props: any) => <CustomLoadingButton text="Upload a file" {...props} />}
               >
                 <input
                   ref={fileInputRef}
