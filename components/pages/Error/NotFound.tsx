@@ -26,7 +26,7 @@ import Image from 'next/image';
 import Link from '@icgc-argo/uikit/Link';
 
 export default function NotFound() {
-  const { ARGO_DOCS_ROOT = '' } = getConfig();
+  const { NEXT_PUBLIC_ARGO_DOCS_ROOT = '' } = getConfig();
   return (
     <ErrorLayout>
       <Row
@@ -64,7 +64,7 @@ export default function NotFound() {
           </Typography>
           <Typography variant="subtitle2">
             Check out our{' '}
-            <Link target="_blank" href={ARGO_DOCS_ROOT}>
+            <Link target="_blank" href={NEXT_PUBLIC_ARGO_DOCS_ROOT}>
               <a>Documentation</a>
             </Link>{' '}
             or head back <Link href="/">Home</Link>.

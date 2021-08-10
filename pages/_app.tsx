@@ -19,7 +19,7 @@ const App = ({
   ctx: NextPageContext;
 }) => {
   const [initialJwt, setInitialJwt] = useState<string>('');
-  const { MAINTENANCE_MODE_ON } = getConfig();
+  const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
 
   useEffect(() => {
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
@@ -39,7 +39,7 @@ const App = ({
   });
   return (
     <Root egoJwt={initialJwt} pageContext={ctx}>
-      {MAINTENANCE_MODE_ON ? <Maintenance /> : <Component {...pageProps} />}
+      {NEXT_PUBLIC_MAINTENANCE_MODE_ON ? <Maintenance /> : <Component {...pageProps} />}
     </Root>
   );
 };
