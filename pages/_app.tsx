@@ -36,14 +36,14 @@ const App = ({
   const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
 
   useEffect(() => {
-    console.log('🏎 START USE EFFECT');
+    console.log('🏎 START USE EFFECT, initialJwt:', initialJwt.substring(0, 10));
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
-    console.log('🎟 EGO JWT', egoJwt)
+    console.log('🎟 EGO JWT:', egoJwt.substring(0, 10))
     if (isValidJwt(egoJwt)) {
-      console.log('✅ INITIAL TOKEN WAS VALID');
+      console.log('✅ INITIAL EGO_JWT WAS VALID:', egoJwt.substring(0, 10));
       setInitialJwt(egoJwt);
     } else if (egoJwt) {
-      console.log('❌ INITIAL TOKEN INVALID');
+      console.log('❌ INITIAL EGO_JWT INVALID, ATTEMPTING REFRESH:', egoJwt.substring(0, 10));
       const forceLogout = () => {
         console.log('💀 FORCE LOGOUT');
         setInitialJwt('');
@@ -68,19 +68,26 @@ const App = ({
           .then(res => res.text())
           .then(newJwt => {
             if (isValidJwt(newJwt)) {
-              console.log('🎉 REFRESH VALID', newJwt);
+              console.log('🎉 REFRESH VALID:', newJwt.substring(0, 10));
               setInitialJwt(newJwt);
               localStorage.setItem(EGO_JWT_KEY, newJwt);
             } else {
-              console.log('💥 REFRESH WASN\'T VALID', newJwt);
+              console.log('💥 REFRESH WASN\'T VALID:', newJwt.substring(0, 10));
               forceLogout();
             }
           })
           .catch((err) => {
-            console.log('🧤 CATCH', err);
+            console.log('🧤 CATCH:', err);
             forceLogout();
           })
       );
+    } else {
+      console.log('💫 NO INITIAL EGO_JWT FOUND');
+      if (!Component.isPublic) {
+        Router.push({
+          pathname: '/',
+        });
+      }
     }
   });
 
