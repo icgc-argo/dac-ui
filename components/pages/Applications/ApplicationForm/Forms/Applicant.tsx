@@ -263,7 +263,9 @@ const Applicant = ({
             name="address_country"
             onChange={validateFieldTouched}
             onBlur={validateFieldTouched}
+            placeholder={false}
             single
+            size="sm"
             value={localState.address_country?.value ? [localState.address_country?.value] : []}
           >
             {countriesList.map(({ name }) => (

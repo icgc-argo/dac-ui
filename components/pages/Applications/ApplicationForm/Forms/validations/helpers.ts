@@ -187,8 +187,9 @@ export const getValueByFieldTypeToPublish = (
       return null;
     }
 
-    case 'string':
+    case 'string': {
       return { [fieldName]: fieldNameInner ? { [fieldNameInner]: value } : value };
+    }
 
     default:
       console.info('unable to get value at getValueByFieldTypeToPublish', field, type);
@@ -281,7 +282,7 @@ export const transformContriesToSelectOptions = (countriesList: CountryNamesAndA
 
 export const transformContriesToValidationOptions = (
   countriesList: CountryNamesAndAbbreviations[],
-) => countriesList.map(({ name }: CountryNamesAndAbbreviations) => name);
+) => countriesList.map(({ name }: CountryNamesAndAbbreviations) => name).concat('');
 
 export const transformToSelectOptions = (list: Array<string | number>) => [
   { content: '-- Select an option --', value: ' ' },
