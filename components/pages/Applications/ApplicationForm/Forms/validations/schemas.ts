@@ -3,6 +3,7 @@ import { countriesList } from '../constants';
 import { FormSectionNames } from '../types';
 import { transformContriesToValidationOptions, maxWords, uniquePublicationURLs } from './helpers';
 
+export const countryNameMsg = 'Please select a country from the list.';
 export const requiredMsg = 'Please fill out the required field.';
 export const textareaLimit = 200;
 
@@ -13,8 +14,7 @@ yup.setLocale({
   },
   string: {
     email: 'Please enter a valid email address.',
-    url:
-      'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
+    url: 'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
     min: '${label} must be at least ${min} characters.',
   },
   number: {
@@ -43,7 +43,7 @@ export const applicantSchema = yup.object().shape({
     .string()
     .default('')
     .trim()
-    .oneOf(transformContriesToValidationOptions(countriesList))
+    .oneOf(transformContriesToValidationOptions(countriesList), countryNameMsg)
     .required(),
   address_postalCode: yup.string().default('').trim().required(),
   address_streetAddress: yup.string().default('').trim().required(),
@@ -182,7 +182,7 @@ export const representativeSchema = yup.object().shape({
     .string()
     .default('')
     .trim()
-    .oneOf(transformContriesToValidationOptions(countriesList))
+    .oneOf(transformContriesToValidationOptions(countriesList), countryNameMsg)
     .required(),
   address_postalCode: yup.string().default('').trim().required(),
   address_streetAddress: yup.string().default('').trim().required(),

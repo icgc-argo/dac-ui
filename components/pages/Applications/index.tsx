@@ -2,10 +2,10 @@ import { ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 
-import DefaultPageLayout from 'components/DefaultPageLayout';
 import Loader from 'components/Loader';
 import { useAuthContext } from 'global/hooks';
 import { hasDacoScope, isDacoAdmin } from 'global/utils/egoTokenUtils';
+import { PageHead } from 'components/Head';
 
 const ApplicationForm = dynamic(() => import('./ApplicationForm'), { loading: Loader });
 const ManageApplications = dynamic(() => import('./ManageApplications'), { loading: Loader });
@@ -30,17 +30,19 @@ const Application = (): ReactElement => {
   const pageTitle = normalisedAppId || 'Application page';
 
   return (
-    <DefaultPageLayout title={pageTitle}>
-      {isLoading ? (
-        <Loader />
-      ) : appId ? (
-        <ApplicationForm appId={normalisedAppId} isAdmin={isAdmin} />
-      ) : isAdmin ? (
-        <ManageApplications />
-      ) : (
-        <Dashboard hasDacoAccess={hasDacoAccess} />
-      )}
-    </DefaultPageLayout>
+    <>
+      <PageHead title={pageTitle} />
+      {
+        isLoading ? (
+          <Loader />
+        ) : appId ? (
+          <ApplicationForm appId={normalisedAppId} isAdmin={isAdmin} />
+        ) : isAdmin ? (
+          <ManageApplications />
+        ) : (
+          <Dashboard hasDacoAccess={hasDacoAccess} />
+        )
+      }</>
   );
 };
 

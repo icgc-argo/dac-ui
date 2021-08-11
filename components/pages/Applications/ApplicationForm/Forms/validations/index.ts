@@ -415,10 +415,19 @@ export const validator: FormSectionValidatorFunction_Main =
               },
             }).then(({ data, ...response } = {} as AxiosResponse<any>) => {
               data
-                ? dispatch({
+                ? (!['', SECTION_STATUS.INCOMPLETE, SECTION_STATUS.PRISTINE].includes(
+                    data.sections[origin].meta.status || '',
+                  ) &&
+                    dispatch({
+                      field: 'showOverall',
+                      section: origin,
+                      type: 'sectionOverall',
+                      value: true,
+                    }),
+                  dispatch({
                     type: 'updating',
                     value: data,
-                  })
+                  }))
                 : console.error(
                     'Something went wrong updating the application form',
                     response || 'no data in response',
@@ -623,33 +632,28 @@ export const useLocalValidation = (
 
       switch (eventType) {
         case 'blur': {
-          const canBlur = !(
-            ['text'].includes(fieldType) &&
-            ['address_country'].includes(fieldName) &&
-            localState[sectionName]?.fields[fieldName]?.value
+          const shouldPersistData =
+            !!fieldType &&
+            ['select-one', 'text', 'textarea'].includes(fieldType) &&
+            fieldsTouched.has(field) &&
+            value !==
+              (fieldIndex
+                ? storedFields[fieldName]?.value?.[fieldIndex]
+                : storedFields[fieldName]?.value);
+
+          const valueIsText = ['select-one', 'text'].includes(fieldType);
+
+          const changes = await fieldValidator(
+            field,
+            valueIsText ? (value || '').trim() : value,
+            shouldPersistData,
           );
 
-          if (canBlur) {
-            const shouldPersistData =
-              !!fieldType &&
-              ['select-one', 'text', 'textarea'].includes(fieldType) &&
-              fieldsTouched.has(field) &&
-              value !==
-                (fieldIndex
-                  ? storedFields[fieldName]?.value?.[fieldIndex]
-                  : storedFields[fieldName]?.value);
-
-            const trimmedValue = ['text'].includes(fieldType) && value.trim();
-
-            const changes = await fieldValidator(field, trimmedValue || value, shouldPersistData);
-
-            changes && updateLocalState(changes);
-          }
+          changes && updateLocalState(changes);
           break;
         }
 
-        case 'change':
-        case 'mousedown': {
+        case 'change': {
           if ('text' === fieldType) {
             updateLocalState({
               field,
@@ -685,6 +689,11 @@ export const useLocalValidation = (
 
         case 'focus': {
           ['select-one'].includes(fieldType) && setFieldTouched((prev) => new Set(prev.add(field)));
+          break;
+        }
+
+        case 'keydown': {
+          // do nothing, triggered by 'select-one' (e.g. country);
           break;
         }
 

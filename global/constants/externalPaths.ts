@@ -2,12 +2,7 @@ import { AppendixEnum } from 'components/pages/Applications/types';
 import { getConfig } from 'global/config';
 import urlJoin from 'url-join';
 
-const {
-  NEXT_PUBLIC_ARGO_DOCS_ROOT,
-  NEXT_PUBLIC_ARGO_ROOT,
-  NEXT_PUBLIC_ARGO_PLATFORM_ROOT,
-  NEXT_PUBLIC_DAC_API_ROOT,
-} = getConfig();
+const { NEXT_PUBLIC_ARGO_ROOT, NEXT_PUBLIC_ARGO_PLATFORM_ROOT } = getConfig();
 
 export const DACO_ROOT = 'https://daco.icgc-argo.org';
 export const ARGO_ROOT = NEXT_PUBLIC_ARGO_PLATFORM_ROOT;
