@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/core';
 import ReactDOM from 'react-dom';
 
@@ -89,6 +89,15 @@ const Root = ({
   pageContext: any;
   egoJwt?: string;
 }) => {
+  // const [tokenState, setTokenState] = useState<string>('');
+  // useEffect(() => {
+  //   // add JWT to Root's state so that AuthProvider will receive updated props.
+  //   setTokenState(egoJwt);
+  // }, [egoJwt]);
+
+  // console.log('🌴 Root - egoJwt (prop):', egoJwt.slice(-10));
+  // console.log('🌴 Root - tokenState (state):', tokenState.slice(-10));
+
   return (
     <React.Fragment>
       <style>

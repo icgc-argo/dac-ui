@@ -75,7 +75,7 @@ const App = ({
               setInitialJwt(refreshedJwt);
               localStorage.setItem(EGO_JWT_KEY, refreshedJwt);
             } else {
-              console.log('💥 _app - refresh token NOT valid:', refreshedJwt.slice(-10));
+              console.log('💥 _app - refresh token NOT valid:', refreshedJwt);
               logoutToHomepage();
             }
           })
