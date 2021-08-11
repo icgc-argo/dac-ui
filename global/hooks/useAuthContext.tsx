@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import { useRouter } from 'next/router';
+import Queue from 'promise-queue';
+import urlJoin from 'url-join';
 import { EGO_JWT_KEY } from '../constants';
 import {
   decodeToken,
@@ -10,6 +12,8 @@ import {
 import { UserWithId } from '../types';
 import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
+
+const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
 
 type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
@@ -29,6 +33,14 @@ const axiosInstance = axios.create({
     }
   }
 });
+
+var maxConcurrent = 1;
+var maxQueue = Infinity;
+var queue = new Queue(maxConcurrent, maxQueue);
+const refreshUrl = urlJoin(
+  NEXT_PUBLIC_EGO_API_ROOT,
+  `/oauth/refresh?client_id=${NEXT_PUBLIC_EGO_CLIENT_ID}`
+);
 
 const AuthContext = createContext<T_AuthContext>({
   cancelFetchWithAuth: () => { },
@@ -55,6 +67,7 @@ export const AuthProvider = ({
   const router = useRouter();
 
   const removeToken = () => {
+    console.log('☠️ fetch - logout');
     localStorage.removeItem(EGO_JWT_KEY);
     setTokenState('');
   };
@@ -63,6 +76,47 @@ export const AuthProvider = ({
     removeToken();
     router.push('/?session_expired=true');
   };
+
+  // TODO refresh token here!
+  console.log('🎫 fetch - egoJwt (prop):', egoJwt.slice(-10));
+  console.log('🎫 fetch - token (state):', token.slice(-10));
+
+  if (token) {
+    if (!isValidJwt(token)) {
+      if (egoJwt && token === egoJwt) {
+        console.log('🌀 fetch - try to get refresh token:', token.slice(-10));
+        queue.add(() =>
+          fetch(refreshUrl, {
+            credentials: 'include', // sends refreshId cookie
+            headers: {
+              accept: '*/*',
+              authorization: `Bearer ${token}`,
+            },
+            method: 'POST',
+          })
+            .then(res => res.text())
+            .then(refreshedJwt => {
+              if (isValidJwt(refreshedJwt)) {
+                console.log('🎉 fetch - refresh token IS valid:', refreshedJwt.slice(-10));
+                setTokenState(refreshedJwt);
+                localStorage.setItem(EGO_JWT_KEY, refreshedJwt);
+              } else {
+                console.log('💥 fetch - refresh token NOT valid:', refreshedJwt.slice(-10));
+                logout();
+              }
+            })
+            .catch((err) => {
+              console.log('🧤 fetch - refresh token error:', err);
+              logout();
+            })
+        );
+      }
+    } else if (!egoJwt) {
+      setTokenState('');
+    }
+  } else if (isValidJwt(egoJwt)) {
+    setTokenState(egoJwt);
+  }
 
   if (token) {
     if (!isValidJwt(token)) {

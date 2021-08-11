@@ -50,7 +50,7 @@ const App = ({
 
   useEffect(() => {
     console.log('🏎 _app - start useEffect - initialJwt in state:', initialJwt.slice(-10));
-    if (ctx.asPath?.includes(LOGGED_IN_PATH)) return;
+    if (ctx.asPath?.includes(LOGGED_IN_PATH)) return; // logged-in page handles its own auth
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
     console.log('🎟 _app - initial localStorage JWT:', egoJwt.slice(-10));
     if (isValidJwt(egoJwt)) {
