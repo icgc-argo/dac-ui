@@ -692,6 +692,11 @@ export const useLocalValidation = (
           break;
         }
 
+        case 'keydown': {
+          // do nothing, triggered by 'select-one' (e.g. country);
+          break;
+        }
+
         default: {
           console.info('unhandled Field event', event);
           break;

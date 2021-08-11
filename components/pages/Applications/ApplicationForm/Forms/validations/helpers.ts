@@ -188,9 +188,7 @@ export const getValueByFieldTypeToPublish = (
     }
 
     case 'string': {
-      const newStr = value || '';
-
-      return { [fieldName]: fieldNameInner ? { [fieldNameInner]: newStr } : newStr };
+      return { [fieldName]: fieldNameInner ? { [fieldNameInner]: value } : value };
     }
 
     default:
