@@ -3,11 +3,14 @@ import { AnyObject } from 'yup/lib/types';
 
 // locale-customised import
 import yup from './schemas';
+import { applicantFieldNames } from '../constants';
 import {
   CountryNamesAndAbbreviations,
   EVENT_TARGET_TAGS,
   FormFieldDataFromEvent,
   FormFieldType,
+  FormSectionNames,
+  FormSectionValidationState_Applicant,
   FormValidationAction,
   FormValidationStateParameters,
 } from '../types';
@@ -313,14 +316,45 @@ export const uniquePublicationURLs = {
   },
 };
 
-export const checkMatchingPrimaryAffiliation = (
+export const checkMatchingApplicant = (
+  origin: FormSectionNames,
+  field: string,
   value: string,
-  applicantPrimaryAffiliation: string,
-) =>
-  value &&
-  applicantPrimaryAffiliation &&
-  value.trim() !== applicantPrimaryAffiliation && {
-    error: [
-      `Primary Affiliation must be the same as the Applicant: ${applicantPrimaryAffiliation}`,
-    ],
-  };
+  applicantData: FormSectionValidationState_Applicant,
+) => {
+  if (value) {
+    switch (true) {
+      case field.includes(applicantFieldNames.AFFILIATION): {
+        const applicantValue = applicantData[applicantFieldNames.AFFILIATION]?.value;
+
+        return (
+          applicantValue &&
+          value.trim() !== applicantValue && {
+            error: [`Primary Affiliation must be the same as the Applicant: ${applicantValue}`],
+          }
+        );
+      }
+
+      case field.includes(applicantFieldNames.EMAIL):
+      case field.includes(applicantFieldNames.GMAIL): {
+        if (['collaborators'].includes(origin)) {
+          const applicantEmail = applicantData[applicantFieldNames.EMAIL]?.value;
+          const applicantGmail = applicantData[applicantFieldNames.GMAIL]?.value;
+
+          return (
+            (applicantEmail || applicantGmail) &&
+            [applicantEmail, applicantGmail].includes(value.trim()) && {
+              error: ['The applicant does not need to be added as a collaborator'],
+            }
+          );
+        }
+      }
+
+      default: {
+        return false;
+      }
+    }
+  }
+};
+
+// The applicant does not need to be added as a collaborator
