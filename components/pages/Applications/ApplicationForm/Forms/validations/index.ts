@@ -632,30 +632,28 @@ export const useLocalValidation = (
 
       switch (eventType) {
         case 'blur': {
-          const canBlur = !['address_country'].includes(fieldName);
+          const shouldPersistData =
+            !!fieldType &&
+            ['select-one', 'text', 'textarea'].includes(fieldType) &&
+            fieldsTouched.has(field) &&
+            value !==
+              (fieldIndex
+                ? storedFields[fieldName]?.value?.[fieldIndex]
+                : storedFields[fieldName]?.value);
 
-          if (canBlur) {
-            const shouldPersistData =
-              !!fieldType &&
-              ['select-one', 'text', 'textarea'].includes(fieldType) &&
-              fieldsTouched.has(field) &&
-              value !==
-                (fieldIndex
-                  ? storedFields[fieldName]?.value?.[fieldIndex]
-                  : storedFields[fieldName]?.value);
+          const valueIsText = ['select-one', 'text'].includes(fieldType);
 
-            const trimmedValue = ['text'].includes(fieldType) && value.trim();
+          const changes = await fieldValidator(
+            field,
+            valueIsText ? (value || '').trim() : value,
+            shouldPersistData,
+          );
 
-            const changes = await fieldValidator(field, trimmedValue || value, shouldPersistData);
-
-            changes && updateLocalState(changes);
-          }
+          changes && updateLocalState(changes);
           break;
         }
 
-        case 'change':
-        case 'mousedown':
-        case 'keydown': {
+        case 'change': {
           if ('text' === fieldType) {
             updateLocalState({
               field,

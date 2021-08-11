@@ -284,7 +284,7 @@ export const transformContriesToSelectOptions = (countriesList: CountryNamesAndA
 
 export const transformContriesToValidationOptions = (
   countriesList: CountryNamesAndAbbreviations[],
-) => countriesList.map(({ name }: CountryNamesAndAbbreviations) => name);
+) => countriesList.map(({ name }: CountryNamesAndAbbreviations) => name).concat('');
 
 export const transformToSelectOptions = (list: Array<string | number>) => [
   { content: '-- Select an option --', value: ' ' },
