@@ -248,6 +248,7 @@ const Representative = ({
             name="address_country"
             onChange={validateFieldTouched}
             onBlur={validateFieldTouched}
+            placeholder={false}
             single
             size="sm"
             value={addressState.address_country?.value ? [addressState.address_country?.value] : []}
