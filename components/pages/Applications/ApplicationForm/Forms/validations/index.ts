@@ -518,14 +518,6 @@ export const useLocalValidation = (
       fields: storedFields,
     },
   } as FormValidationState_AllSectionsObj);
-  const [fieldsTouched, setFieldTouched] = useState(
-    new Set<string>(
-      Object.entries(storedFields).reduce(
-        (acc: string[], [field, data]) => (data?.value ? [...acc, field] : acc),
-        [],
-      ),
-    ),
-  );
   const currentFields = localState[sectionName]?.fields || {};
 
   useEffect(() => {
@@ -554,10 +546,6 @@ export const useLocalValidation = (
       const currentSectionFields = currentSectionData?.fields;
       const currentField = currentSectionFields[fieldName];
       const oldValue = currentField.value;
-
-      fieldOverride === 'remove' ||
-        fieldsTouched.has(field) ||
-        setFieldTouched((prev) => new Set(prev.add(field)));
 
       const newState = {
         ...localState,
@@ -632,14 +620,18 @@ export const useLocalValidation = (
 
       switch (eventType) {
         case 'blur': {
+          const fieldValue = storedFields[fieldName]?.value;
+          const fieldValueAtIndex = fieldIndex && fieldValue?.[fieldIndex];
+
           const shouldPersistData =
             !!fieldType &&
             ['select-one', 'text', 'textarea'].includes(fieldType) &&
-            fieldsTouched.has(field) &&
             value !==
-              (fieldIndex
-                ? storedFields[fieldName]?.value?.[fieldIndex]
-                : storedFields[fieldName]?.value);
+              (fieldValueAtIndex
+                ? fieldValueAtIndex.hasOwnProperty('value')
+                  ? fieldValueAtIndex.value
+                  : fieldValueAtIndex
+                : fieldValue);
 
           const valueIsText = ['select-one', 'text'].includes(fieldType);
 
@@ -664,12 +656,6 @@ export const useLocalValidation = (
                 : value,
             } as FormValidationAction);
           } else if ('remove' === fieldType) {
-            fieldIndex &&
-              setFieldTouched((prev) => {
-                prev.delete(field.replace('--remove', ''));
-                return new Set(prev);
-              });
-
             const changes = await fieldValidator(field, null, !!'remove');
 
             changes && updateLocalState(changes);
@@ -687,12 +673,9 @@ export const useLocalValidation = (
           break;
         }
 
-        case 'focus': {
-          ['select-one'].includes(fieldType) && setFieldTouched((prev) => new Set(prev.add(field)));
-          break;
-        }
-
-        case 'keydown': {
+        case 'focus':
+        case 'keydown':
+        case 'mousedown': {
           // do nothing, triggered by 'select-one' (e.g. country);
           break;
         }

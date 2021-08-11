@@ -205,7 +205,11 @@ export const getValueByFieldTypeToValidate = (
   switch (type) {
     case 'array': {
       const fieldValues =
-        meta?.shape !== 'modal' ? value?.map(getValueByFieldTypeToValidate) : value;
+        meta?.shape === 'modal'
+          ? value
+          : (meta?.shape === 'publicationURLsArray' ? Object.values(value) : value)?.map(
+              getValueByFieldTypeToValidate,
+            );
 
       return fieldValues?.filter((item: any) => item).length > 0 ? fieldValues : null;
     }
