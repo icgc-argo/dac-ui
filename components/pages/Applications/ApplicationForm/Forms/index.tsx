@@ -44,11 +44,11 @@ const ApplicationFormsBase = ({
   const theme: UikitTheme = useTheme();
 
   const triggerSectionValidation = useCallback(
-    (trigger: FormSectionValidationTriggerReasons) =>
+    (trigger: FormSectionValidationTriggerReasons, section: FormSectionNames) =>
       ['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
-        formState.sections[selectedSection]?.meta.overall || '',
-      ) || validateSection(selectedSection, trigger)(),
-    [formState, selectedSection],
+        formState.sections[section]?.meta.overall || '',
+      ) || validateSection(section, trigger)(),
+    [formState],
   );
 
   useEffect(() => {
@@ -66,13 +66,23 @@ const ApplicationFormsBase = ({
 
     // avoid validating a section that has already been validated.
     formState.sections[selectedSection]?.meta.validated ||
-      triggerSectionValidation('initialValidation');
+      triggerSectionValidation('initialValidation', selectedSection);
   }, [formState.sections[selectedSection], selectedSection]);
 
   useEffect(() => {
     if (formState.lastUpdatedAtUtc) {
       setLastUpdated(formState.lastUpdatedAtUtc);
     }
+
+    selectedSection === 'collaborators'
+      ? formState.sections[selectedSection]?.meta.showOverall ||
+        triggerSectionValidation('notShowingOverall', selectedSection)
+      : sectionsOrder.forEach(
+          (section) =>
+            // validates all other section that doen't already show overall status.
+            !(formState.sections[section]?.meta.showOverall || selectedSection === section) &&
+            triggerSectionValidation('notShowingOverall', section),
+        );
   }, [formState.lastUpdatedAtUtc]);
 
   const sectionIndex = sectionsOrder.indexOf(selectedSection);
@@ -86,7 +96,7 @@ const ApplicationFormsBase = ({
 
         // only validates a section that doesn't already show its overall status.
         formState.sections[selectedSection]?.meta.showOverall ||
-          triggerSectionValidation('notShowingOverall');
+          triggerSectionValidation('notShowingOverall', selectedSection);
       }
     },
     [selectedSection, formState],
