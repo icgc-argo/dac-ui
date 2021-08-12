@@ -6,7 +6,7 @@ import { AuthAPIFetchFunction } from 'components/pages/Applications/types';
 import { API } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
 
-import { sectionsOrder, sectionStatusMapping } from '../constants';
+import { applicantFieldNames, sectionsOrder, sectionStatusMapping } from '../constants';
 import {
   FormFieldType,
   FormSectionNames,
@@ -24,7 +24,7 @@ import {
 import {
   getFieldDataFromEvent,
   getValueByFieldTypeToPublish,
-  checkMatchingPrimaryAffiliation,
+  checkMatchingApplicant,
   schemaValidator,
   sectionFieldsSeeder,
   getValueByFieldTypeToValidate,
@@ -240,9 +240,8 @@ export const validator: FormSectionValidatorFunction_Main =
   (formState, dispatch, apiFetcher) =>
   (origin, reasonToValidate) =>
   async (field, value, shouldPersistResults) => {
-    const applicantPrimaryAffiliation =
-      formState.sections.applicant.fields.info_primaryAffiliation.value;
     const validatingApplicant = origin === 'applicant';
+    const applicantData = formState.sections.applicant.fields;
 
     if (reasonToValidate) {
       dispatch({
@@ -257,8 +256,6 @@ export const validator: FormSectionValidatorFunction_Main =
 
         if (!isNull(fieldValue)) {
           if (reasonToValidate === 'notShowingOverall') return fieldValue;
-
-          const validatingPrimaryAffiliation = field.includes('info_primaryAffiliation');
           const [fieldName, fieldIndex, fieldOverride] = field.split('--');
 
           const { error } = await schemaValidator(
@@ -290,8 +287,7 @@ export const validator: FormSectionValidatorFunction_Main =
             ...(error
               ? { error }
               : !validatingApplicant &&
-                validatingPrimaryAffiliation &&
-                checkMatchingPrimaryAffiliation(data.value, applicantPrimaryAffiliation)),
+                checkMatchingApplicant(origin, field, data.value, applicantData)),
           } as FormValidationAction;
 
           dispatch(results);
@@ -314,7 +310,6 @@ export const validator: FormSectionValidatorFunction_Main =
           value &&
           Object.keys(formState.sections[origin].fields[fieldName].innerType?.fields).reduce(
             (acc, innerField) => {
-              const validatingPrimaryAffiliation = innerField.includes('primaryAffiliation');
               const [fieldNamePrefix, fieldNameSuffix] = innerField.split('_');
               const innerValue = fieldNameSuffix
                 ? value[fieldNamePrefix][fieldNameSuffix]
@@ -328,8 +323,7 @@ export const validator: FormSectionValidatorFunction_Main =
               const validationResult = error
                 ? { error }
                 : !validatingApplicant &&
-                  validatingPrimaryAffiliation &&
-                  checkMatchingPrimaryAffiliation(innerValue, applicantPrimaryAffiliation);
+                  checkMatchingApplicant(origin, innerField, innerValue, applicantData);
 
               return {
                 ...acc,
@@ -347,12 +341,14 @@ export const validator: FormSectionValidatorFunction_Main =
           error,
         });
       } else {
-        const validatingPrimaryAffiliation = field.includes('info_primaryAffiliation');
-
         if (
           validatingApplicant &&
-          validatingPrimaryAffiliation &&
-          applicantPrimaryAffiliation !== value
+          ((field.includes(applicantFieldNames.AFFILIATION) &&
+            value !== applicantData[applicantFieldNames.AFFILIATION]) ||
+            (field.includes(applicantFieldNames.EMAIL) &&
+              value !== applicantData[applicantFieldNames.EMAIL]) ||
+            (field.includes(applicantFieldNames.GMAIL) &&
+              value !== applicantData[applicantFieldNames.GMAIL]))
         ) {
           dispatch({
             field: 'validated',
@@ -377,9 +373,7 @@ export const validator: FormSectionValidatorFunction_Main =
         const nextValue = {
           ...(error
             ? { error }
-            : !validatingApplicant &&
-              validatingPrimaryAffiliation &&
-              checkMatchingPrimaryAffiliation(value, applicantPrimaryAffiliation)),
+            : !validatingApplicant && checkMatchingApplicant(origin, field, value, applicantData)),
           value,
         };
 
@@ -645,7 +639,8 @@ export const useLocalValidation = (
           break;
         }
 
-        case 'change': {
+        case 'change':
+        case 'mousedown': {
           if ('text' === fieldType) {
             updateLocalState({
               field,
@@ -661,12 +656,10 @@ export const useLocalValidation = (
             changes && updateLocalState(changes);
           } else if (fieldType.includes('Modal')) {
             fieldValidator(field, value);
-          } else {
-            const shouldPersistData = ['checkbox', 'radio', 'select-one'].includes(fieldType);
-            const checkMultiSelectValue =
-              fieldType === 'select-one' && Array.isArray(value) ? value[0] : value;
+          } else if (fieldType !== 'select-one') {
+            const shouldPersistData = ['checkbox', 'radio'].includes(fieldType);
 
-            const changes = await fieldValidator(field, checkMultiSelectValue, shouldPersistData);
+            const changes = await fieldValidator(field, value, shouldPersistData);
 
             changes && updateLocalState(changes);
           }
@@ -674,8 +667,7 @@ export const useLocalValidation = (
         }
 
         case 'focus':
-        case 'keydown':
-        case 'mousedown': {
+        case 'keydown': {
           // do nothing, triggered by 'select-one' (e.g. country);
           break;
         }

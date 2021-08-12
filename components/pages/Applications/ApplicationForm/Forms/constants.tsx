@@ -309,3 +309,9 @@ export const sectionStatusMapping: SectionStatusMapping = {
   'REVISIONS REQUESTED': 'mustEdit',
   'REVISIONS REQUESTED DISABLED': 'revisionsRequestedDisabled',
 };
+
+export const applicantFieldNames = {
+  AFFILIATION: 'info_primaryAffiliation',
+  EMAIL: 'info_institutionEmail',
+  GMAIL: 'info_googleEmail',
+};
