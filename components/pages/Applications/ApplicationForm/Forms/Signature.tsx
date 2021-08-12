@@ -59,6 +59,8 @@ const Signature = ({
   const [isModalVisible, setModalVisible] = useState(false);
   const dismissModal = () => setModalVisible(false);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const { fetchWithAuth } = useAuthContext();
   const [pdfIsLoading, setPdfIsLoading] = useState(false);
   const [isUploadInProgress, setUploadInProgress] = useState(false);
@@ -74,6 +76,7 @@ const Signature = ({
   };
 
   const submit = () => {
+    setIsSubmitting(true);
     fetchWithAuth({
       data: {
         state: 'REVIEW',
@@ -87,7 +90,10 @@ const Signature = ({
       .catch((err: AxiosError) => {
         console.error('Failed to submit.', err);
       })
-      .finally(() => setModalVisible(false));
+      .finally(() => {
+        setModalVisible(false);
+        setIsSubmitting(false);
+      });
   };
 
   const handleFileUpload = (e: any) => {
@@ -385,10 +391,35 @@ const Signature = ({
         <ModalPortal>
           <Modal
             title="Are you sure you want to submit this application?"
-            onCancelClick={dismissModal}
             onCloseClick={dismissModal}
-            actionButtonText="Yes, Submit"
-            onActionClick={submit}
+            FooterEl={() => (
+              <div
+                css={css`
+                  display: flex;
+                  flex-direction: row;
+                `}
+              >
+                <Button
+                  size="md"
+                  onClick={submit}
+                  Loader={(props: any) => <CustomLoadingButton text="Yes, Submit" {...props} />}
+                  isLoading={isSubmitting}
+                >
+                  Yes, Submit
+                </Button>
+
+                <Button
+                  variant="text"
+                  css={css`
+                    margin-left: 10px;
+                  `}
+                  size="md"
+                  onClick={dismissModal}
+                >
+                  Cancel
+                </Button>
+              </div>
+            )}
           >
             <div
               css={css`
