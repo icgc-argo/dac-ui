@@ -17,7 +17,7 @@ export const createLoginRedirectURL = ({
   path: string;
   query?: string;
 }): string => {
-  if (['/', 'undefined'].includes(path)) {
+  if (['/', 'undefined', APPLICATIONS_PATH].includes(path)) {
     return '';
   }
   const mergedQuery = `?${query ? `${query}&` : ''}${OAUTH_QUERY_PARAM_NAME}=true`;

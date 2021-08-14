@@ -144,7 +144,7 @@ const LoginButton = () => {
         query: existingQuery,
       });
       setLoginPath(urlJoin(EGO_LOGIN_URL, queryRedirect));
-    } else if (path === '/') {
+    } else if (path === '/' || path === APPLICATIONS_PATH) {
       setLoginPath(EGO_LOGIN_URL);
     } else {
       const queryString = path.split('?')[1] || '';
