@@ -8,50 +8,39 @@ import { isValidJwt } from 'global/utils/egoTokenUtils';
 import Router from 'next/router';
 import Maintenance from 'components/pages/Error/Maintenance';
 import { getConfig } from 'global/config';
-
-// * login redirect
 import queryString from 'query-string';
 import { get, omit } from 'lodash';
 import { OAUTH_QUERY_PARAM_NAME } from 'global/utils/authUtils';
 import urlJoin from 'url-join';
 import { css } from '@emotion/core';
 import DnaLoader from '@icgc-argo/uikit/DnaLoader';
-// import { fetchEgoToken } from 'pages/logged-in';
 
-// * login redirect
 const redirectTo = (url: string) => {
-  console.log('🏠 app - redirectTo()', url);
   Router.push(url);
 };
 
-// * login redirect
 const makeRedirectPath = (ctxAsPath: string | undefined): string => {
   const path = ctxAsPath ? `/?redirect=${encodeURI(ctxAsPath)}` : '/';
-  console.log('🏠 app - makeRedirectPath()', path);
   return path;
 };
 
-// * login redirect
+
 const enforceLogin = ({ ctx }: { ctx: NextPageContext }) => {
   const loginRedirect = makeRedirectPath(ctx.asPath);
-  console.log('🏠 app - enforceLogin()', ctx.res, loginRedirect)
   redirectTo(loginRedirect);
 };
 
-// * login redirect
+
 const checkOauthMode = (ctx: any) => {
-  console.log('🏠 checkOauthMode', ctx);
   if (get(ctx?.query, 'redirect')) {
     const parsed = queryString.parseUrl(decodeURIComponent(ctx.query.redirect));
-    console.log('🏠 app - isInOauthMode', parsed, get(parsed.query, OAUTH_QUERY_PARAM_NAME) === 'true')
     return get(parsed.query, OAUTH_QUERY_PARAM_NAME) === 'true';
   } else {
-    console.log('🏠 app - not in Oauth mode');
     return false;
   }
 };
 
-// * login redirect
+
 const fetchEgoToken = (target: string = '', setInitialJwt?: any) => {
   const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
   const egoLoginUrl = urlJoin(
@@ -66,14 +55,12 @@ const fetchEgoToken = (target: string = '', setInitialJwt?: any) => {
     method: 'POST',
   })
     .then((res) => {
-      console.log('🏠 res', res)
       if (res.status !== 200) {
         throw new Error();
       }
       return res.text();
     })
     .then((jwt) => {
-      console.log('🏠 jwt', jwt)
       if (isValidJwt(jwt)) {
         setInitialJwt(jwt);
         return localStorage.setItem(EGO_JWT_KEY, jwt);
@@ -82,7 +69,6 @@ const fetchEgoToken = (target: string = '', setInitialJwt?: any) => {
     })
     .then(() => Router.push(target))
     .catch((err) => {
-      console.log({ err })
       console.warn(err);
       localStorage.removeItem(EGO_JWT_KEY);
       Router.push('/');
@@ -98,25 +84,13 @@ const App = ({
   pageProps: PageConfigProps;
   ctx: NextPageContext;
 }) => {
-  console.log('🏠 START APP')
   const [initialJwt, setInitialJwt] = useState<string>('');
+  const [isLoadingLoginRedirect, setIsLoadingLoginRedirect] = useState<boolean>(checkOauthMode(ctx));
   const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
-
-  // * Login redirect
-  console.log('🏠 ctx & pageProps', { ctx, pageProps })
-  const [isLoadingLoginRedirect, setIsLoadingLoginRedirect] = useState<boolean>(checkOauthMode(ctx))
-  console.log('🏠 isLoadingLoginRedirect', isLoadingLoginRedirect)
-
-  // // ! this is new, trying to figure out why I'm not in oauth mode!
-  // useEffect(() => {
-  //   console.log('‼️ useEffect updating CTX')
-  //   setIsLoadingLoginRedirect(checkOauthMode(ctx))
-  // }, [ctx]);
 
   useEffect(() => {
     const isOauth = checkOauthMode(ctx);
     setIsLoadingLoginRedirect(isOauth);
-    console.log('🏠 START USEEFFECT')
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
     const isEgoJwtValid = isValidJwt(egoJwt);
     if (isEgoJwtValid) {
@@ -125,13 +99,10 @@ const App = ({
       setInitialJwt('');
       localStorage.removeItem(EGO_JWT_KEY);
       if (!Component.isPublic) {
-        // * login redirect
-        // redirectTo(makeRedirectPath(ctx.asPath));
         enforceLogin({ ctx })
       }
     }
 
-    // * login redirect
     if (isOauth) {
       const redirectPath = decodeURIComponent(get(ctx.query, 'redirect') as string);
       const obj = queryString.parseUrl(redirectPath || '');
@@ -139,8 +110,6 @@ const App = ({
         ...obj,
         query: omit(obj.query, OAUTH_QUERY_PARAM_NAME),
       });
-      console.log('🏠 redirecting to...')
-      console.log({ redirectPath, obj, target })
 
       const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
       const egoLoginUrl = urlJoin(
@@ -155,14 +124,12 @@ const App = ({
         method: 'POST',
       })
         .then((res) => {
-          console.log('✨ res', res)
           if (res.status !== 200) {
             throw new Error();
           }
           return res.text();
         })
         .then((jwt) => {
-          console.log('✨ jwt', jwt)
           if (isValidJwt(jwt)) {
             setInitialJwt(jwt);
             return localStorage.setItem(EGO_JWT_KEY, jwt);
@@ -171,7 +138,6 @@ const App = ({
         })
         .then(() => Router.push(target))
         .catch((err) => {
-          console.log('✨', { err })
           console.warn(err);
           localStorage.removeItem(EGO_JWT_KEY);
           Router.push('/');
@@ -184,7 +150,6 @@ const App = ({
     <Root egoJwt={initialJwt} pageContext={ctx}>
       {NEXT_PUBLIC_MAINTENANCE_MODE_ON
         ? <Maintenance />
-        // * login redirect
         : isLoadingLoginRedirect
           ? (
             <div

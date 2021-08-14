@@ -132,14 +132,8 @@ const LoginButton = () => {
   const [loginPath, setLoginPath] = useState(EGO_LOGIN_URL);
   const router = useRouter();
 
-  console.log('🗺 path & query', path, query)
-
-  console.log('🌸🌸🌸🌸🌸🌸', loginPath)
-
   useEffect(() => {
-    // * Login redirect
     const redirect = get(query, 'redirect') as string;
-    console.log('🗺 login btn - redirect', redirect)
     if (redirect) {
       const parsedRedirect = queryString.parseUrl(redirect);
       const existingQuery = queryString.stringify(parsedRedirect.query);
@@ -149,10 +143,8 @@ const LoginButton = () => {
         path: parsedRedirect.url,
         query: existingQuery,
       });
-      console.log('🗺 login btn - has redirect query - queryRedirect', queryRedirect)
       setLoginPath(urlJoin(EGO_LOGIN_URL, queryRedirect));
     } else if (path === '/') {
-      console.log('🗺 login btn - homepage')
       setLoginPath(EGO_LOGIN_URL);
     } else {
       const queryString = path.split('?')[1] || '';
@@ -163,8 +155,6 @@ const LoginButton = () => {
         path: pathRoot,
         query: queryString,
       });
-      console.log('🗺 login btn - not home, no redirect', redirect);
-
       setLoginPath(urlJoin(EGO_LOGIN_URL, redirect));
     }
   }, [path, query]);
