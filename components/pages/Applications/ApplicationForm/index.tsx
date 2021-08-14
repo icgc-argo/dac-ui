@@ -49,6 +49,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
       })
       .catch((err: AxiosError) => {
         setError(err);
+        console.error('Application form error', error);
       })
       .finally(() => {
         setIsLoading(false);
@@ -56,7 +57,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
   }, [lastUpdated]);
 
   return error ? (
-    (console.error('Application form error', error), (<ContentError />))
+    <ContentError />
   ) : isLoading || (data && Object.values(data).length < 1) ? (
     <Loader />
   ) : (

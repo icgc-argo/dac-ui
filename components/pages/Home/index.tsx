@@ -22,9 +22,7 @@ import { css, styled } from '@icgc-argo/uikit';
 import Typography from '@icgc-argo/uikit/Typography';
 import Button from '@icgc-argo/uikit/Button';
 import Link from '@icgc-argo/uikit/Link';
-
 import { Col, Row } from 'react-grid-system';
-
 import { PageHead } from 'components/Head';
 import {
   CONTROLLED_DATA_POLICY,
@@ -37,6 +35,7 @@ import {
 } from 'global/constants/externalPaths';
 import { getConfig } from 'global/config';
 import ApplyForAccessModal from 'components/ApplyForAccessModal';
+import DefaultPageLayout from 'components/DefaultPageLayout';
 
 const LinkWhite = ({ children, href }: { children: any; href: string }) => (
   <Link href={href} style={{ color: '#fff' }} target="_blank">
@@ -144,7 +143,13 @@ const IconParagraphRow = ({ children, img }: { children: any; img: string }) => 
   </div>
 );
 
-const PaddedRow = ({ isVerticallyCentered = false, children }: { isVerticallyCentered?: boolean; children: any }) => (
+const PaddedRow = ({
+  isVerticallyCentered = false,
+  children,
+}: {
+  isVerticallyCentered?: boolean;
+  children: any;
+}) => (
   <Row
     css={css`
       align-items: ${isVerticallyCentered ? 'center !important' : 'normal'};
@@ -198,7 +203,7 @@ const Home = () => {
   const [isAccessModalVisible, setAccessModalVisible] = useState<boolean>(false);
   const { NEXT_PUBLIC_ARGO_PLATFORM_ROOT } = getConfig();
   return (
-    <>
+    <DefaultPageLayout>
       <PageHead title={'Homepage'} />
       <HeroDiv>
         <PaddedRow isVerticallyCentered>
@@ -333,7 +338,7 @@ const Home = () => {
       {isAccessModalVisible && (
         <ApplyForAccessModal dismissModal={() => setAccessModalVisible(false)} />
       )}
-    </>
+    </DefaultPageLayout>
   );
 };
 
