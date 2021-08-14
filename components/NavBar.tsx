@@ -1,4 +1,4 @@
-import { createRef, useState } from 'react';
+import { createRef, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import urlJoin from 'url-join';
 import AppBar, {
@@ -24,11 +24,16 @@ import {
   POLICIES_PAGE,
 } from 'global/constants/externalPaths';
 import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
-import { useAuthContext } from 'global/hooks';
+import { useAuthContext, usePageContext } from 'global/hooks';
 import { UserWithId } from 'global/types';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
 import { ADMIN_APPLICATIONS_LABEL, APPLICANT_APPLICATIONS_LABEL } from 'global/constants';
 import ApplyForAccessModal from 'components/ApplyForAccessModal';
+
+// * login redirect
+import { get } from 'lodash';
+import queryString from 'query-string';
+import { createLoginRedirectURL } from 'global/utils/authUtils';
 
 const StyledMenuItem = styled(MenuItem)`
   ${({ theme }: { theme: UikitTheme }) => `
@@ -123,10 +128,50 @@ const UserDisplayName = ({ user, dropdownOpen }: { user: UserWithId; dropdownOpe
 };
 
 const LoginButton = () => {
+  const { asPath: path = '', query } = usePageContext();
+  const [loginPath, setLoginPath] = useState(EGO_LOGIN_URL);
   const router = useRouter();
+
+  console.log('🗺 path & query', path, query)
+
+  console.log('🌸🌸🌸🌸🌸🌸', loginPath)
+
+  useEffect(() => {
+    // * Login redirect
+    const redirect = get(query, 'redirect') as string;
+    console.log('🗺 login btn - redirect', redirect)
+    if (redirect) {
+      const parsedRedirect = queryString.parseUrl(redirect);
+      const existingQuery = queryString.stringify(parsedRedirect.query);
+
+      const queryRedirect = createLoginRedirectURL({
+        origin: location.origin,
+        path: parsedRedirect.url,
+        query: existingQuery,
+      });
+      console.log('🗺 login btn - has redirect query - queryRedirect', queryRedirect)
+      setLoginPath(urlJoin(EGO_LOGIN_URL, queryRedirect));
+    } else if (path === '/') {
+      console.log('🗺 login btn - homepage')
+      setLoginPath(EGO_LOGIN_URL);
+    } else {
+      const queryString = path.split('?')[1] || '';
+      const pathRoot = path.split('?')[0];
+
+      const redirect = createLoginRedirectURL({
+        origin: location.origin,
+        path: pathRoot,
+        query: queryString,
+      });
+      console.log('🗺 login btn - not home, no redirect', redirect);
+
+      setLoginPath(urlJoin(EGO_LOGIN_URL, redirect));
+    }
+  }, [path, query]);
+
   return (
     <Button
-      onClick={() => router.push(EGO_LOGIN_URL)}
+      onClick={() => router.push(loginPath)}
       css={(theme: UikitTheme) =>
         css`
           background-color: ${theme.colors.accent2};
