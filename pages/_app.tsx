@@ -10,10 +10,8 @@ import Maintenance from 'components/pages/Error/Maintenance';
 import { getConfig } from 'global/config';
 import queryString from 'query-string';
 import { get, omit } from 'lodash';
-import { OAUTH_QUERY_PARAM_NAME } from 'global/utils/authUtils';
-import urlJoin from 'url-join';
-import { css } from '@emotion/core';
-import DnaLoader from '@icgc-argo/uikit/DnaLoader';
+import { fetchEgoToken, OAUTH_QUERY_PARAM_NAME } from 'global/utils/authUtils';
+import Loader from 'components/Loader';
 
 const redirectTo = (url: string) => {
   Router.push(url);
@@ -24,12 +22,10 @@ const makeRedirectPath = (ctxAsPath: string | undefined): string => {
   return path;
 };
 
-
 const enforceLogin = ({ ctx }: { ctx: NextPageContext }) => {
   const loginRedirect = makeRedirectPath(ctx.asPath);
   redirectTo(loginRedirect);
 };
-
 
 const checkOauthMode = (ctx: any) => {
   if (get(ctx?.query, 'redirect')) {
@@ -38,41 +34,6 @@ const checkOauthMode = (ctx: any) => {
   } else {
     return false;
   }
-};
-
-
-const fetchEgoToken = (target: string = '', setInitialJwt?: any) => {
-  const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
-  const egoLoginUrl = urlJoin(
-    NEXT_PUBLIC_EGO_API_ROOT,
-    `/oauth/ego-token?client_id=${NEXT_PUBLIC_EGO_CLIENT_ID}`,
-  );
-
-  fetch(egoLoginUrl, {
-    credentials: 'include',
-    headers: { accept: '*/*' },
-    body: null,
-    method: 'POST',
-  })
-    .then((res) => {
-      if (res.status !== 200) {
-        throw new Error();
-      }
-      return res.text();
-    })
-    .then((jwt) => {
-      if (isValidJwt(jwt)) {
-        setInitialJwt(jwt);
-        return localStorage.setItem(EGO_JWT_KEY, jwt);
-      }
-      throw new Error('Invalid jwt, cannot login.');
-    })
-    .then(() => Router.push(target))
-    .catch((err) => {
-      console.warn(err);
-      localStorage.removeItem(EGO_JWT_KEY);
-      Router.push('/');
-    });
 };
 
 const App = ({
@@ -91,16 +52,12 @@ const App = ({
   useEffect(() => {
     const isOauth = checkOauthMode(ctx);
     setIsLoadingLoginRedirect(isOauth);
+
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
     const isEgoJwtValid = isValidJwt(egoJwt);
+
     if (isEgoJwtValid) {
       setInitialJwt(egoJwt);
-    } else {
-      setInitialJwt('');
-      localStorage.removeItem(EGO_JWT_KEY);
-      if (!Component.isPublic) {
-        enforceLogin({ ctx })
-      }
     }
 
     if (isOauth) {
@@ -110,39 +67,17 @@ const App = ({
         ...obj,
         query: omit(obj.query, OAUTH_QUERY_PARAM_NAME),
       });
+      Router.prefetch(target);
+      const egoToken = fetchEgoToken(target) as unknown as string;
+      setInitialJwt(egoToken);
+    }
 
-      const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
-      const egoLoginUrl = urlJoin(
-        NEXT_PUBLIC_EGO_API_ROOT,
-        `/oauth/ego-token?client_id=${NEXT_PUBLIC_EGO_CLIENT_ID}`,
-      );
-
-      fetch(egoLoginUrl, {
-        credentials: 'include',
-        headers: { accept: '*/*' },
-        body: null,
-        method: 'POST',
-      })
-        .then((res) => {
-          if (res.status !== 200) {
-            throw new Error();
-          }
-          return res.text();
-        })
-        .then((jwt) => {
-          if (isValidJwt(jwt)) {
-            setInitialJwt(jwt);
-            return localStorage.setItem(EGO_JWT_KEY, jwt);
-          }
-          throw new Error('Invalid jwt, cannot login.');
-        })
-        .then(() => Router.push(target))
-        .catch((err) => {
-          console.warn(err);
-          localStorage.removeItem(EGO_JWT_KEY);
-          Router.push('/');
-        })
-        .finally(() => setIsLoadingLoginRedirect(false))
+    if (!egoJwt && !isOauth) {
+      setInitialJwt('');
+      localStorage.removeItem(EGO_JWT_KEY);
+      if (!Component.isPublic) {
+        enforceLogin({ ctx })
+      }
     }
   });
 
@@ -151,19 +86,7 @@ const App = ({
       {NEXT_PUBLIC_MAINTENANCE_MODE_ON
         ? <Maintenance />
         : isLoadingLoginRedirect
-          ? (
-            <div
-              css={css`
-                align-items: center;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                height: 100%;
-              `}
-            >
-              <DnaLoader />
-            </div>
-          )
+          ? <Loader />
           : <Component {...pageProps} />}
     </Root>
   );
