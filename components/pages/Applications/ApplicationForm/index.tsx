@@ -29,10 +29,11 @@ import ContentError from 'components/placeholders/ContentError';
 import ApplicationHeader from './Header';
 import ApplicationFormsBase from './Forms';
 import RequestRevisionsBar from './RequestRevisionsBar';
+import GenericError from 'components/pages/Error/Generic';
+import router from 'next/router';
 
 const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
   const [data, setData] = useState<AxiosResponse | undefined>(undefined);
-  const [error, setError] = useState<AxiosError | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [lastUpdated, setLastUpdated] = useState<string | undefined>(undefined);
 
@@ -48,17 +49,15 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
         setData(res.data);
       })
       .catch((err: AxiosError) => {
-        setError(err);
-        console.error('Application form error', error);
+        console.error('Application form error', err);
+        return router.push('/_error');
       })
       .finally(() => {
         setIsLoading(false);
       });
   }, [lastUpdated]);
 
-  return error ? (
-    <ContentError />
-  ) : isLoading || (data && Object.values(data).length < 1) ? (
+  return isLoading || (data && Object.values(data).length < 1) ? (
     <Loader />
   ) : (
     <>
