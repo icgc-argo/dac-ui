@@ -22,59 +22,66 @@ import { Row, Col } from 'react-grid-system';
 import Typography from '@icgc-argo/uikit/Typography';
 import Image from 'next/image';
 import { css } from '@emotion/core';
+import { PageContainer } from '@icgc-argo/uikit/PageLayout';
+import Footer from 'components/Footer';
+import NavBar from 'components/NavBar';
 
 export default function Maintenance() {
   return (
-    <ErrorLayout hideNavbarLinks>
-      <Row
-        nogutter
-        css={css`
-          padding: 32px;
-        `}
-      >
-        <Col
-          sm={12}
-          md={6}
+    <PageContainer>
+      <NavBar hideLinks={true} />
+      <ErrorLayout>
+        <Row
+          nogutter
           css={css`
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            padding: 32px;
           `}
         >
-          <Typography
+          <Col
+            sm={12}
+            md={6}
             css={css`
-              font-size: 44px;
-              margin: 10px 0;
-              line-height: normal;
-            `}
-            as="h1"
-          >
-            Be back soon
-          </Typography>
-          <Typography
-            as="h2"
-            variant="subtitle"
-            color="secondary"
-            css={css`
-              margin: 0;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
             `}
           >
-            Down for Maintenance
-          </Typography>
-          <Typography variant="subtitle2" as="p">
-            We'll be back up and running as quickly as possible. We appreciate your patience.
-          </Typography>
-        </Col>
-        <Col
-          sm={12}
-          md={6}
-          css={css`
-            text-align: center;
-          `}
-        >
-          <Image alt="Maintenance worker" src="/maintenance.svg" width="367" height="300" />
-        </Col>
-      </Row>
-    </ErrorLayout>
+            <Typography
+              css={css`
+                font-size: 44px;
+                margin: 10px 0;
+                line-height: normal;
+              `}
+              as="h1"
+            >
+              Be back soon
+            </Typography>
+            <Typography
+              as="h2"
+              variant="subtitle"
+              color="secondary"
+              css={css`
+                margin: 0;
+              `}
+            >
+              Down for Maintenance
+            </Typography>
+            <Typography variant="subtitle2" as="p">
+              We'll be back up and running as quickly as possible. We appreciate your patience.
+            </Typography>
+          </Col>
+          <Col
+            sm={12}
+            md={6}
+            css={css`
+              text-align: center;
+            `}
+          >
+            <Image alt="Maintenance worker" src="/maintenance.svg" width="367" height="300" />
+          </Col>
+        </Row>
+      </ErrorLayout>
+      <Footer />
+    </PageContainer>
   );
 }

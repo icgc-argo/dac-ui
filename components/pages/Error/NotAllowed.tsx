@@ -28,63 +28,61 @@ import Link from '@icgc-argo/uikit/Link';
 export default function NotAllowed() {
   const { NEXT_PUBLIC_ARGO_DOCS_ROOT = '' } = getConfig();
   return (
-    <ErrorLayout>
-      <Row
-        nogutter
-        css={css`
-          padding: 32px;
-        `}
-      >
-        <Col sm={12} md={6}>
-          <Typography
-            css={css`
-              font-size: 100px;
-              margin: 0;
-              font-weight: 600;
-              line-height: normal;
-            `}
-          >
-            4
-            <Image
-              css={css`
-                margin: 0 8px -2px;
-              `}
-              alt="Logo mark"
-              src="/logomark.svg"
-              width="70"
-              height="71"
-            />
-            3
-          </Typography>
-          <Typography as="h2" variant="subtitle" color="secondary">
-            Forbidden
-          </Typography>
-          <Typography
-            variant="subtitle2"
-            css={css`
-              margin: 33px 0;
-            `}
-          >
-            You do not have permission to access this page.
-          </Typography>
-          <Typography variant="subtitle2">
-            Check out our{' '}
-            <Link target="_blank" href={NEXT_PUBLIC_ARGO_DOCS_ROOT}>
-              Documentation
-            </Link>{' '}
-            or head back <Link href="/">Home</Link>.
-          </Typography>
-        </Col>
-        <Col
-          sm={12}
-          md={6}
+    <Row
+      nogutter
+      css={css`
+        padding: 32px;
+      `}
+    >
+      <Col sm={12} md={6}>
+        <Typography
           css={css`
-            text-align: center;
+            font-size: 100px;
+            margin: 0;
+            font-weight: 600;
+            line-height: normal;
           `}
         >
-          <Image alt="Broken dna" src="/dna-broken.svg" width="276" height="300" />
-        </Col>
-      </Row>
-    </ErrorLayout>
+          4
+          <Image
+            css={css`
+              margin: 0 8px -2px;
+            `}
+            alt="Logo mark"
+            src="/logomark.svg"
+            width="70"
+            height="71"
+          />
+          3
+        </Typography>
+        <Typography as="h2" variant="subtitle" color="secondary">
+          Forbidden
+        </Typography>
+        <Typography
+          variant="subtitle2"
+          css={css`
+            margin: 33px 0;
+          `}
+        >
+          You do not have permission to access this page.
+        </Typography>
+        <Typography variant="subtitle2">
+          Check out our{' '}
+          <Link target="_blank" href={NEXT_PUBLIC_ARGO_DOCS_ROOT}>
+            Documentation
+          </Link>{' '}
+          or head back <Link href="/">Home</Link>.
+        </Typography>
+      </Col>
+      <Col
+        sm={12}
+        md={6}
+        css={css`
+          text-align: center;
+        `}
+      >
+        <Image alt="Broken dna" src="/dna-broken.svg" width="276" height="300" />
+      </Col>
+    </Row>
   );
 }

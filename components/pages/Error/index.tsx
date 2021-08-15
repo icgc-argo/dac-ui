@@ -24,32 +24,25 @@ import Container from '@icgc-argo/uikit/Container';
 import { css } from '@emotion/core';
 import { PageContainer } from '@icgc-argo/uikit/PageLayout';
 
-export default ({
-  children,
-  hideNavbarLinks = false,
-}: {
-  children: React.ReactNode;
-  hideNavbarLinks?: boolean;
-}) => {
-  return (
-    <PageContainer>
-      <NavBar hideLinks={hideNavbarLinks} />
-      <div
-        css={css`
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        `}
-      >
-        <Container
-          css={css`
-            max-width: 875px;
-          `}
-        >
-          {children}
-        </Container>
-      </div>
-      <Footer />
-    </PageContainer>
-  );
-};
+export default ({ children }: { children: React.ReactNode; hideNavbarLinks?: boolean }) => (
+  <div
+    css={css`
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    `}
+  >
+    <Container
+      css={css`
+        max-width: 875px;
+      `}
+    >
+      {children}
+    </Container>
+  </div>
+);
+
+//  maintenance needs all of it
+
+// route => push _error with status
