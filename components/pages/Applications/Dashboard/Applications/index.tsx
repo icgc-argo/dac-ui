@@ -25,6 +25,8 @@ import { isEmpty } from 'lodash';
 import { useGetApplications } from 'global/hooks';
 import ContentError from 'components/placeholders/ContentError';
 import Loader from 'components/Loader';
+import GenericError from 'components/pages/Error/Generic';
+import router from 'next/router';
 
 const Applications = () => {
   const { error, isLoading, response } = useGetApplications({
@@ -39,7 +41,7 @@ const Applications = () => {
       `}
     />
   ) : error ? (
-    <ContentError />
+    router.push('/error')
   ) : (
     <div
       css={css`

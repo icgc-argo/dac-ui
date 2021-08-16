@@ -44,8 +44,8 @@ import {
 } from './utils';
 
 import PageHeader from 'components/PageHeader';
-import { ContentError } from 'components/placeholders';
 import { useGetApplications } from 'global/hooks';
+import GenericError from 'components/pages/Error/Generic';
 
 const API_DEFAULT_SORT = [
   {
@@ -140,7 +140,7 @@ const ManageApplications = (): ReactElement => {
       >
         <CardContainer loading={isLoading}>
           {error ? (
-            <ContentError />
+            <GenericError />
           ) : (
             <>
               <Container
