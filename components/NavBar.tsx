@@ -16,6 +16,8 @@ import Link from '@icgc-argo/uikit/Link';
 import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import useClickAway from '@icgc-argo/uikit/utils/useClickAway';
+import { get } from 'lodash';
+import queryString from 'query-string';
 
 import {
   CONTROLLED_DATA_USERS_PAGE,
@@ -29,10 +31,6 @@ import { UserWithId } from 'global/types';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
 import { ADMIN_APPLICATIONS_LABEL, APPLICANT_APPLICATIONS_LABEL } from 'global/constants';
 import ApplyForAccessModal from 'components/ApplyForAccessModal';
-
-// * login redirect
-import { get } from 'lodash';
-import queryString from 'query-string';
 import { createLoginRedirectURL } from 'global/utils/authUtils';
 
 const StyledMenuItem = styled(MenuItem)`

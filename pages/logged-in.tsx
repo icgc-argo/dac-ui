@@ -5,7 +5,7 @@ import Loader from 'components/Loader';
 
 import { APPLICATIONS_PATH } from 'global/constants';
 import { createPage } from 'global/utils/pages/createPage';
-import { fetchEgoToken, } from 'global/utils/authUtils';
+import { fetchEgoToken } from 'global/utils/authUtils';
 
 const LoginLoaderPage = createPage({
   isPublic: true,
