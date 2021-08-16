@@ -28,7 +28,7 @@ export const createLoginRedirectURL = ({
   return redirectUri;
 };
 
-export const makeRedirectPath = (ctxAsPath: string | undefined): string =>
+export const createRedirectPath = (ctxAsPath: string | undefined): string =>
   ctxAsPath ? `/?redirect=${encodeURI(ctxAsPath)}` : '/';
 
 export const createLoginURL = ({
@@ -60,7 +60,7 @@ export const createLoginURL = ({
     });
     return urlJoin(EGO_LOGIN_URL, redirect);
   }
-}
+};
 
 export const fetchEgoToken = (target: string = APPLICATIONS_PATH) => {
   const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();

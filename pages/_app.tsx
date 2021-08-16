@@ -10,7 +10,7 @@ import Maintenance from 'components/pages/Error/Maintenance';
 import { getConfig } from 'global/config';
 import queryString from 'query-string';
 import { get, omit } from 'lodash';
-import { fetchEgoToken, makeRedirectPath, OAUTH_QUERY_PARAM_NAME } from 'global/utils/authUtils';
+import { fetchEgoToken, createRedirectPath, OAUTH_QUERY_PARAM_NAME } from 'global/utils/authUtils';
 import Loader from 'components/Loader';
 
 const redirectTo = (res: any, url: string) => {
@@ -25,7 +25,7 @@ const redirectTo = (res: any, url: string) => {
 };
 
 const enforceLogin = ({ ctx }: { ctx: NextPageContext }) => {
-  const loginRedirect = makeRedirectPath(ctx.asPath);
+  const loginRedirect = createRedirectPath(ctx.asPath);
   redirectTo(ctx.res, loginRedirect);
 };
 

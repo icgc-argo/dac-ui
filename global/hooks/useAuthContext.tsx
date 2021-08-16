@@ -10,7 +10,7 @@ import {
 import { UserWithId } from '../types';
 import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
-import { makeRedirectPath } from 'global/utils/authUtils';
+import { createRedirectPath } from 'global/utils/authUtils';
 
 type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
@@ -57,7 +57,7 @@ export const AuthProvider = ({
   };
 
   const sessionExpiredLogout = () => {
-    const redirectPath = makeRedirectPath(router.asPath);
+    const redirectPath = createRedirectPath(router.asPath);
     logout(redirectPath);
   }
 
