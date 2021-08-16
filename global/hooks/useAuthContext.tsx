@@ -10,6 +10,7 @@ import {
 import { UserWithId } from '../types';
 import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
+import { makeRedirectPath } from 'global/utils/authUtils';
 
 type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
@@ -22,12 +23,12 @@ type T_AuthContext = {
 };
 
 const AuthContext = createContext<T_AuthContext>({
-  cancelFetchWithAuth: () => {},
+  cancelFetchWithAuth: () => { },
   token: '',
   isLoading: false,
-  logout: () => {},
+  logout: () => { },
   user: undefined,
-  fetchWithAuth: () => {},
+  fetchWithAuth: () => { },
   permissions: [],
 });
 
@@ -50,15 +51,20 @@ export const AuthProvider = ({
     setTokenState('');
   };
 
-  const logout = () => {
+  const logout = (path: string = '/') => {
     removeToken();
-    router.push('/?session_expired=true');
+    router.push(path);
   };
+
+  const sessionExpiredLogout = () => {
+    const redirectPath = makeRedirectPath(router.asPath);
+    logout(redirectPath);
+  }
 
   if (token) {
     if (!isValidJwt(token)) {
       if (egoJwt && token === egoJwt) {
-        logout();
+        sessionExpiredLogout();
       }
     } else if (!egoJwt) {
       setTokenState('');
@@ -89,6 +95,7 @@ export const AuthProvider = ({
 
     if (!token) {
       setLoading(false);
+      sessionExpiredLogout();
       return Promise.reject(undefined);
     }
 
