@@ -35,7 +35,6 @@ import {
 } from 'global/constants/externalPaths';
 import { getConfig } from 'global/config';
 import ApplyForAccessModal from 'components/ApplyForAccessModal';
-import DefaultPageLayout from 'components/DefaultPageLayout';
 
 const LinkWhite = ({ children, href }: { children: any; href: string }) => (
   <Link href={href} style={{ color: '#fff' }} target="_blank">
@@ -203,7 +202,7 @@ const Home = () => {
   const [isAccessModalVisible, setAccessModalVisible] = useState<boolean>(false);
   const { NEXT_PUBLIC_ARGO_PLATFORM_ROOT } = getConfig();
   return (
-    <DefaultPageLayout>
+    <>
       <PageHead title={'Homepage'} />
       <HeroDiv>
         <PaddedRow isVerticallyCentered>
@@ -338,7 +337,7 @@ const Home = () => {
       {isAccessModalVisible && (
         <ApplyForAccessModal dismissModal={() => setAccessModalVisible(false)} />
       )}
-    </DefaultPageLayout>
+    </>
   );
 };
 

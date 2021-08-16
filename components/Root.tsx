@@ -100,15 +100,7 @@ export const ModalPortal = ({ children }: { children: React.ReactElement }) => {
     : null;
 };
 
-const Root = ({
-  children,
-  pageContext,
-  egoJwt = '',
-}: {
-  children: any;
-  pageContext: any;
-  egoJwt?: string;
-}) => {
+const Root = ({ children, egoJwt = '' }: { children: any; egoJwt?: string }) => {
   return (
     <React.Fragment>
       <style>

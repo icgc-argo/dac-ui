@@ -25,7 +25,6 @@ import Loader from 'components/Loader';
 import { useAuthContext } from 'global/hooks';
 import { hasDacoScope, isDacoAdmin } from 'global/utils/egoTokenUtils';
 import { PageHead } from 'components/Head';
-import DefaultPageLayout from 'components/DefaultPageLayout';
 
 const ApplicationForm = dynamic(() => import('./ApplicationForm'), { loading: Loader });
 const ManageApplications = dynamic(() => import('./ManageApplications'), { loading: Loader });
@@ -50,7 +49,7 @@ const Application = (): ReactElement => {
   const pageTitle = normalisedAppId || 'Application page';
 
   return (
-    <DefaultPageLayout>
+    <>
       <PageHead title={pageTitle} />
       {isLoading ? (
         <Loader />
@@ -60,8 +59,8 @@ const Application = (): ReactElement => {
         <ManageApplications />
       ) : (
         <Dashboard hasDacoAccess={hasDacoAccess} />
-      )}{' '}
-    </DefaultPageLayout>
+      )}
+    </>
   );
 };
 
