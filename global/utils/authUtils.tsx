@@ -17,11 +17,11 @@ export const createLoginRedirectURL = ({
   path: string;
   query?: string;
 }): string => {
-  if (['/', 'undefined', APPLICATIONS_PATH].includes(path)) {
+  if (['/', 'undefined'].includes(path)) {
     return '';
   }
   const mergedQuery = `?${query ? `${query}&` : ''}${OAUTH_QUERY_PARAM_NAME}=true`;
-  const redirectUri = `&redirect_uri=${origin}${path}${encodeURIComponent(mergedQuery)}`;
+  const redirectUri = `&redirect_uri=${origin}${path}/${encodeURIComponent(mergedQuery)}`;
   return redirectUri;
 };
 
