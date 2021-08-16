@@ -34,7 +34,7 @@ const enforceLogin = ({ ctx }: { ctx: NextPageContext }) => {
   redirectTo(ctx.res, loginRedirect);
 };
 
-const checkOauthMode = (ctx: NextPageContext) => {
+const checkOauthMode = ({ ctx }: { ctx: NextPageContext }) => {
   const redirectStr = get(ctx.query, 'redirect') as string;
   if (redirectStr) {
     const parsed = queryString.parseUrl(decodeURIComponent(redirectStr));
@@ -54,11 +54,11 @@ const App = ({
   ctx: NextPageContext;
 }) => {
   const [initialJwt, setInitialJwt] = useState<string>('');
-  const [isLoadingLoginRedirect, setIsLoadingLoginRedirect] = useState<boolean>(checkOauthMode(ctx));
+  const [isLoadingLoginRedirect, setIsLoadingLoginRedirect] = useState<boolean>(checkOauthMode({ ctx }));
   const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
 
   useEffect(() => {
-    const isOauth = checkOauthMode(ctx);
+    const isOauth = checkOauthMode({ ctx });
     setIsLoadingLoginRedirect(isOauth);
 
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
