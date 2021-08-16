@@ -1,6 +1,9 @@
 import { createRef, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import urlJoin from 'url-join';
+import { get } from 'lodash';
+import queryString from 'query-string';
+
 import AppBar, {
   DropdownMenu,
   Logo,
@@ -16,22 +19,21 @@ import Link from '@icgc-argo/uikit/Link';
 import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import useClickAway from '@icgc-argo/uikit/utils/useClickAway';
-import { get } from 'lodash';
-import queryString from 'query-string';
 
 import {
+  ADMIN_APPLICATIONS_LABEL,
+  APPLICANT_APPLICATIONS_LABEL,
+  APPLICATIONS_PATH,
   CONTROLLED_DATA_USERS_PAGE,
   EGO_LOGIN_URL,
   HELP_PAGE,
   POLICIES_PAGE,
-} from 'global/constants/externalPaths';
-import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
+} from 'global/constants';
 import { useAuthContext, usePageContext } from 'global/hooks';
 import { UserWithId } from 'global/types';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
-import { ADMIN_APPLICATIONS_LABEL, APPLICANT_APPLICATIONS_LABEL } from 'global/constants';
-import ApplyForAccessModal from 'components/ApplyForAccessModal';
 import { createLoginRedirectURL } from 'global/utils/authUtils';
+import ApplyForAccessModal from 'components/ApplyForAccessModal';
 
 const StyledMenuItem = styled(MenuItem)`
   ${({ theme }: { theme: UikitTheme }) => `

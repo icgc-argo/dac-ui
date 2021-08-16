@@ -45,12 +45,12 @@ export const fetchEgoToken = (target: string = APPLICATIONS_PATH) => {
       return res.text();
     })
     .then((jwt) => {
-      if (isValidJwt(jwt)) return localStorage.setItem(EGO_JWT_KEY, jwt);
+      if (isValidJwt(jwt)) {
+        localStorage.setItem(EGO_JWT_KEY, jwt);
+        Router.push(target);
+        return jwt;
+      }
       throw new Error('Invalid jwt, cannot login.');
-    })
-    .then((jwt) => {
-      Router.push(target);
-      return jwt;
     })
     .catch((err) => {
       console.warn(err);
