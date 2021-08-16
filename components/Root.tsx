@@ -9,6 +9,7 @@ import Head from 'components/Head';
 import { AuthProvider } from 'global/hooks/useAuthContext';
 import DefaultPageLayout from './DefaultPageLayout';
 import { PageContext } from 'global/hooks/usePageContext';
+import { ClientSideGetInitialPropsContext } from 'global/utils/pages/types';
 
 /**
  * The global portal where modals will show up
@@ -87,7 +88,7 @@ const Root = ({
   egoJwt = '',
 }: {
   children: any;
-  pageContext: any;
+  pageContext: ClientSideGetInitialPropsContext;
   egoJwt?: string;
 }) => {
   return (

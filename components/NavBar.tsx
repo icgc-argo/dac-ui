@@ -32,7 +32,7 @@ import {
 import { useAuthContext, usePageContext } from 'global/hooks';
 import { UserWithId } from 'global/types';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
-import { createLoginRedirectURL } from 'global/utils/authUtils';
+import { createLoginURL } from 'global/utils/authUtils';
 import ApplyForAccessModal from 'components/ApplyForAccessModal';
 
 const StyledMenuItem = styled(MenuItem)`
@@ -128,36 +128,13 @@ const UserDisplayName = ({ user, dropdownOpen }: { user: UserWithId; dropdownOpe
 };
 
 const LoginButton = () => {
-  const { asPath: path = '', query } = usePageContext();
+  const ctx = usePageContext();
   const [loginPath, setLoginPath] = useState(EGO_LOGIN_URL);
   const router = useRouter();
 
   useEffect(() => {
-    const redirect = get(query, 'redirect') as string;
-    if (redirect) {
-      const parsedRedirect = queryString.parseUrl(redirect);
-      const existingQuery = queryString.stringify(parsedRedirect.query);
-
-      const queryRedirect = createLoginRedirectURL({
-        origin: location.origin,
-        path: parsedRedirect.url,
-        query: existingQuery,
-      });
-      setLoginPath(urlJoin(EGO_LOGIN_URL, queryRedirect));
-    } else if (path === '/') {
-      setLoginPath(EGO_LOGIN_URL);
-    } else {
-      const queryString = path.split('?')[1] || '';
-      const pathRoot = path.split('?')[0];
-
-      const redirect = createLoginRedirectURL({
-        origin: location.origin,
-        path: pathRoot,
-        query: queryString,
-      });
-      setLoginPath(urlJoin(EGO_LOGIN_URL, redirect));
-    }
-  }, [path, query]);
+    setLoginPath(createLoginURL({ ctx }));
+  }, [ctx.asPath, ctx.query]);
 
   return (
     <Button
