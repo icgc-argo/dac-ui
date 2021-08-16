@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { ClientSideGetInitialPropsContext } from './types';
+import { createContext, useContext } from 'react';
+import { ClientSideGetInitialPropsContext } from 'global/utils/pages/types';
 
-export const PageContext = React.createContext<ClientSideGetInitialPropsContext>({
+export const PageContext = createContext<ClientSideGetInitialPropsContext>({
   pathname: '',
   query: {},
   asPath: '',
 });
 
 export default function usePageContext(): ClientSideGetInitialPropsContext {
-  const pageContext = React.useContext(PageContext);
+  const pageContext = useContext(PageContext);
   return pageContext;
 }
 
