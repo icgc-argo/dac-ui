@@ -13,8 +13,15 @@ import { get, omit } from 'lodash';
 import { fetchEgoToken, OAUTH_QUERY_PARAM_NAME } from 'global/utils/authUtils';
 import Loader from 'components/Loader';
 
-const redirectTo = (url: string) => {
-  Router.push(url);
+const redirectTo = (res: any, url: string) => {
+  if (res) {
+    res.writeHead(302, {
+      Location: url,
+    });
+    res.end();
+  } else {
+    Router.push(url);
+  }
 };
 
 const makeRedirectPath = (ctxAsPath: string | undefined): string => {
@@ -24,12 +31,13 @@ const makeRedirectPath = (ctxAsPath: string | undefined): string => {
 
 const enforceLogin = ({ ctx }: { ctx: NextPageContext }) => {
   const loginRedirect = makeRedirectPath(ctx.asPath);
-  redirectTo(loginRedirect);
+  redirectTo(ctx.res, loginRedirect);
 };
 
-const checkOauthMode = (ctx: any) => {
-  if (get(ctx?.query, 'redirect')) {
-    const parsed = queryString.parseUrl(decodeURIComponent(ctx.query.redirect));
+const checkOauthMode = (ctx: NextPageContext) => {
+  const redirectStr = get(ctx.query, 'redirect') as string;
+  if (redirectStr) {
+    const parsed = queryString.parseUrl(decodeURIComponent(redirectStr));
     return get(parsed.query, OAUTH_QUERY_PARAM_NAME) === 'true';
   } else {
     return false;
