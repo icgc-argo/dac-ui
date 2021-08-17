@@ -4,6 +4,7 @@ import { createPage } from 'global/utils/pages/createPage';
 const ApplicationPage = createPage({
   getInitialProps: async (ctx) => {
     const { egoJwt, asPath, query } = ctx;
+    console.log({ egoJwt })
     return { egoJwt, query, asPath };
   },
   isPublic: false,
