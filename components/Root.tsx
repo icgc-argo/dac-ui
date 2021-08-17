@@ -132,7 +132,7 @@ const Root = ({
           </ThemeProvider>
         </PageContext.Provider>
       </AuthProvider>
-    </React.Fragment >
+    </React.Fragment>
   );
 };
 
