@@ -7,6 +7,7 @@ import Modal from '@icgc-argo/uikit/Modal';
 
 import Head from 'components/Head';
 import { AuthProvider } from 'global/hooks/useAuthContext';
+import { PageContext } from 'global/hooks/usePageContext';
 import DefaultPageLayout from './DefaultPageLayout';
 
 /**
@@ -112,23 +113,26 @@ const Root = ({
       </style>
       <Head />
       <AuthProvider egoJwt={egoJwt}>
-        <ThemeProvider>
-          <div
-            css={css`
+        <PageContext.Provider value={pageContext}>
+          <ThemeProvider>
+
+            <div
+              css={css`
               position: fixed;
               left: 0px;
               top: 0px;
               z-index: 9999;
               ${fillAvailableWidth}
             `}
-            ref={modalPortalRef}
-          />
-          <DefaultPageLayout>
-            {children}
-          </DefaultPageLayout>
-        </ThemeProvider>
+              ref={modalPortalRef}
+            />
+            <DefaultPageLayout>
+              {children}
+            </DefaultPageLayout>
+          </ThemeProvider>
+        </PageContext.Provider>
       </AuthProvider>
-    </React.Fragment>
+    </React.Fragment >
   );
 };
 
