@@ -170,7 +170,7 @@ const Footer = () => {
         `}
       >
         <Link href={NEXT_PUBLIC_ARGO_ROOT} target="_blank">
-          <Image src={footerArgoLogo} width={'214px'} height={'45px'} alt="ICGC-ARGO logo" />
+          <Image src={footerArgoLogo} width="214px" height="45px" alt="ICGC-ARGO logo" />
         </Link>
         <LinksSection />
         <div

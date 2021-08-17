@@ -46,7 +46,6 @@ const App = ({
 
 App.getInitialProps = async ({ ctx, Component }: AppContext & { Component: PageWithConfig }) => {
   const pageProps = Component.getInitialProps && (await Component.getInitialProps({ ...ctx }));
-  console.log({ pageProps });
   return {
     ctx: {
       pathname: ctx.pathname,
