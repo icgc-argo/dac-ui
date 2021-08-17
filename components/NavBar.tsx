@@ -1,6 +1,7 @@
 import { createRef, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import { some } from 'lodash';
 
 import AppBar, {
   DropdownMenu,
@@ -17,7 +18,6 @@ import Link from '@icgc-argo/uikit/Link';
 import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import useClickAway from '@icgc-argo/uikit/utils/useClickAway';
-import { some } from 'lodash';
 
 import {
   CONTROLLED_DATA_USERS_PAGE,
