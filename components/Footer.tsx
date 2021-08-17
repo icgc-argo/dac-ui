@@ -2,6 +2,7 @@ import React from 'react';
 import { css } from '@icgc-argo/uikit';
 import { styled, UikitTheme } from '@icgc-argo/uikit/index';
 import Link from '@icgc-argo/uikit/Link';
+import Image from 'next/image'
 import {
   CONTACT_PAGE,
   CONTROLLED_DATA_USERS_PAGE,
@@ -17,6 +18,10 @@ import { LinkProps } from './NavBar';
 import { getConfig } from 'global/config';
 import { useHealthAPI } from 'global/hooks';
 import { APP_VERSION } from 'global/constants';
+
+import footerGlasgowLogo from '../public/footer_glasgow-university-logo.png';
+import footerOicrLogo from '../public/oicr-logo.svg';
+import footerArgoLogo from '../public/footer_logo-icgc-argo.png';
 
 const { NEXT_PUBLIC_ARGO_ROOT, NEXT_PUBLIC_ARGO_PLATFORM_ROOT } = getConfig();
 
@@ -165,7 +170,7 @@ const Footer = () => {
         `}
       >
         <Link href={NEXT_PUBLIC_ARGO_ROOT} target="_blank">
-          <img src={'/argo-full-logo.svg'} />
+          <Image src={footerArgoLogo} width={'214px'} height={'45px'} alt="ICGC-ARGO logo" />
         </Link>
         <LinksSection />
         <div
@@ -183,10 +188,10 @@ const Footer = () => {
             href={GLASGOW_UNI_LINK}
             target="_blank"
           >
-            <img src={'/glasgow-university-logo.png'} width={'122px'} height={'38px'} />
+            <Image src={footerGlasgowLogo} width="122px" height="38px" alt="University of Glasgow logo" />
           </Link>
           <Link href={OICR_LINK} target="_blank">
-            <img src={'/oicr-logo.svg'} width={'72px'} height={'52px'} />
+            <Image src={footerOicrLogo} width="72px" height="52px" alt="OICR logo" />
           </Link>
         </div>
       </div>
