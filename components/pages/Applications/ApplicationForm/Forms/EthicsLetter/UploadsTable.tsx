@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2021 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ * This program and the accompanying materials are made available under the terms of
+ * the GNU Affero General Public License v3.0. You should have received a copy of the
+ * GNU Affero General Public License along with this program.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 import { createRef, ReactElement, useEffect, useState } from 'react';
 import { css } from '@emotion/core';
 import { AxiosError } from 'axios';
@@ -42,8 +61,8 @@ const getEthicsLetters = (value: any) =>
   Array.isArray(value)
     ? value
     : typeof value === 'undefined'
-    ? [] // handle undefined approvalLetterDocs just in case
-    : Object.values(value);
+      ? [] // handle undefined approvalLetterDocs just in case
+      : Object.values(value);
 
 const UploadsTable = ({
   appId,
@@ -292,34 +311,34 @@ const UploadsTable = ({
               ...(isRequiredPostApproval
                 ? []
                 : [
-                    {
-                      accessor: 'objectId',
-                      Cell: ({ value }: { value: string }) => (
-                        <Button
-                          css={css`
+                  {
+                    accessor: 'objectId',
+                    Cell: ({ value }: { value: string }) => (
+                      <Button
+                        css={css`
                             label: action_delete;
                             height: 30px;
                             margin: 0 auto;
                             width: 30px;
                           `}
-                          disabled={isSectionDisabled}
-                          onClick={handleFileDelete(value)}
-                          size="sm"
-                          variant="text"
-                        >
-                          <Icon
-                            css={css`
+                        disabled={isSectionDisabled}
+                        onClick={handleFileDelete(value)}
+                        size="sm"
+                        variant="text"
+                      >
+                        <Icon
+                          css={css`
                               margin-bottom: -3px;
                             `}
-                            fill={isSectionDisabled ? 'grey_1' : 'accent2'}
-                            name="trash"
-                          />
-                        </Button>
-                      ),
-                      Header: 'Actions',
-                      width: 60,
-                    },
-                  ]),
+                          fill={isSectionDisabled ? 'grey_1' : 'accent2'}
+                          name="trash"
+                        />
+                      </Button>
+                    ),
+                    Header: 'Actions',
+                    width: 60,
+                  },
+                ]),
             ]}
             css={css`
               margin-top: 10px;
