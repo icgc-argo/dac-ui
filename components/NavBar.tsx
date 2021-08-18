@@ -1,8 +1,7 @@
 import { createRef, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import urlJoin from 'url-join';
-import { get } from 'lodash';
-import queryString from 'query-string';
+import Image from 'next/image';
+import { some } from 'lodash';
 
 import AppBar, {
   DropdownMenu,
@@ -27,13 +26,16 @@ import {
   CONTROLLED_DATA_USERS_PAGE,
   EGO_LOGIN_URL,
   HELP_PAGE,
+  LOGGED_IN_PATH,
   POLICIES_PAGE,
+  PRIVATE_PATHS
 } from 'global/constants';
 import { useAuthContext, usePageContext } from 'global/hooks';
 import { UserWithId } from 'global/types';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
 import { createLoginURL } from 'global/utils/authUtils';
 import ApplyForAccessModal from 'components/ApplyForAccessModal';
+import navDacoLogo from '../public/nav_icgc-daco-logo.png';
 
 const StyledMenuItem = styled(MenuItem)`
   ${({ theme }: { theme: UikitTheme }) => `
@@ -167,10 +169,24 @@ const LoginButton = () => {
 };
 
 const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
+  const { asPath = '' } = usePageContext();
   const { user, logout, permissions } = useAuthContext();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = createRef() as React.RefObject<HTMLDivElement>;
   const [isAccessModalVisible, setAccessModalVisible] = useState<boolean>(false);
+  const [hideLogin, setHideLogin] = useState(true);
+
+  useEffect(() => {
+    // hide login on initial render
+    setHideLogin(false);
+  }, []);
+
+  const isLoginVisible = !(
+    hideLinks ||
+    hideLogin ||
+    [LOGGED_IN_PATH].includes(asPath) ||
+    (some(PRIVATE_PATHS, privatePath => asPath.startsWith(privatePath)) && !user)
+  );
 
   useClickAway({
     domElementRef: dropdownRef,
@@ -206,7 +222,7 @@ const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
                 align-items: center;
               `}
             >
-              <img src="/icgc-daco-logo.svg" alt="ICGC DACO Home" width="208" />
+              <Image src={navDacoLogo} width="208px" height="30px" alt="ICGC DACO Home" />
             </Link>
           )}
         />
@@ -248,7 +264,7 @@ const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
                 {applicationsTitle}
               </StyledMenuItem>
             </Link>
-          ) : hideLinks ? null : (
+          ) : isLoginVisible && (
             <Link
               css={css`
                 text-decoration: none;
@@ -298,7 +314,7 @@ const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
             >
               <UserDisplayName dropdownOpen={dropdownOpen} user={user} />
             </StyledMenuItem>
-          ) : hideLinks ? null : (
+          ) : isLoginVisible && (
             <StyledMenuItem
               css={(theme: UikitTheme) => css`
                 cursor: auto;

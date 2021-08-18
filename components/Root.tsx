@@ -7,8 +7,8 @@ import Modal from '@icgc-argo/uikit/Modal';
 
 import Head from 'components/Head';
 import { AuthProvider } from 'global/hooks/useAuthContext';
-import DefaultPageLayout from './DefaultPageLayout';
 import { PageContext } from 'global/hooks/usePageContext';
+import DefaultPageLayout from './DefaultPageLayout';
 import { ClientSideGetInitialPropsContext } from 'global/utils/pages/types';
 
 /**
