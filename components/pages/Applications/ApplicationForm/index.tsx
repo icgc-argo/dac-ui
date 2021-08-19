@@ -31,6 +31,7 @@ import ApplicationFormsBase from './Forms';
 import RequestRevisionsBar from './RequestRevisionsBar';
 import GenericError from 'components/pages/Error/Generic';
 import router from 'next/router';
+import { ERROR_PATH } from 'global/constants/internalPaths';
 
 const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
   const [data, setData] = useState<AxiosResponse | undefined>(undefined);
@@ -50,7 +51,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
       })
       .catch((err: AxiosError) => {
         console.error('Application form error', err);
-        return router.push('/_error');
+        return router.push(ERROR_PATH);
       })
       .finally(() => {
         setIsLoading(false);
