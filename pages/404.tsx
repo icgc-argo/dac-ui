@@ -17,10 +17,10 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import NotFound from 'components/pages/Error/NotFound';
+import GenericError from 'components/pages/Error/Generic';
 
-export default function Page404() {
-  return <NotFound />;
+function NotFound() {
+  return <GenericError />;
 }
 
-Page404.isPublic = true;
+export default NotFound;
