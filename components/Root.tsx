@@ -100,28 +100,40 @@ export const ModalPortal = ({ children }: { children: React.ReactElement }) => {
     : null;
 };
 
-const Root = ({ children, egoJwt = '' }: { children: any; egoJwt?: string }) => {
+export const CSSGlobalReset = () => (
+  <style>
+    {`
+body {
+  margin: 0;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+} /* custom! */
+#__next {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+}
+`}
+  </style>
+);
+
+const Root = ({
+  children,
+  pageContext,
+  egoJwt = '',
+}: {
+  children: any;
+  pageContext: any;
+  egoJwt?: string;
+}) => {
   return (
     <React.Fragment>
-      <style>
-        {`
-        body {
-          margin: 0;
-          position: absolute;
-          top: 0px;
-          bottom: 0px;
-          left: 0px;
-          right: 0px;
-        } /* custom! */
-        #__next {
-          position: absolute;
-          top: 0px;
-          bottom: 0px;
-          left: 0px;
-          right: 0px;
-        }
-      `}
-      </style>
+      <CSSGlobalReset />
       <Head />
       <AuthProvider egoJwt={egoJwt}>
         <PageContext.Provider value={pageContext}>

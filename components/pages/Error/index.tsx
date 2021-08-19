@@ -18,11 +18,8 @@
  */
 
 import * as React from 'react';
-import NavBar from 'components/NavBar';
-import Footer from 'components/Footer';
 import Container from '@icgc-argo/uikit/Container';
 import { css } from '@emotion/core';
-import { PageContainer } from '@icgc-argo/uikit/PageLayout';
 
 export default ({ children }: { children: React.ReactNode; hideNavbarLinks?: boolean }) => (
   <div
@@ -30,7 +27,7 @@ export default ({ children }: { children: React.ReactNode; hideNavbarLinks?: boo
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100%;
+      height: calc(100vh - 186px);
     `}
   >
     <Container
@@ -42,7 +39,3 @@ export default ({ children }: { children: React.ReactNode; hideNavbarLinks?: boo
     </Container>
   </div>
 );
-
-//  maintenance needs all of it
-
-// route => push _error with status
