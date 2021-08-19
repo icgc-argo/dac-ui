@@ -27,11 +27,17 @@ import ContentError from 'components/placeholders/ContentError';
 import Loader from 'components/Loader';
 import GenericError from 'components/pages/Error/Generic';
 import router from 'next/router';
+import { ERROR_PATH } from 'global/constants';
 
 const Applications = () => {
   const { error, isLoading, response } = useGetApplications({
     sort: [{ field: ApplicationsField.lastUpdatedAtUtc, order: 'desc' }],
   });
+
+  if (error) {
+    router.push(ERROR_PATH);
+  }
+
   const applications = response?.data?.items || [];
 
   return isLoading ? (
@@ -40,8 +46,6 @@ const Applications = () => {
         margin: 24px auto;
       `}
     />
-  ) : error ? (
-    router.push('/error')
   ) : (
     <div
       css={css`

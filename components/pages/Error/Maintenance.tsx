@@ -22,7 +22,6 @@ import { Row, Col } from 'react-grid-system';
 import Typography from '@icgc-argo/uikit/Typography';
 import Image from 'next/image';
 import { css } from '@emotion/core';
-import { PageContainer } from '@icgc-argo/uikit/PageLayout';
 import Footer from 'components/Footer';
 import NavBar from 'components/NavBar';
 import { ThemeProvider } from '@icgc-argo/uikit';
@@ -31,7 +30,7 @@ import { CSSGlobalReset } from 'components/Root';
 
 export default function Maintenance() {
   return (
-    <div css={css``}>
+    <>
       <CSSGlobalReset />
       <Head />
 
@@ -90,6 +89,6 @@ export default function Maintenance() {
         </ErrorLayout>
         <Footer />
       </ThemeProvider>
-    </div>
+    </>
   );
 }

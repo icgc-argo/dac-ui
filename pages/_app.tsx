@@ -20,14 +20,13 @@
 import { useEffect, useState } from 'react';
 import { NextPageContext } from 'next';
 import { AppContext } from 'next/app';
-import Root, { PageRootFragment } from 'components/Root';
+import Root from 'components/Root';
 import { PageConfigProps, PageWithConfig } from 'global/utils/pages/types';
 import { EGO_JWT_KEY } from 'global/constants';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
 import Router from 'next/router';
 import Maintenance from 'components/pages/Error/Maintenance';
 import { getConfig } from 'global/config';
-import { ThemeProvider } from '@icgc-argo/uikit';
 
 const App = ({
   Component,
@@ -61,7 +60,7 @@ const App = ({
     <Maintenance />
   ) : (
     <Root egoJwt={initialJwt} pageContext={ctx}>
-      <Component {...pageProps} />{' '}
+      <Component {...pageProps} />
     </Root>
   );
 };
