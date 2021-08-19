@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2021 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ * This program and the accompanying materials are made available under the terms of
+ * the GNU Affero General Public License v3.0. You should have received a copy of the
+ * GNU Affero General Public License along with this program.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 import { createRef, ReactElement, useCallback, useEffect, useState } from 'react';
 import { Col, Row } from 'react-grid-system';
 import { css } from '@emotion/core';
@@ -104,9 +123,9 @@ const Collaborators = ({
           ...dataAcc,
           [prefix]: suffix
             ? {
-                ...dataAcc[prefix],
-                [suffix]: fieldData.value,
-              }
+              ...dataAcc[prefix],
+              [suffix]: fieldData.value,
+            }
             : fieldData.value,
         };
       },
@@ -139,8 +158,8 @@ const Collaborators = ({
             errorCode === CollaboratorErrorCodes.COLLABORATOR_EXISTS
               ? AddCollaboratorError.CollaboratorExists
               : errorCode === CollaboratorErrorCodes.COLLABORATOR_SAME_AS_APPLICANT
-              ? AddCollaboratorError.CollaboratorIsApplicant
-              : AddCollaboratorError.GenericError,
+                ? AddCollaboratorError.CollaboratorIsApplicant
+                : AddCollaboratorError.GenericError,
           );
           console.error('Failed to create collaborator.', errorCode);
         } else {
@@ -213,12 +232,12 @@ const Collaborators = ({
       Object.values(localState.list?.innerType?.fields).some(
         (field: any) => field?.error?.length > 0,
       ) ||
-        !Object.entries(localState.list?.innerType?.fields)
-          .filter(
-            ([fieldName, fieldData]) =>
-              fieldName !== 'type' && isRequired(fieldData as FormFieldType),
-          )
-          .every(([fieldName, fieldData]) => (fieldData as FormFieldType).value),
+      !Object.entries(localState.list?.innerType?.fields)
+        .filter(
+          ([fieldName, fieldData]) =>
+            fieldName !== 'type' && isRequired(fieldData as FormFieldType),
+        )
+        .every(([fieldName, fieldData]) => (fieldData as FormFieldType).value),
     );
   }, [localState]);
 
@@ -302,9 +321,8 @@ const Collaborators = ({
         (modalVisible === 'collaborator' ? (
           <ModalPortal>
             <Modal
-              actionButtonText={`${
-                localState.list?.innerType?.fields.id.value ? 'Edit' : 'Add'
-              } Collaborator`}
+              actionButtonText={`${localState.list?.innerType?.fields.id.value ? 'Edit' : 'Add'
+                } Collaborator`}
               actionDisabled={isSectionDisabled || modalHasErrors}
               onActionClick={handleCollaboratorCreateOrEdit}
               onCancelClick={dismissCollaboratorModal}
