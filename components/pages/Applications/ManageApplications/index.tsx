@@ -52,9 +52,12 @@ const getDefaultSort = (applicationSorts: ApplicationsSort[]) =>
   applicationSorts.map(({ field, order }) => ({ id: field, desc: order === 'desc' }));
 
 const useManageApplicationsState = () => {
+  const defaultSort = [
+    { field: ApplicationsField.appNumber, order: 'asc' as ApplicationsSortOrder },
+  ];
   const [page, setPage] = useState<number>(DEFAULT_PAGE);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
-  const [sort, setSort] = useState<ApplicationsSort[]>(DEFAULT_SORT);
+  const [sort, setSort] = useState<ApplicationsSort[]>(defaultSort);
 
   const onPageChange = (newPageNum: number) => {
     setPage(newPageNum);
