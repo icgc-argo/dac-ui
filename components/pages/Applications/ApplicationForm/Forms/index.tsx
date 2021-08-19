@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2021 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ * This program and the accompanying materials are made available under the terms of
+ * the GNU Affero General Public License v3.0. You should have received a copy of the
+ * GNU Affero General Public License along with this program.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 import { ReactElement, useCallback, useEffect, useState } from 'react';
 import router, { useRouter } from 'next/router';
 import { css } from '@icgc-argo/uikit';
@@ -37,18 +56,18 @@ const ApplicationFormsBase = ({
     isValidSectionFromQuery
       ? sectionFromQuery
       : (sectionFromQuery &&
-          console.info('Section initially queried was not found', sectionFromQuery),
+        console.info('Section initially queried was not found', sectionFromQuery),
         sectionsOrder[0] as FormSectionNames),
   );
   const { isLoading, formState, validateSection } = useFormValidation(appId);
   const theme: UikitTheme = useTheme();
 
   const triggerSectionValidation = useCallback(
-    (trigger: FormSectionValidationTriggerReasons) =>
+    (trigger: FormSectionValidationTriggerReasons, section: FormSectionNames) =>
       ['', FORM_STATES.DISABLED, FORM_STATES.PRISTINE].includes(
-        formState.sections[selectedSection]?.meta.overall || '',
-      ) || validateSection(selectedSection, trigger)(),
-    [formState, selectedSection],
+        formState.sections[section]?.meta.overall || '',
+      ) || validateSection(section, trigger)(),
+    [formState],
   );
 
   useEffect(() => {
@@ -66,13 +85,23 @@ const ApplicationFormsBase = ({
 
     // avoid validating a section that has already been validated.
     formState.sections[selectedSection]?.meta.validated ||
-      triggerSectionValidation('initialValidation');
+      triggerSectionValidation('initialValidation', selectedSection);
   }, [formState.sections[selectedSection], selectedSection]);
 
   useEffect(() => {
     if (formState.lastUpdatedAtUtc) {
       setLastUpdated(formState.lastUpdatedAtUtc);
     }
+
+    selectedSection === 'collaborators'
+      ? formState.sections[selectedSection]?.meta.showOverall ||
+      triggerSectionValidation('notShowingOverall', selectedSection)
+      : sectionsOrder.forEach(
+        (section) =>
+          // validates all other section that doen't already show overall status.
+          !(formState.sections[section]?.meta.showOverall || selectedSection === section) &&
+          triggerSectionValidation('notShowingOverall', section),
+      );
   }, [formState.lastUpdatedAtUtc]);
 
   const sectionIndex = sectionsOrder.indexOf(selectedSection);
@@ -86,7 +115,7 @@ const ApplicationFormsBase = ({
 
         // only validates a section that doesn't already show its overall status.
         formState.sections[selectedSection]?.meta.showOverall ||
-          triggerSectionValidation('notShowingOverall');
+          triggerSectionValidation('notShowingOverall', selectedSection);
       }
     },
     [selectedSection, formState],

@@ -1,13 +1,35 @@
+/*
+ * Copyright (c) 2021 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ * This program and the accompanying materials are made available under the terms of
+ * the GNU Affero General Public License v3.0. You should have received a copy of the
+ * GNU Affero General Public License along with this program.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 import { countBy } from 'lodash';
 import { AnyObject } from 'yup/lib/types';
 
 // locale-customised import
 import yup from './schemas';
+import { applicantFieldNames } from '../constants';
 import {
   CountryNamesAndAbbreviations,
   EVENT_TARGET_TAGS,
   FormFieldDataFromEvent,
   FormFieldType,
+  FormSectionNames,
+  FormSectionValidationState_Applicant,
   FormValidationAction,
   FormValidationStateParameters,
 } from '../types';
@@ -32,7 +54,7 @@ export const countWordsInString = (value: string) => {
 export const getFieldDataFromEvent: FormFieldDataFromEvent = (event) => {
   if (
     Object.values(EVENT_TARGET_TAGS).includes(
-      event?.target?.tagName as unknown as EVENT_TARGET_TAGS,
+      (event?.target?.tagName as unknown) as EVENT_TARGET_TAGS,
     )
   ) {
     switch (event?.target?.type) {
@@ -187,8 +209,9 @@ export const getValueByFieldTypeToPublish = (
       return null;
     }
 
-    case 'string':
+    case 'string': {
       return { [fieldName]: fieldNameInner ? { [fieldNameInner]: value } : value };
+    }
 
     default:
       console.info('unable to get value at getValueByFieldTypeToPublish', field, type);
@@ -204,7 +227,11 @@ export const getValueByFieldTypeToValidate = (
   switch (type) {
     case 'array': {
       const fieldValues =
-        meta?.shape !== 'modal' ? value?.map(getValueByFieldTypeToValidate) : value;
+        meta?.shape === 'modal'
+          ? value
+          : (meta?.shape === 'publicationURLsArray' ? Object.values(value) : value)?.map(
+              getValueByFieldTypeToValidate,
+            );
 
       return fieldValues?.filter((item: any) => item).length > 0 ? fieldValues : null;
     }
@@ -281,7 +308,7 @@ export const transformContriesToSelectOptions = (countriesList: CountryNamesAndA
 
 export const transformContriesToValidationOptions = (
   countriesList: CountryNamesAndAbbreviations[],
-) => countriesList.map(({ name }: CountryNamesAndAbbreviations) => name);
+) => countriesList.map(({ name }: CountryNamesAndAbbreviations) => name).concat('');
 
 export const transformToSelectOptions = (list: Array<string | number>) => [
   { content: '-- Select an option --', value: ' ' },
@@ -308,14 +335,45 @@ export const uniquePublicationURLs = {
   },
 };
 
-export const checkMatchingPrimaryAffiliation = (
+export const checkMatchingApplicant = (
+  origin: FormSectionNames,
+  field: string,
   value: string,
-  applicantPrimaryAffiliation: string,
-) =>
-  value &&
-  applicantPrimaryAffiliation &&
-  value.trim() !== applicantPrimaryAffiliation && {
-    error: [
-      `Primary Affiliation must be the same as the Applicant: ${applicantPrimaryAffiliation}`,
-    ],
-  };
+  applicantData: FormSectionValidationState_Applicant,
+) => {
+  if (value) {
+    switch (true) {
+      case field.includes(applicantFieldNames.AFFILIATION): {
+        const applicantValue = applicantData[applicantFieldNames.AFFILIATION]?.value;
+
+        return (
+          applicantValue &&
+          value.trim() !== applicantValue && {
+            error: [`Primary Affiliation must be the same as the Applicant: ${applicantValue}`],
+          }
+        );
+      }
+
+      case field.includes(applicantFieldNames.EMAIL):
+      case field.includes(applicantFieldNames.GMAIL): {
+        if (['collaborators'].includes(origin)) {
+          const applicantEmail = applicantData[applicantFieldNames.EMAIL]?.value;
+          const applicantGmail = applicantData[applicantFieldNames.GMAIL]?.value;
+
+          return (
+            (applicantEmail || applicantGmail) &&
+            [applicantEmail, applicantGmail].includes(value.trim()) && {
+              error: ['The applicant does not need to be added as a collaborator'],
+            }
+          );
+        }
+      }
+
+      default: {
+        return false;
+      }
+    }
+  }
+};
+
+// The applicant does not need to be added as a collaborator

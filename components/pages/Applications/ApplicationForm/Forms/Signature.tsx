@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2021 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ * This program and the accompanying materials are made available under the terms of
+ * the GNU Affero General Public License v3.0. You should have received a copy of the
+ * GNU Affero General Public License along with this program.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 import { css } from '@emotion/core';
 import Button from '@icgc-argo/uikit/Button';
 import Control from '@icgc-argo/uikit/form/FormControl';
@@ -59,6 +78,9 @@ const Signature = ({
   const [isModalVisible, setModalVisible] = useState(false);
   const dismissModal = () => setModalVisible(false);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionError, setSubmissionError] = useState(false);
+
   const { fetchWithAuth } = useAuthContext();
   const [pdfIsLoading, setPdfIsLoading] = useState(false);
   const [isUploadInProgress, setUploadInProgress] = useState(false);
@@ -74,6 +96,7 @@ const Signature = ({
   };
 
   const submit = () => {
+    setIsSubmitting(true);
     fetchWithAuth({
       data: {
         state: 'REVIEW',
@@ -87,13 +110,17 @@ const Signature = ({
       .catch((err: AxiosError) => {
         console.error('Failed to submit.', err);
       })
-      .finally(() => setModalVisible(false));
+      .finally(() => {
+        setModalVisible(false);
+        setIsSubmitting(false);
+      });
   };
 
   const handleFileUpload = (e: any) => {
     const file = e.target.files?.[0];
 
     if (file && file.size <= MAX_FILE_SIZE && VALID_FILE_TYPE.includes(file.type)) {
+      setSubmissionError(false);
       setUploadInProgress(true);
       const formData = new FormData();
       formData.append('file', file);
@@ -102,14 +129,15 @@ const Signature = ({
         method: 'POST',
         url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/upload`,
       })
-        .then(({ data }: { data: FormValidationStateParameters }) =>
+        .then(({ data }: { data: FormValidationStateParameters }) => {
           refetchAllData({
             type: 'updating',
             value: data,
-          }),
-        )
+          });
+        })
         .catch((err: AxiosError) => {
           console.error('File failed to upload.', err);
+          setSubmissionError(true);
         })
         .finally(() => {
           setUploadInProgress(false);
@@ -339,6 +367,19 @@ const Signature = ({
                   width: 220px;
                   margin-right: 70px;
                   margin-left: 20px;
+                  ${submissionError &&
+                  css`
+                    background-color: ${theme.colors.error};
+                    border-color: ${theme.colors.error};
+                    margin-left: 15px;
+
+                    :hover,
+                    :active,
+                    :focus {
+                      background-color: ${theme.colors.error_1};
+                      border-color: ${theme.colors.error_1};
+                    }
+                  `}
                 `}
                 isLoading={isUploadInProgress}
                 Loader={(props: any) => <CustomLoadingButton text="Upload a file" {...props} />}
@@ -365,11 +406,19 @@ const Signature = ({
                 />
                 Upload a file
               </Button>
-
               <FormFieldHelpBubble text="Allowed file types: pdf. | Max file size: 5MB" />
             </>
           )}
         </FormControl>
+        <Typography
+          variant="data"
+          css={css`
+            margin-left: 160px;
+            color: ${theme.colors.error_1};
+          `}
+        >
+          {submissionError ? 'Please upload a pdf file that is 5MB or less.' : ''}
+        </Typography>
 
         <Button
           css={css`
@@ -385,10 +434,35 @@ const Signature = ({
         <ModalPortal>
           <Modal
             title="Are you sure you want to submit this application?"
-            onCancelClick={dismissModal}
             onCloseClick={dismissModal}
-            actionButtonText="Yes, Submit"
-            onActionClick={submit}
+            FooterEl={() => (
+              <div
+                css={css`
+                  display: flex;
+                  flex-direction: row;
+                `}
+              >
+                <Button
+                  size="md"
+                  onClick={submit}
+                  Loader={(props: any) => <CustomLoadingButton text="Yes, Submit" {...props} />}
+                  isLoading={isSubmitting}
+                >
+                  Yes, Submit
+                </Button>
+
+                <Button
+                  variant="text"
+                  css={css`
+                    margin-left: 10px;
+                  `}
+                  size="md"
+                  onClick={dismissModal}
+                >
+                  Cancel
+                </Button>
+              </div>
+            )}
           >
             <div
               css={css`

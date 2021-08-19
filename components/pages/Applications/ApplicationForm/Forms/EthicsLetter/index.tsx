@@ -1,10 +1,28 @@
+/*
+ * Copyright (c) 2021 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ * This program and the accompanying materials are made available under the terms of
+ * the GNU Affero General Public License v3.0. You should have received a copy of the
+ * GNU Affero General Public License along with this program.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 import { ReactElement, useEffect, useState } from 'react';
 import { css } from '@emotion/core';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 import FormRadio from '@icgc-argo/uikit/form/FormRadio';
 import InputLabel from '@icgc-argo/uikit/form/InputLabel';
-import Link from '@icgc-argo/uikit/Link';
 import RadioCheckboxGroup from '@icgc-argo/uikit/form/RadioCheckboxGroup';
 import Typography from '@icgc-argo/uikit/Typography';
 
@@ -38,8 +56,8 @@ const EthicsLetter = ({
 }): ReactElement => {
   // applicant made ethics letter required (option 2)
   // and application has been approved
-  const isRequiredPostApproval = !isSectionDisabled &&
-    applicationState === ApplicationState.APPROVED;
+  const isRequiredPostApproval =
+    !isSectionDisabled && applicationState === ApplicationState.APPROVED;
 
   const [selectedRadioValue, setSelectedRadioValue] = useState(
     localState.declaredAsRequired?.value || null,
@@ -75,9 +93,7 @@ const EthicsLetter = ({
       <StaticEthics />
 
       <section>
-        <SectionTitle>
-          {FORM_TEXT.ethics.title}
-        </SectionTitle>
+        <SectionTitle>{FORM_TEXT.ethics.title}</SectionTitle>
 
         <FormControl
           className="vertical"
@@ -98,9 +114,7 @@ const EthicsLetter = ({
             isChecked={isChecked}
             onChange={handleSelectedRadioValueChange}
           >
-            <FormRadio value={false}>
-              {FORM_TEXT.ethics.declarationOptions.notRequired}
-            </FormRadio>
+            <FormRadio value={false}>{FORM_TEXT.ethics.declarationOptions.notRequired}</FormRadio>
             <FormRadio value={true}>
               {FORM_TEXT.ethics.declarationOptions.required.a}{' '}
               <Typography bold component="span">

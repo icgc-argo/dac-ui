@@ -1,6 +1,27 @@
-import { createRef, useState } from 'react';
+/*
+ * Copyright (c) 2021 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ * This program and the accompanying materials are made available under the terms of
+ * the GNU Affero General Public License v3.0. You should have received a copy of the
+ * GNU Affero General Public License along with this program.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+import { createRef, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import urlJoin from 'url-join';
+import Image from 'next/image';
+import { some } from 'lodash';
+
 import AppBar, {
   DropdownMenu,
   Logo,
@@ -23,12 +44,13 @@ import {
   HELP_PAGE,
   POLICIES_PAGE,
 } from 'global/constants/externalPaths';
-import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
-import { useAuthContext } from 'global/hooks';
+import { APPLICATIONS_PATH, LOGGED_IN_PATH, PRIVATE_PATHS } from 'global/constants/internalPaths';
+import { useAuthContext, usePageContext } from 'global/hooks';
 import { UserWithId } from 'global/types';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
 import { ADMIN_APPLICATIONS_LABEL, APPLICANT_APPLICATIONS_LABEL } from 'global/constants';
 import ApplyForAccessModal from 'components/ApplyForAccessModal';
+import navDacoLogo from '../public/nav_icgc-daco-logo.png';
 
 const StyledMenuItem = styled(MenuItem)`
   ${({ theme }: { theme: UikitTheme }) => `
@@ -155,10 +177,24 @@ const LoginButton = () => {
 };
 
 const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
+  const { asPath = '' } = usePageContext();
   const { user, logout, permissions } = useAuthContext();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = createRef() as React.RefObject<HTMLDivElement>;
   const [isAccessModalVisible, setAccessModalVisible] = useState<boolean>(false);
+  const [hideLogin, setHideLogin] = useState(true);
+
+  useEffect(() => {
+    // hide login on initial render
+    setHideLogin(false);
+  }, []);
+
+  const isLoginVisible = !(
+    hideLinks ||
+    hideLogin ||
+    [LOGGED_IN_PATH].includes(asPath) ||
+    (some(PRIVATE_PATHS, (privatePath) => asPath.startsWith(privatePath)) && !user)
+  );
 
   useClickAway({
     domElementRef: dropdownRef,
@@ -194,7 +230,7 @@ const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
                 align-items: center;
               `}
             >
-              <img src="/icgc-daco-logo.svg" alt="ICGC DACO Home" width="208" />
+              <Image src={navDacoLogo} width="208px" height="30px" alt="ICGC DACO Home" />
             </Link>
           )}
         />
@@ -236,26 +272,28 @@ const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
                 {applicationsTitle}
               </StyledMenuItem>
             </Link>
-          ) : hideLinks ? null : (
-            <Link
-              css={css`
-                text-decoration: none;
-              `}
-              onClick={() => setAccessModalVisible(true)}
-            >
-              <StyledMenuItem>
-                <Typography
-                  css={(theme) => css`
-                    ${theme.typography.data};
-                    text-transform: uppercase;
-                    font-weight: bold;
-                    color: ${theme.colors.accent2_dark};
-                  `}
-                >
-                  Apply for Access
-                </Typography>
-              </StyledMenuItem>
-            </Link>
+          ) : (
+            isLoginVisible && (
+              <Link
+                css={css`
+                  text-decoration: none;
+                `}
+                onClick={() => setAccessModalVisible(true)}
+              >
+                <StyledMenuItem>
+                  <Typography
+                    css={(theme) => css`
+                      ${theme.typography.data};
+                      text-transform: uppercase;
+                      font-weight: bold;
+                      color: ${theme.colors.accent2_dark};
+                    `}
+                  >
+                    Apply for Access
+                  </Typography>
+                </StyledMenuItem>
+              </Link>
+            )
           )}
           {user ? (
             <StyledMenuItem
@@ -286,17 +324,19 @@ const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
             >
               <UserDisplayName dropdownOpen={dropdownOpen} user={user} />
             </StyledMenuItem>
-          ) : hideLinks ? null : (
-            <StyledMenuItem
-              css={(theme: UikitTheme) => css`
-                cursor: auto;
-                &:hover {
-                  background-color: ${theme.colors.white};
-                }
-              `}
-            >
-              <LoginButton />
-            </StyledMenuItem>
+          ) : (
+            isLoginVisible && (
+              <StyledMenuItem
+                css={(theme: UikitTheme) => css`
+                  cursor: auto;
+                  &:hover {
+                    background-color: ${theme.colors.white};
+                  }
+                `}
+              >
+                <LoginButton />
+              </StyledMenuItem>
+            )
           )}
         </MenuGroup>
       </Section>

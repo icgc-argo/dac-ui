@@ -17,35 +17,21 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { ReactElement } from 'react';
-import Icon from '@icgc-argo/uikit/Icon';
-import { css, UikitTheme } from '@icgc-argo/uikit/index';
-import Tag from '@icgc-argo/uikit/Tag';
-import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import * as React from 'react';
+import { ClientSideGetInitialPropsContext } from 'global/utils/pages/types';
 
-import { getValidationUIConfig } from './helpers';
-import { FormSectionOverallState } from '../types';
+export const PageContext = React.createContext<ClientSideGetInitialPropsContext>({
+  pathname: '',
+  query: {},
+  asPath: '',
+});
 
-const ValidationIcon = ({ status }: { status: FormSectionOverallState }): ReactElement => {
-  const theme: UikitTheme = useTheme();
-  const { iconName, tagVariant } = getValidationUIConfig(status);
+export default function usePageContext(): ClientSideGetInitialPropsContext {
+  const pageContext = React.useContext(PageContext);
+  return pageContext;
+}
 
-  return (
-    <Tag
-      css={css`
-        align-items: center;
-        border-radius: 50%;
-        display: flex;
-        height: 22px;
-        justify-content: center;
-        padding: 0;
-        width: 22px;
-      `}
-      variant={tagVariant}
-    >
-      <Icon fill={theme.colors.white} height="12px" name={iconName} />
-    </Tag>
-  );
+export const usePageQuery = <T extends { [k: string]: string }>() => {
+  const { query } = usePageContext();
+  return query as T;
 };
-
-export default ValidationIcon;
