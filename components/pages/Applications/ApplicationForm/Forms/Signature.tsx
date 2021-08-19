@@ -60,6 +60,7 @@ const Signature = ({
   const dismissModal = () => setModalVisible(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionError, setSubmissionError] = useState(false);
 
   const { fetchWithAuth } = useAuthContext();
   const [pdfIsLoading, setPdfIsLoading] = useState(false);
@@ -100,6 +101,7 @@ const Signature = ({
     const file = e.target.files?.[0];
 
     if (file && file.size <= MAX_FILE_SIZE && VALID_FILE_TYPE.includes(file.type)) {
+      setSubmissionError(false);
       setUploadInProgress(true);
       const formData = new FormData();
       formData.append('file', file);
@@ -108,14 +110,15 @@ const Signature = ({
         method: 'POST',
         url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/upload`,
       })
-        .then(({ data }: { data: FormValidationStateParameters }) =>
+        .then(({ data }: { data: FormValidationStateParameters }) => {
           refetchAllData({
             type: 'updating',
             value: data,
-          }),
-        )
+          });
+        })
         .catch((err: AxiosError) => {
           console.error('File failed to upload.', err);
+          setSubmissionError(true);
         })
         .finally(() => {
           setUploadInProgress(false);
@@ -345,6 +348,19 @@ const Signature = ({
                   width: 220px;
                   margin-right: 70px;
                   margin-left: 20px;
+                  ${submissionError &&
+                  css`
+                    background-color: ${theme.colors.error};
+                    border-color: ${theme.colors.error};
+                    margin-left: 15px;
+
+                    :hover,
+                    :active,
+                    :focus {
+                      background-color: ${theme.colors.error_1};
+                      border-color: ${theme.colors.error_1};
+                    }
+                  `}
                 `}
                 isLoading={isUploadInProgress}
                 Loader={(props: any) => <CustomLoadingButton text="Upload a file" {...props} />}
@@ -371,11 +387,19 @@ const Signature = ({
                 />
                 Upload a file
               </Button>
-
               <FormFieldHelpBubble text="Allowed file types: pdf. | Max file size: 5MB" />
             </>
           )}
         </FormControl>
+        <Typography
+          variant="data"
+          css={css`
+            margin-left: 160px;
+            color: ${theme.colors.error_1};
+          `}
+        >
+          {submissionError ? 'Please upload a pdf file that is 5MB or less.' : ''}
+        </Typography>
 
         <Button
           css={css`

@@ -1,4 +1,4 @@
-import { Dispatch, MouseEventHandler, ReactElement, SetStateAction } from 'react';
+import { ReactElement } from 'react';
 import { css } from '@icgc-argo/uikit';
 import { UikitTheme } from '@icgc-argo/uikit/index';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';

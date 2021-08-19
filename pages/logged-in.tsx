@@ -26,7 +26,6 @@ import Router from 'next/router';
 
 import DnaLoader from '@icgc-argo/uikit/DnaLoader';
 
-import DefaultPageLayout from 'components/DefaultPageLayout';
 import { getConfig } from 'global/config';
 import { APPLICATIONS_PATH, EGO_JWT_KEY } from 'global/constants';
 import { isValidJwt } from 'global/utils/egoTokenUtils';

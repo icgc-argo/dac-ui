@@ -30,11 +30,7 @@ import { useAuthContext } from 'global/hooks';
 
 import { honorificsList } from '../constants';
 import DoubleFieldRow from '../DoubleFieldRow';
-import {
-  getInternalFieldSchema,
-  isRequired,
-  transformToSelectOptions,
-} from '../validations/helpers';
+import { isRequired, transformToSelectOptions } from '../validations/helpers';
 import {
   FormSectionValidationState_Applicant,
   FormFieldValidationTriggerFunction,
@@ -63,8 +59,9 @@ const Collaborators = ({
   const [collaboratorCount, setCollaboratorCount] = useState(0);
   const [modalVisible, setModalVisible] = useState<'collaborator' | string | null>(null);
   const [modalHasErrors, setModalHasErrors] = useState(true);
-  const [modalBannerError, setModalBannerError] =
-    useState<keyof typeof AddCollaboratorError | null>(null);
+  const [modalBannerError, setModalBannerError] = useState<
+    keyof typeof AddCollaboratorError | null
+  >(null);
   const containerRef = createRef<HTMLDivElement>();
   const { fetchWithAuth, permissions } = useAuthContext();
   const theme = useTheme();

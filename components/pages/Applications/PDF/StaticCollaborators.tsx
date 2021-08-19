@@ -1,4 +1,3 @@
-import React from 'react';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 
 import {

@@ -1,4 +1,3 @@
-import React from 'react';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
@@ -79,7 +78,6 @@ const StaticRepresentative = ({
     TitleComponent,
     SectionComponent,
     ContainerComponent,
-    LinkComponent,
   } = getStaticComponents(isPdf);
 
   return (

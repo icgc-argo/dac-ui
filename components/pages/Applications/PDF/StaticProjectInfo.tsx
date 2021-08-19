@@ -100,7 +100,6 @@ export const DataUseBubble = ({ isPdf = false }: { isPdf?: boolean }) => {
     ListComponent,
     GenericContainer,
     TextComponent,
-    LinkComponent,
   } = getStaticComponents(isPdf);
   return (
     <GenericContainer style={styles.bubbleContainer} wrap={false}>
