@@ -33,7 +33,7 @@ import { FormFieldType } from '../types';
 import { getMin, isRequired } from '../validations';
 import { StaticPublications } from 'components/pages/Applications/PDF/StaticProjectInfo';
 
-const ID = 'publicationsURLs';
+//const ID = 'publicationsURLs';
 
 const PublicationURLs = ({
   error = [],

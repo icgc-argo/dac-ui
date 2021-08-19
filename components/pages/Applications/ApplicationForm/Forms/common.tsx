@@ -18,7 +18,6 @@
  */
 
 import { pdf, Document } from '@react-pdf/renderer';
-import React, { Dispatch, SetStateAction } from 'react';
 import { FILE_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
 import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
 import Cover from '../../PDF/Cover';

@@ -104,6 +104,7 @@ const UploadsTable = ({
   };
 
   const submitFile = (file?: File) => {
+    setLetterError(false);
     const formData = new FormData();
     const fileToUpload = file || selectedFile;
     formData.append('file', fileToUpload as File);
@@ -113,14 +114,15 @@ const UploadsTable = ({
       method: 'POST',
       url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.ETHICS}/upload`,
     })
-      .then(({ data }: { data: FormValidationStateParameters }) =>
+      .then(({ data }: { data: FormValidationStateParameters }) => {
         refetchAllData({
           type: 'updating',
           value: data,
-        }),
-      )
+        });
+      })
       .catch((err: AxiosError) => {
         console.error('File failed to upload.', err);
+        setLetterError(true);
       })
       .finally(() => {
         setSelectedFile(undefined);
@@ -157,6 +159,7 @@ const UploadsTable = ({
       }
     } else {
       console.warn('invalid file', file);
+      setLetterError(true);
     }
   };
 
@@ -237,14 +240,14 @@ const UploadsTable = ({
               justify-content: space-between;
             `}
           >
-            {!!letterError && (
+            {letterError && (
               <Typography
                 css={css`
                   color: ${theme.colors.error};
                   font-size: 11px;
                 `}
               >
-                Please upload an ethics letter.
+                Please upload a pdf, doc or docx file that is 5MB or less.
               </Typography>
             )}
 
@@ -256,7 +259,9 @@ const UploadsTable = ({
                   border-color: ${theme.colors.error};
                   margin-left: 15px;
 
-                  :hover {
+                  :hover,
+                  :active,
+                  :focus {
                     background-color: ${theme.colors.error_1};
                     border-color: ${theme.colors.error_1};
                   }

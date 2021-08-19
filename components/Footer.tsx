@@ -17,7 +17,6 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React from 'react';
 import { css } from '@icgc-argo/uikit';
 import { styled, UikitTheme } from '@icgc-argo/uikit/index';
 import Link from '@icgc-argo/uikit/Link';
@@ -151,8 +150,8 @@ const LinksSection = () => {
             ${theme.typography.caption};
           `}
         >
-          © 2021 ICGC Data Access Compliance Office. All rights reserved.
-          UI v{APP_VERSION}{apiVersion && ` - API v${apiVersion}`}
+          © 2021 ICGC Data Access Compliance Office. All rights reserved. UI v{APP_VERSION}
+          {apiVersion && ` - API v${apiVersion}`}
         </div>
         <div
           css={css`

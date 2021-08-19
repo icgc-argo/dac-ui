@@ -22,11 +22,9 @@ import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 import Input from '@icgc-argo/uikit/form/Input';
 import InputLabel from '@icgc-argo/uikit/form/InputLabel';
-import Link from '@icgc-argo/uikit/Link';
 import Textarea from '@icgc-argo/uikit/form/Textarea';
 
 import FormFieldHelpBubble from '../FormFieldHelpBubble';
-import RequiredFieldsMessage from '../RequiredFieldsMessage';
 import {
   FormFieldValidationTriggerFunction,
   FormSectionValidationState_ProjectInfo,
@@ -59,9 +57,7 @@ const ProjectInfo = ({
       <StaticProjectInfo />
 
       <section>
-        <SectionTitle>
-          {FORM_TEXT.project_info.basic_info}
-        </SectionTitle>
+        <SectionTitle>{FORM_TEXT.project_info.basic_info}</SectionTitle>
 
         <FormControl
           disabled={isSectionDisabled}

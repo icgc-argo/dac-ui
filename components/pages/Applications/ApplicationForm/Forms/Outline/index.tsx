@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dispatch, MouseEventHandler, ReactElement, SetStateAction } from 'react';
+import { ReactElement } from 'react';
 import { css } from '@icgc-argo/uikit';
 import { UikitTheme } from '@icgc-argo/uikit/index';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';

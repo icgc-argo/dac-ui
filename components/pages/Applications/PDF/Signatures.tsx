@@ -17,7 +17,6 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React from 'react';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import { View, StyleSheet } from '@react-pdf/renderer';
 

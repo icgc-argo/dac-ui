@@ -8,7 +8,8 @@
     "start": "next start",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "mock-server": "npx json-server --watch mock/db.json --port 3001"
+    "mock-server": "npx json-server --watch mock/db.json --port 3001",
+    "type-check": "tsc -p ./tsconfig.json"
   },
   "dependencies": {
     "@emotion/babel-plugin": "^11.3.0",

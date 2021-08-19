@@ -17,18 +17,10 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React from 'react';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
-import {
-  Checkbox,
-  getStaticComponents,
-  PDFLink,
-  PDFParagraph,
-  PDFText,
-  SectionTitle,
-} from './common';
+import { Checkbox, getStaticComponents, PDFText, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
 import { View } from '@react-pdf/renderer';
 import { css } from '@icgc-argo/uikit';

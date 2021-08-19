@@ -23,7 +23,6 @@ import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 import FormRadio from '@icgc-argo/uikit/form/FormRadio';
 import InputLabel from '@icgc-argo/uikit/form/InputLabel';
-import Link from '@icgc-argo/uikit/Link';
 import RadioCheckboxGroup from '@icgc-argo/uikit/form/RadioCheckboxGroup';
 import Typography from '@icgc-argo/uikit/Typography';
 
@@ -57,8 +56,8 @@ const EthicsLetter = ({
 }): ReactElement => {
   // applicant made ethics letter required (option 2)
   // and application has been approved
-  const isRequiredPostApproval = !isSectionDisabled &&
-    applicationState === ApplicationState.APPROVED;
+  const isRequiredPostApproval =
+    !isSectionDisabled && applicationState === ApplicationState.APPROVED;
 
   const [selectedRadioValue, setSelectedRadioValue] = useState(
     localState.declaredAsRequired?.value || null,
@@ -94,9 +93,7 @@ const EthicsLetter = ({
       <StaticEthics />
 
       <section>
-        <SectionTitle>
-          {FORM_TEXT.ethics.title}
-        </SectionTitle>
+        <SectionTitle>{FORM_TEXT.ethics.title}</SectionTitle>
 
         <FormControl
           className="vertical"
@@ -117,9 +114,7 @@ const EthicsLetter = ({
             isChecked={isChecked}
             onChange={handleSelectedRadioValueChange}
           >
-            <FormRadio value={false}>
-              {FORM_TEXT.ethics.declarationOptions.notRequired}
-            </FormRadio>
+            <FormRadio value={false}>{FORM_TEXT.ethics.declarationOptions.notRequired}</FormRadio>
             <FormRadio value={true}>
               {FORM_TEXT.ethics.declarationOptions.required.a}{' '}
               <Typography bold component="span">
