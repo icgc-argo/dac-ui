@@ -4,8 +4,6 @@ import { SortedChangeFunction } from 'react-table';
 import pluralize from 'pluralize';
 
 import { css } from '@icgc-argo/uikit';
-import Button from '@icgc-argo/uikit/Button';
-import Icon from '@icgc-argo/uikit/Icon';
 import CardContainer from '@icgc-argo/uikit/Container';
 import Typography from '@icgc-argo/uikit/Typography';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
@@ -29,7 +27,6 @@ import {
 
 import PageHeader from 'components/PageHeader';
 import { ContentError } from 'components/placeholders';
-import { instructionBoxButtonIconStyle, instructionBoxButtonContentStyle } from 'global/styles';
 import { useGetApplications } from 'global/hooks';
 
 const getDefaultSort = (applicationSorts: ApplicationsSort[]) =>
@@ -71,7 +68,7 @@ const useManageApplicationsState = () => {
     pageSize,
     sort,
   };
-}
+};
 
 const ManageApplications = (): ReactElement => {
   const {
@@ -94,10 +91,7 @@ const ManageApplications = (): ReactElement => {
   });
 
   const { items = [] } = response?.data || {};
-  const {
-    pagesCount = 0,
-    totalCount = 0
-  } = response?.data?.pagingInfo || {};
+  const { pagesCount = 0, totalCount = 0 } = response?.data?.pagingInfo || {};
 
   return (
     <>
@@ -108,76 +102,73 @@ const ManageApplications = (): ReactElement => {
           width: 100%;
         `}
       >
-        <CardContainer
-          loading={isLoading}
-        >
-          {error
-            ? <ContentError />
-            : (
-              <>
-                <Container
+        <CardContainer loading={isLoading}>
+          {error ? (
+            <ContentError />
+          ) : (
+            <>
+              <Container
+                css={css`
+                  margin-top: 24px;
+                  margin-bottom: 16px;
+                  width: 100%;
+                  border-bottom: 1px solid ${theme.colors.grey_2};
+                  padding: 0 24px !important;
+                `}
+              >
+                <Row
                   css={css`
-                    margin-top: 24px;
-                    margin-bottom: 16px;
-                    width: 100%;
-                    border-bottom: 1px solid ${theme.colors.grey_2};
-                    padding: 0 24px !important;
+                    justify-content: space-between;
                   `}
                 >
-                  <Row
-                    css={css`
-                      justify-content: space-between;
-                    `}
-                  >
-                    <Col>
-                      <Typography
-                        as="h2"
-                        variant="subtitle2"
-                        css={css`
-                          line-height: 1.3;
-                        `}
-                      >
-                        Manage Applications
-                      </Typography>
-                    </Col>
-                    <Col>
-                      {/* TODO status indicators */}
-                    </Col>
-                  </Row>
-                </Container>
-                <Container
-                  css={css`
-                    width: 100%;
-                    padding: 0 24px !important;
-                  `}
-                >
-                  <Row
-                    css={css`
-                      align-items: center !important;
-                      justify-content: space-between;
-                      margin-bottom: 10px;
-                    `}
-                  >
-                    <Col>
-                      <Typography
-                        as="p"
-                        color={theme.colors.grey}
-                        css={css`
-                          margin: 0 0 0 6px;
-                        `}
-                        variant="data"
-                      >
-                        {totalCount.toLocaleString()} {pluralize('submissions', totalCount)}
-                      </Typography>
-                    </Col>
-                    <Col
+                  <Col>
+                    <Typography
+                      as="h2"
+                      variant="subtitle2"
                       css={css`
-                        display: flex;
-                        align-items: center;
-                        justify-content: flex-end;
-                      `}>
-                      {/* TODO search */}
-                      {/* <Button
+                        line-height: 1.3;
+                      `}
+                    >
+                      Manage Applications
+                    </Typography>
+                  </Col>
+                  <Col>{/* TODO status indicators */}</Col>
+                </Row>
+              </Container>
+              <Container
+                css={css`
+                  width: 100%;
+                  padding: 0 24px !important;
+                `}
+              >
+                <Row
+                  css={css`
+                    align-items: center !important;
+                    justify-content: space-between;
+                    margin-bottom: 10px;
+                  `}
+                >
+                  <Col>
+                    <Typography
+                      as="p"
+                      color={theme.colors.grey}
+                      css={css`
+                        margin: 0 0 0 6px;
+                      `}
+                      variant="data"
+                    >
+                      {totalCount.toLocaleString()} {pluralize('submissions', totalCount)}
+                    </Typography>
+                  </Col>
+                  <Col
+                    css={css`
+                      display: flex;
+                      align-items: center;
+                      justify-content: flex-end;
+                    `}
+                  >
+                    {/* TODO search */}
+                    {/* <Button
                         size="sm"
                         variant="secondary"
                       >
@@ -192,31 +183,31 @@ const ManageApplications = (): ReactElement => {
                           Export Table
                         </span>
                       </Button> */}
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col>
-                      <Table
-                        columns={tableColumns}
-                        data={formatTableData(items)}
-                        NoDataComponent={() => null}
-                        defaultSorted={getDefaultSort(DEFAULT_SORT)}
-                        manual
-                        onPageChange={onPageChange}
-                        onPageSizeChange={onPageSizeChange}
-                        onSortedChange={onSortedChange}
-                        page={page}
-                        pages={pagesCount}
-                        pageSize={pageSize}
-                        parentRef={containerRef}
-                        stripped
-                        withOutsideBorder
-                      />
-                    </Col>
-                  </Row>
-                </Container>
-              </>
-            )}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Table
+                      columns={tableColumns}
+                      data={formatTableData(items)}
+                      NoDataComponent={() => null}
+                      defaultSorted={getDefaultSort(DEFAULT_SORT)}
+                      manual
+                      onPageChange={onPageChange}
+                      onPageSizeChange={onPageSizeChange}
+                      onSortedChange={onSortedChange}
+                      page={page}
+                      pages={pagesCount}
+                      pageSize={pageSize}
+                      parentRef={containerRef}
+                      stripped
+                      withOutsideBorder
+                    />
+                  </Col>
+                </Row>
+              </Container>
+            </>
+          )}
         </CardContainer>
       </Container>
     </>

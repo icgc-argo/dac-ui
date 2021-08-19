@@ -6,10 +6,10 @@ import { EgoJwtData, UserWithId } from 'global/types';
 
 const TokenUtils = createEgoUtils(getConfig().NEXT_PUBLIC_EGO_PUBLIC_KEY);
 
-type PermissionScopeObj = {
+/* type PermissionScopeObj = {
   policy: string;
   permission: 'READ' | 'WRITE' | 'ADMIN' | 'DENY';
-};
+}; */
 
 export const decodeToken = memoize((egoJwt?: string) =>
   egoJwt ? TokenUtils.decodeToken(egoJwt) : null,

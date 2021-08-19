@@ -1,7 +1,6 @@
 import { css } from '@icgc-argo/uikit';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import { styled } from '@icgc-argo/uikit';
-import Link from '@icgc-argo/uikit/Link';
 import Typography from '@icgc-argo/uikit/Typography';
 
 const IconWithText = styled('div')`

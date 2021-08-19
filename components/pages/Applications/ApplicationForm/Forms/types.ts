@@ -1,9 +1,5 @@
 import { ChangeEvent, Dispatch, ReactNode } from 'react';
-import {
-  SchemaDescription,
-  SchemaInnerTypeDescription,
-  SchemaObjectDescription,
-} from 'yup/lib/schema';
+import { SchemaDescription, SchemaObjectDescription } from 'yup/lib/schema';
 import { UikitIconNames } from '@icgc-argo/uikit/Icon/icons';
 import { TAG_VARIANTS } from '@icgc-argo/uikit/Tag';
 

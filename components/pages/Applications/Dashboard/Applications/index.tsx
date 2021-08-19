@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import InProgress from './InProgress';
 import StartApplication from './Start';
 import { css } from '@emotion/core';

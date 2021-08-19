@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { Text, View, Font, StyleSheet } from '@react-pdf/renderer';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import Typography from '@icgc-argo/uikit/Typography';

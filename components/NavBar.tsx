@@ -174,7 +174,7 @@ const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
     hideLinks ||
     hideLogin ||
     [LOGGED_IN_PATH].includes(asPath) ||
-    (some(PRIVATE_PATHS, privatePath => asPath.startsWith(privatePath)) && !user)
+    (some(PRIVATE_PATHS, (privatePath) => asPath.startsWith(privatePath)) && !user)
   );
 
   useClickAway({
@@ -253,26 +253,28 @@ const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
                 {applicationsTitle}
               </StyledMenuItem>
             </Link>
-          ) : isLoginVisible && (
-            <Link
-              css={css`
-                text-decoration: none;
-              `}
-              onClick={() => setAccessModalVisible(true)}
-            >
-              <StyledMenuItem>
-                <Typography
-                  css={(theme) => css`
-                    ${theme.typography.data};
-                    text-transform: uppercase;
-                    font-weight: bold;
-                    color: ${theme.colors.accent2_dark};
-                  `}
-                >
-                  Apply for Access
-                </Typography>
-              </StyledMenuItem>
-            </Link>
+          ) : (
+            isLoginVisible && (
+              <Link
+                css={css`
+                  text-decoration: none;
+                `}
+                onClick={() => setAccessModalVisible(true)}
+              >
+                <StyledMenuItem>
+                  <Typography
+                    css={(theme) => css`
+                      ${theme.typography.data};
+                      text-transform: uppercase;
+                      font-weight: bold;
+                      color: ${theme.colors.accent2_dark};
+                    `}
+                  >
+                    Apply for Access
+                  </Typography>
+                </StyledMenuItem>
+              </Link>
+            )
           )}
           {user ? (
             <StyledMenuItem
@@ -303,17 +305,19 @@ const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
             >
               <UserDisplayName dropdownOpen={dropdownOpen} user={user} />
             </StyledMenuItem>
-          ) : isLoginVisible && (
-            <StyledMenuItem
-              css={(theme: UikitTheme) => css`
-                cursor: auto;
-                &:hover {
-                  background-color: ${theme.colors.white};
-                }
-              `}
-            >
-              <LoginButton />
-            </StyledMenuItem>
+          ) : (
+            isLoginVisible && (
+              <StyledMenuItem
+                css={(theme: UikitTheme) => css`
+                  cursor: auto;
+                  &:hover {
+                    background-color: ${theme.colors.white};
+                  }
+                `}
+              >
+                <LoginButton />
+              </StyledMenuItem>
+            )
           )}
         </MenuGroup>
       </Section>

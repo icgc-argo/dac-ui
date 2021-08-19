@@ -7,7 +7,6 @@ import Input from '@icgc-argo/uikit/form/Input';
 import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import MultiSelect, { Option } from '@icgc-argo/uikit/form/MultiSelect';
 import Select from '@icgc-argo/uikit/form/Select';
-import Typography from '@icgc-argo/uikit/Typography';
 
 import { countriesList, honorificsList } from './constants';
 import DoubleFieldRow from './DoubleFieldRow';
@@ -44,9 +43,7 @@ const Representative = ({
       <StaticRepresentative />
 
       <section>
-        <SectionTitle>
-          {FORM_TEXT.representative.title}
-        </SectionTitle>
+        <SectionTitle>{FORM_TEXT.representative.title}</SectionTitle>
 
         <DoubleFieldRow>
           <FormControl
@@ -212,9 +209,7 @@ const Representative = ({
       </section>
 
       <section>
-        <SectionTitle>
-          {FORM_TEXT.representative.address}
-        </SectionTitle>
+        <SectionTitle>{FORM_TEXT.representative.address}</SectionTitle>
 
         <FormControl disabled={isSectionDisabled}>
           <FormCheckbox
