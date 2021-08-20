@@ -19,12 +19,10 @@
 
 import React, { ReactElement, useState } from 'react';
 import { Col, Container, Row } from 'react-grid-system';
-import { ReactTableDefaults, SortedChangeFunction } from 'react-table';
+import { SortedChangeFunction } from 'react-table';
 import pluralize from 'pluralize';
 
 import { css } from '@icgc-argo/uikit';
-import Button from '@icgc-argo/uikit/Button';
-import Icon from '@icgc-argo/uikit/Icon';
 import CardContainer from '@icgc-argo/uikit/Container';
 import Typography from '@icgc-argo/uikit/Typography';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
@@ -43,12 +41,10 @@ import {
   formatTableData,
   adminStatesAllowList,
   tableColumns,
-  DEFAULT_SORT,
 } from './utils';
 
 import PageHeader from 'components/PageHeader';
 import { ContentError } from 'components/placeholders';
-import { instructionBoxButtonIconStyle, instructionBoxButtonContentStyle } from 'global/styles';
 import { useGetApplications } from 'global/hooks';
 
 const API_DEFAULT_SORT = [
