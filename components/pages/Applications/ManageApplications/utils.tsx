@@ -68,7 +68,6 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
     Header: fieldDisplayNames.appId,
     id: ApplicationsField.appId,
     accessor: 'appId',
-    sortMethod: (a: string, b: string) => Number(a.substring(5)) - Number(b.substring(5)),
     Cell: ({ original }: { original: ApplicationRecord }) =>
       original.appId ? (
         <Link href={urlJoin(APPLICATIONS_PATH, original.appId)}>{original.appId}</Link>
