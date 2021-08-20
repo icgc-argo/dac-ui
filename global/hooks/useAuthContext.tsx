@@ -91,6 +91,7 @@ export const AuthProvider = ({
       if (!isValidJwt(token)) {
         if (egoJwt && token === egoJwt) {
           setLoadingRefreshToken(true);
+          setLoading(true);
           queue.add(() =>
             fetch(refreshUrl, {
               credentials: 'include', // sends refreshId cookie
