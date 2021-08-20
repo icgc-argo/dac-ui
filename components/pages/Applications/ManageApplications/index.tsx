@@ -48,16 +48,27 @@ import PageHeader from 'components/PageHeader';
 import { ContentError } from 'components/placeholders';
 import { useGetApplications } from 'global/hooks';
 
+const API_DEFAULT_SORT = [
+  {
+    field: ApplicationsField.appNumber,
+    order: 'asc' as ApplicationsSortOrder,
+  },
+];
+
+const TABLE_DEFAULT_SORT = [
+  {
+    field: ApplicationsField.appId,
+    order: 'asc' as ApplicationsSortOrder,
+  },
+];
+
 const getDefaultSort = (applicationSorts: ApplicationsSort[]) =>
   applicationSorts.map(({ field, order }) => ({ id: field, desc: order === 'desc' }));
 
 const useManageApplicationsState = () => {
-  const defaultSort = [
-    { field: ApplicationsField.appNumber, order: 'asc' as ApplicationsSortOrder },
-  ];
   const [page, setPage] = useState<number>(DEFAULT_PAGE);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
-  const [sort, setSort] = useState<ApplicationsSort[]>(defaultSort);
+  const [sort, setSort] = useState<ApplicationsSort[]>(API_DEFAULT_SORT);
 
   const onPageChange = (newPageNum: number) => {
     setPage(newPageNum);
