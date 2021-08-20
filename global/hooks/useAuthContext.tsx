@@ -73,15 +73,15 @@ const AuthContext = createContext<T_AuthContext>({
 
 export const AuthProvider = ({
   children,
-  egoJwt = '',
 }: {
   children: React.ReactElement;
-  egoJwt: string;
 }) => {
   // TODO: typing this state as `string` causes a compiler error. the same setup exists in argo but does not cause
   // a type issue. using `any` for now
+  const egoJwt = typeof window !== 'undefined' && localStorage.getItem(EGO_JWT_KEY) || '';
   const [isLoading, setLoading] = useState<boolean>(true);
   const [token, setTokenState] = useState<string>(egoJwt);
+  const [isLoadingRefreshToken, setLoadingRefreshToken] = useState<boolean>(false);
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const router = useRouter();
 
@@ -96,57 +96,50 @@ export const AuthProvider = ({
     removeToken();
   };
 
-  // TODO refresh token here!
-  console.log('🎫 fetch - egoJwt (prop):', egoJwt.slice(-10));
-  console.log('🎫 fetch - token (state):', token.slice(-10));
+  console.log('🌈 useAuthContext - egoJwt:', egoJwt.slice(-10));
+  console.log('🌈 useAuthContext - token:', token.slice(-10));
 
-  if (token) {
-    if (!isValidJwt(token)) {
-      if (egoJwt && token === egoJwt) {
-        console.log('🌀 fetch - try to get refresh token:', token.slice(-10));
-        queue.add(() =>
-          fetch(refreshUrl, {
-            credentials: 'include', // sends refreshId cookie
-            headers: {
-              accept: '*/*',
-              authorization: `Bearer ${token}`,
-            },
-            method: 'POST',
-          })
-            .then(res => res.text())
-            .then(refreshedJwt => {
-              if (isValidJwt(refreshedJwt)) {
-                console.log('🎉 fetch - refresh token IS valid:', refreshedJwt.slice(-10));
-                setTokenState(refreshedJwt);
-                localStorage.setItem(EGO_JWT_KEY, refreshedJwt);
-              } else {
-                console.log('💥 fetch - refresh token NOT valid:', refreshedJwt.slice(-10));
+  if (!isLoadingRefreshToken) {
+    if (token) {
+      if (!isValidJwt(token)) {
+        if (egoJwt && token === egoJwt) {
+          console.log('🌀 fetch - try to get refresh token:', token.slice(-10));
+          setLoadingRefreshToken(true);
+          queue.add(() =>
+            fetch(refreshUrl, {
+              credentials: 'include', // sends refreshId cookie
+              headers: {
+                accept: '*/*',
+                authorization: `Bearer ${token}`,
+              },
+              method: 'POST',
+            })
+              .then(res => res.text())
+              .then(refreshedJwt => {
+                if (isValidJwt(refreshedJwt)) {
+                  console.log('🎉 fetch - refresh token IS valid:', refreshedJwt.slice(-10));
+                  setTokenState(refreshedJwt);
+                  localStorage.setItem(EGO_JWT_KEY, refreshedJwt);
+                } else {
+                  console.log('💥 fetch - refresh token NOT valid:', refreshedJwt);
+                  logout();
+                }
+              })
+              .catch((err) => {
+                console.log('🧤 fetch - refresh token error:', err);
                 logout();
-              }
-            })
-            .catch((err) => {
-              console.log('🧤 fetch - refresh token error:', err);
-              logout();
-            })
-        );
+              })
+              .finally(() => {
+                setLoadingRefreshToken(false);
+              })
+          );
+        }
+      } else if (!egoJwt) {
+        setTokenState('');
       }
-    } else if (!egoJwt) {
-      setTokenState('');
+    } else if (isValidJwt(egoJwt)) {
+      setTokenState(egoJwt);
     }
-  } else if (isValidJwt(egoJwt)) {
-    setTokenState(egoJwt);
-  }
-
-  if (token) {
-    if (!isValidJwt(token)) {
-      if (egoJwt && token === egoJwt) {
-        logout();
-      }
-    } else if (!egoJwt) {
-      setTokenState('');
-    }
-  } else if (isValidJwt(egoJwt)) {
-    setTokenState(egoJwt);
   }
 
   const cancelTokenSource = axios.CancelToken.source();

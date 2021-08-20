@@ -103,21 +103,10 @@ export const ModalPortal = ({ children }: { children: React.ReactElement }) => {
 const Root = ({
   children,
   pageContext,
-  egoJwt = '',
 }: {
   children: any;
   pageContext: any;
-  egoJwt?: string;
 }) => {
-  // const [tokenState, setTokenState] = useState<string>('');
-  // useEffect(() => {
-  //   // add JWT to Root's state so that AuthProvider will receive updated props.
-  //   setTokenState(egoJwt);
-  // }, [egoJwt]);
-
-  // console.log('🌴 Root - egoJwt (prop):', egoJwt.slice(-10));
-  // console.log('🌴 Root - tokenState (state):', tokenState.slice(-10));
-
   return (
     <React.Fragment>
       <style>
@@ -140,10 +129,9 @@ const Root = ({
       `}
       </style>
       <Head />
-      <AuthProvider egoJwt={egoJwt}>
+      <AuthProvider>
         <PageContext.Provider value={pageContext}>
           <ThemeProvider>
-
             <div
               css={css`
               position: fixed;
