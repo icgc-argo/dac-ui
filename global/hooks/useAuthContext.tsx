@@ -44,9 +44,6 @@ type T_AuthContext = {
   user?: UserWithId | void;
 };
 
-const maxConcurrent = 1;
-const maxQueue = Infinity;
-const queue = new Queue(maxConcurrent, maxQueue);
 const refreshUrl = urlJoin(
   NEXT_PUBLIC_EGO_API_ROOT,
   `/oauth/refresh?client_id=${NEXT_PUBLIC_EGO_CLIENT_ID}`
@@ -64,9 +61,12 @@ const AuthContext = createContext<T_AuthContext>({
 
 export const AuthProvider = ({
   children,
+  queue,
 }: {
+  queue: any;
   children: React.ReactElement;
 }) => {
+  console.log('▶️ start AuthProvider')
   // TODO: typing this state as `string` causes a compiler error. the same setup exists in argo but does not cause
   // a type issue. using `any` for now
   const egoJwt = typeof window !== 'undefined' && localStorage.getItem(EGO_JWT_KEY) || '';
@@ -82,14 +82,18 @@ export const AuthProvider = ({
   };
 
   const logout = () => {
+    console.log('💀 logout')
     router.push('/?session_expired=true');
     removeToken();
   };
 
   if (!isLoadingRefreshToken) {
     if (token) {
+      console.log('🎫 token exists', token.slice(-5));
       if (!isValidJwt(token)) {
         if (egoJwt && token === egoJwt) {
+          console.log('🌀 get refresh token');
+          console.log('⏸ queue', queue)
           setLoadingRefreshToken(true);
           setLoading(true);
           queue.add(() =>
@@ -104,13 +108,16 @@ export const AuthProvider = ({
               .then(res => res.text())
               .then(refreshedJwt => {
                 if (isValidJwt(refreshedJwt)) {
+                  console.log('✅ refresh token valid', refreshedJwt.slice(-5))
                   setTokenState(refreshedJwt);
                   localStorage.setItem(EGO_JWT_KEY, refreshedJwt);
                 } else {
+                  console.log('❌ refresh token & token state invalid', refreshedJwt)
                   logout();
                 }
               })
               .catch((err) => {
+                console.log('❌ refresh token error', err)
                 logout();
               })
               .finally(() => {
@@ -124,6 +131,8 @@ export const AuthProvider = ({
     } else if (isValidJwt(egoJwt)) {
       setTokenState(egoJwt);
     }
+  } else {
+    console.log('⏳ refresh token loading')
   }
 
   axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
@@ -177,7 +186,9 @@ export const AuthProvider = ({
       });
   };
 
-  const userInfo = token ? decodeToken(token) : null;
+  const userInfo = token && !isLoadingRefreshToken && isValidJwt(token)
+    ? decodeToken(token)
+    : null;
   const user = userInfo ? extractUser(userInfo) : undefined;
   const permissions = getPermissionsFromToken(token);
 

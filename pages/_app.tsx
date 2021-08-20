@@ -34,6 +34,7 @@ const App = ({
   ctx: NextPageContext;
 }) => {
   const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
+  console.log('🦄 app')
   return (
     <Root pageContext={ctx}>
       {NEXT_PUBLIC_MAINTENANCE_MODE_ON ? <Maintenance /> : <Component {...pageProps} />}

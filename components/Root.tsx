@@ -20,6 +20,7 @@
 import React from 'react';
 import { css } from '@emotion/core';
 import ReactDOM from 'react-dom';
+import Queue from 'promise-queue';
 
 import ThemeProvider from '@icgc-argo/uikit/ThemeProvider';
 import Modal from '@icgc-argo/uikit/Modal';
@@ -100,13 +101,18 @@ export const ModalPortal = ({ children }: { children: React.ReactElement }) => {
     : null;
 };
 
+const refreshTokensMaxConcurrent = 1;
+const refreshTokensMaxQueue = Infinity;
+const refreshTokensQueue = new Queue(refreshTokensMaxConcurrent, refreshTokensMaxQueue);
+
 const Root = ({
   children,
   pageContext,
 }: {
   children: any;
   pageContext: any;
-}) => {
+  }) => {
+  console.log('🌲 root')
   return (
     <React.Fragment>
       <style>
@@ -129,7 +135,7 @@ const Root = ({
       `}
       </style>
       <Head />
-      <AuthProvider>
+      <AuthProvider queue={refreshTokensQueue}>
         <PageContext.Provider value={pageContext}>
           <ThemeProvider>
             <div
