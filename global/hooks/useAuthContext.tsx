@@ -149,32 +149,30 @@ export const AuthProvider = ({
     url,
   }: AxiosRequestConfig) => {
     setLoading(true);
-    if (!url) {
+
+    const cancelFetch = () => {
       setLoading(false);
       return Promise.reject(undefined);
     }
 
-    if (!token) {
-      setLoading(false);
-      return Promise.reject(undefined);
-    }
+    !url || !token && cancelFetch();
 
-    const config: AxiosRequestConfig = {
+    const makeConfig = (configToken: string): AxiosRequestConfig => ({
       ...(!['DELETE', 'GET'].includes(method) && { data }),
       baseURL: NEXT_PUBLIC_DAC_API_ROOT,
       cancelToken: cancelTokenSource.token,
       headers: {
         accept: '*/*',
         ...headers,
-        Authorization: `Bearer ${token || ''}`,
+        Authorization: `Bearer ${configToken || ''}`,
       },
       method,
       params,
       ...(responseType ? { responseType } : {}),
       url,
-    };
+    });
 
-    return axios(config)
+    return axios(makeConfig(token))
       .catch((error) => {
         // TODO: log errors somewhere not visible to the user?
         // Leaving this log here pre-release, for troubleshooting
