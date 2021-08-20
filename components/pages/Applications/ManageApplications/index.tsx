@@ -38,7 +38,6 @@ import {
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGE,
-  DEFAULT_SORT,
   formatTableData,
   adminStatesAllowList,
   tableColumns,
@@ -48,13 +47,27 @@ import PageHeader from 'components/PageHeader';
 import { ContentError } from 'components/placeholders';
 import { useGetApplications } from 'global/hooks';
 
+const API_DEFAULT_SORT = [
+  {
+    field: ApplicationsField.appNumber,
+    order: 'asc' as ApplicationsSortOrder,
+  },
+];
+
+const TABLE_DEFAULT_SORT = [
+  {
+    field: ApplicationsField.appId,
+    order: 'asc' as ApplicationsSortOrder,
+  },
+];
+
 const getDefaultSort = (applicationSorts: ApplicationsSort[]) =>
   applicationSorts.map(({ field, order }) => ({ id: field, desc: order === 'desc' }));
 
 const useManageApplicationsState = () => {
   const [page, setPage] = useState<number>(DEFAULT_PAGE);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
-  const [sort, setSort] = useState<ApplicationsSort[]>(DEFAULT_SORT);
+  const [sort, setSort] = useState<ApplicationsSort[]>(API_DEFAULT_SORT);
 
   const onPageChange = (newPageNum: number) => {
     setPage(newPageNum);
@@ -69,8 +82,13 @@ const useManageApplicationsState = () => {
     const newSort = newSorted.reduce(
       (accSort: Array<ApplicationsSort>, sortRule: ApplicationsSortingRule) => {
         const order = sortRule.desc ? 'desc' : 'asc';
+
         return accSort.concat({
-          field: sortRule.id as ApplicationsField,
+          field:
+            // if sorting on appId, user appNumber instead
+            sortRule.id === ApplicationsField.appId
+              ? ApplicationsField.appNumber
+              : (sortRule.id as ApplicationsField),
           order: order as ApplicationsSortOrder,
         }) as ApplicationsSort[];
       },
@@ -108,7 +126,6 @@ const ManageApplications = (): ReactElement => {
     sort,
     states: adminStatesAllowList,
   });
-
   const { items = [] } = response?.data || {};
   const { pagesCount = 0, totalCount = 0 } = response?.data?.pagingInfo || {};
 
@@ -210,7 +227,7 @@ const ManageApplications = (): ReactElement => {
                       columns={tableColumns}
                       data={formatTableData(items)}
                       NoDataComponent={() => null}
-                      defaultSorted={getDefaultSort(DEFAULT_SORT)}
+                      defaultSorted={getDefaultSort(TABLE_DEFAULT_SORT)}
                       manual
                       onPageChange={onPageChange}
                       onPageSizeChange={onPageSizeChange}

@@ -240,6 +240,7 @@ export enum ApplicationsField {
   expiresAtUtc = 'expiresAtUtc',
   lastUpdatedAtUtc = 'lastUpdatedAtUtc',
   state = 'state',
+  appNumber = 'appNumber',
 }
 
 export type AuthAPIFetchFunction = (options?: {
