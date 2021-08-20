@@ -155,7 +155,10 @@ export const AuthProvider = ({
       return Promise.reject(undefined);
     }
 
-    !url || !token && cancelFetch();
+    if (!url || !token) {
+      console.log('!!! no token || no url');
+      cancelFetch();
+    }
 
     const makeConfig = (configToken: string): AxiosRequestConfig => ({
       ...(!['DELETE', 'GET'].includes(method) && { data }),
@@ -172,16 +175,19 @@ export const AuthProvider = ({
       url,
     });
 
-    return axios(makeConfig(token))
-      .catch((error) => {
-        // TODO: log errors somewhere not visible to the user?
-        // Leaving this log here pre-release, for troubleshooting
-        console.error('Error in fetchWithAuth', { error });
-        throw { error };
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    const getAxios = (configToken: string) =>
+      axios(makeConfig(configToken))
+        .catch((error) => {
+          // TODO: log errors somewhere not visible to the user?
+          // Leaving this log here pre-release, for troubleshooting
+          console.error('Error in fetchWithAuth', { error });
+          throw { error };
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+
+    return getAxios(token);
   };
 
   const userInfo = token && !isLoadingRefreshToken && isValidJwt(token)
