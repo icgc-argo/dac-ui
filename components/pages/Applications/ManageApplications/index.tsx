@@ -58,6 +58,13 @@ const API_DEFAULT_SORT = [
   },
 ];
 
+const TABLE_DEFAULT_SORT = [
+  {
+    field: ApplicationsField.appId,
+    order: 'asc' as ApplicationsSortOrder,
+  },
+];
+
 const getDefaultSort = (applicationSorts: ApplicationsSort[]) =>
   applicationSorts.map(({ field, order }) => ({ id: field, desc: order === 'desc' }));
 
@@ -224,7 +231,7 @@ const ManageApplications = (): ReactElement => {
                       columns={tableColumns}
                       data={formatTableData(items)}
                       NoDataComponent={() => null}
-                      defaultSorted={getDefaultSort(DEFAULT_SORT)}
+                      defaultSorted={getDefaultSort(TABLE_DEFAULT_SORT)}
                       manual
                       onPageChange={onPageChange}
                       onPageSizeChange={onPageSizeChange}
