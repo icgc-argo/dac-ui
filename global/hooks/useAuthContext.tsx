@@ -44,15 +44,6 @@ type T_AuthContext = {
   user?: UserWithId | void;
 };
 
-const axiosInstance = axios.create({
-  headers: {
-    post: {
-      ['Content-Type']: 'application/json;charset=utf-8',
-      ['Access-Control-Allow-Origin']: '*'
-    }
-  }
-});
-
 var maxConcurrent = 1;
 var maxQueue = Infinity;
 var queue = new Queue(maxConcurrent, maxQueue);
@@ -142,6 +133,9 @@ export const AuthProvider = ({
     }
   }
 
+  axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
+  axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+
   const cancelTokenSource = axios.CancelToken.source();
   const cancelFetchWithAuth = cancelTokenSource.cancel;
   const fetchWithAuth = ({
@@ -178,7 +172,7 @@ export const AuthProvider = ({
       url,
     };
 
-    return axiosInstance(config)
+    return axios(config)
       .catch((error) => {
         // TODO: log errors somewhere not visible to the user?
         // Leaving this log here pre-release, for troubleshooting
