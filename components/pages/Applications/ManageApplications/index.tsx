@@ -38,10 +38,10 @@ import {
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGE,
-  DEFAULT_SORT,
   formatTableData,
   adminStatesAllowList,
   tableColumns,
+  DEFAULT_SORT,
 } from './utils';
 
 import PageHeader from 'components/PageHeader';
@@ -51,13 +51,6 @@ import { useGetApplications } from 'global/hooks';
 const API_DEFAULT_SORT = [
   {
     field: ApplicationsField.appNumber,
-    order: 'asc' as ApplicationsSortOrder,
-  },
-];
-
-const TABLE_DEFAULT_SORT = [
-  {
-    field: ApplicationsField.appId,
     order: 'asc' as ApplicationsSortOrder,
   },
 ];
