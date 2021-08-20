@@ -44,9 +44,9 @@ type T_AuthContext = {
   user?: UserWithId | void;
 };
 
-var maxConcurrent = 1;
-var maxQueue = Infinity;
-var queue = new Queue(maxConcurrent, maxQueue);
+const maxConcurrent = 1;
+const maxQueue = Infinity;
+const queue = new Queue(maxConcurrent, maxQueue);
 const refreshUrl = urlJoin(
   NEXT_PUBLIC_EGO_API_ROOT,
   `/oauth/refresh?client_id=${NEXT_PUBLIC_EGO_CLIENT_ID}`
@@ -77,7 +77,6 @@ export const AuthProvider = ({
   const router = useRouter();
 
   const removeToken = () => {
-    console.log('☠️ fetch - logout');
     localStorage.removeItem(EGO_JWT_KEY);
     setTokenState('');
   };
@@ -87,14 +86,10 @@ export const AuthProvider = ({
     removeToken();
   };
 
-  console.log('🌈 useAuthContext - egoJwt:', egoJwt.slice(-10));
-  console.log('🌈 useAuthContext - token:', token.slice(-10));
-
   if (!isLoadingRefreshToken) {
     if (token) {
       if (!isValidJwt(token)) {
         if (egoJwt && token === egoJwt) {
-          console.log('🌀 fetch - try to get refresh token:', token.slice(-10));
           setLoadingRefreshToken(true);
           queue.add(() =>
             fetch(refreshUrl, {
@@ -108,16 +103,13 @@ export const AuthProvider = ({
               .then(res => res.text())
               .then(refreshedJwt => {
                 if (isValidJwt(refreshedJwt)) {
-                  console.log('🎉 fetch - refresh token IS valid:', refreshedJwt.slice(-10));
                   setTokenState(refreshedJwt);
                   localStorage.setItem(EGO_JWT_KEY, refreshedJwt);
                 } else {
-                  console.log('💥 fetch - refresh token NOT valid:', refreshedJwt);
                   logout();
                 }
               })
               .catch((err) => {
-                console.log('🧤 fetch - refresh token error:', err);
                 logout();
               })
               .finally(() => {
