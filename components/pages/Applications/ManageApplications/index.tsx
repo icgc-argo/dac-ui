@@ -19,10 +19,12 @@
 
 import React, { ReactElement, useState } from 'react';
 import { Col, Container, Row } from 'react-grid-system';
-import { SortedChangeFunction } from 'react-table';
+import { ReactTableDefaults, SortedChangeFunction } from 'react-table';
 import pluralize from 'pluralize';
 
 import { css } from '@icgc-argo/uikit';
+import Button from '@icgc-argo/uikit/Button';
+import Icon from '@icgc-argo/uikit/Icon';
 import CardContainer from '@icgc-argo/uikit/Container';
 import Typography from '@icgc-argo/uikit/Typography';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
@@ -46,6 +48,7 @@ import {
 
 import PageHeader from 'components/PageHeader';
 import { ContentError } from 'components/placeholders';
+import { instructionBoxButtonIconStyle, instructionBoxButtonContentStyle } from 'global/styles';
 import { useGetApplications } from 'global/hooks';
 
 const API_DEFAULT_SORT = [
@@ -76,8 +79,13 @@ const useManageApplicationsState = () => {
     const newSort = newSorted.reduce(
       (accSort: Array<ApplicationsSort>, sortRule: ApplicationsSortingRule) => {
         const order = sortRule.desc ? 'desc' : 'asc';
+
         return accSort.concat({
-          field: sortRule.id as ApplicationsField,
+          field:
+            // if sorting on appId, user appNumber instead
+            sortRule.id === ApplicationsField.appId
+              ? ApplicationsField.appNumber
+              : (sortRule.id as ApplicationsField),
           order: order as ApplicationsSortOrder,
         }) as ApplicationsSort[];
       },
@@ -115,7 +123,6 @@ const ManageApplications = (): ReactElement => {
     sort,
     states: adminStatesAllowList,
   });
-
   const { items = [] } = response?.data || {};
   const { pagesCount = 0, totalCount = 0 } = response?.data?.pagingInfo || {};
 
