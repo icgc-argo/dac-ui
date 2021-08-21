@@ -28,6 +28,7 @@ import { isValidJwt } from 'global/utils/egoTokenUtils';
 import { NextRouter, useRouter } from 'next/router';
 import Maintenance from 'components/pages/Error/Maintenance';
 import { getConfig } from 'global/config';
+import Loader from 'components/Loader';
 
 const authSkipPaths = [LOGGED_IN_PATH];
 const applicationsPathname = '/applications/[[...ID]]';
@@ -52,11 +53,16 @@ const App = ({
   ctx: NextPageContext;
 }) => {
   const [initialJwt, setInitialJwt] = useState<string>('');
+  const [isAuthLoading, setAuthLoading] = useState<boolean>(true);
   const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
   const router = useRouter();
 
   useEffect(() => {
-    if (checkAuthSkip(router)) return;
+    if (checkAuthSkip(router)) {
+      setAuthLoading(false);
+      return;
+    }
+    setAuthLoading(true);
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
     if (isValidJwt(egoJwt)) {
       setInitialJwt(egoJwt);
@@ -71,10 +77,15 @@ const App = ({
         });
       }
     }
+    setAuthLoading(false);
   }, [router.asPath]);
   return (
     <Root egoJwt={initialJwt} pageContext={ctx}>
-      {NEXT_PUBLIC_MAINTENANCE_MODE_ON ? <Maintenance /> : <Component {...pageProps} />}
+      {NEXT_PUBLIC_MAINTENANCE_MODE_ON
+        ? <Maintenance />
+        : isAuthLoading
+          ? <Loader />
+          : <Component {...pageProps} />}
     </Root>
   );
 };
