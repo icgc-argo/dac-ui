@@ -101,6 +101,7 @@ export const AuthProvider = ({
 
     const egoJwt = getToken() || '';
     (!url || !egoJwt) && cancelFetch();
+    !egoJwt && logout();
 
     const config: AxiosRequestConfig = {
       ...(!['DELETE', 'GET'].includes(method) && { data }),
@@ -140,7 +141,7 @@ export const AuthProvider = ({
         cancelFetch();
         logout();
       }
-    } else {
+    } else if (egoJwt) {
       return axios(config)
         .catch((error) => {
           // TODO: log errors somewhere not visible to the user?
