@@ -72,31 +72,13 @@ export const AuthProvider = ({
   // TODO: typing this state as `string` causes a compiler error. the same setup exists in argo but does not cause
   // a type issue. using `any` for now
   const [isLoading, setLoading] = useState<boolean>(true);
-  const [token, setTokenState] = useState<string>(egoJwt);
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const router = useRouter();
-
-  const removeToken = () => {
-    localStorage.removeItem(EGO_JWT_KEY);
-    setTokenState('');
-  };
 
   const logout = () => {
     router.push('/?session_expired=true');
     removeToken();
   };
-
-  if (token) {
-    if (!isValidJwt(token)) {
-      if (egoJwt && token === egoJwt) {
-        logout();
-      }
-    } else if (!egoJwt) {
-      setTokenState('');
-    }
-  } else if (isValidJwt(egoJwt)) {
-    setTokenState(egoJwt);
-  }
 
   // TODO: decide if we want these for all types of requests or only POST
   axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
@@ -120,7 +102,6 @@ export const AuthProvider = ({
 
     const egoJwt = getToken() || '';
     (!url || !egoJwt) && cancelFetch();
-    }
 
     const config: AxiosRequestConfig = {
       ...(!['DELETE', 'GET'].includes(method) && { data }),
