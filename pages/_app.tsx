@@ -22,11 +22,25 @@ import { NextPageContext } from 'next';
 import { AppContext } from 'next/app';
 import Root from 'components/Root';
 import { PageConfigProps, PageWithConfig } from 'global/utils/pages/types';
-import { EGO_JWT_KEY } from 'global/constants';
+import { EGO_JWT_KEY, LOGGED_IN_PATH } from 'global/constants';
+import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
-import Router from 'next/router';
+import { NextRouter, useRouter } from 'next/router';
 import Maintenance from 'components/pages/Error/Maintenance';
 import { getConfig } from 'global/config';
+
+const authSkipPaths = [LOGGED_IN_PATH];
+const applicationsPathname = '/applications/[[...ID]]';
+
+const checkAuthSkip = (router: NextRouter): boolean => {
+  const { asPath, pathname, query } = router;
+  // wait for individual application pages to load their section query
+  // to cut down on auth checks when changing routes
+  const isApplicationPageWithoutSection = pathname === applicationsPathname &&
+    asPath !== APPLICATIONS_PATH &&
+    !query.section;
+  return authSkipPaths.includes(asPath) || isApplicationPageWithoutSection;
+};
 
 const App = ({
   Component,
@@ -39,8 +53,10 @@ const App = ({
 }) => {
   const [initialJwt, setInitialJwt] = useState<string>('');
   const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
+  const router = useRouter();
 
   useEffect(() => {
+    if (checkAuthSkip(router)) return;
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
     if (isValidJwt(egoJwt)) {
       setInitialJwt(egoJwt);
@@ -49,13 +65,13 @@ const App = ({
       localStorage.removeItem(EGO_JWT_KEY);
       // redirect to logout when token is expired/missing only if user is on a non-public page
       if (!Component.isPublic) {
-        Router.push({
+        router.push({
           pathname: '/',
           query: { session_expired: true },
         });
       }
     }
-  });
+  }, [router.asPath]);
   return (
     <Root egoJwt={initialJwt} pageContext={ctx}>
       {NEXT_PUBLIC_MAINTENANCE_MODE_ON ? <Maintenance /> : <Component {...pageProps} />}
