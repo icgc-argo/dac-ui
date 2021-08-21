@@ -157,7 +157,7 @@ export const AuthProvider = ({
 
   // get the latest token
   const token = getToken() || undefined;
-  const userInfo = token ? decodeToken(token) : null;
+  const userInfo = token && isValidJwt(token) ? decodeToken(token) : null;
   const user = userInfo ? extractUser(userInfo) : undefined;
   const permissions = getPermissionsFromToken(token || '');
 

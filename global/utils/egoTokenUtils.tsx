@@ -31,7 +31,7 @@ const TokenUtils = createEgoUtils(getConfig().NEXT_PUBLIC_EGO_PUBLIC_KEY);
 }; */
 
 export const decodeToken = memoize((egoJwt?: string) =>
-  egoJwt && isValidJwt(egoJwt) ? TokenUtils.decodeToken(egoJwt) : null,
+  egoJwt ? TokenUtils.decodeToken(egoJwt) : null,
 );
 
 export const isValidJwt = (egoJwt?: string) => !!egoJwt && TokenUtils.isValidJwt(egoJwt);
