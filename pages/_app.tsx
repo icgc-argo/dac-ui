@@ -23,7 +23,6 @@ import { AppContext } from 'next/app';
 import Root from 'components/Root';
 import { PageConfigProps, PageWithConfig } from 'global/utils/pages/types';
 import { EGO_JWT_KEY, LOGGED_IN_PATH } from 'global/constants';
-import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
 import { NextRouter, useRouter } from 'next/router';
 import Maintenance from 'components/pages/Error/Maintenance';
@@ -31,16 +30,10 @@ import { getConfig } from 'global/config';
 import Loader from 'components/Loader';
 
 const authSkipPaths = [LOGGED_IN_PATH];
-const applicationsPathname = '/applications/[[...ID]]';
 
 const checkAuthSkip = (router: NextRouter): boolean => {
-  const { asPath, pathname, query } = router;
-  // wait for individual application pages to load their section query
-  // to cut down on auth checks when changing routes
-  const isApplicationPageWithoutSection = pathname === applicationsPathname &&
-    asPath !== APPLICATIONS_PATH &&
-    !query.section;
-  return authSkipPaths.includes(asPath) || isApplicationPageWithoutSection;
+  const { asPath } = router;
+  return authSkipPaths.includes(asPath);
 };
 
 const App = ({
@@ -57,6 +50,8 @@ const App = ({
   const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
   const router = useRouter();
 
+  console.log('🦄 app - start - isAuthLoading', isAuthLoading);
+
   useEffect(() => {
     if (checkAuthSkip(router)) {
       setAuthLoading(false);
@@ -64,6 +59,7 @@ const App = ({
     }
     setAuthLoading(true);
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
+    console.log('🦄 app - useEffect - egoJwt', egoJwt.slice(-5) || '📭');
     if (isValidJwt(egoJwt)) {
       setInitialJwt(egoJwt);
     } else {
@@ -84,7 +80,7 @@ const App = ({
       {NEXT_PUBLIC_MAINTENANCE_MODE_ON
         ? <Maintenance />
         : isAuthLoading
-          ? <Loader />
+          ? <div style={{ position: 'fixed', background: 'rebeccapurple', top: 0, bottom: 0, left: 0, right: 0 }}><h1>AUTH</h1></div>
           : <Component {...pageProps} />}
     </Root>
   );

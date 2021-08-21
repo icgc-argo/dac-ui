@@ -50,6 +50,18 @@ const AuthContext = createContext<T_AuthContext>({
   permissions: [],
 });
 
+const removeToken = () => {
+  localStorage.removeItem(EGO_JWT_KEY);
+};
+
+const setToken = (token: string) => {
+  localStorage.setItem(EGO_JWT_KEY, token);
+};
+
+const getToken = (): string | null => {
+  return localStorage.getItem(EGO_JWT_KEY);
+};
+
 export const AuthProvider = ({
   children,
   egoJwt = '',
@@ -101,14 +113,12 @@ export const AuthProvider = ({
     url,
   }: AxiosRequestConfig) => {
     setLoading(true);
-    if (!url) {
+    const cancelFetch = () => {
       setLoading(false);
       return Promise.reject(undefined);
     }
 
-    if (!token) {
-      setLoading(false);
-      return Promise.reject(undefined);
+    (!url || !egoJwt) && cancelFetch();
     }
 
     const config: AxiosRequestConfig = {
@@ -118,7 +128,7 @@ export const AuthProvider = ({
       headers: {
         accept: '*/*',
         ...headers,
-        Authorization: `Bearer ${token || ''}`,
+        Authorization: `Bearer ${egoJwt || ''}`,
       },
       method,
       params,
@@ -138,9 +148,11 @@ export const AuthProvider = ({
       });
   };
 
+  // get the latest token
+  const token = getToken() || undefined;
   const userInfo = token ? decodeToken(token) : null;
   const user = userInfo ? extractUser(userInfo) : undefined;
-  const permissions = getPermissionsFromToken(token);
+  const permissions = getPermissionsFromToken(token || '');
 
   isLoading && token && user && setLoading(false);
 
