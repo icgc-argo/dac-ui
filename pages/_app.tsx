@@ -27,6 +27,7 @@ import { isValidJwt } from 'global/utils/egoTokenUtils';
 import { NextRouter, useRouter } from 'next/router';
 import Maintenance from 'components/pages/Error/Maintenance';
 import { getConfig } from 'global/config';
+import refreshJwt from 'global/utils/refreshJwt';
 import Loader from 'components/Loader';
 
 const authSkipPaths = [LOGGED_IN_PATH];
@@ -45,12 +46,20 @@ const App = ({
   pageProps: PageConfigProps;
   ctx: NextPageContext;
 }) => {
-  const [initialJwt, setInitialJwt] = useState<string>('');
   const [isAuthLoading, setAuthLoading] = useState<boolean>(true);
   const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
   const router = useRouter();
 
-  console.log('🦄 app - start - isAuthLoading', isAuthLoading);
+  const logout = () => {
+    localStorage.removeItem(EGO_JWT_KEY);
+    // redirect to logout when token is expired/missing only if user is on a non-public page
+    if (!Component.isPublic) {
+      router.push({
+        pathname: '/',
+        query: { session_expired: true },
+      });
+    }
+  };
 
   useEffect(() => {
     if (checkAuthSkip(router)) {
@@ -59,25 +68,33 @@ const App = ({
     }
     setAuthLoading(true);
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
-    console.log('🦄 app - useEffect - egoJwt', egoJwt.slice(-5) || '📭');
-    if (!isValidJwt(egoJwt)) {
-      localStorage.removeItem(EGO_JWT_KEY);
-      // redirect to logout when token is expired/missing only if user is on a non-public page
-      if (!Component.isPublic) {
-        router.push({
-          pathname: '/',
-          query: { session_expired: true },
+
+    !egoJwt && logout();
+    (!egoJwt || isValidJwt(egoJwt)) && setAuthLoading(false);
+
+    if (egoJwt && !isValidJwt(egoJwt)) {
+      refreshJwt()
+        .then((newJwt) => {
+          if (isValidJwt(newJwt)) {
+            localStorage.setItem(EGO_JWT_KEY, newJwt);
+          } else {
+            logout();
+          }
+        })
+        .catch((err) => {
+          logout();
+        })
+        .finally(() => {
+          setAuthLoading(false);
         });
-      }
     }
-    setAuthLoading(false);
   }, [router.asPath]);
   return (
     <Root pageContext={ctx}>
       {NEXT_PUBLIC_MAINTENANCE_MODE_ON
         ? <Maintenance />
         : isAuthLoading
-          ? <div style={{ position: 'fixed', background: 'rebeccapurple', top: 0, bottom: 0, left: 0, right: 0 }}><h1>AUTH</h1></div>
+          ? <Loader />
           : <Component {...pageProps} />}
     </Root>
   );

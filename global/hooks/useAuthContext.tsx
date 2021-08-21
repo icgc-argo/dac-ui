@@ -55,10 +55,10 @@ const removeToken = () => {
   typeof window !== 'undefined' && localStorage.removeItem(EGO_JWT_KEY);
 };
 
-const setToken = (token: string) => {
-  typeof window !== 'undefined' &&
-    localStorage.setItem(EGO_JWT_KEY, token);
-};
+// const setToken = (token: string) => {
+//   typeof window !== 'undefined' &&
+//     localStorage.setItem(EGO_JWT_KEY, token);
+// };
 
 const getToken = (): string | null => {
   return typeof window === 'undefined' ? null : localStorage.getItem(EGO_JWT_KEY);
@@ -69,8 +69,6 @@ export const AuthProvider = ({
 }: {
   children: React.ReactElement;
 }) => {
-  // TODO: typing this state as `string` causes a compiler error. the same setup exists in argo but does not cause
-  // a type issue. using `any` for now
   const [isLoading, setLoading] = useState<boolean>(true);
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const router = useRouter();
@@ -95,6 +93,7 @@ export const AuthProvider = ({
     url,
   }: AxiosRequestConfig) => {
     setLoading(true);
+
     const cancelFetch = () => {
       setLoading(false);
       return Promise.reject(undefined);
