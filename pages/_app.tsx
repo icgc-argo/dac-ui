@@ -60,10 +60,7 @@ const App = ({
     setAuthLoading(true);
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
     console.log('🦄 app - useEffect - egoJwt', egoJwt.slice(-5) || '📭');
-    if (isValidJwt(egoJwt)) {
-      setInitialJwt(egoJwt);
-    } else {
-      setInitialJwt('');
+    if (!isValidJwt(egoJwt)) {
       localStorage.removeItem(EGO_JWT_KEY);
       // redirect to logout when token is expired/missing only if user is on a non-public page
       if (!Component.isPublic) {
@@ -76,7 +73,7 @@ const App = ({
     setAuthLoading(false);
   }, [router.asPath]);
   return (
-    <Root egoJwt={initialJwt} pageContext={ctx}>
+    <Root pageContext={ctx}>
       {NEXT_PUBLIC_MAINTENANCE_MODE_ON
         ? <Maintenance />
         : isAuthLoading

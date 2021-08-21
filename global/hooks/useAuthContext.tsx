@@ -29,6 +29,7 @@ import {
 import { UserWithId } from '../types';
 import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
+import refreshJwt from 'global/utils/refreshJwt';
 
 type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
@@ -51,23 +52,22 @@ const AuthContext = createContext<T_AuthContext>({
 });
 
 const removeToken = () => {
-  localStorage.removeItem(EGO_JWT_KEY);
+  typeof window !== 'undefined' && localStorage.removeItem(EGO_JWT_KEY);
 };
 
 const setToken = (token: string) => {
-  localStorage.setItem(EGO_JWT_KEY, token);
+  typeof window !== 'undefined' &&
+    localStorage.setItem(EGO_JWT_KEY, token);
 };
 
 const getToken = (): string | null => {
-  return localStorage.getItem(EGO_JWT_KEY);
+  return typeof window === 'undefined' ? null : localStorage.getItem(EGO_JWT_KEY);
 };
 
 export const AuthProvider = ({
   children,
-  egoJwt = '',
 }: {
   children: React.ReactElement;
-  egoJwt: string;
 }) => {
   // TODO: typing this state as `string` causes a compiler error. the same setup exists in argo but does not cause
   // a type issue. using `any` for now
@@ -104,7 +104,7 @@ export const AuthProvider = ({
 
   const cancelTokenSource = axios.CancelToken.source();
   const cancelFetchWithAuth = cancelTokenSource.cancel;
-  const fetchWithAuth = ({
+  const fetchWithAuth = async ({
     data,
     headers = {},
     method = 'GET' as Method,
@@ -118,6 +118,7 @@ export const AuthProvider = ({
       return Promise.reject(undefined);
     }
 
+    const egoJwt = getToken() || '';
     (!url || !egoJwt) && cancelFetch();
     }
 
@@ -136,16 +137,41 @@ export const AuthProvider = ({
       url,
     };
 
-    return axios(config)
-      .catch((error) => {
-        // TODO: log errors somewhere not visible to the user?
-        // Leaving this log here pre-release, for troubleshooting
-        console.error('Error in fetchWithAuth', { error });
-        throw { error };
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    if (egoJwt && !isValidJwt(egoJwt)) {
+      const newJwt = (await refreshJwt()) as string;
+      if (isValidJwt(newJwt)) {
+        return axios({
+          ...config,
+          headers: {
+            ...config.headers,
+            Authorization: `Bearer ${newJwt || ''}`,
+          }
+        })
+          .catch((error) => {
+            // TODO: log errors somewhere not visible to the user?
+            // Leaving this log here pre-release, for troubleshooting
+            console.error('Error in fetchWithAuth', { error });
+            throw { error };
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } else {
+        cancelFetch();
+        logout();
+      }
+    } else {
+      return axios(config)
+        .catch((error) => {
+          // TODO: log errors somewhere not visible to the user?
+          // Leaving this log here pre-release, for troubleshooting
+          console.error('Error in fetchWithAuth', { error });
+          throw { error };
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
   };
 
   // get the latest token
