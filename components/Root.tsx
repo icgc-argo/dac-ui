@@ -103,11 +103,9 @@ export const ModalPortal = ({ children }: { children: React.ReactElement }) => {
 const Root = ({
   children,
   pageContext,
-  egoJwt = '',
 }: {
   children: any;
   pageContext: any;
-  egoJwt?: string;
 }) => {
   return (
     <React.Fragment>
@@ -131,7 +129,7 @@ const Root = ({
       `}
       </style>
       <Head />
-      <AuthProvider egoJwt={egoJwt}>
+      <AuthProvider>
         <PageContext.Provider value={pageContext}>
           <ThemeProvider>
 
