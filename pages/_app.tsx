@@ -22,11 +22,15 @@ import { NextPageContext } from 'next';
 import { AppContext } from 'next/app';
 import Root from 'components/Root';
 import { PageConfigProps, PageWithConfig } from 'global/utils/pages/types';
-import { EGO_JWT_KEY } from 'global/constants';
+import { EGO_JWT_KEY, SUBMISSION_SUCCESS_CHECK } from 'global/constants';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import Maintenance from 'components/pages/Error/Maintenance';
 import { getConfig } from 'global/config';
+
+const resetFlashData = () => {
+  [SUBMISSION_SUCCESS_CHECK].forEach((key) => localStorage.setItem(key, ''));
+};
 
 const App = ({
   Component,
@@ -39,6 +43,22 @@ const App = ({
 }) => {
   const [initialJwt, setInitialJwt] = useState<string>('');
   const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
+
+  const router = useRouter();
+
+  // set up router event listeners
+  useEffect(() => {
+    const handleRouteChange = (url, { shallow }) => {
+      console.log('xxx', url, shallow);
+      resetFlashData();
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, []);
 
   useEffect(() => {
     const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
