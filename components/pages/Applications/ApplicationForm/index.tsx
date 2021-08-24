@@ -24,12 +24,10 @@ import urlJoin from 'url-join';
 import Loader from 'components/Loader';
 import { useAuthContext } from 'global/hooks';
 import { API } from 'global/constants';
-import ContentError from 'components/placeholders/ContentError';
 
 import ApplicationHeader from './Header';
 import ApplicationFormsBase from './Forms';
 import RequestRevisionsBar from './RequestRevisionsBar';
-import GenericError from 'components/pages/Error/Generic';
 import router from 'next/router';
 import { ERROR_PATH } from 'global/constants/internalPaths';
 

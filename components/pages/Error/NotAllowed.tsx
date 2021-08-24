@@ -17,7 +17,6 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import ErrorLayout from '.';
 import { getConfig } from 'global/config';
 import { Row, Col } from 'react-grid-system';
 import Image from 'next/image';

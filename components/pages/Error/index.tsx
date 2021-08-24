@@ -21,7 +21,7 @@ import * as React from 'react';
 import Container from '@icgc-argo/uikit/Container';
 import { css } from '@emotion/core';
 
-export default ({ children }: { children: React.ReactNode; hideNavbarLinks?: boolean }) => (
+const Error = ({ children }: { children: React.ReactNode; hideNavbarLinks?: boolean }) => (
   <div
     css={css`
       display: flex;
@@ -39,3 +39,5 @@ export default ({ children }: { children: React.ReactNode; hideNavbarLinks?: boo
     </Container>
   </div>
 );
+
+export default Error;

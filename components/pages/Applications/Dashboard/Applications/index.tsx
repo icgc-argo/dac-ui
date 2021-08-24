@@ -23,9 +23,7 @@ import { css } from '@emotion/core';
 import { ApplicationsField, ApplicationsResponseItem } from 'components/pages/Applications/types';
 import { isEmpty } from 'lodash';
 import { useGetApplications } from 'global/hooks';
-import ContentError from 'components/placeholders/ContentError';
 import Loader from 'components/Loader';
-import GenericError from 'components/pages/Error/Generic';
 import router from 'next/router';
 import { ERROR_PATH } from 'global/constants';
 
