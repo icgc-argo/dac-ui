@@ -48,9 +48,11 @@ const App = ({
 
   // set up router event listeners
   useEffect(() => {
-    const handleRouteChange = (url, { shallow }) => {
-      console.log('xxx', url, shallow);
-      resetFlashData();
+    const handleRouteChange = (url: string) => {
+      // only reset if page has changed, not just queries
+      if (url.split('?')[0] !== window.location.pathname) {
+        resetFlashData();
+      }
     };
 
     router.events.on('routeChangeStart', handleRouteChange);
