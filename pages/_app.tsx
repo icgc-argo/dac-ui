@@ -78,9 +78,11 @@ const App = ({
       }
     }
   });
-  return (
+  return NEXT_PUBLIC_MAINTENANCE_MODE_ON ? (
+    <Maintenance />
+  ) : (
     <Root egoJwt={initialJwt} pageContext={ctx}>
-      {NEXT_PUBLIC_MAINTENANCE_MODE_ON ? <Maintenance /> : <Component {...pageProps} />}
+      <Component {...pageProps} />
     </Root>
   );
 };
