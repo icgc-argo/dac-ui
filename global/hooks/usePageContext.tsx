@@ -18,26 +18,20 @@
  */
 
 import * as React from 'react';
-import Container from '@icgc-argo/uikit/Container';
-import { css } from '@emotion/core';
+import { ClientSideGetInitialPropsContext } from 'global/utils/pages/types';
 
-const Error = ({ children }: { children: React.ReactNode; hideNavbarLinks?: boolean }) => (
-  <div
-    css={css`
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: calc(100vh - 186px);
-    `}
-  >
-    <Container
-      css={css`
-        max-width: 875px;
-      `}
-    >
-      {children}
-    </Container>
-  </div>
-);
+export const PageContext = React.createContext<ClientSideGetInitialPropsContext>({
+  pathname: '',
+  query: {},
+  asPath: '',
+});
 
-export default Error;
+export default function usePageContext(): ClientSideGetInitialPropsContext {
+  const pageContext = React.useContext(PageContext);
+  return pageContext;
+}
+
+export const usePageQuery = <T extends { [k: string]: string }>() => {
+  const { query } = usePageContext();
+  return query as T;
+};

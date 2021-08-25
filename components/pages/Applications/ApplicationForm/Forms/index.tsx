@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2021 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ * This program and the accompanying materials are made available under the terms of
+ * the GNU Affero General Public License v3.0. You should have received a copy of the
+ * GNU Affero General Public License along with this program.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 import { ReactElement, useCallback, useEffect, useState } from 'react';
 import router, { useRouter } from 'next/router';
 import { css } from '@icgc-argo/uikit';
@@ -13,6 +32,8 @@ import { enabledSections, sectionSelector } from './helpers';
 import Outline from './Outline';
 import { FormSectionNames, FormSectionValidationTriggerReasons, FORM_STATES } from './types';
 import { useFormValidation } from './validations';
+import Notification from '@icgc-argo/uikit/notifications/Notification';
+import { SUBMISSION_SUCCESS_CHECK } from 'global/constants';
 
 type QueryType = {
   query: {
@@ -21,6 +42,17 @@ type QueryType = {
 };
 
 type SetLastUpdated = (lastUpdatedAtUtc: string) => void;
+
+const getActiveSection = (sectionFromQuery?: FormSectionNames): FormSectionNames => {
+  if (!sectionFromQuery) return sectionsOrder[0];
+  const isValidSectionFromQuery = sectionsOrder.includes(sectionFromQuery);
+
+  return isValidSectionFromQuery
+    ? sectionFromQuery
+    : ((sectionFromQuery &&
+        console.info('Section initially queried was not found', sectionFromQuery),
+      sectionsOrder[0]) as FormSectionNames);
+};
 
 const ApplicationFormsBase = ({
   appId = 'none',
@@ -32,14 +64,12 @@ const ApplicationFormsBase = ({
   const {
     query: { section: sectionFromQuery = '' as FormSectionNames },
   }: QueryType = useRouter();
-  const isValidSectionFromQuery = sectionsOrder.includes(sectionFromQuery);
-  const [selectedSection, setSelectedSection] = useState(
-    isValidSectionFromQuery
-      ? sectionFromQuery
-      : (sectionFromQuery &&
-          console.info('Section initially queried was not found', sectionFromQuery),
-        sectionsOrder[0] as FormSectionNames),
-  );
+  const [selectedSection, setSelectedSection] = useState(getActiveSection(sectionFromQuery));
+
+  useEffect(() => {
+    setSelectedSection(getActiveSection(sectionFromQuery));
+  }, [sectionFromQuery]);
+
   const { isLoading, formState, validateSection } = useFormValidation(appId);
   const theme: UikitTheme = useTheme();
 
@@ -112,6 +142,21 @@ const ApplicationFormsBase = ({
 
   return (
     <ContentBody>
+      {JSON.parse(localStorage.getItem(SUBMISSION_SUCCESS_CHECK) || 'false') && (
+        <Notification
+          title="Your Application has been Submitted"
+          content="The ICGC DACO has been notified for review and you should hear back within ten business days regarding the status of your application."
+          interactionType="CLOSE"
+          variant="SUCCESS"
+          onInteraction={({ type }) => {
+            if (type === 'CLOSE') {
+              localStorage.setItem(SUBMISSION_SUCCESS_CHECK, 'false');
+              router.push(`/applications/${appId}?section=${selectedSection}`);
+            }
+          }}
+        />
+      )}
+
       <ContentBox
         css={css`
           box-sizing: border-box;

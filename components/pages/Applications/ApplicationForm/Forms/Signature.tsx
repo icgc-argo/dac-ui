@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2021 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ * This program and the accompanying materials are made available under the terms of
+ * the GNU Affero General Public License v3.0. You should have received a copy of the
+ * GNU Affero General Public License along with this program.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 import { css } from '@emotion/core';
 import Button from '@icgc-argo/uikit/Button';
 import Control from '@icgc-argo/uikit/form/FormControl';
@@ -18,7 +37,7 @@ import {
 } from './types';
 import { UPLOAD_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
 import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
-import { API } from 'global/constants';
+import { API, SUBMISSION_SUCCESS_CHECK } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
 import Modal from '@icgc-argo/uikit/Modal';
 import { ModalPortal } from 'components/Root';
@@ -60,6 +79,7 @@ const Signature = ({
   const dismissModal = () => setModalVisible(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionError, setSubmissionError] = useState(false);
 
   const { fetchWithAuth } = useAuthContext();
   const [pdfIsLoading, setPdfIsLoading] = useState(false);
@@ -85,7 +105,8 @@ const Signature = ({
       url: urlJoin(API.APPLICATIONS, appId),
     })
       .then(() => {
-        router.reload();
+        localStorage.setItem(SUBMISSION_SUCCESS_CHECK, 'true');
+        router.push(`/applications/${appId}?section=terms`);
       })
       .catch((err: AxiosError) => {
         console.error('Failed to submit.', err);
@@ -100,6 +121,7 @@ const Signature = ({
     const file = e.target.files?.[0];
 
     if (file && file.size <= MAX_FILE_SIZE && VALID_FILE_TYPE.includes(file.type)) {
+      setSubmissionError(false);
       setUploadInProgress(true);
       const formData = new FormData();
       formData.append('file', file);
@@ -108,14 +130,15 @@ const Signature = ({
         method: 'POST',
         url: `${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.SIGNED_APP}/upload`,
       })
-        .then(({ data }: { data: FormValidationStateParameters }) =>
+        .then(({ data }: { data: FormValidationStateParameters }) => {
           refetchAllData({
             type: 'updating',
             value: data,
-          }),
-        )
+          });
+        })
         .catch((err: AxiosError) => {
           console.error('File failed to upload.', err);
+          setSubmissionError(true);
         })
         .finally(() => {
           setUploadInProgress(false);
@@ -345,6 +368,19 @@ const Signature = ({
                   width: 220px;
                   margin-right: 70px;
                   margin-left: 20px;
+                  ${submissionError &&
+                  css`
+                    background-color: ${theme.colors.error};
+                    border-color: ${theme.colors.error};
+                    margin-left: 15px;
+
+                    :hover,
+                    :active,
+                    :focus {
+                      background-color: ${theme.colors.error_1};
+                      border-color: ${theme.colors.error_1};
+                    }
+                  `}
                 `}
                 isLoading={isUploadInProgress}
                 Loader={(props: any) => <CustomLoadingButton text="Upload a file" {...props} />}
@@ -371,11 +407,19 @@ const Signature = ({
                 />
                 Upload a file
               </Button>
-
               <FormFieldHelpBubble text="Allowed file types: pdf. | Max file size: 5MB" />
             </>
           )}
         </FormControl>
+        <Typography
+          variant="data"
+          css={css`
+            margin-left: 160px;
+            color: ${theme.colors.error_1};
+          `}
+        >
+          {submissionError ? 'Please upload a pdf file that is 5MB or less.' : ''}
+        </Typography>
 
         <Button
           css={css`
