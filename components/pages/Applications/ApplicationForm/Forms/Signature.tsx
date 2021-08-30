@@ -106,7 +106,7 @@ const Signature = ({
     })
       .then(() => {
         localStorage.setItem(SUBMISSION_SUCCESS_CHECK, 'true');
-        router.push(`/applications/${appId}?section=terms`);
+        refetchAllData();
       })
       .catch((err: AxiosError) => {
         console.error('Failed to submit.', err);
