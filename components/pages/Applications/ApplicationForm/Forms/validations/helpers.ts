@@ -146,7 +146,7 @@ const getSeedValueByFieldType = (fieldType: string, fieldBase: any, seedValue: a
       return { value: seedValue };
 
     default:
-      console.info('unable to get value at getSeedValueByFieldType', fieldType);
+      return { value: undefined };
   }
 };
 
@@ -214,7 +214,7 @@ export const getValueByFieldTypeToPublish = (
     }
 
     default:
-      console.info('unable to get value at getValueByFieldTypeToPublish', field, type);
+      return null;
   }
 };
 
@@ -262,7 +262,7 @@ export const getValueByFieldTypeToValidate = (
       return value?.length > 0 ? value : null;
 
     default:
-      console.info('unable to get value at getValueByFieldTypeToValidate', field, type);
+      return null;
   }
 };
 
