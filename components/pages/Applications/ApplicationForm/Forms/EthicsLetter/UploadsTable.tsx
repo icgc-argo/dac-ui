@@ -200,7 +200,7 @@ const UploadsTable = ({
           margin: 15px 0 17px !important;
         `}
       >
-        If the ethics approval is written in a language other than English or French,{' '}
+        If the ethics approval is written in a language other than English,{' '}
         <Typography as="span" bold>
           please upload a translated version
         </Typography>
