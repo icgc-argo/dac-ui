@@ -146,7 +146,7 @@ const getSeedValueByFieldType = (fieldType: string, fieldBase: any, seedValue: a
       return { value: seedValue };
 
     default:
-      return { value: undefined };
+      break;
   }
 };
 
@@ -214,7 +214,7 @@ export const getValueByFieldTypeToPublish = (
     }
 
     default:
-      return null;
+      break;
   }
 };
 
@@ -262,7 +262,7 @@ export const getValueByFieldTypeToValidate = (
       return value?.length > 0 ? value : null;
 
     default:
-      return null;
+      break;
   }
 };
 
