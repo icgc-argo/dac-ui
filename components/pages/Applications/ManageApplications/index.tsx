@@ -41,25 +41,12 @@ import {
   formatTableData,
   adminStatesAllowList,
   tableColumns,
+  DEFAULT_SORT,
 } from './utils';
 
 import PageHeader from 'components/PageHeader';
 import { useGetApplications } from 'global/hooks';
 import GenericError from 'components/pages/Error/Generic';
-
-const API_DEFAULT_SORT = [
-  {
-    field: ApplicationsField.appNumber,
-    order: 'asc' as ApplicationsSortOrder,
-  },
-];
-
-const TABLE_DEFAULT_SORT = [
-  {
-    field: ApplicationsField.appId,
-    order: 'asc' as ApplicationsSortOrder,
-  },
-];
 
 const getDefaultSort = (applicationSorts: ApplicationsSort[]) =>
   applicationSorts.map(({ field, order }) => ({ id: field, desc: order === 'desc' }));
@@ -67,7 +54,7 @@ const getDefaultSort = (applicationSorts: ApplicationsSort[]) =>
 const useManageApplicationsState = () => {
   const [page, setPage] = useState<number>(DEFAULT_PAGE);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
-  const [sort, setSort] = useState<ApplicationsSort[]>(API_DEFAULT_SORT);
+  const [sort, setSort] = useState<ApplicationsSort[]>(DEFAULT_SORT);
 
   const onPageChange = (newPageNum: number) => {
     setPage(newPageNum);
@@ -85,7 +72,7 @@ const useManageApplicationsState = () => {
 
         return accSort.concat({
           field:
-            // if sorting on appId, user appNumber instead
+            // if sorting on appId, use appNumber instead
             sortRule.id === ApplicationsField.appId
               ? ApplicationsField.appNumber
               : (sortRule.id as ApplicationsField),
@@ -227,7 +214,7 @@ const ManageApplications = (): ReactElement => {
                       columns={tableColumns}
                       data={formatTableData(items)}
                       NoDataComponent={() => null}
-                      defaultSorted={getDefaultSort(TABLE_DEFAULT_SORT)}
+                      defaultSorted={getDefaultSort(DEFAULT_SORT)}
                       manual
                       onPageChange={onPageChange}
                       onPageSizeChange={onPageSizeChange}
