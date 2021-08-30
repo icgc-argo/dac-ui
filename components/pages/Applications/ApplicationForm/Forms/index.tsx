@@ -154,6 +154,12 @@ const ApplicationFormsBase = ({
               router.push(`/applications/${appId}?section=${selectedSection}`);
             }
           }}
+          css={css`
+            margin: 0 auto 25px auto;
+            max-width: 1200px;
+            min-width: 665px;
+            width: 100%;
+          `}
         />
       )}
 
