@@ -22,9 +22,7 @@ import { css, styled } from '@icgc-argo/uikit';
 import Typography from '@icgc-argo/uikit/Typography';
 import Button from '@icgc-argo/uikit/Button';
 import Link from '@icgc-argo/uikit/Link';
-
 import { Col, Row } from 'react-grid-system';
-
 import { PageHead } from 'components/Head';
 import {
   CONTROLLED_DATA_POLICY,
@@ -144,7 +142,13 @@ const IconParagraphRow = ({ children, img }: { children: any; img: string }) => 
   </div>
 );
 
-const PaddedRow = ({ isVerticallyCentered = false, children }: { isVerticallyCentered?: boolean; children: any }) => (
+const PaddedRow = ({
+  isVerticallyCentered = false,
+  children,
+}: {
+  isVerticallyCentered?: boolean;
+  children: any;
+}) => (
   <Row
     css={css`
       align-items: ${isVerticallyCentered ? 'center !important' : 'normal'};

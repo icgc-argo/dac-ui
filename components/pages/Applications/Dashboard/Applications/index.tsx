@@ -23,13 +23,19 @@ import { css } from '@emotion/core';
 import { ApplicationsField, ApplicationsResponseItem } from 'components/pages/Applications/types';
 import { isEmpty } from 'lodash';
 import { useGetApplications } from 'global/hooks';
-import ContentError from 'components/placeholders/ContentError';
 import Loader from 'components/Loader';
+import router from 'next/router';
+import { ERROR_PATH } from 'global/constants';
 
 const Applications = () => {
   const { error, isLoading, response } = useGetApplications({
     sort: [{ field: ApplicationsField.lastUpdatedAtUtc, order: 'desc' }],
   });
+
+  if (error) {
+    router.push(ERROR_PATH);
+  }
+
   const applications = response?.data?.items || [];
 
   return isLoading ? (
@@ -38,8 +44,6 @@ const Applications = () => {
         margin: 24px auto;
       `}
     />
-  ) : error ? (
-    <ContentError />
   ) : (
     <div
       css={css`

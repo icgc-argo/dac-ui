@@ -24,15 +24,15 @@ import urlJoin from 'url-join';
 import Loader from 'components/Loader';
 import { useAuthContext } from 'global/hooks';
 import { API } from 'global/constants';
-import ContentError from 'components/placeholders/ContentError';
 
 import ApplicationHeader from './Header';
 import ApplicationFormsBase from './Forms';
 import RequestRevisionsBar from './RequestRevisionsBar';
+import router from 'next/router';
+import { ERROR_PATH } from 'global/constants/internalPaths';
 
 const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
   const [data, setData] = useState<AxiosResponse | undefined>(undefined);
-  const [error, setError] = useState<AxiosError | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [lastUpdated, setLastUpdated] = useState<string | undefined>(undefined);
 
@@ -48,16 +48,15 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
         setData(res.data);
       })
       .catch((err: AxiosError) => {
-        setError(err);
+        console.error('Application form error', err);
+        return router.push(ERROR_PATH);
       })
       .finally(() => {
         setIsLoading(false);
       });
   }, [lastUpdated]);
 
-  return error ? (
-    (console.error('Application form error', error), (<ContentError />))
-  ) : isLoading || (data && Object.values(data).length < 1) ? (
+  return isLoading || (data && Object.values(data).length < 1) ? (
     <Loader />
   ) : (
     <>

@@ -51,17 +51,16 @@ const Application = (): ReactElement => {
   return (
     <>
       <PageHead title={pageTitle} />
-      {
-        isLoading ? (
-          <Loader />
-        ) : appId ? (
-          <ApplicationForm appId={normalisedAppId} isAdmin={isAdmin} />
-        ) : isAdmin ? (
-          <ManageApplications />
-        ) : (
-          <Dashboard hasDacoAccess={hasDacoAccess} />
-        )
-      }</>
+      {isLoading ? (
+        <Loader />
+      ) : appId ? (
+        <ApplicationForm appId={normalisedAppId} isAdmin={isAdmin} />
+      ) : isAdmin ? (
+        <ManageApplications />
+      ) : (
+        <Dashboard hasDacoAccess={hasDacoAccess} />
+      )}
+    </>
   );
 };
 

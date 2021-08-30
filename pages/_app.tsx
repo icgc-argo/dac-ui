@@ -22,7 +22,7 @@ import { NextPageContext } from 'next';
 import { AppContext } from 'next/app';
 import Root from 'components/Root';
 import { PageConfigProps, PageWithConfig } from 'global/utils/pages/types';
-import { EGO_JWT_KEY, LOGGED_IN_PATH } from 'global/constants';
+import { EGO_JWT_KEY, LOGGED_IN_PATH, SUBMISSION_SUCCESS_CHECK } from 'global/constants';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
 import { NextRouter, useRouter } from 'next/router';
 import Maintenance from 'components/pages/Error/Maintenance';
@@ -35,6 +35,10 @@ const authSkipPaths = [LOGGED_IN_PATH];
 const checkAuthSkip = (router: NextRouter): boolean => {
   const { asPath } = router;
   return authSkipPaths.includes(asPath);
+};
+
+const resetFlashData = () => {
+  [SUBMISSION_SUCCESS_CHECK].forEach((key) => localStorage.setItem(key, ''));
 };
 
 const App = ({
@@ -61,6 +65,22 @@ const App = ({
     }
   };
 
+  // set up router event listeners
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      // only reset if page has changed, not just queries
+      if (url.split('?')[0] !== window.location.pathname) {
+        resetFlashData();
+      }
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, []);
+
   useEffect(() => {
     if (checkAuthSkip(router)) {
       setAuthLoading(false);
@@ -74,14 +94,14 @@ const App = ({
 
     if (egoJwt && !isValidJwt(egoJwt)) {
       refreshJwt()
-        .then((newJwt) => {
+        .then((newJwt: string) => {
           if (isValidJwt(newJwt)) {
             localStorage.setItem(EGO_JWT_KEY, newJwt);
           } else {
             logout();
           }
         })
-        .catch((err) => {
+        .catch((err: any) => {
           logout();
         })
         .finally(() => {
@@ -89,13 +109,12 @@ const App = ({
         });
     }
   }, [router.asPath]);
-  return (
+
+  return NEXT_PUBLIC_MAINTENANCE_MODE_ON ? (
+    <Maintenance />
+  ) : (
     <Root pageContext={ctx}>
-      {NEXT_PUBLIC_MAINTENANCE_MODE_ON
-        ? <Maintenance />
-        : isAuthLoading
-          ? <Loader />
-          : <Component {...pageProps} />}
+      {isAuthLoading ? <Loader /> : <Component {...pageProps} />}
     </Root>
   );
 };

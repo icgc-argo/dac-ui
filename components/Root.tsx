@@ -60,45 +60,67 @@ export const ModalPortal = ({ children }: { children: React.ReactElement }) => {
   const mounted = useMounted();
   return ref
     ? ReactDOM.createPortal(
-      <div
-        id="modalContainer"
-        css={css`
-          transition: all 0.2s;
-          opacity: ${mounted ? 1 : 0};
-          #modal-action-btn_google-logo {
-            position: relative;
-            padding-left: 34px;
-            &::before {
-              position: absolute;
-              display: block;
-              content: ' ';
-              background-image: url('/icons-google.svg');
-              background-size: 18px 19px;
-              background-repeat: no-repeat;
-              height: 18px;
-              width: 19px;
-              left: 11px;
-            }
-          }
-        `}
-      >
-        <Modal.Overlay
+        <div
+          id="modalContainer"
           css={css`
-            ${fillAvailableWidth}
-            ${fillAvailableHeight}
-            @media (min-width: 768px) {
-              width: 100vw;
-              height: 100vh;
+            transition: all 0.2s;
+            opacity: ${mounted ? 1 : 0};
+            #modal-action-btn_google-logo {
+              position: relative;
+              padding-left: 34px;
+              &::before {
+                position: absolute;
+                display: block;
+                content: ' ';
+                background-image: url('/icons-google.svg');
+                background-size: 18px 19px;
+                background-repeat: no-repeat;
+                height: 18px;
+                width: 19px;
+                left: 11px;
+              }
             }
           `}
         >
-          {children}
-        </Modal.Overlay>
-      </div>,
-      ref,
-    )
+          <Modal.Overlay
+            css={css`
+              ${fillAvailableWidth}
+              ${fillAvailableHeight}
+            @media (min-width: 768px) {
+                width: 100vw;
+                height: 100vh;
+              }
+            `}
+          >
+            {children}
+          </Modal.Overlay>
+        </div>,
+        ref,
+      )
     : null;
 };
+
+export const CSSGlobalReset = () => (
+  <style>
+    {`
+body {
+  margin: 0;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+} /* custom! */
+#__next {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+}
+`}
+  </style>
+);
 
 const Root = ({
   children,
@@ -109,43 +131,22 @@ const Root = ({
 }) => {
   return (
     <React.Fragment>
-      <style>
-        {`
-        body {
-          margin: 0;
-          position: absolute;
-          top: 0px;
-          bottom: 0px;
-          left: 0px;
-          right: 0px;
-        } /* custom! */
-        #__next {
-          position: absolute;
-          top: 0px;
-          bottom: 0px;
-          left: 0px;
-          right: 0px;
-        }
-      `}
-      </style>
+      <CSSGlobalReset />
       <Head />
       <AuthProvider>
         <PageContext.Provider value={pageContext}>
           <ThemeProvider>
-
             <div
               css={css`
-              position: fixed;
-              left: 0px;
-              top: 0px;
-              z-index: 9999;
-              ${fillAvailableWidth}
-            `}
+                position: fixed;
+                left: 0px;
+                top: 0px;
+                z-index: 9999;
+                ${fillAvailableWidth}
+              `}
               ref={modalPortalRef}
             />
-            <DefaultPageLayout>
-              {children}
-            </DefaultPageLayout>
+            <DefaultPageLayout>{children}</DefaultPageLayout>
           </ThemeProvider>
         </PageContext.Provider>
       </AuthProvider>

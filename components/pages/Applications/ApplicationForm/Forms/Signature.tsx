@@ -37,7 +37,7 @@ import {
 } from './types';
 import { UPLOAD_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
 import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
-import { API } from 'global/constants';
+import { API, SUBMISSION_SUCCESS_CHECK } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
 import Modal from '@icgc-argo/uikit/Modal';
 import { ModalPortal } from 'components/Root';
@@ -105,7 +105,8 @@ const Signature = ({
       url: urlJoin(API.APPLICATIONS, appId),
     })
       .then(() => {
-        router.reload();
+        localStorage.setItem(SUBMISSION_SUCCESS_CHECK, 'true');
+        router.push(`/applications/${appId}?section=terms`);
       })
       .catch((err: AxiosError) => {
         console.error('Failed to submit.', err);

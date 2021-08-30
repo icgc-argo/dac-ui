@@ -32,6 +32,8 @@ import { enabledSections, sectionSelector } from './helpers';
 import Outline from './Outline';
 import { FormSectionNames, FormSectionValidationTriggerReasons, FORM_STATES } from './types';
 import { useFormValidation } from './validations';
+import Notification from '@icgc-argo/uikit/notifications/Notification';
+import { SUBMISSION_SUCCESS_CHECK } from 'global/constants';
 
 type QueryType = {
   query: {
@@ -40,6 +42,17 @@ type QueryType = {
 };
 
 type SetLastUpdated = (lastUpdatedAtUtc: string) => void;
+
+const getActiveSection = (sectionFromQuery?: FormSectionNames): FormSectionNames => {
+  if (!sectionFromQuery) return sectionsOrder[0];
+  const isValidSectionFromQuery = sectionsOrder.includes(sectionFromQuery);
+
+  return isValidSectionFromQuery
+    ? sectionFromQuery
+    : ((sectionFromQuery &&
+        console.info('Section initially queried was not found', sectionFromQuery),
+      sectionsOrder[0]) as FormSectionNames);
+};
 
 const ApplicationFormsBase = ({
   appId = 'none',
@@ -51,14 +64,12 @@ const ApplicationFormsBase = ({
   const {
     query: { section: sectionFromQuery = '' as FormSectionNames },
   }: QueryType = useRouter();
-  const isValidSectionFromQuery = sectionsOrder.includes(sectionFromQuery);
-  const [selectedSection, setSelectedSection] = useState(
-    isValidSectionFromQuery
-      ? sectionFromQuery
-      : (sectionFromQuery &&
-        console.info('Section initially queried was not found', sectionFromQuery),
-        sectionsOrder[0] as FormSectionNames),
-  );
+  const [selectedSection, setSelectedSection] = useState(getActiveSection(sectionFromQuery));
+
+  useEffect(() => {
+    setSelectedSection(getActiveSection(sectionFromQuery));
+  }, [sectionFromQuery]);
+
   const { isLoading, formState, validateSection } = useFormValidation(appId);
   const theme: UikitTheme = useTheme();
 
@@ -95,13 +106,13 @@ const ApplicationFormsBase = ({
 
     selectedSection === 'collaborators'
       ? formState.sections[selectedSection]?.meta.showOverall ||
-      triggerSectionValidation('notShowingOverall', selectedSection)
+        triggerSectionValidation('notShowingOverall', selectedSection)
       : sectionsOrder.forEach(
-        (section) =>
-          // validates all other section that doen't already show overall status.
-          !(formState.sections[section]?.meta.showOverall || selectedSection === section) &&
-          triggerSectionValidation('notShowingOverall', section),
-      );
+          (section) =>
+            // validates all other section that doen't already show overall status.
+            !(formState.sections[section]?.meta.showOverall || selectedSection === section) &&
+            triggerSectionValidation('notShowingOverall', section),
+        );
   }, [formState.lastUpdatedAtUtc]);
 
   const sectionIndex = sectionsOrder.indexOf(selectedSection);
@@ -131,6 +142,21 @@ const ApplicationFormsBase = ({
 
   return (
     <ContentBody>
+      {JSON.parse(localStorage.getItem(SUBMISSION_SUCCESS_CHECK) || 'false') && (
+        <Notification
+          title="Your Application has been Submitted"
+          content="The ICGC DACO has been notified for review and you should hear back within ten business days regarding the status of your application."
+          interactionType="CLOSE"
+          variant="SUCCESS"
+          onInteraction={({ type }) => {
+            if (type === 'CLOSE') {
+              localStorage.setItem(SUBMISSION_SUCCESS_CHECK, 'false');
+              router.push(`/applications/${appId}?section=${selectedSection}`);
+            }
+          }}
+        />
+      )}
+
       <ContentBox
         css={css`
           box-sizing: border-box;
