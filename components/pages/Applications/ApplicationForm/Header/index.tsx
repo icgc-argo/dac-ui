@@ -35,6 +35,7 @@ const ApplicationHeader = ({ data = {} }: { data: any }): ReactElement => {
     appId,
     createdAtUtc,
     lastUpdatedAtUtc,
+    expiresAtUtc,
     sections: { applicant: { info: { displayName = '', primaryAffiliation = '' } = {} } = {} } = {},
     state,
   } = data;
@@ -58,6 +59,7 @@ const ApplicationHeader = ({ data = {} }: { data: any }): ReactElement => {
           applicant={applicant}
           createdAt={format(new Date(createdAtUtc), DATE_TEXT_FORMAT)}
           lastUpdated={format(new Date(lastUpdatedAtUtc), DATE_TEXT_FORMAT + ' h:mm aaaa')}
+          expiresAt={expiresAtUtc && format(new Date(expiresAtUtc), DATE_TEXT_FORMAT)}
         />
 
         <Progress state={state} />
