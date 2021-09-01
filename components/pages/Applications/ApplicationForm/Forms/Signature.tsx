@@ -29,7 +29,6 @@ import FormFieldHelpBubble from './FormFieldHelpBubble';
 import { RequiredStar } from './RequiredFieldsMessage';
 import { styled } from '@icgc-argo/uikit';
 import { AxiosError } from 'axios';
-import router from 'next/router';
 import {
   DOCUMENT_TYPES,
   FormSectionValidationState_Signature,
