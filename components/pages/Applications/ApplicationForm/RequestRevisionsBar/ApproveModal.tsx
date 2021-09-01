@@ -41,8 +41,9 @@ const ApproveModal = ({
   dismissModal: () => any | void;
   primaryAffiliation: string;
 }) => {
-  const startDate = format(new Date(), DATE_TEXT_FORMAT);
-  const endDate = format(add(new Date(startDate), { years: 2 }), DATE_TEXT_FORMAT);
+  const currentDate = new Date();
+  const startDate = format(currentDate, DATE_TEXT_FORMAT);
+  const endDate = format(add(currentDate, { years: 2 }), DATE_TEXT_FORMAT);
 
   const [error, setError] = useState<AxiosError | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
