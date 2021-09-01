@@ -51,15 +51,19 @@ const HeaderDetails = ({
           margin: 0 0 5px;
         `}
       >
-        <Link href={APPLICATIONS_PATH}>My Applications</Link>: {appId.toUpperCase()} |{' '}
+        <Link href={APPLICATIONS_PATH}>My Applications</Link>: {appId.toUpperCase()}
         {expiresAt && (
-          <span
-            css={css`
-              color: ${theme.colors.secondary}; ;
-            `}
-          >
-            Expires: {expiresAt}
-          </span>
+          <>
+            {' '}
+            |{' '}
+            <span
+              css={css`
+                color: ${theme.colors.secondary}; ;
+              `}
+            >
+              Expires: {expiresAt}
+            </span>
+          </>
         )}
       </Typography>
 
