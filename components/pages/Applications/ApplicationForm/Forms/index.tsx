@@ -50,7 +50,7 @@ const getActiveSection = (sectionFromQuery?: FormSectionNames): FormSectionNames
   return isValidSectionFromQuery
     ? sectionFromQuery
     : ((sectionFromQuery &&
-        console.info('Section initially queried was not found', sectionFromQuery),
+      console.info('Section initially queried was not found', sectionFromQuery),
       sectionsOrder[0]) as FormSectionNames);
 };
 
@@ -106,13 +106,13 @@ const ApplicationFormsBase = ({
 
     selectedSection === 'collaborators'
       ? formState.sections[selectedSection]?.meta.showOverall ||
-        triggerSectionValidation('notShowingOverall', selectedSection)
+      triggerSectionValidation('notShowingOverall', selectedSection)
       : sectionsOrder.forEach(
-          (section) =>
-            // validates all other section that doen't already show overall status.
-            !(formState.sections[section]?.meta.showOverall || selectedSection === section) &&
-            triggerSectionValidation('notShowingOverall', section),
-        );
+        (section) =>
+          // validates all other section that doen't already show overall status.
+          !(formState.sections[section]?.meta.showOverall || selectedSection === section) &&
+          triggerSectionValidation('notShowingOverall', section),
+      );
   }, [formState.lastUpdatedAtUtc]);
 
   const sectionIndex = sectionsOrder.indexOf(selectedSection);
@@ -236,6 +236,10 @@ const ApplicationFormsBase = ({
                     & ~ p {
                       margin-top: 5px 0 0;
                     }
+                  }
+
+                  input {
+                    line-height: 32px;
                   }
 
                   &.vertical {
