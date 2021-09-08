@@ -45,6 +45,7 @@ import { CustomLoadingButton, generatePDFDocument } from './common';
 import urlJoin from 'url-join';
 import { ApplicationState } from '../../types';
 import { getStaticComponents } from '../../PDF/common';
+import router from 'next/router';
 
 const FormControl = styled(Control)`
   display: flex;
@@ -106,6 +107,7 @@ const Signature = ({
       .then(() => {
         localStorage.setItem(SUBMISSION_SUCCESS_CHECK, 'true');
         refetchAllData();
+        router.push(`/applications/${appId}?section=terms`);
       })
       .catch((err: AxiosError) => {
         console.error('Failed to submit.', err);
