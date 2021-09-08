@@ -36,7 +36,7 @@ import {
 } from './types';
 import { UPLOAD_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
 import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
-import { API, SUBMISSION_SUCCESS_CHECK } from 'global/constants';
+import { API, APPLICATIONS_PATH, SUBMISSION_SUCCESS_CHECK } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
 import Modal from '@icgc-argo/uikit/Modal';
 import { ModalPortal } from 'components/Root';
@@ -45,6 +45,7 @@ import { CustomLoadingButton, generatePDFDocument } from './common';
 import urlJoin from 'url-join';
 import { ApplicationState } from '../../types';
 import { getStaticComponents } from '../../PDF/common';
+import router from 'next/router';
 
 const FormControl = styled(Control)`
   display: flex;
@@ -106,6 +107,7 @@ const Signature = ({
       .then(() => {
         localStorage.setItem(SUBMISSION_SUCCESS_CHECK, 'true');
         refetchAllData();
+        router.push(`${APPLICATIONS_PATH}/${appId}?section=terms`);
       })
       .catch((err: AxiosError) => {
         console.error('Failed to submit.', err);
