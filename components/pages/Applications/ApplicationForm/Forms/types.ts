@@ -249,6 +249,7 @@ export type FormValidationActionTypes =
 export type FormValidationAction = {
   error?: any;
   field: string;
+  fieldType?: string;
   section: FormSectionNames;
   type: FormValidationActionTypes;
   value?: any;

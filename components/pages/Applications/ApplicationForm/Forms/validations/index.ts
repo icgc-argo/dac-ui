@@ -53,6 +53,24 @@ import { AxiosResponse } from 'axios';
 
 export { getMin, isRequired } from './helpers';
 
+const getValues = (fieldsObj: any) =>
+  Object.keys(fieldsObj).reduce(
+    (acc, curr) => ({
+      ...acc,
+      [curr]: fieldsObj[curr].value,
+    }),
+    {},
+  );
+
+const getUpdatedValues = (oldFields: any, newFields: any) =>
+  Object.keys(oldFields).reduce(
+    (acc, curr) => ({
+      ...acc,
+      ...(isEqual(oldFields[curr], newFields[curr]) ? {} : { [curr]: newFields[curr] }),
+    }),
+    {},
+  );
+
 export const validationReducer = (
   formState: FormValidationStateParameters,
   action: FormValidationAction,
@@ -558,7 +576,7 @@ export const useLocalValidation = (
   }, [storedFields]);
 
   const updateLocalState = useCallback(
-    ({ error, field, value, type }: FormValidationAction) => {
+    ({ error, field, fieldType = '', value, type }: FormValidationAction) => {
       const currentSectionData = localState[sectionName];
       const currentSectionFields = currentSectionData?.fields;
 
@@ -590,6 +608,7 @@ export const useLocalValidation = (
                                 ...(value[fieldIndex] || { value }),
                                 // ensure affiliation validation is applied before allowing "save"
                                 error: validatingPrimaryAffiliation ? error || [''] : error,
+                                fieldType,
                               },
                             },
                           },
@@ -601,12 +620,14 @@ export const useLocalValidation = (
                             [fieldIndex]: {
                               ...currentField.fields[fieldIndex],
                               error,
+                              fieldType,
                               value,
                             },
                           },
                         }
                       : {
                           error,
+                          fieldType,
                           value:
                             oldValue && typeof oldValue === 'object'
                               ? {
@@ -640,31 +661,13 @@ export const useLocalValidation = (
 
       switch (eventType) {
         case 'blur': {
-          const getValues = (fieldsObj: any) =>
-            Object.keys(fieldsObj).reduce(
-              (acc, curr) => ({
-                ...acc,
-                [curr]: fieldsObj[curr].value,
-              }),
-              {},
-            );
-
-          const getUpdatedValues = (oldFields: any, newFields: any) =>
-            Object.keys(oldFields).reduce(
-              (acc, curr) => ({
-                ...acc,
-                ...(isEqual(oldFields[curr], newFields[curr]) ? {} : { [curr]: newFields[curr] }),
-              }),
-              {},
-            );
-
           const oldValues = getValues(storedFields);
           const newValues = getValues(localState[sectionName].fields);
           const updatedValues = getUpdatedValues(oldValues, newValues);
           console.log({ updatedValues });
 
           const oldValue = storedFields[fieldName]?.value;
-          const oldValueAtIndex = fieldIndex && oldValue?.[fieldIndex];
+          const oldValueSubField = fieldIndex && oldValue?.[fieldIndex];
 
           const valueIsText = ['select-one', 'text', 'textarea'].includes(fieldType);
 
@@ -672,10 +675,10 @@ export const useLocalValidation = (
             !!fieldType &&
             valueIsText &&
             value !==
-              (oldValueAtIndex
-                ? oldValueAtIndex.hasOwnProperty('value')
-                  ? oldValueAtIndex.value
-                  : oldValueAtIndex
+              (oldValueSubField
+                ? oldValueSubField.hasOwnProperty('value')
+                  ? oldValueSubField.value
+                  : oldValueSubField
                 : oldValue);
 
           const changes = await fieldValidator(
@@ -684,7 +687,7 @@ export const useLocalValidation = (
             shouldPersistData,
           );
 
-          changes && updateLocalState(changes);
+          changes && updateLocalState({ ...changes, fieldType });
           break;
         }
 
@@ -693,6 +696,7 @@ export const useLocalValidation = (
           if ('text' === fieldType) {
             updateLocalState({
               field,
+              fieldType,
               value: fieldIndex
                 ? {
                     [fieldIndex]: { value },
@@ -702,7 +706,7 @@ export const useLocalValidation = (
           } else if ('remove' === fieldType) {
             const changes = await fieldValidator(field, null, !!'remove');
 
-            changes && updateLocalState(changes);
+            changes && updateLocalState({ ...changes, fieldType });
           } else if (fieldType.includes('Modal')) {
             fieldValidator(field, value);
           } else if (fieldType !== 'select-one') {
@@ -710,7 +714,7 @@ export const useLocalValidation = (
 
             const changes = await fieldValidator(field, value, shouldPersistData);
 
-            changes && updateLocalState(changes);
+            changes && updateLocalState({ ...changes, fieldType });
           }
           break;
         }
