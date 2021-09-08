@@ -559,10 +559,11 @@ export const useLocalValidation = (
 
   const updateLocalState = useCallback(
     ({ error, field, value, type }: FormValidationAction) => {
-      const validatingPrimaryAffiliation = field.includes('info_primaryAffiliation');
-      const [fieldName, fieldIndex, fieldOverride] = field.split('--');
       const currentSectionData = localState[sectionName];
       const currentSectionFields = currentSectionData?.fields;
+
+      const validatingPrimaryAffiliation = field.includes('info_primaryAffiliation');
+      const [fieldName, fieldIndex, fieldOverride] = field.split('--');
       const currentField = currentSectionFields[fieldName];
       const oldValue = currentField.value;
 
@@ -639,20 +640,43 @@ export const useLocalValidation = (
 
       switch (eventType) {
         case 'blur': {
-          const fieldValue = storedFields[fieldName]?.value;
-          const fieldValueAtIndex = fieldIndex && fieldValue?.[fieldIndex];
+          const getValues = (fieldsObj: any) =>
+            Object.keys(fieldsObj).reduce(
+              (acc, curr) => ({
+                ...acc,
+                [curr]: fieldsObj[curr].value,
+              }),
+              {},
+            );
+
+          const getUpdatedValues = (oldFields: any, newFields: any) =>
+            Object.keys(oldFields).reduce(
+              (acc, curr) => ({
+                ...acc,
+                ...(isEqual(oldFields[curr], newFields[curr]) ? {} : { [curr]: newFields[curr] }),
+              }),
+              {},
+            );
+
+          const oldValues = getValues(storedFields);
+          const newValues = getValues(localState[sectionName].fields);
+          const updatedValues = getUpdatedValues(oldValues, newValues);
+          console.log({ updatedValues });
+
+          const oldValue = storedFields[fieldName]?.value;
+          const oldValueAtIndex = fieldIndex && oldValue?.[fieldIndex];
+
+          const valueIsText = ['select-one', 'text', 'textarea'].includes(fieldType);
 
           const shouldPersistData =
             !!fieldType &&
-            ['select-one', 'text', 'textarea'].includes(fieldType) &&
+            valueIsText &&
             value !==
-              (fieldValueAtIndex
-                ? fieldValueAtIndex.hasOwnProperty('value')
-                  ? fieldValueAtIndex.value
-                  : fieldValueAtIndex
-                : fieldValue);
-
-          const valueIsText = ['select-one', 'text'].includes(fieldType);
+              (oldValueAtIndex
+                ? oldValueAtIndex.hasOwnProperty('value')
+                  ? oldValueAtIndex.value
+                  : oldValueAtIndex
+                : oldValue);
 
           const changes = await fieldValidator(
             field,
