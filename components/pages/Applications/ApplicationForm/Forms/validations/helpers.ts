@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { countBy } from 'lodash';
+import { countBy, isEqual } from 'lodash';
 import { AnyObject } from 'yup/lib/types';
 
 // locale-customised import
@@ -377,3 +377,25 @@ export const checkMatchingApplicant = (
 };
 
 // The applicant does not need to be added as a collaborator
+
+export const sectionsWithAutoComplete = ['applicant', 'collaborators', 'representative'];
+
+export const getFieldValues = (fieldsObj: any, isList: boolean): { [key: string]: any} => {
+  const fields = isList ? fieldsObj.list?.innerType?.fields : fieldsObj;
+  return Object.keys(fields).reduce(
+    (acc, curr) => ({
+      ...acc,
+      [`${isList ? 'list--' : ''}${curr}`]: fields[curr],
+    }),
+    {},
+  );
+};
+
+export const getUpdatedFieldValues = (oldFields: any, newFields: any): { [key: string]: any } =>
+  Object.keys(oldFields).reduce(
+    (acc, curr) => ({
+      ...acc,
+      ...(isEqual(oldFields[curr].value, newFields[curr].value) ? {} : { [curr]: newFields[curr] }),
+    }),
+    {},
+  );

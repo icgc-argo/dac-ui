@@ -282,7 +282,153 @@ export const validationReducer = (
 export const validator: FormSectionValidatorFunction_Main = (formState, dispatch, apiFetcher) => (
   origin,
   reasonToValidate,
-) => async (fieldsToValidate) => {
+) => async (fieldsToValidate: any) => {
+  const validatingApplicant = origin === 'applicant';
+  const applicantData = formState.sections.applicant.fields;
+
+  console.log('validator - fieldsToValidate', fieldsToValidate);
+
+  if (reasonToValidate) {
+    // NOTE doesn't return anything
+    dispatch({
+      field: 'validated',
+      section: origin,
+      type: 'sectionOverall',
+      value: true,
+    });
+
+    Object.entries(formState.sections[origin]?.fields as object).map(async ([field, data]) => {
+      const fieldValue = getValueByFieldTypeToValidate(data, field || origin);
+
+      if (!isNull(fieldValue)) {
+        if (reasonToValidate === 'notShowingOverall') return fieldValue;
+        const [fieldName, fieldIndex, fieldOverride] = field.split('--');
+
+        const { error } = await schemaValidator(
+          yup.reach(
+            combinedSchema[origin],
+            fieldIndex && fieldOverride !== 'overall' ? `${fieldName}.${fieldIndex}` : fieldName,
+          ),
+          data.meta?.shape === 'modal'
+            ? fieldValue.map((modalItem: any) =>
+                Object.entries(data.innerType?.fields).reduce((acc, innerField) => {
+                  const [fieldNamePrefix, fieldNameSuffix] = innerField[0].split('_');
+
+                  return {
+                    ...acc,
+                    [innerField[0]]: fieldNameSuffix
+                      ? modalItem[fieldNamePrefix][fieldNameSuffix]
+                      : modalItem[innerField[0]],
+                  };
+                }, {}),
+              )
+            : fieldValue,
+        );
+
+        const results = {
+          field,
+          section: origin,
+          type: data.type,
+          value: data.value,
+          ...(error
+            ? { error }
+            : !validatingApplicant &&
+              checkMatchingApplicant(origin, field, data.value, applicantData)),
+        } as FormValidationAction;
+
+        dispatch(results);
+      }
+    });
+
+    reasonToValidate === 'notShowingOverall' &&
+      dispatch({
+        field: 'showOverall',
+        section: origin,
+        type: 'sectionOverall',
+        value: true,
+      });
+  } else if (fieldsToValidate.length > 0) {
+    const fieldsWithModalOverride = fieldsToValidate.filter(
+      ({ field = '' }) => field && field.split('--')[2]?.includes('Modal'),
+    );
+
+    for (const { field = '', value = '' } of fieldsWithModalOverride) {
+      const fieldName = field.split('--')[0];
+      const fieldOverride = field.split('--')[2];
+      const error =
+        value &&
+        Object.keys(formState.sections[origin].fields[fieldName].innerType?.fields).reduce(
+          (acc, innerField) => {
+            const [fieldNamePrefix, fieldNameSuffix] = innerField.split('_');
+            const innerValue = fieldNameSuffix
+              ? value[fieldNamePrefix][fieldNameSuffix]
+              : value[innerField];
+
+            const { error } = schemaValidator(
+              yup.reach(combinedSchema[origin], `${fieldName}.${innerField}`),
+              innerValue,
+            );
+
+            const validationResult = error
+              ? { error }
+              : !validatingApplicant &&
+                checkMatchingApplicant(origin, innerField, innerValue, applicantData);
+
+            return {
+              ...acc,
+              ...(validationResult && { [innerField]: validationResult }),
+            };
+          },
+          {},
+        );
+
+      dispatch({
+        field: fieldName,
+        section: origin,
+        type: fieldOverride as FormValidationActionTypes,
+        value,
+        error,
+      });
+    }
+
+    const fieldsWithoutModalOverride = fieldsToValidate.filter(
+      ({ field = '' }) => field && !field.split('--')[2]?.includes('Modal'),
+    );
+
+    if (fieldsWithoutModalOverride.length > 0) {
+      const fieldErrors = await Promise.all(
+        fieldsWithoutModalOverride.map(async (fieldItem: any) => {
+          const { field, value } = fieldItem;
+          const [fieldName, fieldIndex, fieldOverride] = field.split('--');
+          console.log(fieldOverride);
+          const { error } = fieldOverride
+            ? { error: null } // TODO: this validation will be handled in ticket #138
+            : await schemaValidator(
+                yup.reach(
+                  combinedSchema[origin],
+                  fieldIndex && fieldOverride !== 'overall'
+                    ? `${fieldName}.${fieldIndex}`
+                    : fieldName,
+                ),
+                value,
+              );
+          return {
+            ...fieldItem,
+            error,
+          };
+        }),
+      );
+
+      console.log({ fieldErrors });
+    }
+  }
+};
+
+export const originalValidator: FormSectionValidatorFunction_Main = (
+  formState,
+  dispatch,
+  apiFetcher,
+) => (origin, reasonToValidate) => async (fieldsToValidate) => {
   const { field, value, shouldPersistResults } = fieldsToValidate[0];
   const validatingApplicant = origin === 'applicant';
   const applicantData = formState.sections.applicant.fields;
@@ -577,14 +723,14 @@ export const useLocalValidation = (
   }, [storedFields]);
 
   const updateLocalState = useCallback(
-    ({ error, field, fieldType = '', value, type }: FormValidationAction) => {
+    ({ error, field = '', fieldType = '', value, type }: FormValidationAction) => {
       const currentSectionData = localState[sectionName];
       const currentSectionFields = currentSectionData?.fields;
 
       const validatingPrimaryAffiliation = field.includes('info_primaryAffiliation');
       const [fieldName, fieldIndex, fieldOverride] = field.split('--');
       const currentField = currentSectionFields[fieldName];
-      const oldValue = currentField.value;
+      const oldValue = currentField?.value || '';
 
       const newState = {
         ...localState,
@@ -598,7 +744,7 @@ export const useLocalValidation = (
                 : {
                     ...currentField,
                     ...((type === 'array' && currentField.innerType?.type === 'object') ||
-                    currentField.meta?.shape === 'modal'
+                    currentField?.meta?.shape === 'modal'
                       ? {
                           innerType: {
                             ...currentField.innerType,
