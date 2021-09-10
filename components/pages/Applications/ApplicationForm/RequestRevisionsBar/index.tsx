@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { useState } from "react";
+import { useState } from 'react';
 import { css } from '@emotion/core';
 
 import { ContentHeader } from '@icgc-argo/uikit/PageLayout';
@@ -28,24 +28,24 @@ import Icon from '@icgc-argo/uikit/Icon';
 import { instructionBoxButtonContentStyle, instructionBoxButtonIconStyle } from 'global/styles';
 import { ModalPortal } from 'components/Root';
 
-import RequestRevisionsModal from "./RequestRevisionsModal";
-import ApproveModal from "./ApproveModal";
+import RequestRevisionsModal from './RequestRevisionsModal';
+import ApproveModal from './ApproveModal';
+
+enum VisibleModalOption {
+  NONE = 'NONE',
+  APPROVAL = 'APPROVAL',
+  REVISIONS = 'REVISIONS',
+}
 
 const RequestRevisionsBar = ({ data }: { data: any }) => {
   const theme = useTheme();
-  const [isRequestRevisionsModalVisible, setRequestRevisionsModalVisible] = useState(false);
-  const [isApproveModalVisible, setApproveModalVisible] = useState(false);
+
+  const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
 
   const {
     appId,
-    sections: {
-      applicant: {
-        info: {
-          primaryAffiliation = ''
-        } = {},
-      } = {}
-    },
-    state
+    sections: { applicant: { info: { primaryAffiliation = '' } = {} } = {} },
+    state,
   } = data;
 
   const buttonsDisabled = ['APPROVED'].includes(state);
@@ -53,30 +53,32 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
 
   return (
     <>
-      {isRequestRevisionsModalVisible && (
+      {visibleModal === VisibleModalOption.REVISIONS && (
         <ModalPortal>
           <RequestRevisionsModal
             appId={appId}
-            dismissModal={() => setRequestRevisionsModalVisible(false)}
+            dismissModal={() => setVisibleModal(VisibleModalOption.NONE)}
           />
         </ModalPortal>
       )}
-      {isApproveModalVisible && (
+      {visibleModal === VisibleModalOption.APPROVAL && (
         <ModalPortal>
           <ApproveModal
             appId={appId}
-            dismissModal={() => setApproveModalVisible(false)}
+            dismissModal={() => setVisibleModal(VisibleModalOption.NONE)}
             primaryAffiliation={primaryAffiliation}
           />
         </ModalPortal>
       )}
-      <ContentHeader css={css`
-        border: 0 none;
-        height: auto;
-        line-height: 1;
-        margin-bottom: -16px;
-        margin-top: 16px;
-      `}>
+      <ContentHeader
+        css={css`
+          border: 0 none;
+          height: auto;
+          line-height: 1;
+          margin-bottom: -16px;
+          margin-top: 16px;
+        `}
+      >
         <div
           css={css`
             align-items: center;
@@ -93,24 +95,24 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
             width: 100%;
           `}
         >
-          <div>
-            {/* Expiry placeholder */}
-          </div>
-          <div css={css`
-            display: flex;
-            > button {
-              margin-right: 8px;
-              &:last-child {
-                margin-right: 0;
+          <div>{/* Expiry placeholder */}</div>
+          <div
+            css={css`
+              display: flex;
+              > button {
+                margin-right: 8px;
+                &:last-child {
+                  margin-right: 0;
+                }
               }
-            }
-          `}>
+            `}
+          >
             {buttonsVisible && (
               <>
                 <Button
                   disabled={buttonsDisabled}
                   onClick={() => {
-                    setApproveModalVisible(true);
+                    setVisibleModal(VisibleModalOption.APPROVAL);
                   }}
                   size="sm"
                 >
@@ -130,7 +132,7 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
                 <Button
                   disabled={buttonsDisabled}
                   onClick={() => {
-                    setRequestRevisionsModalVisible(true);
+                    setVisibleModal(VisibleModalOption.REVISIONS);
                   }}
                   size="sm"
                 >
@@ -144,10 +146,7 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
                     Request Revisions
                   </span>
                 </Button>
-                <Button
-                  disabled={buttonsDisabled}
-                  size="sm"
-                >
+                <Button disabled={buttonsDisabled} size="sm">
                   <span css={instructionBoxButtonContentStyle}>
                     <Icon
                       css={instructionBoxButtonIconStyle}
