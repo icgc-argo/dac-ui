@@ -393,5 +393,5 @@ export const getFieldValues = (fieldsObj: any, isList: boolean): { [key: string]
 
 export const getUpdatedFields = (oldFields: any, newFields: any): string[] =>
   Object.keys(oldFields).filter(
-    (oldField: any) => !isEqual(oldField.value, newFields[oldField].value),
+    (fieldName: any) => !isEqual(oldFields[fieldName].value, newFields[fieldName].value),
   );

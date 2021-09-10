@@ -18,7 +18,7 @@
  */
 
 import { Dispatch, useCallback, useEffect, useReducer, useState } from 'react';
-import { isEqual, isNull, omit } from 'lodash';
+import { find, isEqual, isNull, omit } from 'lodash';
 import merge from 'deepmerge';
 
 import { AuthAPIFetchFunction } from 'components/pages/Applications/types';
@@ -271,10 +271,7 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
   const validatingApplicant = origin === 'applicant';
   const applicantData = formState.sections.applicant.fields;
 
-  console.log('validator - fieldsToValidate', fieldsToValidate);
-
   if (reasonToValidate) {
-    // NOTE doesn't return anything
     dispatch({
       field: 'validated',
       section: origin,
@@ -381,11 +378,32 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
     );
 
     if (fieldsWithoutModalOverride.length > 0) {
-      const fieldErrors = await Promise.all(
+      const fieldNames = fieldsWithoutModalOverride.map((fieldObj: any) => fieldObj.field);
+
+      if (
+        validatingApplicant &&
+        ((fieldNames.includes(applicantFieldNames.AFFILIATION) &&
+          find(fieldsWithoutModalOverride, { field: applicantFieldNames.AFFILIATION }).value !==
+            applicantData[applicantFieldNames.AFFILIATION]) ||
+          (fieldNames.includes(applicantFieldNames.EMAIL) &&
+            find(fieldsWithoutModalOverride, { field: applicantFieldNames.EMAIL }).value !==
+              applicantData[applicantFieldNames.EMAIL]) ||
+          (fieldNames.includes(applicantFieldNames.GMAIL) &&
+            find(fieldsWithoutModalOverride, { field: applicantFieldNames.GMAIL }).value !==
+              applicantData[applicantFieldNames.GMAIL]))
+      ) {
+        dispatch({
+          field: 'validated',
+          section: 'representative',
+          type: 'sectionOverall',
+          value: false,
+        });
+      }
+
+      const fieldsWithErrors = await Promise.all(
         fieldsWithoutModalOverride.map(async (fieldItem: any) => {
           const { field, value } = fieldItem;
           const [fieldName, fieldIndex, fieldOverride] = field.split('--');
-          console.log(fieldOverride);
           const { error } = fieldOverride
             ? { error: null } // TODO: this validation will be handled in ticket #138
             : await schemaValidator(
@@ -404,208 +422,91 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
         }),
       );
 
-      console.log({ fieldErrors });
-    }
-  }
-};
+      const fieldsForPatch = fieldsWithErrors.map((fieldObj: any) => {
+        const [fieldName, fieldIndex] = fieldObj.field.split('--');
+        const fieldIsArray = !Number.isNaN(Number(fieldIndex));
 
-export const originalValidator: FormSectionValidatorFunction_Main = (
-  formState,
-  dispatch,
-  apiFetcher,
-) => (origin, reasonToValidate) => async (fieldsToValidate) => {
-  const { field, value, shouldPersistResults } = fieldsToValidate[0];
-  const validatingApplicant = origin === 'applicant';
-  const applicantData = formState.sections.applicant.fields;
-
-  if (reasonToValidate) {
-    dispatch({
-      field: 'validated',
-      section: origin,
-      type: 'sectionOverall',
-      value: true,
-    });
-
-    Object.entries(formState.sections[origin]?.fields as object).map(async ([field, data]) => {
-      const fieldValue = getValueByFieldTypeToValidate(data, field || origin);
-
-      if (!isNull(fieldValue)) {
-        if (reasonToValidate === 'notShowingOverall') return fieldValue;
-        const [fieldName, fieldIndex, fieldOverride] = field.split('--');
-
-        const { error } = await schemaValidator(
-          yup.reach(
-            combinedSchema[origin],
-            fieldIndex && fieldOverride !== 'overall' ? `${fieldName}.${fieldIndex}` : fieldName,
-          ),
-          data.meta?.shape === 'modal'
-            ? fieldValue.map((modalItem: any) =>
-                Object.entries(data.innerType?.fields).reduce((acc, innerField) => {
-                  const [fieldNamePrefix, fieldNameSuffix] = innerField[0].split('_');
-
-                  return {
-                    ...acc,
-                    [innerField[0]]: fieldNameSuffix
-                      ? modalItem[fieldNamePrefix][fieldNameSuffix]
-                      : modalItem[innerField[0]],
-                  };
-                }, {}),
-              )
-            : fieldValue,
-        );
+        const nextValue = {
+          ...(fieldObj.error
+            ? { error: fieldObj.error }
+            : !validatingApplicant &&
+              checkMatchingApplicant(origin, fieldObj.field, fieldObj.value, applicantData)),
+          value: fieldObj.value,
+        };
 
         const results = {
-          field,
+          field: fieldObj.field,
           section: origin,
-          type: data.type,
-          value: data.value,
-          ...(error
-            ? { error }
-            : !validatingApplicant &&
-              checkMatchingApplicant(origin, field, data.value, applicantData)),
+          type: formState.sections[origin]?.fields?.[fieldName]?.type,
+          ...(fieldIsArray
+            ? {
+                error: fieldObj.error,
+                value: {
+                  [fieldIndex]: nextValue,
+                },
+              }
+            : nextValue),
         } as FormValidationAction;
 
-        dispatch(results);
-      }
-    });
+        fieldObj.shouldPersistResults && dispatch(results);
 
-    reasonToValidate === 'notShowingOverall' &&
-      dispatch({
-        field: 'showOverall',
-        section: origin,
-        type: 'sectionOverall',
-        value: true,
+        const isModalShape =
+          formState.sections[origin]?.fields?.[fieldName]?.meta?.shape === 'modal';
+
+        return {
+          fieldName,
+          results,
+          shouldPatch: fieldObj.shouldPersistResults && !isModalShape,
+        };
       });
-  } else if (field) {
-    const [fieldName, fieldIndex, fieldOverride] = field.split('--');
-    const fieldIsArray = !Number.isNaN(Number(fieldIndex));
 
-    if (fieldOverride?.includes('Modal')) {
-      const error =
-        value &&
-        Object.keys(formState.sections[origin].fields[fieldName].innerType?.fields).reduce(
-          (acc, innerField) => {
-            const [fieldNamePrefix, fieldNameSuffix] = innerField.split('_');
-            const innerValue = fieldNameSuffix
-              ? value[fieldNamePrefix][fieldNameSuffix]
-              : value[innerField];
-
-            const { error } = schemaValidator(
-              yup.reach(combinedSchema[origin], `${fieldName}.${innerField}`),
-              innerValue,
-            );
-
-            const validationResult = error
-              ? { error }
-              : !validatingApplicant &&
-                checkMatchingApplicant(origin, innerField, innerValue, applicantData);
-
-            return {
-              ...acc,
-              ...(validationResult && { [innerField]: validationResult }),
-            };
-          },
-          {},
+      const fieldsResults = fieldsForPatch
+        .filter((fieldObj: any) => fieldObj.shouldPatch)
+        .map((fieldObj: any) =>
+          getValueByFieldTypeToPublish(
+            fieldObj.results,
+            formState.sections[origin]?.fields?.[fieldObj.fieldName]?.meta,
+            formState.sections[origin]?.fields?.[fieldObj.fieldName]?.value,
+          ),
         );
+      console.log({ fieldsResults });
 
-      dispatch({
-        field: fieldName,
-        section: origin,
-        type: fieldOverride as FormValidationActionTypes,
-        value,
-        error,
-      });
-    } else {
-      if (
-        validatingApplicant &&
-        ((field.includes(applicantFieldNames.AFFILIATION) &&
-          value !== applicantData[applicantFieldNames.AFFILIATION]) ||
-          (field.includes(applicantFieldNames.EMAIL) &&
-            value !== applicantData[applicantFieldNames.EMAIL]) ||
-          (field.includes(applicantFieldNames.GMAIL) &&
-            value !== applicantData[applicantFieldNames.GMAIL]))
-      ) {
-        dispatch({
-          field: 'validated',
-          section: 'representative',
-          type: 'sectionOverall',
-          value: false,
-        });
-      }
+      // if (fieldsForPatch.length > 0) {
+      //   await apiFetcher({
+      //     method: 'PATCH',
+      //     data: {
+      //       sections: {
+      //         [origin]: getValueByFieldTypeToPublish(
+      //           results,
+      //           formState.sections[origin]?.fields?.[fieldName]?.meta,
+      //           formState.sections[origin]?.fields?.[fieldName]?.value,
+      //         ),
+      //       },
+      //       // __v: formState.__v,
+      //     },
+      //   }).then(({ data, ...response } = {} as AxiosResponse<any>) => {
+      //     data
+      //       ? (!['', SECTION_STATUS.INCOMPLETE, SECTION_STATUS.PRISTINE].includes(
+      //           data.sections[origin].meta.status || '',
+      //         ) &&
+      //           dispatch({
+      //             field: 'showOverall',
+      //             section: origin,
+      //             type: 'sectionOverall',
+      //             value: true,
+      //           }),
+      //         dispatch({
+      //           type: 'updating',
+      //           value: data,
+      //         }))
+      //       : console.error(
+      //           'Something went wrong updating the application form',
+      //           response || 'no data in response',
+      //         );
 
-      const { error } = fieldOverride
-        ? { error: null } // TODO: this validation will be handled in ticket #138
-        : await schemaValidator(
-            yup.reach(
-              combinedSchema[origin],
-              fieldIndex && fieldOverride !== 'overall' ? `${fieldName}.${fieldIndex}` : fieldName,
-            ),
-            value,
-          );
-
-      const nextValue = {
-        ...(error
-          ? { error }
-          : !validatingApplicant && checkMatchingApplicant(origin, field, value, applicantData)),
-        value,
-      };
-
-      const results = {
-        field,
-        section: origin,
-        type: formState.sections[origin]?.fields?.[fieldName]?.type,
-        ...(fieldIsArray
-          ? {
-              error,
-              value: {
-                [fieldIndex]: nextValue,
-              },
-            }
-          : nextValue),
-      } as FormValidationAction;
-
-      if (shouldPersistResults) {
-        dispatch(results);
-
-        if (formState.sections[origin]?.fields?.[fieldName]?.meta?.shape !== 'modal') {
-          await apiFetcher({
-            method: 'PATCH',
-            data: {
-              sections: {
-                [origin]: getValueByFieldTypeToPublish(
-                  results,
-                  formState.sections[origin]?.fields?.[fieldName]?.meta,
-                  formState.sections[origin]?.fields?.[fieldName]?.value,
-                ),
-              },
-              // __v: formState.__v,
-            },
-          }).then(({ data, ...response } = {} as AxiosResponse<any>) => {
-            data
-              ? (!['', SECTION_STATUS.INCOMPLETE, SECTION_STATUS.PRISTINE].includes(
-                  data.sections[origin].meta.status || '',
-                ) &&
-                  dispatch({
-                    field: 'showOverall',
-                    section: origin,
-                    type: 'sectionOverall',
-                    value: true,
-                  }),
-                dispatch({
-                  type: 'updating',
-                  value: data,
-                }))
-              : console.error(
-                  'Something went wrong updating the application form',
-                  response || 'no data in response',
-                );
-
-            return data;
-          });
-        }
-      }
-
-      return results;
+      //     return data;
+      //   });
+      // }
     }
   }
 };
@@ -787,7 +688,6 @@ export const useLocalValidation = (
 
   const validateFieldTouched: FormFieldValidationTriggerFunction = async (event) => {
     const { eventType, field, fieldType, value } = getFieldDataFromEvent(event);
-    console.log('blur - field', field);
 
     if (eventType && field && fieldType) {
       const [fieldName, fieldIndex] = field.split('--');
@@ -803,9 +703,10 @@ export const useLocalValidation = (
             // this works for applicant, representative, collaborators.
             // it's less broad than non-autocomplete blur events.
             const fieldsForValidator = updatedFields.map((updatedField: any) => {
+              const [updatedFieldName, updatedFieldIndex] = updatedField.split('--');
               const fieldObj = isList
-                ? localState[sectionName].fields.list?.innerType?.fields[updatedField]
-                : localState[sectionName].fields[updatedField];
+                ? localState[sectionName].fields.list?.innerType?.fields[updatedFieldIndex]
+                : localState[sectionName].fields[updatedFieldName];
 
               return {
                 field: updatedField,
