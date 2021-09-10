@@ -308,10 +308,14 @@ export type FormFieldDataFromEvent = (
 
 export type FormFieldValidationTriggerFunction = (event: any) => Promise<void>;
 
+export type FormValidationFunctionArguments = {
+  field?: string;
+  value?: any;
+  shouldPersistResults?: Boolean;
+};
+
 export type FormFieldValidatorFunction = (
-  field?: string,
-  value?: any,
-  shouldPersistData?: Boolean,
+  argo0: FormValidationFunctionArguments[],
 ) => Promise<FormValidationAction | void>;
 
 export type FormSectionValidationTriggerReasons = 'initialValidation' | 'notShowingOverall';

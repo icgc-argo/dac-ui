@@ -282,7 +282,8 @@ export const validationReducer = (
 export const validator: FormSectionValidatorFunction_Main = (formState, dispatch, apiFetcher) => (
   origin,
   reasonToValidate,
-) => async (field, value, shouldPersistResults) => {
+) => async (fieldsToValidate) => {
+  const { field, value, shouldPersistResults } = fieldsToValidate[0];
   const validatingApplicant = origin === 'applicant';
   const applicantData = formState.sections.applicant.fields;
 
@@ -671,7 +672,7 @@ export const useLocalValidation = (
 
           const valueIsText = ['select-one', 'text', 'textarea'].includes(fieldType);
 
-          const shouldPersistData =
+          const shouldPersistResults =
             !!fieldType &&
             valueIsText &&
             value !==
@@ -681,11 +682,13 @@ export const useLocalValidation = (
                   : oldValueSubField
                 : oldValue);
 
-          const changes = await fieldValidator(
-            field,
-            valueIsText ? (value || '').trim() : value,
-            shouldPersistData,
-          );
+          const changes = await fieldValidator([
+            {
+              field,
+              value: valueIsText ? (value || '').trim() : value,
+              shouldPersistResults,
+            },
+          ]);
 
           changes && updateLocalState({ ...changes, fieldType });
           break;
@@ -704,15 +707,21 @@ export const useLocalValidation = (
                 : value,
             } as FormValidationAction);
           } else if ('remove' === fieldType) {
-            const changes = await fieldValidator(field, null, !!'remove');
+            const changes = await fieldValidator([
+              {
+                field,
+                value: null,
+                shouldPersistResults: !!'remove',
+              },
+            ]);
 
             changes && updateLocalState({ ...changes, fieldType });
           } else if (fieldType.includes('Modal')) {
-            fieldValidator(field, value);
+            fieldValidator([{ field, value }]);
           } else if (fieldType !== 'select-one') {
-            const shouldPersistData = ['checkbox', 'radio'].includes(fieldType);
+            const shouldPersistResults = ['checkbox', 'radio'].includes(fieldType);
 
-            const changes = await fieldValidator(field, value, shouldPersistData);
+            const changes = await fieldValidator([{ field, value, shouldPersistResults }]);
 
             changes && updateLocalState({ ...changes, fieldType });
           }
