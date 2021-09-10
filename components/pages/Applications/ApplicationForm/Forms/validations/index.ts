@@ -47,29 +47,14 @@ import {
   schemaValidator,
   sectionFieldsSeeder,
   getValueByFieldTypeToValidate,
+  getFieldValues,
+  getUpdatedFields,
+  sectionsWithAutoComplete,
 } from './helpers';
 import yup, { combinedSchema } from './schemas';
 import { AxiosResponse } from 'axios';
 
 export { getMin, isRequired } from './helpers';
-
-const getValues = (fieldsObj: any) =>
-  Object.keys(fieldsObj).reduce(
-    (acc, curr) => ({
-      ...acc,
-      [curr]: fieldsObj[curr].value,
-    }),
-    {},
-  );
-
-const getUpdatedValues = (oldFields: any, newFields: any) =>
-  Object.keys(oldFields).reduce(
-    (acc, curr) => ({
-      ...acc,
-      ...(isEqual(oldFields[curr], newFields[curr]) ? {} : { [curr]: newFields[curr] }),
-    }),
-    {},
-  );
 
 export const validationReducer = (
   formState: FormValidationStateParameters,
@@ -802,41 +787,64 @@ export const useLocalValidation = (
 
   const validateFieldTouched: FormFieldValidationTriggerFunction = async (event) => {
     const { eventType, field, fieldType, value } = getFieldDataFromEvent(event);
+    console.log('blur - field', field);
 
     if (eventType && field && fieldType) {
       const [fieldName, fieldIndex] = field.split('--');
 
       switch (eventType) {
         case 'blur': {
-          const oldValues = getValues(storedFields);
-          const newValues = getValues(localState[sectionName].fields);
-          const updatedValues = getUpdatedValues(oldValues, newValues);
-          console.log({ updatedValues });
+          if (sectionsWithAutoComplete.includes(sectionName)) {
+            const isList = sectionName === 'collaborators';
+            const oldValues = getFieldValues(storedFields, isList);
+            const newValues = getFieldValues(localState[sectionName].fields, isList);
+            const updatedFields = getUpdatedFields(oldValues, newValues);
 
-          const oldValue = storedFields[fieldName]?.value;
-          const oldValueSubField = fieldIndex && oldValue?.[fieldIndex];
+            // this works for applicant, representative, collaborators.
+            // it's less broad than non-autocomplete blur events.
+            const fieldsForValidator = updatedFields.map((updatedField: any) => {
+              const fieldObj = isList
+                ? localState[sectionName].fields.list?.innerType?.fields[updatedField]
+                : localState[sectionName].fields[updatedField];
 
-          const valueIsText = ['select-one', 'text', 'textarea'].includes(fieldType);
+              return {
+                field: updatedField,
+                shouldPersistResults: fieldObj.type === 'string',
+                value: fieldObj.type === 'string' ? (fieldObj.value || '').trim() : fieldObj.value,
+              };
+            });
 
-          const shouldPersistResults =
-            !!fieldType &&
-            valueIsText &&
-            value !==
-              (oldValueSubField
-                ? oldValueSubField.hasOwnProperty('value')
-                  ? oldValueSubField.value
-                  : oldValueSubField
-                : oldValue);
+            const changes = await fieldValidator(fieldsForValidator);
 
-          const changes = await fieldValidator([
-            {
-              field,
-              value: valueIsText ? (value || '').trim() : value,
-              shouldPersistResults,
-            },
-          ]);
+            console.log({ changes });
 
-          changes && updateLocalState({ ...changes, fieldType });
+            // changes && updateLocalState({ ...changes, fieldType });
+          } else {
+            const oldValue = storedFields[fieldName]?.value;
+            const oldValueSubField = fieldIndex && oldValue?.[fieldIndex];
+
+            const valueIsText = ['select-one', 'text', 'textarea'].includes(fieldType);
+
+            const shouldPersistResults =
+              !!fieldType &&
+              valueIsText &&
+              value !==
+                (oldValueSubField
+                  ? oldValueSubField.hasOwnProperty('value')
+                    ? oldValueSubField.value
+                    : oldValueSubField
+                  : oldValue);
+
+            const changes = await fieldValidator([
+              {
+                field,
+                value: valueIsText ? (value || '').trim() : value,
+                shouldPersistResults,
+              },
+            ]);
+
+            changes && updateLocalState({ ...changes, fieldType });
+          }
           break;
         }
 

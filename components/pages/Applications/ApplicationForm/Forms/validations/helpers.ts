@@ -380,7 +380,7 @@ export const checkMatchingApplicant = (
 
 export const sectionsWithAutoComplete = ['applicant', 'collaborators', 'representative'];
 
-export const getFieldValues = (fieldsObj: any, isList: boolean): { [key: string]: any} => {
+export const getFieldValues = (fieldsObj: any, isList: boolean): { [key: string]: any } => {
   const fields = isList ? fieldsObj.list?.innerType?.fields : fieldsObj;
   return Object.keys(fields).reduce(
     (acc, curr) => ({
@@ -391,11 +391,7 @@ export const getFieldValues = (fieldsObj: any, isList: boolean): { [key: string]
   );
 };
 
-export const getUpdatedFieldValues = (oldFields: any, newFields: any): { [key: string]: any } =>
-  Object.keys(oldFields).reduce(
-    (acc, curr) => ({
-      ...acc,
-      ...(isEqual(oldFields[curr].value, newFields[curr].value) ? {} : { [curr]: newFields[curr] }),
-    }),
-    {},
+export const getUpdatedFields = (oldFields: any, newFields: any): string[] =>
+  Object.keys(oldFields).filter(
+    (oldField: any) => !isEqual(oldField.value, newFields[oldField].value),
   );
