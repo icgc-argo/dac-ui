@@ -385,15 +385,15 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
       if (
         validatingApplicant &&
         fieldsWithoutModalOverride &&
+        fieldsWithoutModalOverride.length > 0 &&
         ((fieldNames.includes(applicantFieldNames.AFFILIATION) &&
-          // ! typescript issues
-          find(fieldsWithoutModalOverride, { field: applicantFieldNames.AFFILIATION }).value !==
+          find(fieldsWithoutModalOverride, { field: applicantFieldNames.AFFILIATION })?.value !==
             applicantData[applicantFieldNames.AFFILIATION]) ||
           (fieldNames.includes(applicantFieldNames.EMAIL) &&
-            find(fieldsWithoutModalOverride, { field: applicantFieldNames.EMAIL }).value !==
+            find(fieldsWithoutModalOverride, { field: applicantFieldNames.EMAIL })?.value !==
               applicantData[applicantFieldNames.EMAIL]) ||
           (fieldNames.includes(applicantFieldNames.GMAIL) &&
-            find(fieldsWithoutModalOverride, { field: applicantFieldNames.GMAIL }).value !==
+            find(fieldsWithoutModalOverride, { field: applicantFieldNames.GMAIL })?.value !==
               applicantData[applicantFieldNames.GMAIL]))
       ) {
         dispatch({
