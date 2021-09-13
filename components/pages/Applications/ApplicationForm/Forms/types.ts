@@ -315,7 +315,7 @@ export type FormValidationFunctionArguments = {
 };
 
 export type FormFieldValidatorFunction = (
-  argo0: FormValidationFunctionArguments[],
+  fieldsToValidate: FormValidationFunctionArguments[],
 ) => Promise<FormValidationAction | void>;
 
 export type FormSectionValidationTriggerReasons = 'initialValidation' | 'notShowingOverall';

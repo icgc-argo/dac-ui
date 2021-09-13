@@ -39,6 +39,7 @@ import {
   FORM_STATES,
   SECTION_STATUS,
   FormValidationActionTypes,
+  FormValidationFunctionArguments,
 } from '../types';
 import {
   getFieldDataFromEvent,
@@ -267,7 +268,8 @@ export const validationReducer = (
 export const validator: FormSectionValidatorFunction_Main = (formState, dispatch, apiFetcher) => (
   origin,
   reasonToValidate,
-) => async (fieldsToValidate: any) => {
+) => async (fieldsToValidate: FormValidationFunctionArguments[]) => {
+  // ! typescript issues
   const validatingApplicant = origin === 'applicant';
   const applicantData = formState.sections.applicant.fields;
 
@@ -377,12 +379,14 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
       ({ field = '' }) => field && !field.split('--')[2]?.includes('Modal'),
     );
 
-    if (fieldsWithoutModalOverride.length > 0) {
+    if (fieldsWithoutModalOverride && fieldsWithoutModalOverride.length > 0) {
       const fieldNames = fieldsWithoutModalOverride.map((fieldObj: any) => fieldObj.field);
 
       if (
         validatingApplicant &&
+        fieldsWithoutModalOverride &&
         ((fieldNames.includes(applicantFieldNames.AFFILIATION) &&
+          // ! typescript issues
           find(fieldsWithoutModalOverride, { field: applicantFieldNames.AFFILIATION }).value !==
             applicantData[applicantFieldNames.AFFILIATION]) ||
           (fieldNames.includes(applicantFieldNames.EMAIL) &&
@@ -422,7 +426,7 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
         }),
       );
 
-      const fieldsForPatch = fieldsWithErrors.map((fieldObj: any) => {
+      const fieldsResults = fieldsWithErrors.map((fieldObj: any) => {
         const [fieldName, fieldIndex] = fieldObj.field.split('--');
         const fieldIsArray = !Number.isNaN(Number(fieldIndex));
 
@@ -459,8 +463,9 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
           shouldPatch: fieldObj.shouldPersistResults && !isModalShape,
         };
       });
+      // console.log({ fieldsResults });
 
-      const fieldsResults = fieldsForPatch
+      const fieldsForPatch = fieldsResults
         .filter((fieldObj: any) => fieldObj.shouldPatch)
         .map((fieldObj: any) =>
           getValueByFieldTypeToPublish(
@@ -468,45 +473,52 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
             formState.sections[origin]?.fields?.[fieldObj.fieldName]?.meta,
             formState.sections[origin]?.fields?.[fieldObj.fieldName]?.value,
           ),
-        );
-      console.log({ fieldsResults });
+        )
+        .reduce((acc, curr) => {
+          const [key, value] = Object.entries(curr)[0];
+          return {
+            ...acc,
+            [key]: {
+              ...(acc[key] || {}),
+              ...(value as object),
+            },
+          };
+        }, {});
 
-      // if (fieldsForPatch.length > 0) {
-      //   await apiFetcher({
-      //     method: 'PATCH',
-      //     data: {
-      //       sections: {
-      //         [origin]: getValueByFieldTypeToPublish(
-      //           results,
-      //           formState.sections[origin]?.fields?.[fieldName]?.meta,
-      //           formState.sections[origin]?.fields?.[fieldName]?.value,
-      //         ),
-      //       },
-      //       // __v: formState.__v,
-      //     },
-      //   }).then(({ data, ...response } = {} as AxiosResponse<any>) => {
-      //     data
-      //       ? (!['', SECTION_STATUS.INCOMPLETE, SECTION_STATUS.PRISTINE].includes(
-      //           data.sections[origin].meta.status || '',
-      //         ) &&
-      //           dispatch({
-      //             field: 'showOverall',
-      //             section: origin,
-      //             type: 'sectionOverall',
-      //             value: true,
-      //           }),
-      //         dispatch({
-      //           type: 'updating',
-      //           value: data,
-      //         }))
-      //       : console.error(
-      //           'Something went wrong updating the application form',
-      //           response || 'no data in response',
-      //         );
+      if (Object.keys(fieldsForPatch).length > 0) {
+        await apiFetcher({
+          method: 'PATCH',
+          data: {
+            sections: { [origin]: fieldsForPatch },
+            // __v: formState.__v,
+          },
+        })
+          .then(({ data, ...response } = {} as AxiosResponse<any>) => {
+            data
+              ? (!['', SECTION_STATUS.INCOMPLETE, SECTION_STATUS.PRISTINE].includes(
+                  data.sections[origin].meta.status || '',
+                ) &&
+                  dispatch({
+                    field: 'showOverall',
+                    section: origin,
+                    type: 'sectionOverall',
+                    value: true,
+                  }),
+                dispatch({
+                  type: 'updating',
+                  value: data,
+                }))
+              : console.error(
+                  'Something went wrong updating the application form',
+                  response || 'no data in response',
+                );
 
-      //     return data;
-      //   });
-      // }
+            return data;
+          })
+          .catch((err) => console.error(err));
+      }
+
+      return fieldsResults.map((fieldObj: any) => fieldObj.results);
     }
   }
 };
@@ -714,10 +726,13 @@ export const useLocalValidation = (
                 value: fieldObj.type === 'string' ? (fieldObj.value || '').trim() : fieldObj.value,
               };
             });
+            // console.log({ fieldsForValidator });
 
             const changes = await fieldValidator(fieldsForValidator);
 
-            console.log({ changes });
+            console.log({ changes, localState });
+            // TODO
+            // check changes and send them to localState
 
             // changes && updateLocalState({ ...changes, fieldType });
           } else {
