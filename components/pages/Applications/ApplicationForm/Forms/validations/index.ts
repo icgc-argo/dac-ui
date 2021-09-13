@@ -621,7 +621,8 @@ export const useLocalValidation = (
   }, [storedFields]);
 
   const updateLocalState = useCallback(
-    ({ error, field = '', fieldType = '', value, type }: FormValidationAction) => {
+    (changes: FormValidationAction[]) => {
+      const { error, field = '', value, type } = changes[0];
       const currentSectionData = localState[sectionName];
       const currentSectionFields = currentSectionData?.fields;
 
@@ -653,7 +654,6 @@ export const useLocalValidation = (
                                 ...(value[fieldIndex] || { value }),
                                 // ensure affiliation validation is applied before allowing "save"
                                 error: validatingPrimaryAffiliation ? error || [''] : error,
-                                fieldType,
                               },
                             },
                           },
@@ -665,14 +665,12 @@ export const useLocalValidation = (
                             [fieldIndex]: {
                               ...currentField.fields[fieldIndex],
                               error,
-                              fieldType,
                               value,
                             },
                           },
                         }
                       : {
                           error,
-                          fieldType,
                           value:
                             oldValue && typeof oldValue === 'object'
                               ? {
@@ -734,7 +732,7 @@ export const useLocalValidation = (
             // TODO
             // check changes and send them to localState
 
-            // changes && updateLocalState({ ...changes, fieldType });
+            // changes && updateLocalState(changes);
           } else {
             const oldValue = storedFields[fieldName]?.value;
             const oldValueSubField = fieldIndex && oldValue?.[fieldIndex];
@@ -759,7 +757,7 @@ export const useLocalValidation = (
               },
             ]);
 
-            changes && updateLocalState({ ...changes, fieldType });
+            changes && updateLocalState([changes]);
           }
           break;
         }
@@ -767,15 +765,16 @@ export const useLocalValidation = (
         case 'change':
         case 'mousedown': {
           if ('text' === fieldType) {
-            updateLocalState({
-              field,
-              fieldType,
-              value: fieldIndex
-                ? {
-                    [fieldIndex]: { value },
-                  }
-                : value,
-            } as FormValidationAction);
+            updateLocalState([
+              {
+                field,
+                value: fieldIndex
+                  ? {
+                      [fieldIndex]: { value },
+                    }
+                  : value,
+              },
+            ] as FormValidationAction[]);
           } else if ('remove' === fieldType) {
             const changes = await fieldValidator([
               {
@@ -785,7 +784,7 @@ export const useLocalValidation = (
               },
             ]);
 
-            changes && updateLocalState({ ...changes, fieldType });
+            changes && updateLocalState([changes]);
           } else if (fieldType.includes('Modal')) {
             fieldValidator([{ field, value }]);
           } else if (fieldType !== 'select-one') {
@@ -793,7 +792,7 @@ export const useLocalValidation = (
 
             const changes = await fieldValidator([{ field, value, shouldPersistResults }]);
 
-            changes && updateLocalState({ ...changes, fieldType });
+            changes && updateLocalState([changes]);
           }
           break;
         }
