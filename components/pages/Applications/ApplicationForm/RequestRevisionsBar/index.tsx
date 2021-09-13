@@ -30,6 +30,7 @@ import { ModalPortal } from 'components/Root';
 
 import RequestRevisionsModal from './RequestRevisionsModal';
 import ApproveModal from './ApproveModal';
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -48,8 +49,12 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
     state,
   } = data;
 
-  const buttonsDisabled = ['APPROVED'].includes(state);
-  const buttonsVisible = !['REVISIONS REQUESTED'].includes(state);
+  const buttonsDisabled = [
+    ApplicationState.APPROVED,
+    ApplicationState.REVISIONS_REQUESTED,
+    ApplicationState.REJECTED,
+    ApplicationState.CLOSED,
+  ].includes(state);
 
   return (
     <>
@@ -107,58 +112,54 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
               }
             `}
           >
-            {buttonsVisible && (
-              <>
-                <Button
-                  disabled={buttonsDisabled}
-                  onClick={() => {
-                    setVisibleModal(VisibleModalOption.APPROVAL);
-                  }}
-                  size="sm"
-                >
-                  <span css={instructionBoxButtonContentStyle}>
-                    <Icon
-                      css={css`
-                        margin-right: 1px;
-                        margin-left: -4px;
-                      `}
-                      fill={theme.colors.white}
-                      height="12px"
-                      name="checkmark"
-                    />
-                    Approve
-                  </span>
-                </Button>
-                <Button
-                  disabled={buttonsDisabled}
-                  onClick={() => {
-                    setVisibleModal(VisibleModalOption.REVISIONS);
-                  }}
-                  size="sm"
-                >
-                  <span css={instructionBoxButtonContentStyle}>
-                    <Icon
-                      css={instructionBoxButtonIconStyle}
-                      fill={theme.colors.white}
-                      height="9px"
-                      name="edit"
-                    />
-                    Request Revisions
-                  </span>
-                </Button>
-                <Button disabled={buttonsDisabled} size="sm">
-                  <span css={instructionBoxButtonContentStyle}>
-                    <Icon
-                      css={instructionBoxButtonIconStyle}
-                      fill={theme.colors.white}
-                      height="10px"
-                      name="times"
-                    />
-                    Reject
-                  </span>
-                </Button>
-              </>
-            )}
+            <Button
+              disabled={buttonsDisabled}
+              onClick={() => {
+                setVisibleModal(VisibleModalOption.APPROVAL);
+              }}
+              size="sm"
+            >
+              <span css={instructionBoxButtonContentStyle}>
+                <Icon
+                  css={css`
+                    margin-right: 1px;
+                    margin-left: -4px;
+                  `}
+                  fill={theme.colors.white}
+                  height="12px"
+                  name="checkmark"
+                />
+                Approve
+              </span>
+            </Button>
+            <Button
+              disabled={buttonsDisabled}
+              onClick={() => {
+                setVisibleModal(VisibleModalOption.REVISIONS);
+              }}
+              size="sm"
+            >
+              <span css={instructionBoxButtonContentStyle}>
+                <Icon
+                  css={instructionBoxButtonIconStyle}
+                  fill={theme.colors.white}
+                  height="9px"
+                  name="edit"
+                />
+                Request Revisions
+              </span>
+            </Button>
+            <Button disabled={buttonsDisabled} size="sm">
+              <span css={instructionBoxButtonContentStyle}>
+                <Icon
+                  css={instructionBoxButtonIconStyle}
+                  fill={theme.colors.white}
+                  height="10px"
+                  name="times"
+                />
+                Reject
+              </span>
+            </Button>
           </div>
         </div>
       </ContentHeader>
