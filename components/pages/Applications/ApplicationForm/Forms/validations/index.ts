@@ -268,7 +268,7 @@ export const validationReducer = (
 export const validator: FormSectionValidatorFunction_Main = (formState, dispatch, apiFetcher) => (
   origin,
   reasonToValidate,
-) => async (fieldsToValidate: FormValidationFunctionArguments[]) => {
+) => async (fieldsToValidate) => {
   // ! typescript issues
   const validatingApplicant = origin === 'applicant';
   const applicantData = formState.sections.applicant.fields;
@@ -463,7 +463,6 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
           shouldPatch: fieldObj.shouldPersistResults && !isModalShape,
         };
       });
-      // console.log({ fieldsResults });
 
       const fieldsForPatch = fieldsResults
         .filter((fieldObj: any) => fieldObj.shouldPatch)
@@ -518,7 +517,7 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
           .catch((err) => console.error(err));
       }
 
-      return fieldsResults.map((fieldObj: any) => fieldObj.results);
+      return fieldsResults.map((fieldObj) => fieldObj.results as FormValidationAction);
     }
   }
 };
@@ -621,74 +620,76 @@ export const useLocalValidation = (
   }, [storedFields]);
 
   const updateLocalState = useCallback(
-    (changes: FormValidationAction[]) => {
-      const { error, field = '', value, type } = changes[0];
-      const currentSectionData = localState[sectionName];
-      const currentSectionFields = currentSectionData?.fields;
+    (changes: FormValidationAction[] = []) => {
+      const newState = changes.reduce((acc, curr: FormValidationAction) => {
+        const { error, field = '', value, type } = curr;
+        const validatingPrimaryAffiliation = field.includes('info_primaryAffiliation');
+        const [fieldName, fieldIndex, fieldOverride] = field.split('--');
 
-      const validatingPrimaryAffiliation = field.includes('info_primaryAffiliation');
-      const [fieldName, fieldIndex, fieldOverride] = field.split('--');
-      const currentField = currentSectionFields[fieldName];
-      const oldValue = currentField?.value || '';
+        const currentSection = acc[sectionName];
+        const currentSectionFields = acc[sectionName]?.fields;
+        const currentField = currentSectionFields[fieldName];
+        const oldValue = currentField?.value || '';
 
-      const newState = {
-        ...localState,
-        [sectionName]: {
-          ...currentSectionData,
-          fields: {
-            ...currentSectionFields,
-            [fieldName]:
-              type === 'remove'
-                ? storedFields[fieldName]
-                : {
-                    ...currentField,
-                    ...((type === 'array' && currentField.innerType?.type === 'object') ||
-                    currentField?.meta?.shape === 'modal'
-                      ? {
-                          innerType: {
-                            ...currentField.innerType,
-                            fields: {
-                              ...currentField.innerType?.fields,
-                              [fieldIndex]: {
-                                ...currentField.innerType?.fields[fieldIndex],
-                                ...(value[fieldIndex] || { value }),
-                                // ensure affiliation validation is applied before allowing "save"
-                                error: validatingPrimaryAffiliation ? error || [''] : error,
+        return {
+          ...acc,
+          [sectionName]: {
+            ...currentSection,
+            fields: {
+              ...currentSectionFields,
+              [fieldName]:
+                type === 'remove'
+                  ? storedFields[fieldName]
+                  : {
+                      ...currentField,
+                      ...((type === 'array' && currentField.innerType?.type === 'object') ||
+                      currentField?.meta?.shape === 'modal'
+                        ? {
+                            innerType: {
+                              ...currentField.innerType,
+                              fields: {
+                                ...currentField.innerType?.fields,
+                                [fieldIndex]: {
+                                  ...currentField.innerType?.fields[fieldIndex],
+                                  ...(value[fieldIndex] || { value }),
+                                  // ensure affiliation validation is applied before allowing "save"
+                                  error: validatingPrimaryAffiliation ? error || [''] : error,
+                                },
                               },
                             },
-                          },
-                        }
-                      : type === 'object'
-                      ? {
-                          fields: {
-                            ...currentField.fields,
-                            [fieldIndex]: {
-                              ...currentField.fields[fieldIndex],
-                              error,
-                              value,
+                          }
+                        : type === 'object'
+                        ? {
+                            fields: {
+                              ...currentField.fields,
+                              [fieldIndex]: {
+                                ...currentField.fields[fieldIndex],
+                                error,
+                                value,
+                              },
                             },
-                          },
-                        }
-                      : {
-                          error,
-                          value:
-                            oldValue && typeof oldValue === 'object'
-                              ? {
-                                  ...oldValue,
-                                  ...([fieldOverride, type].includes('remove')
-                                    ? {
-                                        [fieldIndex]: {
-                                          value: null,
-                                        },
-                                      }
-                                    : value),
-                                }
-                              : value,
-                        }),
-                  },
+                          }
+                        : {
+                            error,
+                            value:
+                              oldValue && typeof oldValue === 'object'
+                                ? {
+                                    ...oldValue,
+                                    ...([fieldOverride, type].includes('remove')
+                                      ? {
+                                          [fieldIndex]: {
+                                            value: null,
+                                          },
+                                        }
+                                      : value),
+                                  }
+                                : value,
+                          }),
+                    },
+            },
           },
-        },
-      } as FormValidationState_AllSectionsObj;
+        };
+      }, localState as FormValidationState_AllSectionsObj);
 
       setLocalState(newState);
       return newState;
@@ -724,15 +725,10 @@ export const useLocalValidation = (
                 value: fieldObj.type === 'string' ? (fieldObj.value || '').trim() : fieldObj.value,
               };
             });
-            // console.log({ fieldsForValidator });
 
             const changes = await fieldValidator(fieldsForValidator);
 
-            console.log({ changes, localState });
-            // TODO
-            // check changes and send them to localState
-
-            // changes && updateLocalState(changes);
+            changes && updateLocalState([changes]);
           } else {
             const oldValue = storedFields[fieldName]?.value;
             const oldValueSubField = fieldIndex && oldValue?.[fieldIndex];
