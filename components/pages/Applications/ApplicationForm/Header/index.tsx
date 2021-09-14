@@ -30,7 +30,13 @@ import Details from './Details';
 import Progress from './Progress';
 import { ApplicationState } from '../../types';
 
-const ApplicationHeader = ({ data = {} }: { data: any }): ReactElement => {
+const ApplicationHeader = ({
+  data = {},
+  refetchAllData,
+}: {
+  data: any;
+  refetchAllData: any;
+}): ReactElement => {
   const {
     appId,
     createdAtUtc,
@@ -64,7 +70,9 @@ const ApplicationHeader = ({ data = {} }: { data: any }): ReactElement => {
 
         <Progress state={state} />
 
-        {!isEqual(state, ApplicationState.CLOSED) && <Actions appId={appId} state={state} />}
+        {!isEqual(state, ApplicationState.CLOSED) && (
+          <Actions appId={appId} state={state} refetchAllData={refetchAllData} />
+        )}
       </div>
     </PageHeader>
   );

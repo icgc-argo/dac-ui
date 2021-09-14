@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React, { ReactElement, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
@@ -26,12 +26,14 @@ import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import urlJoin from 'url-join';
 import { isEqual } from 'lodash';
 import { useAuthContext } from 'global/hooks';
-import { API } from 'global/constants';
+import { API, APPLICATIONS_PATH } from 'global/constants';
 import { AxiosError } from 'axios';
 import { ApplicationState } from '../../types';
 import { CustomLoadingButton, generatePDFDocument } from '../Forms/common';
 import { ModalPortal } from 'components/Root';
 import Modal from '@icgc-argo/uikit/Modal';
+import router from 'next/router';
+import { FormValidationState_Base } from '../Forms/types';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -62,14 +64,17 @@ const PDF_BUTTON_WIDTH = 130;
 const HeaderActions = ({
   appId,
   state,
+  refetchAllData,
 }: {
   appId: string;
   state: ApplicationState;
+  refetchAllData: any;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();
   const { fetchWithAuth } = useAuthContext();
   const [pdfIsLoading, setPdfIsLoading] = useState<boolean>(false);
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const pdfButtonText = getPdfButtonText(state);
 
@@ -79,16 +84,66 @@ const HeaderActions = ({
     ApplicationState.REVISIONS_REQUESTED,
   ].includes(state);
 
+  const dismissModal = () => setVisibleModal(VisibleModalOption.NONE);
+
+  const submit = () => {
+    setIsSubmitting(true);
+    fetchWithAuth({
+      data: {
+        state: ApplicationState.CLOSED,
+      },
+      method: 'PATCH',
+      url: urlJoin(API.APPLICATIONS, appId),
+    })
+      .then(() => {
+        refetchAllData();
+        router.push(`${APPLICATIONS_PATH}/${appId}?section=terms`);
+      })
+      .catch((err: AxiosError) => {
+        console.error('Failed to submit.', err);
+      })
+      .finally(() => {
+        dismissModal();
+        setIsSubmitting(false);
+      });
+  };
+
   return (
     <>
       {visibleModal === VisibleModalOption.CLOSE_APPLICATION && (
         <ModalPortal>
           <Modal
             actionButtonText="Yes, close"
-            onActionClick={() => console.log('close')}
             title="Are you sure you want to close this application?"
-            onCancelClick={() => setVisibleModal(VisibleModalOption.NONE)}
-            onCloseClick={() => setVisibleModal(VisibleModalOption.NONE)}
+            onCloseClick={dismissModal}
+            FooterEl={() => (
+              <div
+                css={css`
+                  display: flex;
+                  flex-direction: row;
+                `}
+              >
+                <Button
+                  size="md"
+                  onClick={submit}
+                  Loader={(props: any) => <CustomLoadingButton text="Yes, Close" {...props} />}
+                  isLoading={isSubmitting}
+                >
+                  Yes, Close
+                </Button>
+
+                <Button
+                  variant="text"
+                  css={css`
+                    margin-left: 10px;
+                  `}
+                  size="md"
+                  onClick={dismissModal}
+                >
+                  Cancel
+                </Button>
+              </div>
+            )}
           >
             <p>
               Are you sure you want to close{' '}
