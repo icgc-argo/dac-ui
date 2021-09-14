@@ -35,7 +35,6 @@ import { FormFieldValidationTriggerFunction, FormSectionValidationState_Applican
 import { isRequired } from './validations';
 import { transformToSelectOptions } from './validations/helpers';
 import { getStaticComponents } from '../../PDF/common';
-import { getAutoCompleteValue } from './common';
 
 const Applicant = ({
   isSectionDisabled,
@@ -89,7 +88,6 @@ const Applicant = ({
 
             <Input
               aria-label="First Name"
-              autoComplete={getAutoCompleteValue(localState.info_firstName?.value)}
               id="info_firstName"
               name="info_firstName"
               onBlur={validateFieldTouched}
@@ -109,7 +107,6 @@ const Applicant = ({
 
             <Input
               aria-label="Middle Name"
-              autoComplete={getAutoCompleteValue(localState.info_middleName?.value)}
               id="info_middleName"
               name="info_middleName"
               onBlur={validateFieldTouched}
@@ -131,7 +128,6 @@ const Applicant = ({
 
             <Input
               aria-label="Last Name"
-              autoComplete={getAutoCompleteValue(localState.info_lastName?.value)}
               id="info_lastName"
               name="info_lastName"
               onBlur={validateFieldTouched}
@@ -151,7 +147,6 @@ const Applicant = ({
 
             <Input
               aria-label="Suffix, e.g. Jr., Sr., MD."
-              autoComplete={getAutoCompleteValue(localState.info_suffix?.value)}
               id="info_suffix"
               name="info_suffix"
               onBlur={validateFieldTouched}
@@ -174,7 +169,6 @@ const Applicant = ({
 
             <Input
               aria-label="Primary Affiliation"
-              autoComplete={getAutoCompleteValue(localState.info_primaryAffiliation?.value)}
               id="info_primaryAffiliation"
               name="info_primaryAffiliation"
               onBlur={validateFieldTouched}
@@ -198,7 +192,6 @@ const Applicant = ({
 
             <Input
               aria-label="Institutional Email"
-              autoComplete={getAutoCompleteValue(localState.info_institutionEmail?.value)}
               id="info_institutionEmail"
               name="info_institutionEmail"
               onBlur={validateFieldTouched}
@@ -222,7 +215,6 @@ const Applicant = ({
 
             <Input
               aria-label="Google Email"
-              autoComplete={getAutoCompleteValue(localState.info_googleEmail?.value)}
               id="info_googleEmail"
               name="info_googleEmail"
               onBlur={validateFieldTouched}
@@ -244,7 +236,6 @@ const Applicant = ({
 
             <Input
               aria-label="Institution/Company Website"
-              autoComplete={getAutoCompleteValue(localState.info_website?.value)}
               id="info_website"
               name="info_website"
               onBlur={validateFieldTouched}
@@ -265,7 +256,6 @@ const Applicant = ({
 
           <Input
             aria-label="Position Title"
-            autoComplete={getAutoCompleteValue(localState.info_positionTitle?.value)}
             id="info_positionTitle"
             name="info_positionTitle"
             onBlur={validateFieldTouched}
@@ -325,7 +315,6 @@ const Applicant = ({
 
           <Input
             aria-label="Building, e.g. MaRS Centre, South Tower"
-            autoComplete={getAutoCompleteValue(localState.address_building?.value)}
             id="address_building"
             name="address_building"
             onBlur={validateFieldTouched}
@@ -346,7 +335,6 @@ const Applicant = ({
 
           <Input
             aria-label="Street Address, e.g. 101 College Street, Suite 800"
-            autoComplete={getAutoCompleteValue(localState.address_streetAddress?.value)}
             id="address_streetAddress"
             name="address_streetAddress"
             onBlur={validateFieldTouched}
@@ -369,7 +357,6 @@ const Applicant = ({
 
           <Input
             aria-label="City and Province/State"
-            autoComplete={getAutoCompleteValue(localState.address_cityAndProvince?.value)}
             id="address_cityAndProvince"
             name="address_cityAndProvince"
             onBlur={validateFieldTouched}
@@ -392,7 +379,6 @@ const Applicant = ({
 
           <Input
             aria-label="Postal/Zip Code"
-            autoComplete={getAutoCompleteValue(localState.address_postalCode?.value)}
             id="address_postalCode"
             name="address_postalCode"
             onBlur={validateFieldTouched}

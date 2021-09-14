@@ -59,7 +59,6 @@ import {
 import TableComponent from './TableComponent';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
 import ErrorBanner, { AddCollaboratorError, CollaboratorErrorCodes } from './ErrorBanner';
-import { getAutoCompleteValue } from '../common';
 
 const Collaborators = ({
   appId,
@@ -469,7 +468,6 @@ const Collaborators = ({
 
                       <Input
                         aria-label="First Name"
-                        autoComplete={getAutoCompleteValue(localState.list?.innerType?.fields.info_firstName?.value)}
                         disabled={isSectionDisabled}
                         id="list--info_firstName"
                         name="list--info_firstName"
@@ -491,7 +489,6 @@ const Collaborators = ({
 
                       <Input
                         aria-label="Middle Name"
-                        autoComplete={getAutoCompleteValue(localState.list?.innerType?.fields.info_middleName?.value)}
                         disabled={isSectionDisabled}
                         id="list--info_middleName"
                         name="list--info_middleName"
@@ -515,7 +512,6 @@ const Collaborators = ({
 
                       <Input
                         aria-label="Last Name"
-                        autoComplete={getAutoCompleteValue(localState.list?.innerType?.fields.info_lastName?.value)}
                         disabled={isSectionDisabled}
                         id="list--info_lastName"
                         name="list--info_lastName"
@@ -537,7 +533,6 @@ const Collaborators = ({
 
                       <Input
                         aria-label="Suffix, e.g. Jr., Sr., MD."
-                        autoComplete={getAutoCompleteValue(localState.list?.innerType?.fields.info_suffix?.value)}
                         disabled={isSectionDisabled}
                         id="list--info_suffix"
                         name="list--info_suffix"
@@ -569,7 +564,6 @@ const Collaborators = ({
 
                       <Input
                         aria-label="Primary Affiliation"
-                        autoComplete={getAutoCompleteValue(localState.list?.innerType?.fields.info_primaryAffiliation?.value)}
                         disabled={isSectionDisabled}
                         id="list--info_primaryAffiliation"
                         name="list--info_primaryAffiliation"
@@ -595,7 +589,6 @@ const Collaborators = ({
 
                       <Input
                         aria-label="Institutional Email"
-                        autoComplete={getAutoCompleteValue(localState.list?.innerType?.fields.info_institutionEmail?.value)}
                         disabled={isSectionDisabled}
                         id="list--info_institutionEmail"
                         name="list--info_institutionEmail"
@@ -619,7 +612,6 @@ const Collaborators = ({
 
                       <Input
                         aria-label="Google Email"
-                        autoComplete={getAutoCompleteValue(localState.list?.innerType?.fields.info_googleEmail?.value)}
                         disabled={isSectionDisabled}
                         id="list--info_googleEmail"
                         name="list--info_googleEmail"
@@ -647,7 +639,6 @@ const Collaborators = ({
 
                       <Input
                         aria-label="Position Title"
-                        autoComplete={getAutoCompleteValue(localState.list?.innerType?.fields.info_positionTitle?.value)}
                         disabled={isSectionDisabled}
                         id="list--info_positionTitle"
                         name="list--info_positionTitle"

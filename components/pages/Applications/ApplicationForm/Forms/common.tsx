@@ -85,7 +85,3 @@ export const CustomLoadingButton = ({ text, variant }: { text: string; variant: 
     </div>
   );
 };
-
-// update autoComplete value when field value changes,
-// to stop autocomplete from filling fields that already have a value
-export const getAutoCompleteValue = (value?: string) => (value && value.trim()) || 'on';
