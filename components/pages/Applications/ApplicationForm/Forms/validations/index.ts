@@ -39,7 +39,6 @@ import {
   FORM_STATES,
   SECTION_STATUS,
   FormValidationActionTypes,
-  FormValidationFunctionArguments,
 } from '../types';
 import {
   getFieldDataFromEvent,
@@ -268,7 +267,7 @@ export const validationReducer = (
 export const validator: FormSectionValidatorFunction_Main = (formState, dispatch, apiFetcher) => (
   origin,
   reasonToValidate,
-) => async (fieldsToValidate) => {
+) => async (fieldsToValidate: any = []) => {
   // ! typescript issues
   const validatingApplicant = origin === 'applicant';
   const applicantData = formState.sections.applicant.fields;
@@ -728,7 +727,7 @@ export const useLocalValidation = (
 
             const changes = await fieldValidator(fieldsForValidator);
 
-            changes && updateLocalState([changes]);
+            changes && updateLocalState(changes);
           } else {
             const oldValue = storedFields[fieldName]?.value;
             const oldValueSubField = fieldIndex && oldValue?.[fieldIndex];
@@ -753,7 +752,7 @@ export const useLocalValidation = (
               },
             ]);
 
-            changes && updateLocalState([changes]);
+            changes && updateLocalState(changes);
           }
           break;
         }
@@ -780,7 +779,7 @@ export const useLocalValidation = (
               },
             ]);
 
-            changes && updateLocalState([changes]);
+            changes && updateLocalState(changes);
           } else if (fieldType.includes('Modal')) {
             fieldValidator([{ field, value }]);
           } else if (fieldType !== 'select-one') {
@@ -788,7 +787,7 @@ export const useLocalValidation = (
 
             const changes = await fieldValidator([{ field, value, shouldPersistResults }]);
 
-            changes && updateLocalState([changes]);
+            changes && updateLocalState(changes);
           }
           break;
         }
