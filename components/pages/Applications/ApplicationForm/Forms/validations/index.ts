@@ -704,7 +704,8 @@ export const useLocalValidation = (
 
       switch (eventType) {
         case 'blur': {
-          if (sectionsWithAutoComplete.includes(sectionName)) {
+          if (sectionsWithAutoComplete.includes(sectionName) && fieldType !== 'select-one') {
+            // NOTE select-one is excluded because it needs its own autocomplete logic
             const isList = sectionName === 'collaborators';
             const oldValues = getFieldValues(storedFields, isList);
             const newValues = getFieldValues(localState[sectionName].fields, isList);
