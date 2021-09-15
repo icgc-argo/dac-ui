@@ -20,7 +20,6 @@
 import { ReactElement } from 'react';
 import { format } from 'date-fns';
 import { css } from '@icgc-argo/uikit';
-import { isEqual } from 'lodash';
 
 import PageHeader from 'components/PageHeader';
 import { DATE_TEXT_FORMAT } from 'global/constants';
@@ -28,13 +27,14 @@ import { DATE_TEXT_FORMAT } from 'global/constants';
 import Actions from './Actions';
 import Details from './Details';
 import Progress from './Progress';
+import { RefetchData } from '../Forms/types';
 
 const ApplicationHeader = ({
   data = {},
   refetchAllData,
 }: {
   data: any;
-  refetchAllData: any;
+  refetchAllData: RefetchData;
 }): ReactElement => {
   const {
     appId,

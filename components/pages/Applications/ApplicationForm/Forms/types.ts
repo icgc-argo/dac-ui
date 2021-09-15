@@ -254,7 +254,8 @@ export type FormValidationAction = {
   value?: any;
 };
 
-interface FormValidationState_Base {
+export type RefetchData = (action?: Partial<FormValidationAction>) => void;
+export interface FormValidationState_Base {
   appId: string;
   approvedAtUtc?: string;
   approvedBy?: string;
@@ -268,8 +269,7 @@ interface FormValidationState_Base {
   state?: string; // called `state` in BE, but that complicates things in FE
   submittedAtUtc?: string;
   submitterId?: string;
-  __refetchAllData: (action?: Partial<FormValidationAction>) => void;
-  __seeded: boolean;
+  __refetchAllData: RefetchData;
   __v: number;
 }
 

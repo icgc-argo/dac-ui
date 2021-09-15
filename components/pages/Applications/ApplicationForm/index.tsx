@@ -58,12 +58,12 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
         setIsAppLoading(false);
       });
   }, [lastUpdated]);
-  const r = formState.__refetchAllData;
+
   return isAppLoading || (data && Object.values(data).length < 1) ? (
     <Loader />
   ) : (
     <>
-      <ApplicationHeader refetchAllData={r} data={data} />
+      <ApplicationHeader refetchAllData={formState.__refetchAllData} data={data} />
       {isAdmin && <RequestRevisionsBar data={data} />}
       <ApplicationFormsBase
         appId={appId}
