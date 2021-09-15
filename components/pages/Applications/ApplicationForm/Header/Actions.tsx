@@ -33,7 +33,6 @@ import { CustomLoadingButton, generatePDFDocument } from '../Forms/common';
 import { ModalPortal } from 'components/Root';
 import Modal from '@icgc-argo/uikit/Modal';
 import router from 'next/router';
-import { FormValidationState_Base } from '../Forms/types';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -44,7 +43,13 @@ enum VisibleModalOption {
 const getPdfButtonText: (state: ApplicationState) => string = (state) => {
   const text = 'PDF';
 
-  if ([ApplicationState.DRAFT, ApplicationState.REVISIONS_REQUESTED].includes(state)) {
+  if (
+    [
+      ApplicationState.DRAFT,
+      ApplicationState.REVISIONS_REQUESTED,
+      ApplicationState.CLOSED,
+    ].includes(state)
+  ) {
     return `DRAFT ${text}`;
   }
   if (isEqual(state, ApplicationState.SIGN_AND_SUBMIT)) {

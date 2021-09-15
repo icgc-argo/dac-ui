@@ -28,7 +28,6 @@ import { DATE_TEXT_FORMAT } from 'global/constants';
 import Actions from './Actions';
 import Details from './Details';
 import Progress from './Progress';
-import { ApplicationState } from '../../types';
 
 const ApplicationHeader = ({
   data = {},
@@ -70,9 +69,7 @@ const ApplicationHeader = ({
 
         <Progress state={state} />
 
-        {!isEqual(state, ApplicationState.CLOSED) && (
-          <Actions appId={appId} state={state} refetchAllData={refetchAllData} />
-        )}
+        <Actions appId={appId} state={state} refetchAllData={refetchAllData} />
       </div>
     </PageHeader>
   );
