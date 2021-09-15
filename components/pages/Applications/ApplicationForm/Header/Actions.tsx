@@ -33,7 +33,7 @@ import { CustomLoadingButton, generatePDFDocument } from '../Forms/common';
 import { ModalPortal } from 'components/Root';
 import Modal from '@icgc-argo/uikit/Modal';
 import router from 'next/router';
-import { RefetchData } from '../Forms/types';
+import { RefetchDataFunction } from '../Forms/types';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -74,7 +74,7 @@ const HeaderActions = ({
 }: {
   appId: string;
   state: ApplicationState;
-  refetchAllData: RefetchData;
+  refetchAllData: RefetchDataFunction;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();
   const { fetchWithAuth } = useAuthContext();

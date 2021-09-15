@@ -27,14 +27,14 @@ import { DATE_TEXT_FORMAT } from 'global/constants';
 import Actions from './Actions';
 import Details from './Details';
 import Progress from './Progress';
-import { RefetchData } from '../Forms/types';
+import { RefetchDataFunction } from '../Forms/types';
 
 const ApplicationHeader = ({
   data = {},
   refetchAllData,
 }: {
   data: any;
-  refetchAllData: RefetchData;
+  refetchAllData: RefetchDataFunction;
 }): ReactElement => {
   const {
     appId,
