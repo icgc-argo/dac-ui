@@ -30,7 +30,13 @@ import Typography from '@icgc-argo/uikit/Typography';
 import { sectionsOrder } from './constants';
 import { enabledSections, sectionSelector } from './helpers';
 import Outline from './Outline';
-import { FormSectionNames, FormSectionValidationTriggerReasons, FORM_STATES } from './types';
+import {
+  FormSectionNames,
+  FormSectionValidationTriggerReasons,
+  FormSectionValidatorFunction_Origin,
+  FormValidationStateParameters,
+  FORM_STATES,
+} from './types';
 import Notification from '@icgc-argo/uikit/notifications/Notification';
 import { SUBMISSION_SUCCESS_CHECK } from 'global/constants';
 
@@ -63,8 +69,8 @@ const ApplicationFormsBase = ({
   appId: string;
   setLastUpdated: SetLastUpdated;
   isLoading: boolean;
-  formState: any;
-  validateSection: any;
+  formState: FormValidationStateParameters;
+  validateSection: FormSectionValidatorFunction_Origin;
 }): ReactElement => {
   const {
     query: { section: sectionFromQuery = '' as FormSectionNames },

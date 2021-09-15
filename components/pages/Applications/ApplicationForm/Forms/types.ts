@@ -279,6 +279,7 @@ export type FormValidationState_AllSectionsObj = Record<
 >;
 export type FormValidationStateParameters = FormValidationState_Base & {
   sections: FormValidationState_AllSectionsObj;
+  __seeded: boolean;
 };
 
 export type FormSectionUpdateLocalStateFunction = (fieldData: FormValidationAction) => void;
