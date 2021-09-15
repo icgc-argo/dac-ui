@@ -30,8 +30,13 @@ import Typography from '@icgc-argo/uikit/Typography';
 import { sectionsOrder } from './constants';
 import { enabledSections, sectionSelector } from './helpers';
 import Outline from './Outline';
-import { FormSectionNames, FormSectionValidationTriggerReasons, FORM_STATES } from './types';
-import { useFormValidation } from './validations';
+import {
+  FormSectionNames,
+  FormSectionValidationTriggerReasons,
+  FormSectionValidatorFunction_Origin,
+  FormValidationStateParameters,
+  FORM_STATES,
+} from './types';
 import Notification from '@icgc-argo/uikit/notifications/Notification';
 import { SUBMISSION_SUCCESS_CHECK } from 'global/constants';
 
@@ -57,9 +62,15 @@ const getActiveSection = (sectionFromQuery?: FormSectionNames): FormSectionNames
 const ApplicationFormsBase = ({
   appId = 'none',
   setLastUpdated,
+  isLoading,
+  formState,
+  validateSection,
 }: {
   appId: string;
   setLastUpdated: SetLastUpdated;
+  isLoading: boolean;
+  formState: FormValidationStateParameters;
+  validateSection: FormSectionValidatorFunction_Origin;
 }): ReactElement => {
   const {
     query: { section: sectionFromQuery = '' as FormSectionNames },
@@ -70,7 +81,6 @@ const ApplicationFormsBase = ({
     setSelectedSection(getActiveSection(sectionFromQuery));
   }, [sectionFromQuery]);
 
-  const { isLoading, formState, validateSection } = useFormValidation(appId);
   const theme: UikitTheme = useTheme();
 
   const triggerSectionValidation = useCallback(

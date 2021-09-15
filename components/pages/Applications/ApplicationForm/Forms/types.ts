@@ -254,7 +254,8 @@ export type FormValidationAction = {
   value?: any;
 };
 
-interface FormValidationState_Base {
+export type RefetchDataFunction = (action?: Partial<FormValidationAction>) => void;
+export interface FormValidationState_Base {
   appId: string;
   approvedAtUtc?: string;
   approvedBy?: string;
@@ -268,8 +269,7 @@ interface FormValidationState_Base {
   state?: string; // called `state` in BE, but that complicates things in FE
   submittedAtUtc?: string;
   submitterId?: string;
-  __refetchAllData: (action?: Partial<FormValidationAction>) => void;
-  __seeded: boolean;
+  __refetchAllData: RefetchDataFunction;
   __v: number;
 }
 
@@ -279,6 +279,7 @@ export type FormValidationState_AllSectionsObj = Record<
 >;
 export type FormValidationStateParameters = FormValidationState_Base & {
   sections: FormValidationState_AllSectionsObj;
+  __seeded: boolean;
 };
 
 export type FormSectionUpdateLocalStateFunction = (fieldData: FormValidationAction) => void;
