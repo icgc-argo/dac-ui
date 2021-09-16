@@ -30,11 +30,13 @@ import { ModalPortal } from 'components/Root';
 
 import RequestRevisionsModal from './RequestRevisionsModal';
 import ApproveModal from './ApproveModal';
+import RejectModal from './RejectModal';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
 enum VisibleModalOption {
   NONE = 'NONE',
   APPROVAL = 'APPROVAL',
+  REJECTION = 'REJECTION',
   REVISIONS = 'REVISIONS',
 }
 
@@ -69,6 +71,15 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
       {visibleModal === VisibleModalOption.APPROVAL && (
         <ModalPortal>
           <ApproveModal
+            appId={appId}
+            dismissModal={() => setVisibleModal(VisibleModalOption.NONE)}
+            primaryAffiliation={primaryAffiliation}
+          />
+        </ModalPortal>
+      )}
+      {visibleModal === VisibleModalOption.REJECTION && (
+        <ModalPortal>
+          <RejectModal
             appId={appId}
             dismissModal={() => setVisibleModal(VisibleModalOption.NONE)}
             primaryAffiliation={primaryAffiliation}
@@ -149,7 +160,13 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
                 Request Revisions
               </span>
             </Button>
-            <Button disabled={buttonsDisabled} size="sm">
+            <Button
+              disabled={buttonsDisabled}
+              onClick={() => {
+                setVisibleModal(VisibleModalOption.REJECTION);
+              }}
+              size="sm"
+            >
               <span css={instructionBoxButtonContentStyle}>
                 <Icon
                   css={instructionBoxButtonIconStyle}
