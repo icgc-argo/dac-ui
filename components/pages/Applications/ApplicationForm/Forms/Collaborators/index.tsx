@@ -57,7 +57,6 @@ import {
   FormValidationAction,
 } from '../types';
 import TableComponent from './TableComponent';
-import { isDacoAdmin } from 'global/utils/egoTokenUtils';
 import ErrorBanner, { AddCollaboratorError, CollaboratorErrorCodes } from './ErrorBanner';
 
 const Collaborators = ({
