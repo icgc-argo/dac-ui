@@ -20,6 +20,7 @@
 import { ReactElement } from 'react';
 import { format } from 'date-fns';
 import { css } from '@icgc-argo/uikit';
+import { UikitTheme } from '@icgc-argo/uikit/index';
 
 import PageHeader from 'components/PageHeader';
 import { DATE_TEXT_FORMAT } from 'global/constants';
@@ -28,6 +29,7 @@ import Actions from './Actions';
 import Details from './Details';
 import Progress from './Progress';
 import { RefetchDataFunction } from '../Forms/types';
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
 const ApplicationHeader = ({
   data = {},
@@ -67,7 +69,26 @@ const ApplicationHeader = ({
           expiresAt={expiresAtUtc && format(new Date(expiresAtUtc), DATE_TEXT_FORMAT)}
         />
 
-        <Progress state={state} />
+        <div>
+          {state === ApplicationState.REVISIONS_REQUESTED && (
+            <div
+              css={(theme: UikitTheme) =>
+                css`
+                  ${theme.typography.data};
+                  background: ${theme.colors.primary_1};
+                  border-radius: 8px;
+                  color: ${theme.colors.white};
+                  font-weight: bold;
+                  margin: 0 auto 10px 72px;
+                  padding: 3px 8px;
+                  text-align: center;
+                  width: 130px;
+            `}>
+              Revisions Requested
+            </div>
+          )}
+          <Progress state={state} />
+        </div>
 
         <Actions appId={appId} state={state} refetchAllData={refetchAllData} />
       </div>
