@@ -190,7 +190,7 @@ const HeaderActions = ({
           isLoading={pdfIsLoading}
           onClick={async () => {
             setPdfIsLoading(true);
-            const isDownloadZip = [ApplicationState.REVIEW, ApplicationState.APPROVED].includes(
+            const isDownloadZip = [ApplicationState.REVIEW, ApplicationState.APPROVED, ApplicationState.REJECTED].includes(
               state,
             );
             const downloadUrl = urlJoin(
