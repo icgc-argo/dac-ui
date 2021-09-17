@@ -39,6 +39,7 @@ import {
 } from './types';
 import Notification from '@icgc-argo/uikit/notifications/Notification';
 import { SUBMISSION_SUCCESS_CHECK } from 'global/constants';
+import { ApplicationState } from 'components/pages/Applications/types';
 
 type QueryType = {
   query: {
@@ -55,18 +56,20 @@ const getActiveSection = (sectionFromQuery?: FormSectionNames): FormSectionNames
   return isValidSectionFromQuery
     ? sectionFromQuery
     : ((sectionFromQuery &&
-        console.info('Section initially queried was not found', sectionFromQuery),
+      console.info('Section initially queried was not found', sectionFromQuery),
       sectionsOrder[0]) as FormSectionNames);
 };
 
 const ApplicationFormsBase = ({
   appId = 'none',
+  applicationState,
   setLastUpdated,
   isLoading,
   formState,
   validateSection,
 }: {
   appId: string;
+  applicationState: ApplicationState;
   setLastUpdated: SetLastUpdated;
   isLoading: boolean;
   formState: FormValidationStateParameters;
@@ -116,13 +119,13 @@ const ApplicationFormsBase = ({
 
     selectedSection === 'collaborators'
       ? formState.sections[selectedSection]?.meta.showOverall ||
-        triggerSectionValidation('notShowingOverall', selectedSection)
+      triggerSectionValidation('notShowingOverall', selectedSection)
       : sectionsOrder.forEach(
-          (section) =>
-            // validates all other section that doen't already show overall status.
-            !(formState.sections[section]?.meta.showOverall || selectedSection === section) &&
-            triggerSectionValidation('notShowingOverall', section),
-        );
+        (section) =>
+          // validates all other section that doen't already show overall status.
+          !(formState.sections[section]?.meta.showOverall || selectedSection === section) &&
+          triggerSectionValidation('notShowingOverall', section),
+      );
   }, [formState.lastUpdatedAtUtc]);
 
   const sectionIndex = sectionsOrder.indexOf(selectedSection);
@@ -152,26 +155,27 @@ const ApplicationFormsBase = ({
 
   return (
     <ContentBody>
-      {JSON.parse(localStorage.getItem(SUBMISSION_SUCCESS_CHECK) || 'false') && (
-        <Notification
-          title="Your Application has been Submitted"
-          content="The ICGC DACO has been notified for review and you should hear back within ten business days regarding the status of your application."
-          interactionType="CLOSE"
-          variant="SUCCESS"
-          onInteraction={({ type }) => {
-            if (type === 'CLOSE') {
-              localStorage.setItem(SUBMISSION_SUCCESS_CHECK, 'false');
-              router.push(`/applications/${appId}?section=${selectedSection}`);
-            }
-          }}
-          css={css`
+      {JSON.parse(localStorage.getItem(SUBMISSION_SUCCESS_CHECK) || 'false') &&
+        ![ApplicationState.REJECTED].includes(applicationState) && (
+          <Notification
+            title="Your Application has been Submitted"
+            content="The ICGC DACO has been notified for review and you should hear back within ten business days regarding the status of your application."
+            interactionType="CLOSE"
+            variant="SUCCESS"
+            onInteraction={({ type }) => {
+              if (type === 'CLOSE') {
+                localStorage.setItem(SUBMISSION_SUCCESS_CHECK, 'false');
+                router.push(`/applications/${appId}?section=${selectedSection}`);
+              }
+            }}
+            css={css`
             margin: 0 auto 25px auto;
             max-width: 1200px;
             min-width: 665px;
             width: 100%;
           `}
-        />
-      )}
+          />
+        )}
 
       <ContentBox
         css={css`

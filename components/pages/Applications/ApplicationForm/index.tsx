@@ -33,7 +33,7 @@ import { ERROR_PATH } from 'global/constants/internalPaths';
 import { useFormValidation } from './Forms/validations';
 
 const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
-  const [data, setData] = useState<AxiosResponse | undefined>(undefined);
+  const [data, setData] = useState<any>(undefined);
   const [isAppLoading, setIsAppLoading] = useState<boolean>(true);
   const [lastUpdated, setLastUpdated] = useState<string | undefined>(undefined);
 
@@ -67,6 +67,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
       {isAdmin && <RequestRevisionsBar data={data} />}
       <ApplicationFormsBase
         appId={appId}
+        applicationState={data?.state}
         setLastUpdated={setLastUpdated}
         isLoading={isFormLoading}
         formState={formState}

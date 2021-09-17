@@ -83,8 +83,7 @@ const Collaborators = ({
   const containerRef = createRef<HTMLDivElement>();
   const { fetchWithAuth } = useAuthContext();
   const theme = useTheme();
-  const disableActions =
-    applicationState === ApplicationState.REVIEW;
+  const disableActions = [ApplicationState.REVIEW, ApplicationState.REJECTED].includes(applicationState);
 
   const clearCollaboratorModalData = () => {
     validateFieldTouched({

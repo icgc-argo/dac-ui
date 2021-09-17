@@ -68,8 +68,8 @@ const progressStates: ProgressStates = {
     { label: PROGRESS_LABELS.DACO_REVIEW, state: 'disabled', completed: false },
   ],
   [ApplicationState.REJECTED]: [
-    { label: PROGRESS_LABELS.DRAFT, state: 'success', completed: true },
-    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'success', completed: true },
+    { label: PROGRESS_LABELS.DRAFT, state: 'closed', completed: true },
+    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'closed', completed: true },
     { label: PROGRESS_LABELS.REJECTED, state: 'closed', completed: true },
   ],
   [ApplicationState.CLOSED]: [
