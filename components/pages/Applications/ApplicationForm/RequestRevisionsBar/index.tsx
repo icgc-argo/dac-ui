@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { useState } from "react";
+import { useState } from 'react';
 import { css } from '@emotion/core';
 
 import { ContentHeader } from '@icgc-argo/uikit/PageLayout';
@@ -28,55 +28,73 @@ import Icon from '@icgc-argo/uikit/Icon';
 import { instructionBoxButtonContentStyle, instructionBoxButtonIconStyle } from 'global/styles';
 import { ModalPortal } from 'components/Root';
 
-import RequestRevisionsModal from "./RequestRevisionsModal";
-import ApproveModal from "./ApproveModal";
+import RequestRevisionsModal from './RequestRevisionsModal';
+import ApproveModal from './ApproveModal';
+import RejectModal from './RejectModal';
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
+
+enum VisibleModalOption {
+  NONE = 'NONE',
+  APPROVAL = 'APPROVAL',
+  REJECTION = 'REJECTION',
+  REVISIONS = 'REVISIONS',
+}
 
 const RequestRevisionsBar = ({ data }: { data: any }) => {
   const theme = useTheme();
-  const [isRequestRevisionsModalVisible, setRequestRevisionsModalVisible] = useState(false);
-  const [isApproveModalVisible, setApproveModalVisible] = useState(false);
+
+  const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
 
   const {
     appId,
-    sections: {
-      applicant: {
-        info: {
-          primaryAffiliation = ''
-        } = {},
-      } = {}
-    },
-    state
+    sections: { applicant: { info: { primaryAffiliation = '' } = {} } = {} },
+    state,
   } = data;
 
-  const buttonsDisabled = ['APPROVED'].includes(state);
-  const buttonsVisible = !['REVISIONS REQUESTED'].includes(state);
+  const buttonsDisabled = [
+    ApplicationState.APPROVED,
+    ApplicationState.REVISIONS_REQUESTED,
+    ApplicationState.REJECTED,
+    ApplicationState.CLOSED,
+  ].includes(state);
 
   return (
     <>
-      {isRequestRevisionsModalVisible && (
+      {visibleModal === VisibleModalOption.REVISIONS && (
         <ModalPortal>
           <RequestRevisionsModal
             appId={appId}
-            dismissModal={() => setRequestRevisionsModalVisible(false)}
+            dismissModal={() => setVisibleModal(VisibleModalOption.NONE)}
           />
         </ModalPortal>
       )}
-      {isApproveModalVisible && (
+      {visibleModal === VisibleModalOption.APPROVAL && (
         <ModalPortal>
           <ApproveModal
             appId={appId}
-            dismissModal={() => setApproveModalVisible(false)}
+            dismissModal={() => setVisibleModal(VisibleModalOption.NONE)}
             primaryAffiliation={primaryAffiliation}
           />
         </ModalPortal>
       )}
-      <ContentHeader css={css`
-        border: 0 none;
-        height: auto;
-        line-height: 1;
-        margin-bottom: -16px;
-        margin-top: 16px;
-      `}>
+      {visibleModal === VisibleModalOption.REJECTION && (
+        <ModalPortal>
+          <RejectModal
+            appId={appId}
+            dismissModal={() => setVisibleModal(VisibleModalOption.NONE)}
+            primaryAffiliation={primaryAffiliation}
+          />
+        </ModalPortal>
+      )}
+      <ContentHeader
+        css={css`
+          border: 0 none;
+          height: auto;
+          line-height: 1;
+          margin-bottom: -16px;
+          margin-top: 16px;
+        `}
+      >
         <div
           css={css`
             align-items: center;
@@ -93,73 +111,72 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
             width: 100%;
           `}
         >
-          <div>
-            {/* Expiry placeholder */}
-          </div>
-          <div css={css`
-            display: flex;
-            > button {
-              margin-right: 8px;
-              &:last-child {
-                margin-right: 0;
+          <div>{/* Expiry placeholder */}</div>
+          <div
+            css={css`
+              display: flex;
+              > button {
+                margin-right: 8px;
+                &:last-child {
+                  margin-right: 0;
+                }
               }
-            }
-          `}>
-            {buttonsVisible && (
-              <>
-                <Button
-                  disabled={buttonsDisabled}
-                  onClick={() => {
-                    setApproveModalVisible(true);
-                  }}
-                  size="sm"
-                >
-                  <span css={instructionBoxButtonContentStyle}>
-                    <Icon
-                      css={css`
-                        margin-right: 1px;
-                        margin-left: -4px;
-                      `}
-                      fill={theme.colors.white}
-                      height="12px"
-                      name="checkmark"
-                    />
-                    Approve
-                  </span>
-                </Button>
-                <Button
-                  disabled={buttonsDisabled}
-                  onClick={() => {
-                    setRequestRevisionsModalVisible(true);
-                  }}
-                  size="sm"
-                >
-                  <span css={instructionBoxButtonContentStyle}>
-                    <Icon
-                      css={instructionBoxButtonIconStyle}
-                      fill={theme.colors.white}
-                      height="9px"
-                      name="edit"
-                    />
-                    Request Revisions
-                  </span>
-                </Button>
-                <Button
-                  disabled={buttonsDisabled}
-                  size="sm"
-                >
-                  <span css={instructionBoxButtonContentStyle}>
-                    <Icon
-                      css={instructionBoxButtonIconStyle}
-                      fill={theme.colors.white}
-                      height="10px"
-                      name="times"
-                    />
-                    Reject
-                  </span>
-                </Button>
-              </>
-            )}
+            `}
+          >
+            <Button
+              disabled={buttonsDisabled}
+              onClick={() => {
+                setVisibleModal(VisibleModalOption.APPROVAL);
+              }}
+              size="sm"
+            >
+              <span css={instructionBoxButtonContentStyle}>
+                <Icon
+                  css={css`
+                    margin-right: 1px;
+                    margin-left: -4px;
+                  `}
+                  fill={theme.colors.white}
+                  height="12px"
+                  name="checkmark"
+                />
+                Approve
+              </span>
+            </Button>
+            <Button
+              disabled={buttonsDisabled}
+              onClick={() => {
+                setVisibleModal(VisibleModalOption.REVISIONS);
+              }}
+              size="sm"
+            >
+              <span css={instructionBoxButtonContentStyle}>
+                <Icon
+                  css={instructionBoxButtonIconStyle}
+                  fill={theme.colors.white}
+                  height="9px"
+                  name="edit"
+                />
+                Request Revisions
+              </span>
+            </Button>
+            <Button
+              disabled={buttonsDisabled}
+              onClick={() => {
+                setVisibleModal(VisibleModalOption.REJECTION);
+              }}
+              size="sm"
+            >
+              <span css={instructionBoxButtonContentStyle}>
+                <Icon
+                  css={instructionBoxButtonIconStyle}
+                  fill={theme.colors.white}
+                  height="10px"
+                  name="times"
+                />
+                Reject
+              </span>
+            </Button>
           </div>
         </div>
       </ContentHeader>

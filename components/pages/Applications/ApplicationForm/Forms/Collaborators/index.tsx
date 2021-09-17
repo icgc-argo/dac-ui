@@ -57,7 +57,6 @@ import {
   FormValidationAction,
 } from '../types';
 import TableComponent from './TableComponent';
-import { isDacoAdmin } from 'global/utils/egoTokenUtils';
 import ErrorBanner, { AddCollaboratorError, CollaboratorErrorCodes } from './ErrorBanner';
 
 const Collaborators = ({
@@ -82,12 +81,9 @@ const Collaborators = ({
     keyof typeof AddCollaboratorError | null
   >(null);
   const containerRef = createRef<HTMLDivElement>();
-  const { fetchWithAuth, permissions } = useAuthContext();
+  const { fetchWithAuth } = useAuthContext();
   const theme = useTheme();
-
-  const isAdmin = permissions.length > 0 && isDacoAdmin(permissions);
   const disableActions =
-    (isAdmin && applicationState === ApplicationState.APPROVED) ||
     applicationState === ApplicationState.REVIEW;
 
   const clearCollaboratorModalData = () => {

@@ -75,10 +75,11 @@ spec:
 
         }
 
-        stage('install') {
+        stage('install & build') {
           steps {
             container('node') {
               sh "npm ci"
+              sh "npm run build"
             }
           }
         }
