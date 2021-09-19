@@ -83,7 +83,11 @@ const Collaborators = ({
   const containerRef = createRef<HTMLDivElement>();
   const { fetchWithAuth } = useAuthContext();
   const theme = useTheme();
-  const disableActions = [ApplicationState.REVIEW, ApplicationState.REJECTED].includes(applicationState);
+  const disableActions = [
+    ApplicationState.REVIEW,
+    ApplicationState.REJECTED,
+    ApplicationState.CLOSED,
+  ].includes(applicationState);
 
   const clearCollaboratorModalData = () => {
     validateFieldTouched({
@@ -118,9 +122,9 @@ const Collaborators = ({
           ...dataAcc,
           [prefix]: suffix
             ? {
-              ...dataAcc[prefix],
-              [suffix]: fieldData.value,
-            }
+                ...dataAcc[prefix],
+                [suffix]: fieldData.value,
+              }
             : fieldData.value,
         };
       },
@@ -153,8 +157,8 @@ const Collaborators = ({
             errorCode === CollaboratorErrorCodes.COLLABORATOR_EXISTS
               ? AddCollaboratorError.CollaboratorExists
               : errorCode === CollaboratorErrorCodes.COLLABORATOR_SAME_AS_APPLICANT
-                ? AddCollaboratorError.CollaboratorIsApplicant
-                : AddCollaboratorError.GenericError,
+              ? AddCollaboratorError.CollaboratorIsApplicant
+              : AddCollaboratorError.GenericError,
           );
           console.error('Failed to create collaborator.', errorCode);
         } else {
@@ -227,12 +231,12 @@ const Collaborators = ({
       Object.values(localState.list?.innerType?.fields).some(
         (field: any) => field?.error?.length > 0,
       ) ||
-      !Object.entries(localState.list?.innerType?.fields)
-        .filter(
-          ([fieldName, fieldData]) =>
-            fieldName !== 'type' && isRequired(fieldData as FormFieldType),
-        )
-        .every(([fieldName, fieldData]) => (fieldData as FormFieldType).value),
+        !Object.entries(localState.list?.innerType?.fields)
+          .filter(
+            ([fieldName, fieldData]) =>
+              fieldName !== 'type' && isRequired(fieldData as FormFieldType),
+          )
+          .every(([fieldName, fieldData]) => (fieldData as FormFieldType).value),
     );
   }, [localState]);
 
@@ -316,8 +320,9 @@ const Collaborators = ({
         (modalVisible === 'collaborator' ? (
           <ModalPortal>
             <Modal
-              actionButtonText={`${localState.list?.innerType?.fields.id.value ? 'Edit' : 'Add'
-                } Collaborator`}
+              actionButtonText={`${
+                localState.list?.innerType?.fields.id.value ? 'Edit' : 'Add'
+              } Collaborator`}
               actionDisabled={isSectionDisabled || modalHasErrors}
               onActionClick={handleCollaboratorCreateOrEdit}
               onCancelClick={dismissCollaboratorModal}
