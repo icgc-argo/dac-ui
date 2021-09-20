@@ -27,7 +27,7 @@ type DashboardCardProps = {
   Icon?: any;
   title: string;
   subtitle?: string;
-  info?: string;
+  info?: string | React.ReactNode;
   children: React.ReactNode;
 };
 
