@@ -44,11 +44,15 @@ const ApplicationHeader = ({
     lastUpdatedAtUtc,
     expiresAtUtc,
     closedAtUtc,
+    revisionsRequested,
     sections: { applicant: { info: { displayName = '', primaryAffiliation = '' } = {} } = {} } = {},
     state,
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
+
+  const showRevisionsRequestedFlag = revisionsRequested &&
+    [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state);
 
   return (
     <PageHeader>
@@ -72,7 +76,7 @@ const ApplicationHeader = ({
         />
 
         <div>
-          {state === ApplicationState.REVISIONS_REQUESTED && (
+          {showRevisionsRequestedFlag && (
             <div
               css={(theme: UikitTheme) =>
                 css`
