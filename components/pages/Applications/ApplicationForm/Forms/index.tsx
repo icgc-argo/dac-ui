@@ -156,7 +156,7 @@ const ApplicationFormsBase = ({
   return (
     <ContentBody>
       {JSON.parse(localStorage.getItem(SUBMISSION_SUCCESS_CHECK) || 'false') &&
-        ![ApplicationState.REJECTED].includes(applicationState) && (
+        [ApplicationState.REVIEW].includes(applicationState) && (
           <Notification
             title="Your Application has been Submitted"
             content="The ICGC DACO has been notified for review and you should hear back within ten business days regarding the status of your application."

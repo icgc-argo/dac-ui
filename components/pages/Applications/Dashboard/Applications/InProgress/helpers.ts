@@ -38,7 +38,7 @@ export const getStatusText = (state: ApplicationState, dates: StatusDates) => {
         dates.submittedAtUtc,
       )}. This application is locked for ICGC DACO review.`;
     case ApplicationState.REVISIONS_REQUESTED:
-      return `Reopened on ${formatStatusDate(
+      return `Reopened for revisions on ${formatStatusDate(
         dates.lastUpdatedAtUtc,
       )}. Revision details were sent via email.`;
     case ApplicationState.REJECTED:

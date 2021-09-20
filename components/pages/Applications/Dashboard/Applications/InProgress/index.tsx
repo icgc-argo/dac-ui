@@ -69,6 +69,8 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     ''
   );
 
+  const statusError = [ApplicationState.REVISIONS_REQUESTED].includes(state as ApplicationState);
+
   return (
     <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={expiryDate}>
       <div
@@ -90,7 +92,15 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
               margin-bottom: 5px;
             `}
           >
-            <b>Status:</b> {getStatusText(state as ApplicationState, dates)}
+            <b>Status:</b>
+            {' '}
+            <span
+              css={css`
+                color: ${statusError ? theme.colors.error : 'inherit'};
+              `}
+            >
+              {getStatusText(state as ApplicationState, dates)}
+            </span>
           </div>
           <div>
             <b>Last Updated:</b> {getFormattedDate(lastUpdatedAtUtc, TIME_AND_DATE_FORMAT)}
