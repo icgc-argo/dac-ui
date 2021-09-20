@@ -43,6 +43,7 @@ const ApplicationHeader = ({
     createdAtUtc,
     lastUpdatedAtUtc,
     expiresAtUtc,
+    closedAtUtc,
     sections: { applicant: { info: { displayName = '', primaryAffiliation = '' } = {} } = {} } = {},
     state,
   } = data;
@@ -67,6 +68,7 @@ const ApplicationHeader = ({
           createdAt={format(new Date(createdAtUtc), DATE_TEXT_FORMAT)}
           lastUpdated={format(new Date(lastUpdatedAtUtc), DATE_TEXT_FORMAT + ' h:mm aaaa')}
           expiresAt={expiresAtUtc && format(new Date(expiresAtUtc), DATE_TEXT_FORMAT)}
+          closedAt={closedAtUtc && format(new Date(closedAtUtc), DATE_TEXT_FORMAT)}
         />
 
         <div>

@@ -48,7 +48,7 @@ export const getStatusText = (state: ApplicationState, dates: StatusDates) => {
     case ApplicationState.CLOSED:
       return `Closed on ${formatStatusDate(
         dates.closedAtUtc,
-      )}. You can reopen this application at anytime.`;
+      )}. This application cannot be reopened.`;
     case ApplicationState.RENEWING:
       return `Closed on ${formatStatusDate(dates.closedAtUtc)}.`;
     default:
