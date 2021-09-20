@@ -28,6 +28,7 @@ import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { DATE_TEXT_FORMAT } from 'global/constants';
 import { ApplicationsResponseItem } from 'components/pages/Applications/types';
 import { pick } from 'lodash';
+import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 
 export interface StatusDates {
   lastUpdatedAtUtc: string;
@@ -38,6 +39,8 @@ export interface StatusDates {
 }
 
 const InProgress = ({ application }: { application: ApplicationsResponseItem }) => {
+  const theme = useTheme();
+
   const {
     appId,
     applicant: {
@@ -46,6 +49,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     state,
     expiresAtUtc,
     lastUpdatedAtUtc,
+    closedAtUtc,
   } = application;
 
   const dates: StatusDates = {
@@ -53,9 +57,17 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     ...pick(application, ['createdAtUtc', 'submittedAtUtc', 'closedAtUtc', 'approvedAtUtc']),
   };
 
-  const expiryDate = expiresAtUtc
-    ? `Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`
-    : '';
+  const expiryDate = expiresAtUtc ? (
+    `Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`
+  ) : closedAtUtc ? (
+    <div
+      css={css`
+        color: ${theme.colors.error};
+      `}
+    >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
+  ) : (
+    ''
+  );
 
   return (
     <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={expiryDate}>
