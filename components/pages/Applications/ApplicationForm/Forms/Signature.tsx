@@ -146,6 +146,7 @@ const Signature = ({
         });
     } else {
       console.warn('invalid file');
+      setSubmissionError(true);
     }
   };
 
