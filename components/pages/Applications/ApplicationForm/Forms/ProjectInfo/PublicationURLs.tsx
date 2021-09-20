@@ -73,7 +73,7 @@ const PublicationURLs = ({
 
   const duplicateUrls = Object.values(fields)
     .map((field: any) => field.value.trim())
-    .filter((value, index, array) => array.indexOf(value) !== index);
+    .filter((value, index, array) => value && array.indexOf(value) !== index);
 
   return (
     <section>
