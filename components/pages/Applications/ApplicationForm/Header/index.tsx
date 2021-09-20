@@ -36,7 +36,6 @@ const ApplicationHeader = ({
   data: any;
   refetchAllData: RefetchDataFunction;
 }): ReactElement => {
-  console.log('data', data);
   const {
     appId,
     createdAtUtc,
