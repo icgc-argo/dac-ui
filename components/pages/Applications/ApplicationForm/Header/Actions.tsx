@@ -34,6 +34,7 @@ import { ModalPortal } from 'components/Root';
 import Modal from '@icgc-argo/uikit/Modal';
 import router from 'next/router';
 import { RefetchDataFunction } from '../Forms/types';
+import Banner from '@icgc-argo/uikit/notifications/Banner';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -88,6 +89,7 @@ const HeaderActions = ({
     ApplicationState.DRAFT,
     ApplicationState.SIGN_AND_SUBMIT,
     ApplicationState.REVISIONS_REQUESTED,
+    ApplicationState.APPROVED,
   ].includes(state);
 
   const dismissModal = () => setVisibleModal(VisibleModalOption.NONE);
@@ -151,6 +153,18 @@ const HeaderActions = ({
               </div>
             )}
           >
+            {state === ApplicationState.APPROVED && (
+              <Banner
+                content={
+                  <>
+                    <b>WARNING:</b> This application is approved, and closing it means that the
+                    Applicant and all Collaborators associated with this research project{' '}
+                    <b>will lose access to ICGC Controlled Data.</b>
+                  </>
+                }
+                variant="WARNING"
+              />
+            )}
             <p>
               Are you sure you want to close{' '}
               <b>Application: DACO-12344 (Ontario Institute for Cancer Research)?</b>
@@ -190,7 +204,7 @@ const HeaderActions = ({
           isLoading={pdfIsLoading}
           onClick={async () => {
             setPdfIsLoading(true);
-            const isDownloadZip = [ApplicationState.REVIEW, ApplicationState.APPROVED].includes(
+            const isDownloadZip = [ApplicationState.REVIEW, ApplicationState.APPROVED, ApplicationState.REJECTED].includes(
               state,
             );
             const downloadUrl = urlJoin(
