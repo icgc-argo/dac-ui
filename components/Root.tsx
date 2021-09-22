@@ -145,10 +145,6 @@ const ToastProvider = ({ children }: { children: React.ReactNode }) => {
           `}
         >
           <ToastStack toastConfigs={toaster.toastStack} onInteraction={toaster.onInteraction} />
-          {/*           {toaster.toastStack.map((t) => (
-            <Toast title={t.title} />
-          ))}
- */}{' '}
         </div>
       </div>
     </ToasterContext.Provider>
