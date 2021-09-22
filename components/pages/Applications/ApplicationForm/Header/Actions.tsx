@@ -167,7 +167,7 @@ const HeaderActions = ({
             )}
             <p>
               Are you sure you want to close{' '}
-              <b>Application: DACO-12344 (Ontario Institute for Cancer Research)?</b>
+              <b>Application: {appId} (Ontario Institute for Cancer Research)?</b>
             </p>
             <p>
               <b>This action cannot be undone and you will be unable to reopen this application.</b>
@@ -204,9 +204,11 @@ const HeaderActions = ({
           isLoading={pdfIsLoading}
           onClick={async () => {
             setPdfIsLoading(true);
-            const isDownloadZip = [ApplicationState.REVIEW, ApplicationState.APPROVED, ApplicationState.REJECTED].includes(
-              state,
-            );
+            const isDownloadZip = [
+              ApplicationState.REVIEW,
+              ApplicationState.APPROVED,
+              ApplicationState.REJECTED,
+            ].includes(state);
             const downloadUrl = urlJoin(
               API.APPLICATIONS,
               appId,

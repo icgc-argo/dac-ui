@@ -31,6 +31,8 @@ import Progress from './Progress';
 import { RefetchDataFunction } from '../Forms/types';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
+export type ApplicationExpiry = { date: string; isExpired: boolean };
+
 const ApplicationHeader = ({
   data = {},
   refetchAllData,
@@ -45,14 +47,22 @@ const ApplicationHeader = ({
     expiresAtUtc,
     closedAtUtc,
     revisionsRequested,
+    approvedAtUtc,
     sections: { applicant: { info: { displayName = '', primaryAffiliation = '' } = {} } = {} } = {},
     state,
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
 
-  const showRevisionsRequestedFlag = revisionsRequested &&
+  const showRevisionsRequestedFlag =
+    revisionsRequested &&
     [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state);
+
+  // only pass expiry for applications that have been approved
+  const expiry: ApplicationExpiry = approvedAtUtc && {
+    date: format(new Date(closedAtUtc || expiresAtUtc || ''), DATE_TEXT_FORMAT),
+    isExpired: closedAtUtc ? true : false,
+  };
 
   return (
     <PageHeader>
@@ -71,8 +81,7 @@ const ApplicationHeader = ({
           applicant={applicant}
           createdAt={format(new Date(createdAtUtc), DATE_TEXT_FORMAT)}
           lastUpdated={format(new Date(lastUpdatedAtUtc), DATE_TEXT_FORMAT + ' h:mm aaaa')}
-          expiresAt={expiresAtUtc && format(new Date(expiresAtUtc), DATE_TEXT_FORMAT)}
-          closedAt={closedAtUtc && format(new Date(closedAtUtc), DATE_TEXT_FORMAT)}
+          expiry={expiry}
         />
 
         <div>
@@ -89,7 +98,9 @@ const ApplicationHeader = ({
                   padding: 3px 8px;
                   text-align: center;
                   width: 130px;
-            `}>
+                `
+              }
+            >
               Revisions Requested
             </div>
           )}
