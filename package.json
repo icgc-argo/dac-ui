@@ -17,7 +17,7 @@
     "@emotion/core": "^10.0.10",
     "@emotion/styled": "^10.0.11",
     "@icgc-argo/ego-token-utils": "^8.2.0",
-    "@icgc-argo/uikit": "^1.13.0",
+    "@icgc-argo/uikit": "^1.14.0",
     "@react-pdf/renderer": "^2.0.15",
     "axios": "^0.21.1",
     "babel-plugin-emotion": "^10.2.2",

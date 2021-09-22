@@ -23,8 +23,9 @@ import Link from '@icgc-argo/uikit/Link';
 import Typography from '@icgc-argo/uikit/Typography';
 import { APPLICATIONS_PATH } from 'global/constants';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import { ApplicationExpiry } from '.';
 
-const Expiry = ({ expiry, isExpired }: { expiry: string; isExpired: boolean }) => {
+const Expiry = ({ date, isExpired }: { date: string; isExpired: boolean }) => {
   const theme = useTheme();
   return (
     <>
@@ -35,7 +36,7 @@ const Expiry = ({ expiry, isExpired }: { expiry: string; isExpired: boolean }) =
           color: ${theme.colors[isExpired ? 'error' : 'secondary']}; ;
         `}
       >
-        {`${isExpired ? 'Expired' : 'Expires'}: ${expiry}`}
+        {`${isExpired ? 'Expired' : 'Expires'}: ${date}`}
       </span>
     </>
   );
@@ -46,17 +47,14 @@ const HeaderDetails = ({
   createdAt,
   appId,
   lastUpdated,
-  expiresAt,
-  closedAt,
+  expiry,
 }: {
   applicant?: string;
   createdAt?: string;
   appId: string;
   lastUpdated?: string;
-  expiresAt?: string;
-  closedAt?: string;
+  expiry?: ApplicationExpiry;
 }): ReactElement => {
-  const expiryDate: string = closedAt || expiresAt || '';
   return (
     <section
       css={css`
@@ -71,7 +69,7 @@ const HeaderDetails = ({
         `}
       >
         <Link href={APPLICATIONS_PATH}>My Applications</Link>: {appId.toUpperCase()}
-        {expiryDate && <Expiry expiry={expiryDate} isExpired={!!closedAt} />}
+        {expiry && <Expiry date={expiry.date} isExpired={expiry.isExpired} />}
       </Typography>
 
       {(createdAt || lastUpdated) && (
