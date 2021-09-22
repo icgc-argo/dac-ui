@@ -50,6 +50,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     expiresAtUtc,
     lastUpdatedAtUtc,
     closedAtUtc,
+    approvedAtUtc,
   } = application;
 
   const dates: StatusDates = {
@@ -57,19 +58,16 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     ...pick(application, ['createdAtUtc', 'submittedAtUtc', 'closedAtUtc', 'approvedAtUtc']),
   };
 
-  const expiryDate = (
-    <div
-      css={css`
-        color: ${theme.colors.error};
-      `}
-    >
-      {expiresAtUtc
-        ? `Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`
-        : closedAtUtc
-        ? `Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`
-        : ''}
-    </div>
-  );
+  const expiryDate =
+    expiresAtUtc && !closedAtUtc ? (
+      `Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`
+    ) : closedAtUtc && approvedAtUtc ? (
+      <div
+        css={css`
+          color: ${theme.colors.error};
+        `}
+      >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
+    ) : null;
 
   const statusError = [ApplicationState.REVISIONS_REQUESTED].includes(state as ApplicationState);
 
