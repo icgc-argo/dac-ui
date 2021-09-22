@@ -268,7 +268,6 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
   origin,
   reasonToValidate,
 ) => async (fieldsToValidate: any = []) => {
-  // ! typescript issues
   const validatingApplicant = origin === 'applicant';
   const applicantData = formState.sections.applicant.fields;
 
@@ -464,7 +463,8 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
       });
 
       const fieldsForPatch = fieldsResults
-        .filter((fieldObj: any) => fieldObj.shouldPatch)
+        .filter((fieldObj: any) => fieldObj.shouldPatch || fieldObj.fieldName.includes('address'))
+        // address fields can be autofilled, and should be patched
         .map((fieldObj: any) =>
           getValueByFieldTypeToPublish(
             fieldObj.results,
@@ -473,13 +473,17 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
           ),
         )
         .reduce((acc, curr) => {
+          // reduce fields array to an object with unique keys.
           const [key, value] = Object.entries(curr)[0];
           return {
             ...acc,
-            [key]: {
-              ...(acc[key] || {}),
-              ...(value as object),
-            },
+            [key]:
+              typeof value === 'object'
+                ? {
+                    ...(acc[key] || {}),
+                    ...(value as object),
+                  }
+                : value,
           };
         }, {});
 
@@ -783,6 +787,13 @@ export const useLocalValidation = (
             changes && updateLocalState(changes);
           } else if (fieldType.includes('Modal')) {
             fieldValidator([{ field, value }]);
+          } else if (fieldType === 'select-one' && eventType === 'change') {
+            // assume potential autofill event here, like on blur for other fields.
+            const changes = await fieldValidator([
+              { field, value: value[0], shouldPersistResults: true },
+            ]);
+
+            changes && updateLocalState(changes);
           } else if (fieldType !== 'select-one') {
             const shouldPersistResults = ['checkbox', 'radio'].includes(fieldType);
 
