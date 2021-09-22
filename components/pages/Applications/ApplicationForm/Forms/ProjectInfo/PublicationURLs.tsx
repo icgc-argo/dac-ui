@@ -71,6 +71,10 @@ const PublicationURLs = ({
     }
   };
 
+  const duplicateUrls = Object.values(fields)
+    .map((field: any) => field.value.trim())
+    .filter((value, index, array) => value && array.indexOf(value) !== index);
+
   return (
     <section>
       <StaticPublications />
@@ -90,8 +94,10 @@ const PublicationURLs = ({
           ),
         ),
       ).map(
-        (item, index) =>
-          item.value !== null && (
+        (item, index) => {
+          if (item.value === null) return false;
+          const isDuplicate = duplicateUrls.includes(item.value);
+          return (
             <DoubleFieldRow
               actions={
                 index >= minPublications ? (
@@ -136,7 +142,7 @@ const PublicationURLs = ({
             >
               <FormControl
                 disabled={isSectionDisabled}
-                error={!!item.error}
+                error={!!item.error || isDuplicate}
                 required={isRequired(innerType as FormFieldType)}
               >
                 <InputLabel htmlFor="title">Publication URL</InputLabel>
@@ -151,10 +157,12 @@ const PublicationURLs = ({
 
                 <FormHelperText onErrorOnly>
                   {item.error?.[0] !== 'this field must have at least 3 items' && item.error?.[0]}
+                  {isDuplicate && 'Publication URLs must be unique.'}
                 </FormHelperText>
               </FormControl>
             </DoubleFieldRow>
-          ),
+          );
+        }
       )}
 
       <Button

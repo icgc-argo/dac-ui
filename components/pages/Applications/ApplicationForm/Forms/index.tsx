@@ -30,10 +30,16 @@ import Typography from '@icgc-argo/uikit/Typography';
 import { sectionsOrder } from './constants';
 import { enabledSections, sectionSelector } from './helpers';
 import Outline from './Outline';
-import { FormSectionNames, FormSectionValidationTriggerReasons, FORM_STATES } from './types';
-import { useFormValidation } from './validations';
+import {
+  FormSectionNames,
+  FormSectionValidationTriggerReasons,
+  FormSectionValidatorFunction_Origin,
+  FormValidationStateParameters,
+  FORM_STATES,
+} from './types';
 import Notification from '@icgc-argo/uikit/notifications/Notification';
 import { SUBMISSION_SUCCESS_CHECK } from 'global/constants';
+import { ApplicationState } from 'components/pages/Applications/types';
 
 type QueryType = {
   query: {
@@ -56,10 +62,18 @@ const getActiveSection = (sectionFromQuery?: FormSectionNames): FormSectionNames
 
 const ApplicationFormsBase = ({
   appId = 'none',
+  applicationState,
   setLastUpdated,
+  isLoading,
+  formState,
+  validateSection,
 }: {
   appId: string;
+  applicationState: ApplicationState;
   setLastUpdated: SetLastUpdated;
+  isLoading: boolean;
+  formState: FormValidationStateParameters;
+  validateSection: FormSectionValidatorFunction_Origin;
 }): ReactElement => {
   const {
     query: { section: sectionFromQuery = '' as FormSectionNames },
@@ -70,7 +84,6 @@ const ApplicationFormsBase = ({
     setSelectedSection(getActiveSection(sectionFromQuery));
   }, [sectionFromQuery]);
 
-  const { isLoading, formState, validateSection } = useFormValidation(appId);
   const theme: UikitTheme = useTheme();
 
   const triggerSectionValidation = useCallback(
@@ -142,26 +155,27 @@ const ApplicationFormsBase = ({
 
   return (
     <ContentBody>
-      {JSON.parse(localStorage.getItem(SUBMISSION_SUCCESS_CHECK) || 'false') && (
-        <Notification
-          title="Your Application has been Submitted"
-          content="The ICGC DACO has been notified for review and you should hear back within ten business days regarding the status of your application."
-          interactionType="CLOSE"
-          variant="SUCCESS"
-          onInteraction={({ type }) => {
-            if (type === 'CLOSE') {
-              localStorage.setItem(SUBMISSION_SUCCESS_CHECK, 'false');
-              router.push(`/applications/${appId}?section=${selectedSection}`);
-            }
-          }}
-          css={css`
+      {JSON.parse(localStorage.getItem(SUBMISSION_SUCCESS_CHECK) || 'false') &&
+        [ApplicationState.REVIEW].includes(applicationState) && (
+          <Notification
+            title="Your Application has been Submitted"
+            content="The ICGC DACO has been notified for review and you should hear back within ten business days regarding the status of your application."
+            interactionType="CLOSE"
+            variant="SUCCESS"
+            onInteraction={({ type }) => {
+              if (type === 'CLOSE') {
+                localStorage.setItem(SUBMISSION_SUCCESS_CHECK, 'false');
+                router.push(`/applications/${appId}?section=${selectedSection}`);
+              }
+            }}
+            css={css`
             margin: 0 auto 25px auto;
             max-width: 1200px;
             min-width: 665px;
             width: 100%;
           `}
-        />
-      )}
+          />
+        )}
 
       <ContentBox
         css={css`

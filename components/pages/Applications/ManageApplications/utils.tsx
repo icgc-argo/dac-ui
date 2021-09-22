@@ -32,6 +32,8 @@ import {
 } from '../types';
 
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
+import { css } from '@icgc-argo/uikit';
+import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 
 export const stringifySort = (sortArr: ApplicationsSort[]) =>
   sortArr.map(({ field, order }) => `${field}:${order}`).join(', ');
@@ -56,7 +58,7 @@ export const formatTableData = (data: ApplicationsResponseItem[]) =>
     applicant: datum.applicant.info.displayName,
     googleEmail: datum.applicant.info.googleEmail,
     ethicsLetter: datum.ethics.declaredAsRequired,
-    accessExpiry: datum.expiresAtUtc,
+    accessExpiry: datum.closedAtUtc || datum.expiresAtUtc,
     lastUpdated: datum.lastUpdatedAtUtc,
     status: datum.state,
   }));
@@ -97,10 +99,22 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
     Header: fieldDisplayNames.expiresAtUtc,
     id: ApplicationsField.expiresAtUtc,
     accessor: 'accessExpiry',
-    Cell: ({ original }: { original: ApplicationRecord }) =>
-      original.accessExpiry
-        ? formatDate(new Date(original.accessExpiry), DATE_RANGE_DISPLAY_FORMAT)
-        : null,
+    Cell: ({ original }: { original: ApplicationRecord }) => {
+      const theme = useTheme();
+      return (
+        <div
+          css={css`
+            color: ${theme.colors[
+              original.status === ApplicationState.CLOSED ? 'error' : 'secondary'
+            ]}; ;
+          `}
+        >
+          {original.accessExpiry
+            ? formatDate(new Date(original.accessExpiry), DATE_RANGE_DISPLAY_FORMAT)
+            : null}
+        </div>
+      );
+    },
   },
   {
     Header: fieldDisplayNames.lastUpdatedAtUtc,

@@ -63,13 +63,13 @@ const progressStates: ProgressStates = {
     { label: PROGRESS_LABELS.APPROVED, state: 'success', completed: true },
   ],
   [ApplicationState.REVISIONS_REQUESTED]: [
-    { label: PROGRESS_LABELS.REVISIONS_REQUESTED, state: 'pending', completed: true },
+    { label: PROGRESS_LABELS.DRAFT, state: 'pending', completed: true },
     { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'disabled', completed: false },
     { label: PROGRESS_LABELS.DACO_REVIEW, state: 'disabled', completed: false },
   ],
   [ApplicationState.REJECTED]: [
-    { label: PROGRESS_LABELS.DRAFT, state: 'success', completed: true },
-    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'success', completed: true },
+    { label: PROGRESS_LABELS.DRAFT, state: 'closed', completed: true },
+    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'closed', completed: true },
     { label: PROGRESS_LABELS.REJECTED, state: 'closed', completed: true },
   ],
   [ApplicationState.CLOSED]: [

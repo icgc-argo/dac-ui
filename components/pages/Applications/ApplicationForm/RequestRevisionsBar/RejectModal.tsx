@@ -20,7 +20,6 @@
 import { useState } from 'react';
 import { AxiosError } from 'axios';
 import urlJoin from 'url-join';
-import { add, format } from 'date-fns';
 import { css } from '@emotion/core';
 import router from 'next/router';
 
@@ -28,11 +27,13 @@ import Modal from '@icgc-argo/uikit/Modal';
 import Typography from '@icgc-argo/uikit/Typography';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
+import InputLabel from '@icgc-argo/uikit/form/InputLabel';
+import Textarea from '@icgc-argo/uikit/form/Textarea';
 
 import { useAuthContext } from 'global/hooks';
-import { API, DATE_TEXT_FORMAT } from 'global/constants';
+import { API } from 'global/constants';
 
-const ApproveModal = ({
+const RejectModal = ({
   appId,
   dismissModal,
   primaryAffiliation,
@@ -41,19 +42,17 @@ const ApproveModal = ({
   dismissModal: () => any | void;
   primaryAffiliation: string;
 }) => {
-  const currentDate = new Date();
-  const startDate = format(currentDate, DATE_TEXT_FORMAT);
-  const endDate = format(add(currentDate, { years: 2 }), DATE_TEXT_FORMAT);
-
   const [error, setError] = useState<AxiosError | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [denialReason, setDenialReason] = useState<string>('');
   const { fetchWithAuth } = useAuthContext();
 
-  const submitApproval = () => {
+  const submitRejection = () => {
     setIsLoading(true);
     fetchWithAuth({
       data: {
-        state: 'APPROVED'
+        state: 'REJECTED',
+        denialReason,
       },
       method: 'PATCH',
       url: urlJoin(API.APPLICATIONS, appId)
@@ -69,24 +68,32 @@ const ApproveModal = ({
 
   return (
     <Modal
-      actionButtonText={isLoading ? 'Loading' : 'Approve for Access'}
+      actionButtonText={isLoading ? 'Loading' : 'Reject'}
       actionDisabled={isLoading}
       buttonSize="sm"
       cancelText="Cancel"
-      onActionClick={() => submitApproval()}
+      onActionClick={() => submitRejection()}
       onCancelClick={dismissModal}
       onCloseClick={dismissModal}
-      title="Are you sure you want to APPROVE the application?"
+      title="Are you sure you want to REJECT this application?"
     >
       <Typography>
-        Are you sure you want to approve <strong>Application: {appId} ({primaryAffiliation})?</strong>
+        Are you sure you want to reject <strong>Application: {appId} ({primaryAffiliation})?</strong> If so, the applicant will be notified and will be unable to reopen this application.
       </Typography>
-      <Typography>
-        If so, the applicant and collaborators will be notified and will receive access to ICGC Controlled Data for the following time period:
-      </Typography>
-      <Typography>
-        <strong>Start Date:</strong> {startDate} &nbsp; | &nbsp; <strong>End Date:</strong> {endDate}
-      </Typography>
+
+      <FormControl>
+        <InputLabel htmlFor="denialReason">
+          Details from the ICGC DACO Team (optional):
+        </InputLabel>
+        <Textarea
+          aria-label="Details from the ICGC DACO Team (optional)"
+          id="denialReason"
+          onChange={(e: any) => setDenialReason(e.target.value)}
+          rows={6}
+          value={denialReason}
+        />
+      </FormControl>
+
       <FormControl error={!!error}>
         <FormHelperText
           css={css`
@@ -101,4 +108,4 @@ const ApproveModal = ({
   );
 };
 
-export default ApproveModal;
+export default RejectModal;

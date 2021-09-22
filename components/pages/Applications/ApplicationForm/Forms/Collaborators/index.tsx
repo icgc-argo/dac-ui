@@ -57,7 +57,6 @@ import {
   FormValidationAction,
 } from '../types';
 import TableComponent from './TableComponent';
-import { isDacoAdmin } from 'global/utils/egoTokenUtils';
 import ErrorBanner, { AddCollaboratorError, CollaboratorErrorCodes } from './ErrorBanner';
 
 const Collaborators = ({
@@ -82,13 +81,13 @@ const Collaborators = ({
     keyof typeof AddCollaboratorError | null
   >(null);
   const containerRef = createRef<HTMLDivElement>();
-  const { fetchWithAuth, permissions } = useAuthContext();
+  const { fetchWithAuth } = useAuthContext();
   const theme = useTheme();
-
-  const isAdmin = permissions.length > 0 && isDacoAdmin(permissions);
-  const disableActions =
-    (isAdmin && applicationState === ApplicationState.APPROVED) ||
-    applicationState === ApplicationState.REVIEW;
+  const disableActions = [
+    ApplicationState.REVIEW,
+    ApplicationState.REJECTED,
+    ApplicationState.CLOSED,
+  ].includes(applicationState);
 
   const clearCollaboratorModalData = () => {
     validateFieldTouched({
@@ -123,9 +122,9 @@ const Collaborators = ({
           ...dataAcc,
           [prefix]: suffix
             ? {
-              ...dataAcc[prefix],
-              [suffix]: fieldData.value,
-            }
+                ...dataAcc[prefix],
+                [suffix]: fieldData.value,
+              }
             : fieldData.value,
         };
       },
@@ -158,8 +157,8 @@ const Collaborators = ({
             errorCode === CollaboratorErrorCodes.COLLABORATOR_EXISTS
               ? AddCollaboratorError.CollaboratorExists
               : errorCode === CollaboratorErrorCodes.COLLABORATOR_SAME_AS_APPLICANT
-                ? AddCollaboratorError.CollaboratorIsApplicant
-                : AddCollaboratorError.GenericError,
+              ? AddCollaboratorError.CollaboratorIsApplicant
+              : AddCollaboratorError.GenericError,
           );
           console.error('Failed to create collaborator.', errorCode);
         } else {
@@ -232,12 +231,12 @@ const Collaborators = ({
       Object.values(localState.list?.innerType?.fields).some(
         (field: any) => field?.error?.length > 0,
       ) ||
-      !Object.entries(localState.list?.innerType?.fields)
-        .filter(
-          ([fieldName, fieldData]) =>
-            fieldName !== 'type' && isRequired(fieldData as FormFieldType),
-        )
-        .every(([fieldName, fieldData]) => (fieldData as FormFieldType).value),
+        !Object.entries(localState.list?.innerType?.fields)
+          .filter(
+            ([fieldName, fieldData]) =>
+              fieldName !== 'type' && isRequired(fieldData as FormFieldType),
+          )
+          .every(([fieldName, fieldData]) => (fieldData as FormFieldType).value),
     );
   }, [localState]);
 
@@ -321,8 +320,9 @@ const Collaborators = ({
         (modalVisible === 'collaborator' ? (
           <ModalPortal>
             <Modal
-              actionButtonText={`${localState.list?.innerType?.fields.id.value ? 'Edit' : 'Add'
-                } Collaborator`}
+              actionButtonText={`${
+                localState.list?.innerType?.fields.id.value ? 'Edit' : 'Add'
+              } Collaborator`}
               actionDisabled={isSectionDisabled || modalHasErrors}
               onActionClick={handleCollaboratorCreateOrEdit}
               onCancelClick={dismissCollaboratorModal}

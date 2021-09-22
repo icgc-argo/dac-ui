@@ -20,7 +20,7 @@
 import { ReactElement } from 'react';
 import { format } from 'date-fns';
 import { css } from '@icgc-argo/uikit';
-import { isEqual } from 'lodash';
+import { UikitTheme } from '@icgc-argo/uikit/index';
 
 import PageHeader from 'components/PageHeader';
 import { DATE_TEXT_FORMAT } from 'global/constants';
@@ -28,19 +28,41 @@ import { DATE_TEXT_FORMAT } from 'global/constants';
 import Actions from './Actions';
 import Details from './Details';
 import Progress from './Progress';
-import { ApplicationState } from '../../types';
+import { RefetchDataFunction } from '../Forms/types';
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
-const ApplicationHeader = ({ data = {} }: { data: any }): ReactElement => {
+export type ApplicationExpiry = { date: string; isExpired: boolean };
+
+const ApplicationHeader = ({
+  data = {},
+  refetchAllData,
+}: {
+  data: any;
+  refetchAllData: RefetchDataFunction;
+}): ReactElement => {
   const {
     appId,
     createdAtUtc,
     lastUpdatedAtUtc,
     expiresAtUtc,
+    closedAtUtc,
+    revisionsRequested,
+    approvedAtUtc,
     sections: { applicant: { info: { displayName = '', primaryAffiliation = '' } = {} } = {} } = {},
     state,
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
+
+  const showRevisionsRequestedFlag =
+    revisionsRequested &&
+    [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state);
+
+  // only pass expiry for applications that have been approved
+  const expiry: ApplicationExpiry = approvedAtUtc && {
+    date: format(new Date(closedAtUtc || expiresAtUtc || ''), DATE_TEXT_FORMAT),
+    isExpired: closedAtUtc ? true : false,
+  };
 
   return (
     <PageHeader>
@@ -59,12 +81,33 @@ const ApplicationHeader = ({ data = {} }: { data: any }): ReactElement => {
           applicant={applicant}
           createdAt={format(new Date(createdAtUtc), DATE_TEXT_FORMAT)}
           lastUpdated={format(new Date(lastUpdatedAtUtc), DATE_TEXT_FORMAT + ' h:mm aaaa')}
-          expiresAt={expiresAtUtc && format(new Date(expiresAtUtc), DATE_TEXT_FORMAT)}
+          expiry={expiry}
         />
 
-        <Progress state={state} />
+        <div>
+          {showRevisionsRequestedFlag && (
+            <div
+              css={(theme: UikitTheme) =>
+                css`
+                  ${theme.typography.data};
+                  background: ${theme.colors.primary_1};
+                  border-radius: 8px;
+                  color: ${theme.colors.white};
+                  font-weight: bold;
+                  margin: 0 auto 10px 72px;
+                  padding: 3px 8px;
+                  text-align: center;
+                  width: 130px;
+                `
+              }
+            >
+              Revisions Requested
+            </div>
+          )}
+          <Progress state={state} />
+        </div>
 
-        {!isEqual(state, ApplicationState.CLOSED) && <Actions appId={appId} state={state} />}
+        <Actions appId={appId} state={state} refetchAllData={refetchAllData} />
       </div>
     </PageHeader>
   );

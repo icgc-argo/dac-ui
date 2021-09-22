@@ -26,16 +26,32 @@ import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import urlJoin from 'url-join';
 import { isEqual } from 'lodash';
 import { useAuthContext } from 'global/hooks';
-import { API } from 'global/constants';
+import { API, APPLICATIONS_PATH } from 'global/constants';
 import { AxiosError } from 'axios';
 import { ApplicationState } from '../../types';
 import { CustomLoadingButton, generatePDFDocument } from '../Forms/common';
+import { ModalPortal } from 'components/Root';
+import Modal from '@icgc-argo/uikit/Modal';
+import router from 'next/router';
+import { RefetchDataFunction } from '../Forms/types';
+import Banner from '@icgc-argo/uikit/notifications/Banner';
+
+enum VisibleModalOption {
+  NONE = 'NONE',
+  CLOSE_APPLICATION = 'CLOSE APPLICATION',
+}
 
 // EXPIRED and RENEWING handling is tbd, CLOSED excludes Action buttons
 const getPdfButtonText: (state: ApplicationState) => string = (state) => {
   const text = 'PDF';
 
-  if ([ApplicationState.DRAFT, ApplicationState.REVISIONS_REQUESTED].includes(state)) {
+  if (
+    [
+      ApplicationState.DRAFT,
+      ApplicationState.REVISIONS_REQUESTED,
+      ApplicationState.CLOSED,
+    ].includes(state)
+  ) {
     return `DRAFT ${text}`;
   }
   if (isEqual(state, ApplicationState.SIGN_AND_SUBMIT)) {
@@ -55,96 +71,195 @@ const PDF_BUTTON_WIDTH = 130;
 const HeaderActions = ({
   appId,
   state,
+  refetchAllData,
 }: {
   appId: string;
   state: ApplicationState;
+  refetchAllData: RefetchDataFunction;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();
   const { fetchWithAuth } = useAuthContext();
   const [pdfIsLoading, setPdfIsLoading] = useState<boolean>(false);
+  const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const pdfButtonText = getPdfButtonText(state);
 
-  return (
-    <section
-      css={css`
-        display: flex;
+  const closeApplicationVisible = [
+    ApplicationState.DRAFT,
+    ApplicationState.SIGN_AND_SUBMIT,
+    ApplicationState.REVISIONS_REQUESTED,
+    ApplicationState.APPROVED,
+  ].includes(state);
 
-        *:not(:last-of-type) {
-          margin-right: 5px;
-        }
-      `}
-    >
-      {/*
-      // Commented out for soft launch. User flow is not implemented yet.
-      // Please do not delete. Will be used for hard launch.
-      <Button onClick={function noRefCheck() {}} size="sm" variant="secondary">
-        Close Application
-      </Button>*/}
-      <Button
-        // setting width on button & CustomLoadingButton to prevent resize on loading state
+  const dismissModal = () => setVisibleModal(VisibleModalOption.NONE);
+
+  const submit = () => {
+    setIsSubmitting(true);
+    fetchWithAuth({
+      data: {
+        state: ApplicationState.CLOSED,
+      },
+      method: 'PATCH',
+      url: urlJoin(API.APPLICATIONS, appId),
+    })
+      .then(() => {
+        refetchAllData();
+        router.push(`${APPLICATIONS_PATH}/${appId}?section=terms`);
+      })
+      .catch((err: AxiosError) => {
+        console.error('Failed to submit.', err);
+      })
+      .finally(() => {
+        dismissModal();
+        setIsSubmitting(false);
+      });
+  };
+
+  return (
+    <>
+      {visibleModal === VisibleModalOption.CLOSE_APPLICATION && (
+        <ModalPortal>
+          <Modal
+            actionButtonText="Yes, close"
+            title="Are you sure you want to close this application?"
+            onCloseClick={dismissModal}
+            FooterEl={() => (
+              <div
+                css={css`
+                  display: flex;
+                  flex-direction: row;
+                `}
+              >
+                <Button
+                  size="md"
+                  onClick={submit}
+                  Loader={(props: any) => <CustomLoadingButton text="Yes, Close" {...props} />}
+                  isLoading={isSubmitting}
+                >
+                  Yes, Close
+                </Button>
+
+                <Button
+                  variant="text"
+                  css={css`
+                    margin-left: 10px;
+                  `}
+                  size="md"
+                  onClick={dismissModal}
+                >
+                  Cancel
+                </Button>
+              </div>
+            )}
+          >
+            {state === ApplicationState.APPROVED && (
+              <Banner
+                content={
+                  <>
+                    <b>WARNING:</b> This application is approved, and closing it means that the
+                    Applicant and all Collaborators associated with this research project{' '}
+                    <b>will lose access to ICGC Controlled Data.</b>
+                  </>
+                }
+                variant="WARNING"
+              />
+            )}
+            <p>
+              Are you sure you want to close{' '}
+              <b>Application: {appId} (Ontario Institute for Cancer Research)?</b>
+            </p>
+            <p>
+              <b>This action cannot be undone and you will be unable to reopen this application.</b>
+            </p>
+          </Modal>
+        </ModalPortal>
+      )}
+      <section
         css={css`
-          width: ${PDF_BUTTON_WIDTH}px;
-        `}
-        isAsync
-        Loader={(props: any) => <CustomLoadingButton text={pdfButtonText} {...props} />}
-        variant="secondary"
-        isLoading={pdfIsLoading}
-        onClick={async () => {
-          setPdfIsLoading(true);
-          const isDownloadZip = [ApplicationState.REVIEW, ApplicationState.APPROVED].includes(
-            state,
-          );
-          const downloadUrl = urlJoin(
-            API.APPLICATIONS,
-            appId,
-            isDownloadZip ? API.APP_PACKAGE : '',
-          );
-          const data = await fetchWithAuth({
-            url: downloadUrl,
-            ...(isDownloadZip ? { responseType: 'blob' } : {}),
-          })
-            .then((res: any) => {
-              if (res.data && isDownloadZip) {
-                const downloadUrl = window.URL.createObjectURL(new Blob([res.data]));
-                const filename = res.headers['content-disposition'].split('"')[1];
-                const link = document.createElement('a');
-                link.href = downloadUrl;
-                link.setAttribute('download', filename);
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
-                setPdfIsLoading(false);
-                return {};
-              } else {
-                return res.data;
-              }
-            })
-            .catch((err: AxiosError) => {
-              console.error('Application fetch failed, pdf or zip not generated.', err);
-              setPdfIsLoading(false);
-              return null;
-            });
-          // if data fetch fails, do not proceed to pdf generation
-          if (data && !isDownloadZip) {
-            // reset loading state after generate is done
-            await generatePDFDocument(data);
-            setPdfIsLoading(false);
+          display: flex;
+
+          *:not(:last-of-type) {
+            margin-right: 5px;
           }
-        }}
+        `}
       >
-        <Icon
+        {closeApplicationVisible && (
+          <Button
+            onClick={() => setVisibleModal(VisibleModalOption.CLOSE_APPLICATION)}
+            size="sm"
+            variant="secondary"
+          >
+            Close Application
+          </Button>
+        )}
+        <Button
+          // setting width on button & CustomLoadingButton to prevent resize on loading state
           css={css`
-            margin-bottom: -2px;
+            width: ${PDF_BUTTON_WIDTH}px;
           `}
-          fill={theme.colors.accent2_dark}
-          height="12px"
-          width="12px"
-          name="download"
-        />{' '}
-        {pdfButtonText}
-      </Button>
-    </section>
+          isAsync
+          Loader={(props: any) => <CustomLoadingButton text={pdfButtonText} {...props} />}
+          variant="secondary"
+          isLoading={pdfIsLoading}
+          onClick={async () => {
+            setPdfIsLoading(true);
+            const isDownloadZip = [
+              ApplicationState.REVIEW,
+              ApplicationState.APPROVED,
+              ApplicationState.REJECTED,
+            ].includes(state);
+            const downloadUrl = urlJoin(
+              API.APPLICATIONS,
+              appId,
+              isDownloadZip ? API.APP_PACKAGE : '',
+            );
+            const data = await fetchWithAuth({
+              url: downloadUrl,
+              ...(isDownloadZip ? { responseType: 'blob' } : {}),
+            })
+              .then((res: any) => {
+                if (res.data && isDownloadZip) {
+                  const downloadUrl = window.URL.createObjectURL(new Blob([res.data]));
+                  const filename = res.headers['content-disposition'].split('"')[1];
+                  const link = document.createElement('a');
+                  link.href = downloadUrl;
+                  link.setAttribute('download', filename);
+                  document.body.appendChild(link);
+                  link.click();
+                  link.remove();
+                  setPdfIsLoading(false);
+                  return {};
+                } else {
+                  return res.data;
+                }
+              })
+              .catch((err: AxiosError) => {
+                console.error('Application fetch failed, pdf or zip not generated.', err);
+                setPdfIsLoading(false);
+                return null;
+              });
+            // if data fetch fails, do not proceed to pdf generation
+            if (data && !isDownloadZip) {
+              // reset loading state after generate is done
+              await generatePDFDocument(data);
+              setPdfIsLoading(false);
+            }
+          }}
+        >
+          <Icon
+            css={css`
+              margin-bottom: -2px;
+            `}
+            fill={theme.colors.accent2_dark}
+            height="12px"
+            width="12px"
+            name="download"
+          />{' '}
+          {pdfButtonText}
+        </Button>
+      </section>
+    </>
   );
 };
 
