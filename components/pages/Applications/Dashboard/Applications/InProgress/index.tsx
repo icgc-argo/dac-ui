@@ -57,16 +57,18 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     ...pick(application, ['createdAtUtc', 'submittedAtUtc', 'closedAtUtc', 'approvedAtUtc']),
   };
 
-  const expiryDate = expiresAtUtc ? (
-    `Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`
-  ) : closedAtUtc ? (
+  const expiryDate = (
     <div
       css={css`
         color: ${theme.colors.error};
       `}
-    >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
-  ) : (
-    ''
+    >
+      {expiresAtUtc
+        ? `Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`
+        : closedAtUtc
+        ? `Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`
+        : ''}
+    </div>
   );
 
   const statusError = [ApplicationState.REVISIONS_REQUESTED].includes(state as ApplicationState);
@@ -92,8 +94,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
               margin-bottom: 5px;
             `}
           >
-            <b>Status:</b>
-            {' '}
+            <b>Status:</b>{' '}
             <span
               css={css`
                 color: ${statusError ? theme.colors.error : 'inherit'};
