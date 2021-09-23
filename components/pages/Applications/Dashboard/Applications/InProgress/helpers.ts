@@ -22,25 +22,34 @@ import { format as formatDate } from 'date-fns';
 import { DATE_TEXT_FORMAT } from 'global/constants';
 import { StatusDates } from '.';
 
-export const getStatusText = (state: ApplicationState, dates: StatusDates) => {
+export const getStatusText = (
+  state: ApplicationState,
+  dates: StatusDates,
+  revisionsRequested: boolean,
+) => {
   const formatStatusDate = (date: string) =>
     formatDate(new Date(date || dates.lastUpdatedAtUtc), DATE_TEXT_FORMAT);
+
+  const revisionsRequestedText = `Reopened for revisions on ${formatStatusDate(
+    dates.lastUpdatedAtUtc,
+  )}. Revision details were sent via email.`;
+  const createdOnText = `Created on ${formatStatusDate(dates.createdAtUtc)}.`;
+
   switch (state) {
     case ApplicationState.APPROVED:
       return `Approved on ${formatStatusDate(
         dates.approvedAtUtc,
       )}. You now have access to ICGC Controlled Data.`;
     case ApplicationState.SIGN_AND_SUBMIT:
+      return revisionsRequested ? revisionsRequestedText : createdOnText;
     case ApplicationState.DRAFT:
-      return `Created on ${formatStatusDate(dates.createdAtUtc)}.`;
+      return createdOnText;
     case ApplicationState.REVIEW:
       return `Submitted on ${formatStatusDate(
         dates.submittedAtUtc,
       )}. This application is locked for ICGC DACO review.`;
     case ApplicationState.REVISIONS_REQUESTED:
-      return `Reopened for revisions on ${formatStatusDate(
-        dates.lastUpdatedAtUtc,
-      )}. Revision details were sent via email.`;
+      return revisionsRequestedText;
     case ApplicationState.REJECTED:
       return `Rejected on ${formatStatusDate(
         dates.lastUpdatedAtUtc,
