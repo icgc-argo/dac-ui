@@ -30,6 +30,7 @@ export type ApplicationRecord = {
   accessExpiry: string;
   lastUpdated: string;
   status: string;
+  country: string;
 };
 
 export enum ApplicationState {
@@ -83,6 +84,9 @@ export type ApplicationsResponseItem = {
       primaryAffiliation: string;
       displayName: string;
       googleEmail: string;
+    };
+    address: {
+      country: string;
     };
   };
   ethics: {
@@ -241,6 +245,7 @@ export enum ApplicationsField {
   lastUpdatedAtUtc = 'lastUpdatedAtUtc',
   state = 'state',
   appNumber = 'appNumber',
+  'applicant.address.country' = 'country',
 }
 
 export type AuthAPIFetchFunction = (options?: {
