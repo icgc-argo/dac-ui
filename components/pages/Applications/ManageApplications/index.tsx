@@ -21,6 +21,7 @@ import React, { ReactElement, useState } from 'react';
 import { Col, Container, Row } from 'react-grid-system';
 import { SortedChangeFunction } from 'react-table';
 import pluralize from 'pluralize';
+import { trim } from 'lodash';
 
 import { css } from '@icgc-argo/uikit';
 import CardContainer from '@icgc-argo/uikit/Container';
@@ -47,6 +48,8 @@ import {
 import PageHeader from 'components/PageHeader';
 import { useGetApplications } from 'global/hooks';
 import GenericError from 'components/pages/Error/Generic';
+import Input from '@icgc-argo/uikit/form/Input';
+import useDebounce from 'global/hooks/useDebounce';
 
 const getDefaultSort = (applicationSorts: ApplicationsSort[]) =>
   applicationSorts.map(({ field, order }) => ({ id: field, desc: order === 'desc' }));
@@ -55,6 +58,11 @@ const useManageApplicationsState = () => {
   const [page, setPage] = useState<number>(DEFAULT_PAGE);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
   const [sort, setSort] = useState<ApplicationsSort[]>(DEFAULT_SORT);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const onSearchQueryChange = (newQuery: string) => {
+    setSearchQuery(newQuery);
+  };
 
   const onPageChange = (newPageNum: number) => {
     setPage(newPageNum);
@@ -88,9 +96,11 @@ const useManageApplicationsState = () => {
     onPageChange,
     onPageSizeChange,
     onSortedChange,
+    onSearchQueryChange,
     page,
     pageSize,
     sort,
+    searchQuery,
   };
 };
 
@@ -99,19 +109,24 @@ const ManageApplications = (): ReactElement => {
     onPageChange,
     onPageSizeChange,
     onSortedChange,
+    onSearchQueryChange,
     page,
     pageSize,
     sort,
+    searchQuery,
   } = useManageApplicationsState();
 
   const theme = useTheme();
   const containerRef = React.createRef<HTMLDivElement>();
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   const { error, isLoading, response } = useGetApplications({
     page,
     pageSize,
     sort,
     states: adminStatesAllowList,
+    query: debouncedSearchQuery,
   });
   const { items = [] } = response?.data || {};
   const { pagesCount = 0, totalCount = 0 } = response?.data?.pagingInfo || {};
@@ -190,7 +205,16 @@ const ManageApplications = (): ReactElement => {
                       justify-content: flex-end;
                     `}
                   >
-                    {/* TODO search */}
+                    <Input
+                      aria-label="application-table-search"
+                      placeholder="Search..."
+                      preset="search"
+                      value={searchQuery}
+                      onChange={(e) => {
+                        // setSearchQuery(e.target.value);
+                        onSearchQueryChange(trim(e.target.value));
+                      }}
+                    />
                     {/* <Button
                         size="sm"
                         variant="secondary"
