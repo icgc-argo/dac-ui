@@ -39,6 +39,7 @@ const useGetApplications = ({
   pageSize = DEFAULT_PAGE_SIZE,
   sort = DEFAULT_SORT,
   states = [],
+  includeStats = false,
 }: ApplicationsRequestData = {}) => {
   const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
   const [error, setError] = useState<AxiosError | undefined>(undefined);
@@ -50,14 +51,17 @@ const useGetApplications = ({
     if (token && !isTokenLoading) {
       fetchWithAuth({
         method: 'GET' as Method,
-        ...appId ? {} : {
-          params: {
-            page,
-            pageSize,
-            sort: stringifySort(sort),
-            states: stringifyStates(states),
-          }
-        },
+        ...(appId
+          ? {}
+          : {
+              params: {
+                page,
+                pageSize,
+                sort: stringifySort(sort),
+                states: stringifyStates(states),
+                includeStats,
+              },
+            }),
         url: urlJoin(API.APPLICATIONS, appId),
       })
         .then((res: AxiosResponse) => {
@@ -68,7 +72,7 @@ const useGetApplications = ({
         })
         .finally(() => {
           setIsLoading(false);
-        })
+        });
     }
   }, [page, pageSize, stringifySort(sort)]);
 

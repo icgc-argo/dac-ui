@@ -33,6 +33,7 @@ import {
   ApplicationsSortingRule,
   ApplicationsSortOrder,
   ApplicationsField,
+  ApplicationState,
 } from '../types';
 
 import {
@@ -47,6 +48,7 @@ import {
 import PageHeader from 'components/PageHeader';
 import { useGetApplications } from 'global/hooks';
 import GenericError from 'components/pages/Error/Generic';
+import Icon from '@icgc-argo/uikit/Icon';
 
 const getDefaultSort = (applicationSorts: ApplicationsSort[]) =>
   applicationSorts.map(({ field, order }) => ({ id: field, desc: order === 'desc' }));
@@ -112,9 +114,34 @@ const ManageApplications = (): ReactElement => {
     pageSize,
     sort,
     states: adminStatesAllowList,
+    includeStats: true,
   });
   const { items = [] } = response?.data || {};
   const { pagesCount = 0, totalCount = 0 } = response?.data?.pagingInfo || {};
+  const { countByState = {} } = response?.data?.stats || {};
+
+  const stats: { accessor: ApplicationState; header: string; icon: React.ReactElement }[] = [
+    {
+      accessor: ApplicationState.REVIEW,
+      header: 'For Review',
+      icon: <img src="/icons-status-review.svg" width="18px" height="18px" />,
+    },
+    {
+      accessor: ApplicationState.APPROVED,
+      header: 'Approved',
+      icon: <Icon name="success" fill={theme.colors.accent1} width="18px" height="18px" />,
+    },
+    {
+      accessor: ApplicationState.REVISIONS_REQUESTED,
+      header: 'Revisions Requested',
+      icon: <img src="/icons-toc-edit.svg" width="18px" height="18px" />,
+    },
+    {
+      accessor: ApplicationState.EXPIRED,
+      header: 'Expired',
+      icon: <img src="/icons-toc-errors.svg" width="18px" height="18px" />,
+    },
+  ];
 
   return (
     <>
@@ -139,12 +166,8 @@ const ManageApplications = (): ReactElement => {
                   padding: 0 24px !important;
                 `}
               >
-                <Row
-                  css={css`
-                    justify-content: space-between;
-                  `}
-                >
-                  <Col>
+                <Row>
+                  <Col md={5}>
                     <Typography
                       as="h2"
                       variant="subtitle2"
@@ -155,7 +178,23 @@ const ManageApplications = (): ReactElement => {
                       Manage Applications
                     </Typography>
                   </Col>
-                  <Col>{/* TODO status indicators */}</Col>
+                  <Col md={7}>
+                    <Row style={{ justifyContent: 'space-between', paddingRight: '24px' }}>
+                      {stats.map((stat) => (
+                        <Row style={{ alignItems: 'center', margin: 0 }}>
+                          {stat.icon}
+                          <Typography
+                            css={css`
+                              margin-left: 8px;
+                              line-height: 20px;
+                            `}
+                          >
+                            {countByState[stat.accessor]} {stat.header}
+                          </Typography>
+                        </Row>
+                      ))}
+                    </Row>
+                  </Col>
                 </Row>
               </Container>
               <Container
