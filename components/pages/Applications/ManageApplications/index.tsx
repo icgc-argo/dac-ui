@@ -205,16 +205,6 @@ const ManageApplications = (): ReactElement => {
                       justify-content: flex-end;
                     `}
                   >
-                    <Input
-                      aria-label="application-table-search"
-                      placeholder="Search..."
-                      preset="search"
-                      value={searchQuery}
-                      onChange={(e) => {
-                        // setSearchQuery(e.target.value);
-                        onSearchQueryChange(trim(e.target.value));
-                      }}
-                    />
                     {/* <Button
                         size="sm"
                         variant="secondary"
@@ -230,6 +220,18 @@ const ManageApplications = (): ReactElement => {
                           Export Table
                         </span>
                       </Button> */}
+                    <Input
+                      aria-label="application-table-search"
+                      placeholder="Search..."
+                      preset="search"
+                      value={searchQuery}
+                      onChange={(e) => {
+                        onSearchQueryChange(trim(e.target.value));
+                      }}
+                      css={css`
+                        width: 200px;
+                      `}
+                    />
                   </Col>
                 </Row>
                 <Row>
