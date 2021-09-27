@@ -49,6 +49,8 @@ import {
 import pluralize from 'pluralize';
 import { CustomLoadingButton } from '../common';
 import Banner from '@icgc-argo/uikit/notifications/Banner';
+import { useToaster } from 'global/hooks/useToaster';
+import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
 
 const VALID_FILE_TYPE = [
   'application/msword',
@@ -80,6 +82,7 @@ const UploadsTable = ({
   refetchAllData,
   required,
   isRequiredPostApproval,
+  isApplicationApproved,
 }: {
   appId: string;
   isSectionDisabled: boolean;
@@ -87,6 +90,7 @@ const UploadsTable = ({
   refetchAllData: (action?: Partial<FormValidationAction>) => void;
   required: boolean;
   isRequiredPostApproval: boolean;
+  isApplicationApproved: boolean;
 }): ReactElement => {
   const containerRef = createRef<HTMLDivElement>();
   const fileInputRef = createRef<HTMLInputElement>();
@@ -103,6 +107,8 @@ const UploadsTable = ({
   const [modalVisibility, setModalVisibility] = useState(ModalStates.NONE);
 
   const [isFileUploadInProgress, setFileUploadInProgress] = useState(false);
+
+  const toaster = useToaster();
 
   // make button work as input
   const selectFile = () => {
@@ -129,6 +135,14 @@ const UploadsTable = ({
           type: 'updating',
           value: data,
         });
+        if (isApplicationApproved) {
+          toaster.addToast({
+            variant: TOAST_VARIANTS.SUCCESS,
+            title: 'New Ethics Letter has been Uploaded',
+            content: 'The ICGC DACO has been notified for review.',
+            interactionType: 'CLOSE',
+          });
+        }
       })
       .catch((err: AxiosError) => {
         console.error('File failed to upload.', err);
