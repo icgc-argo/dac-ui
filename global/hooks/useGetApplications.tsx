@@ -59,7 +59,7 @@ const useGetApplications = ({
                 pageSize,
                 sort: stringifySort(sort),
                 states: stringifyStates(states),
-                query,
+                ...(query.length && { query }),
               },
             }),
         url: urlJoin(API.APPLICATIONS, appId),
