@@ -36,7 +36,6 @@ import Input from '@icgc-argo/uikit/form/Input';
 import Modal from '@icgc-argo/uikit/Modal';
 import Typography from '@icgc-argo/uikit/Typography';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
-
 import {
   ApplicationState,
   Collaborator,
@@ -58,6 +57,8 @@ import {
 } from '../types';
 import TableComponent from './TableComponent';
 import ErrorBanner, { AddCollaboratorError, CollaboratorErrorCodes } from './ErrorBanner';
+import { useToaster } from 'global/hooks/useToaster';
+import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
 
 const Collaborators = ({
   appId,
@@ -75,7 +76,7 @@ const Collaborators = ({
   validateFieldTouched: FormFieldValidationTriggerFunction;
 }): ReactElement => {
   const [collaboratorCount, setCollaboratorCount] = useState(0);
-  const [modalVisible, setModalVisible] = useState<'collaborator' | string | null>(null);
+  const [modalVisible, setModalVisible] = useState<ModalStates | string | null>(null);
   const [modalHasErrors, setModalHasErrors] = useState(true);
   const [modalBannerError, setModalBannerError] = useState<
     keyof typeof AddCollaboratorError | null
@@ -88,6 +89,8 @@ const Collaborators = ({
     ApplicationState.REJECTED,
     ApplicationState.CLOSED,
   ].includes(applicationState);
+
+  const applicationIsApproved = applicationState === ApplicationState.APPROVED;
 
   const clearCollaboratorModalData = () => {
     validateFieldTouched({
@@ -109,8 +112,10 @@ const Collaborators = ({
 
   const newCollaboratorModal = () => {
     clearCollaboratorModalData(); // ensure modal is clear for a new collaborator
-    setModalVisible('collaborator');
+    setModalVisible(ModalStates.ADD_COLLABORATOR);
   };
+
+  const toaster = useToaster();
 
   const handleCollaboratorCreateOrEdit = useCallback(() => {
     const newCollaboratorData = Object.entries(localState.list?.innerType?.fields).reduce(
@@ -144,6 +149,15 @@ const Collaborators = ({
           refetchAllData();
           dismissCollaboratorModal();
           setModalBannerError(null);
+          if (applicationIsApproved && modalVisible === ModalStates.ADD_COLLABORATOR) {
+            toaster.addToast({
+              variant: TOAST_VARIANTS.SUCCESS,
+              title: 'New Collaborator Added',
+              content:
+                'The Collaborator has been notified and ICGC DACO has been notified for review.',
+              interactionType: 'NONE',
+            });
+          }
         } else {
           // TODO: troubleshooting log, remove upon release
           console.error('response', res);
@@ -177,6 +191,15 @@ const Collaborators = ({
         .then(() => {
           refetchAllData();
           dismissCollaboratorModal();
+          if (applicationIsApproved) {
+            toaster.addToast({
+              variant: TOAST_VARIANTS.SUCCESS,
+              title: 'Collaborator has been Removed',
+              content:
+                'The collaborator has been notified that their access will be removed within the next 24 hours.',
+              interactionType: 'NONE',
+            });
+          }
         })
         .catch((err: AxiosError) => {
           console.error('Failed to remove collaborator.', err);
@@ -198,6 +221,11 @@ const Collaborators = ({
     });
   };
 
+  enum ModalStates {
+    EDIT_COLLABORATOR = 'EDIT_COLLABORATOR',
+    ADD_COLLABORATOR = 'ADD_COLLABORATOR',
+  }
+
   const handleTableActions = (action: 'edit' | 'remove', collaboratorId: string) => () => {
     validateFieldTouched({
       // faking event values to keep scope limited
@@ -212,7 +240,7 @@ const Collaborators = ({
 
     switch (action) {
       case 'edit': {
-        setModalVisible('collaborator');
+        setModalVisible(ModalStates.EDIT_COLLABORATOR);
         break;
       }
 
@@ -317,7 +345,8 @@ const Collaborators = ({
       </section>
 
       {modalVisible &&
-        (modalVisible === 'collaborator' ? (
+        (modalVisible === ModalStates.ADD_COLLABORATOR ||
+        modalVisible === ModalStates.EDIT_COLLABORATOR ? (
           <ModalPortal>
             <Modal
               actionButtonText={`${
