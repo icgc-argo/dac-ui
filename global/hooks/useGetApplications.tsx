@@ -40,6 +40,7 @@ const useGetApplications = ({
   sort = DEFAULT_SORT,
   states = [],
   includeStats = false,
+  query = '',
 }: ApplicationsRequestData = {}) => {
   const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
   const [error, setError] = useState<AxiosError | undefined>(undefined);
@@ -60,6 +61,7 @@ const useGetApplications = ({
                 sort: stringifySort(sort),
                 states: stringifyStates(states),
                 includeStats,
+                query,
               },
             }),
         url: urlJoin(API.APPLICATIONS, appId),
@@ -74,7 +76,7 @@ const useGetApplications = ({
           setIsLoading(false);
         });
     }
-  }, [page, pageSize, stringifySort(sort)]);
+  }, [page, pageSize, stringifySort(sort), query]);
 
   return { error, isLoading, response };
 };
