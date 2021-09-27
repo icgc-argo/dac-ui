@@ -42,7 +42,7 @@ const Actions = ({
   const theme: UikitTheme = useTheme();
 
   const iconColor = theme.colors[disabled ? 'grey_disabled' : 'accent2'];
-
+  console.log('table', !['APPROVED'].includes(applicationState));
   return (
     <div
       css={css`

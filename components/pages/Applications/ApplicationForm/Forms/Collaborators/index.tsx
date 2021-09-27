@@ -90,7 +90,7 @@ const Collaborators = ({
     ApplicationState.CLOSED,
   ].includes(applicationState);
 
-  const applicationIsApproved = applicationState === ApplicationState.APPROVED;
+  const isApplicationApproved = applicationState === ApplicationState.APPROVED;
 
   const clearCollaboratorModalData = () => {
     validateFieldTouched({
@@ -149,13 +149,13 @@ const Collaborators = ({
           refetchAllData();
           dismissCollaboratorModal();
           setModalBannerError(null);
-          if (applicationIsApproved && modalVisible === ModalStates.ADD_COLLABORATOR) {
+          if (isApplicationApproved && modalVisible === ModalStates.ADD_COLLABORATOR) {
             toaster.addToast({
               variant: TOAST_VARIANTS.SUCCESS,
               title: 'New Collaborator Added',
               content:
                 'The Collaborator has been notified and ICGC DACO has been notified for review.',
-              interactionType: 'NONE',
+              interactionType: 'CLOSE',
             });
           }
         } else {
@@ -191,13 +191,13 @@ const Collaborators = ({
         .then(() => {
           refetchAllData();
           dismissCollaboratorModal();
-          if (applicationIsApproved) {
+          if (isApplicationApproved) {
             toaster.addToast({
               variant: TOAST_VARIANTS.SUCCESS,
               title: 'Collaborator has been Removed',
               content:
                 'The collaborator has been notified that their access will be removed within the next 24 hours.',
-              interactionType: 'NONE',
+              interactionType: 'CLOSE',
             });
           }
         })
