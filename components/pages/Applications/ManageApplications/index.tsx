@@ -129,7 +129,7 @@ const ManageApplications = (): ReactElement => {
     sort,
     states: adminStatesAllowList,
     includeStats: true,
-    query: debouncedSearchQuery,
+    query: trim(debouncedSearchQuery),
   });
   const { items = [] } = response?.data || {};
   const { pagesCount = 0, totalCount = 0 } = response?.data?.pagingInfo || {};
@@ -265,7 +265,7 @@ const ManageApplications = (): ReactElement => {
                       preset="search"
                       value={searchQuery}
                       onChange={(e) => {
-                        onSearchQueryChange(trim(e.target.value));
+                        onSearchQueryChange(e.target.value);
                       }}
                       css={css`
                         width: 200px;

@@ -70,10 +70,12 @@ const PDF_BUTTON_WIDTH = 130;
 
 const HeaderActions = ({
   appId,
+  primaryAffiliation = '',
   state,
   refetchAllData,
 }: {
   appId: string;
+  primaryAffiliation: string;
   state: ApplicationState;
   refetchAllData: RefetchDataFunction;
 }): ReactElement => {
@@ -167,7 +169,9 @@ const HeaderActions = ({
             )}
             <p>
               Are you sure you want to close{' '}
-              <b>Application: {appId} (Ontario Institute for Cancer Research)?</b>
+              <b>
+                Application: {appId} ({primaryAffiliation})?
+              </b>
             </p>
             <p>
               <b>This action cannot be undone and you will be unable to reopen this application.</b>
