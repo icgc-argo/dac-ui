@@ -59,6 +59,7 @@ export type ApplicationsRequestData = {
   pageSize?: number;
   sort?: ApplicationsSort[];
   states?: ApplicationState[];
+  includeStats?: boolean;
   query?: string;
 };
 

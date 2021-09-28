@@ -39,6 +39,7 @@ const useGetApplications = ({
   pageSize = DEFAULT_PAGE_SIZE,
   sort = DEFAULT_SORT,
   states = [],
+  includeStats = false,
   query = '',
 }: ApplicationsRequestData = {}) => {
   const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
@@ -59,6 +60,7 @@ const useGetApplications = ({
                 pageSize,
                 sort: stringifySort(sort),
                 states: stringifyStates(states),
+                includeStats,
                 ...(query.length && { query }),
               },
             }),
