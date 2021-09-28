@@ -107,7 +107,12 @@ const ApplicationHeader = ({
           <Progress state={state} />
         </div>
 
-        <Actions appId={appId} state={state} refetchAllData={refetchAllData} />
+        <Actions
+          appId={appId}
+          primaryAffiliation={primaryAffiliation}
+          state={state}
+          refetchAllData={refetchAllData}
+        />
       </div>
     </PageHeader>
   );
