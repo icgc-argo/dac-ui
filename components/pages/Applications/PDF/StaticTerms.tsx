@@ -81,11 +81,17 @@ const StaticTerms = ({ isPdf = false, data }: { isPdf?: boolean; data?: Applicat
           </ListComponent>
 
           <ListComponent asListItem>
-            have a scientific abstract outlining the desired use of the ICGC Controlled Data
+            have a scientific abstract and lay summary outlining the desired use of the ICGC
+            Controlled Data
+          </ListComponent>
+
+          <ListComponent asListItem>
+            have at least 3 qualifying publications of which you were an author/co-author
           </ListComponent>
 
           <ListComponent asListItem style={{ marginBottom: '10pt' }}>
-            have at least 3 qualifying publications of which you were an author/co-author
+            include an ethics letter, if ethics approval for use of ICGC Controlled Data is required
+            in your country/region
           </ListComponent>
         </ListAsTypography>
 

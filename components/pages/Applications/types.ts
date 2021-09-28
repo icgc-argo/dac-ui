@@ -30,6 +30,7 @@ export type ApplicationRecord = {
   accessExpiry: string;
   lastUpdated: string;
   status: string;
+  country: string;
 };
 
 export enum ApplicationState {
@@ -58,6 +59,8 @@ export type ApplicationsRequestData = {
   pageSize?: number;
   sort?: ApplicationsSort[];
   states?: ApplicationState[];
+  includeStats?: boolean;
+  query?: string;
 };
 
 export type ApplicationsSort = {
@@ -84,6 +87,9 @@ export type ApplicationsResponseItem = {
       displayName: string;
       googleEmail: string;
     };
+    address: {
+      country: string;
+    };
   };
   ethics: {
     declaredAsRequired: string;
@@ -95,6 +101,7 @@ export type ApplicationsResponseItem = {
   submittedAtUtc: string;
   closedAtUtc: string;
   approvedAtUtc: string;
+  revisionsRequested: boolean;
 };
 
 export type ApplicationDataByField = {
@@ -241,6 +248,7 @@ export enum ApplicationsField {
   lastUpdatedAtUtc = 'lastUpdatedAtUtc',
   state = 'state',
   appNumber = 'appNumber',
+  'applicant.address.country' = 'country',
 }
 
 export type AuthAPIFetchFunction = (options?: {

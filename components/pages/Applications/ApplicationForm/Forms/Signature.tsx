@@ -363,6 +363,7 @@ const Signature = ({
           ) : (
             <>
               <Button
+                disabled={isSectionDisabled}
                 size="sm"
                 onClick={selectFile}
                 aria-label="Signed Application"
