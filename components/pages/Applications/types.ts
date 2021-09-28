@@ -101,6 +101,7 @@ export type ApplicationsResponseItem = {
   submittedAtUtc: string;
   closedAtUtc: string;
   approvedAtUtc: string;
+  revisionsRequested: boolean;
 };
 
 export type ApplicationDataByField = {
