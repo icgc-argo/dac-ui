@@ -43,6 +43,7 @@ export const stringifyStates = (statesArr: ApplicationState[]) => statesArr.join
 export const fieldDisplayNames = {
   appId: 'Application #',
   'applicant.info.primaryAffiliation': 'Institution',
+  'applicant.address.country': 'Country',
   'applicant.info.displayName': 'Applicant',
   'applicant.info.googleEmail': 'Applicant Google Email',
   expiresAtUtc: 'Access Expiry',
@@ -55,6 +56,7 @@ export const formatTableData = (data: ApplicationsResponseItem[]) =>
   data.map<ApplicationRecord>((datum: ApplicationsResponseItem) => ({
     appId: datum.appId,
     institution: datum.applicant.info.primaryAffiliation,
+    country: datum.applicant.address.country,
     applicant: datum.applicant.info.displayName,
     googleEmail: datum.applicant.info.googleEmail,
     ethicsLetter: datum.ethics.declaredAsRequired,
@@ -79,6 +81,11 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
     Header: fieldDisplayNames['applicant.info.primaryAffiliation'],
     id: ApplicationsField['applicant.info.primaryAffiliation'],
     accessor: 'institution',
+  },
+  {
+    Header: fieldDisplayNames['applicant.address.country'],
+    id: ApplicationsField['applicant.address.country'],
+    accessor: 'country',
   },
   {
     Header: fieldDisplayNames['applicant.info.displayName'],

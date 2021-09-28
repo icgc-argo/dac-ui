@@ -51,6 +51,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     lastUpdatedAtUtc,
     closedAtUtc,
     approvedAtUtc,
+    revisionsRequested,
   } = application;
 
   const dates: StatusDates = {
@@ -69,7 +70,11 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
       >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
     ) : null;
 
-  const statusError = [ApplicationState.REVISIONS_REQUESTED].includes(state as ApplicationState);
+  const statusError = revisionsRequested &&
+    [
+      ApplicationState.REVISIONS_REQUESTED,
+      ApplicationState.SIGN_AND_SUBMIT
+    ].includes(state as ApplicationState);
 
   return (
     <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={expiryDate}>
@@ -98,7 +103,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
                 color: ${statusError ? theme.colors.error : 'inherit'};
               `}
             >
-              {getStatusText(state as ApplicationState, dates)}
+              {getStatusText(state as ApplicationState, dates, revisionsRequested)}
             </span>
           </div>
           <div>

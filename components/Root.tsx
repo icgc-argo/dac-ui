@@ -28,6 +28,8 @@ import Head from 'components/Head';
 import { AuthProvider } from 'global/hooks/useAuthContext';
 import { PageContext } from 'global/hooks/usePageContext';
 import DefaultPageLayout from './DefaultPageLayout';
+import { ToasterContext, useToastState } from 'global/hooks/useToaster';
+import ToastStack from '@icgc-argo/uikit/notifications/ToastStack';
 
 /**
  * The global portal where modals will show up
@@ -122,6 +124,33 @@ body {
   </style>
 );
 
+const ToastProvider = ({ children }: { children: React.ReactNode }) => {
+  const toaster = useToastState();
+  return (
+    <ToasterContext.Provider value={toaster}>
+      {children}
+      <div
+        className="toastStackContainer"
+        css={css`
+          position: fixed;
+          z-index: 9999;
+          right: 0px;
+          top: 80px;
+        `}
+      >
+        <div
+          css={css`
+            margin-right: 20px;
+            margin-left: 20px;
+          `}
+        >
+          <ToastStack toastConfigs={toaster.toastStack} onInteraction={toaster.onInteraction} />
+        </div>
+      </div>
+    </ToasterContext.Provider>
+  );
+};
+
 const Root = ({
   children,
   pageContext,
@@ -138,17 +167,19 @@ const Root = ({
       <AuthProvider egoJwt={egoJwt}>
         <PageContext.Provider value={pageContext}>
           <ThemeProvider>
-            <div
-              css={css`
-                position: fixed;
-                left: 0px;
-                top: 0px;
-                z-index: 9999;
-                ${fillAvailableWidth}
-              `}
-              ref={modalPortalRef}
-            />
-            <DefaultPageLayout>{children}</DefaultPageLayout>
+            <ToastProvider>
+              <div
+                css={css`
+                  position: fixed;
+                  left: 0px;
+                  top: 0px;
+                  z-index: 9999;
+                  ${fillAvailableWidth}
+                `}
+                ref={modalPortalRef}
+              />
+              <DefaultPageLayout>{children}</DefaultPageLayout>
+            </ToastProvider>
           </ThemeProvider>
         </PageContext.Provider>
       </AuthProvider>

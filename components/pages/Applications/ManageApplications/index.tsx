@@ -21,6 +21,7 @@ import React, { ReactElement, useState } from 'react';
 import { Col, Container, Row } from 'react-grid-system';
 import { SortedChangeFunction } from 'react-table';
 import pluralize from 'pluralize';
+import { trim } from 'lodash';
 
 import { css } from '@icgc-argo/uikit';
 import CardContainer from '@icgc-argo/uikit/Container';
@@ -33,6 +34,7 @@ import {
   ApplicationsSortingRule,
   ApplicationsSortOrder,
   ApplicationsField,
+  ApplicationState,
 } from '../types';
 
 import {
@@ -47,6 +49,9 @@ import {
 import PageHeader from 'components/PageHeader';
 import { useGetApplications } from 'global/hooks';
 import GenericError from 'components/pages/Error/Generic';
+import Icon from '@icgc-argo/uikit/Icon';
+import Input from '@icgc-argo/uikit/form/Input';
+import useDebounce from 'global/hooks/useDebounce';
 
 const getDefaultSort = (applicationSorts: ApplicationsSort[]) =>
   applicationSorts.map(({ field, order }) => ({ id: field, desc: order === 'desc' }));
@@ -55,6 +60,11 @@ const useManageApplicationsState = () => {
   const [page, setPage] = useState<number>(DEFAULT_PAGE);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
   const [sort, setSort] = useState<ApplicationsSort[]>(DEFAULT_SORT);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const onSearchQueryChange = (newQuery: string) => {
+    setSearchQuery(newQuery);
+  };
 
   const onPageChange = (newPageNum: number) => {
     setPage(newPageNum);
@@ -88,9 +98,11 @@ const useManageApplicationsState = () => {
     onPageChange,
     onPageSizeChange,
     onSortedChange,
+    onSearchQueryChange,
     page,
     pageSize,
     sort,
+    searchQuery,
   };
 };
 
@@ -99,22 +111,52 @@ const ManageApplications = (): ReactElement => {
     onPageChange,
     onPageSizeChange,
     onSortedChange,
+    onSearchQueryChange,
     page,
     pageSize,
     sort,
+    searchQuery,
   } = useManageApplicationsState();
 
   const theme = useTheme();
   const containerRef = React.createRef<HTMLDivElement>();
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   const { error, isLoading, response } = useGetApplications({
     page,
     pageSize,
     sort,
     states: adminStatesAllowList,
+    includeStats: true,
+    query: trim(debouncedSearchQuery),
   });
   const { items = [] } = response?.data || {};
   const { pagesCount = 0, totalCount = 0 } = response?.data?.pagingInfo || {};
+  const { countByState = {} } = response?.data?.stats || {};
+
+  const stats: { accessor: ApplicationState; header: string; icon: React.ReactElement }[] = [
+    {
+      accessor: ApplicationState.REVIEW,
+      header: 'For Review',
+      icon: <img src="/icons-status-review.svg" width="18px" height="18px" />,
+    },
+    {
+      accessor: ApplicationState.APPROVED,
+      header: 'Approved',
+      icon: <Icon name="success" fill={theme.colors.accent1} width="18px" height="18px" />,
+    },
+    {
+      accessor: ApplicationState.REVISIONS_REQUESTED,
+      header: 'Revisions Requested',
+      icon: <img src="/icons-toc-edit.svg" width="18px" height="18px" />,
+    },
+    {
+      accessor: ApplicationState.EXPIRED,
+      header: 'Expired',
+      icon: <img src="/icons-toc-errors.svg" width="18px" height="18px" />,
+    },
+  ];
 
   return (
     <>
@@ -139,12 +181,8 @@ const ManageApplications = (): ReactElement => {
                   padding: 0 24px !important;
                 `}
               >
-                <Row
-                  css={css`
-                    justify-content: space-between;
-                  `}
-                >
-                  <Col>
+                <Row>
+                  <Col md={5}>
                     <Typography
                       as="h2"
                       variant="subtitle2"
@@ -155,7 +193,23 @@ const ManageApplications = (): ReactElement => {
                       Manage Applications
                     </Typography>
                   </Col>
-                  <Col>{/* TODO status indicators */}</Col>
+                  <Col md={7}>
+                    <Row style={{ justifyContent: 'space-between', paddingRight: '24px' }}>
+                      {stats.map((stat) => (
+                        <Row style={{ alignItems: 'center', margin: 0 }}>
+                          {stat.icon}
+                          <Typography
+                            css={css`
+                              margin-left: 8px;
+                              line-height: 20px;
+                            `}
+                          >
+                            {countByState[stat.accessor]} {stat.header}
+                          </Typography>
+                        </Row>
+                      ))}
+                    </Row>
+                  </Col>
                 </Row>
               </Container>
               <Container
@@ -190,7 +244,6 @@ const ManageApplications = (): ReactElement => {
                       justify-content: flex-end;
                     `}
                   >
-                    {/* TODO search */}
                     {/* <Button
                         size="sm"
                         variant="secondary"
@@ -206,6 +259,18 @@ const ManageApplications = (): ReactElement => {
                           Export Table
                         </span>
                       </Button> */}
+                    <Input
+                      aria-label="application-table-search"
+                      placeholder="Search..."
+                      preset="search"
+                      value={searchQuery}
+                      onChange={(e) => {
+                        onSearchQueryChange(e.target.value);
+                      }}
+                      css={css`
+                        width: 200px;
+                      `}
+                    />
                   </Col>
                 </Row>
                 <Row>
