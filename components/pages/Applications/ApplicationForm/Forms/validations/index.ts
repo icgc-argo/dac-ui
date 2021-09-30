@@ -462,36 +462,36 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
         };
       });
 
-      const fieldsForPatch = fieldsResults
-        .filter((fieldObj: any) => fieldObj.shouldPatch || fieldObj.fieldName.includes('address'))
-        // address fields can be autofilled, and should be patched
-        .map((fieldObj: any) =>
-          getValueByFieldTypeToPublish(
-            fieldObj.results,
-            formState.sections[origin]?.fields?.[fieldObj.fieldName]?.meta,
-            formState.sections[origin]?.fields?.[fieldObj.fieldName]?.value,
-          ),
-        )
-        .reduce((acc, curr) => {
-          // reduce fields array to an object with unique keys.
-          const [key, value] = Object.entries(curr)[0];
-          return {
-            ...acc,
-            [key]:
-              typeof value === 'object'
-                ? {
-                    ...(acc[key] || {}),
-                    ...(value as object),
-                  }
-                : value,
-          };
-        }, {});
+      const fieldsForPatch = fieldsResults.filter(
+        (fieldObj: any) => fieldObj.shouldPatch || fieldObj.fieldName.includes('address'),
+      );
+      // address fields can be autofilled, and should be patched
+      const valuesForPatch = fieldsForPatch.map((fieldObj: any) =>
+        getValueByFieldTypeToPublish(
+          fieldObj.results,
+          formState.sections[origin]?.fields?.[fieldObj.fieldName]?.meta,
+          formState.sections[origin]?.fields?.[fieldObj.fieldName]?.value,
+        ),
+      );
+      const sectionForPatch = valuesForPatch.reduce((acc, curr, idx, array) => {
+        // reduce/flatten valuesForPatch array to an object with unique keys.
+        const [key, value] = Object.entries(curr)[0];
+        return {
+          ...acc,
+          [key]: Array.isArray(value) || typeof value !== 'object'
+            ? value
+            : {
+                ...(acc[key] || {}),
+                ...(value as object),
+              },
+        };
+      }, {});
 
-      if (Object.keys(fieldsForPatch).length > 0) {
+      if (Object.keys(sectionForPatch).length > 0) {
         await apiFetcher({
           method: 'PATCH',
           data: {
-            sections: { [origin]: fieldsForPatch },
+            sections: { [origin]: sectionForPatch },
             // __v: formState.__v,
           },
         })
