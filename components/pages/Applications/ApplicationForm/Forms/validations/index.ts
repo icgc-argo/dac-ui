@@ -461,9 +461,11 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
         };
       });
 
+      console.log(fieldsResults);
+
       const fieldsForPatch = fieldsResults.filter(
-        (fieldObj: any) => fieldObj.shouldPatch || fieldObj.fieldName.includes('address'),
-        // address fields can be autofilled, and should be patched
+        (fieldObj: any) =>
+          fieldObj.shouldPatch || fieldsWithAutoComplete.includes(fieldObj.fieldName),
       );
 
       const valuesForPatch = fieldsForPatch.map((fieldObj: any) =>
@@ -473,8 +475,10 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
           formState.sections[origin]?.fields?.[fieldObj.fieldName]?.value,
         ),
       );
+
       const sectionForPatch = valuesForPatch.reduce((acc, curr, idx, array) => {
-        // reduce/flatten valuesForPatch array to an object with unique keys.
+        // reduce/flatten valuesForPatch array for API
+        // i.e. put all address changes in one `address: {}` object
         const [key, value] = Object.entries(curr)[0];
         return {
           ...acc,
