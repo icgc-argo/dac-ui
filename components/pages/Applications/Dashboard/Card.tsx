@@ -24,14 +24,20 @@ import Typography from '@icgc-argo/uikit/Typography';
 import React from 'react';
 
 type DashboardCardProps = {
-  Icon?: any;
+  CustomIcon?: any;
   title: string;
   subtitle?: string;
   info?: string | React.ReactNode;
   children: React.ReactNode;
 };
 
-const DashboardCard = ({ title, subtitle, info, children }: DashboardCardProps) => {
+const DashboardCard = ({
+  title,
+  subtitle,
+  info,
+  children,
+  CustomIcon = null,
+}: DashboardCardProps) => {
   const theme = useTheme();
 
   return (
@@ -54,15 +60,17 @@ const DashboardCard = ({ title, subtitle, info, children }: DashboardCardProps) 
           padding: 8px 22px;
         `}
       >
-        <Icon
-          css={css`
-            margin-right: 8px;
-          `}
-          width="30px"
-          height="30px"
-          fill={theme.colors.secondary}
-          name="form"
-        />
+        {(CustomIcon && <CustomIcon />) || (
+          <Icon
+            css={css`
+              margin-right: 8px;
+            `}
+            width="30px"
+            height="30px"
+            fill={theme.colors.secondary}
+            name="form"
+          />
+        )}
         <div>
           <Typography
             as="h2"
