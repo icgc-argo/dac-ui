@@ -26,6 +26,7 @@ import { useGetApplications } from 'global/hooks';
 import Loader from 'components/Loader';
 import router from 'next/router';
 import { ERROR_PATH } from 'global/constants';
+import CollaboratorApplication from './CollaboratorApplication';
 
 const Applications = () => {
   const { error, isLoading, response } = useGetApplications({
@@ -58,6 +59,9 @@ const Applications = () => {
           <InProgress application={application} key={application.appId} />
         ))}
       <StartApplication />
+      {[].map(() => (
+        <CollaboratorApplication />
+      ))}
     </div>
   );
 };
