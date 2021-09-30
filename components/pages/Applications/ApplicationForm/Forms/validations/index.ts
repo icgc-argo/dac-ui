@@ -50,6 +50,7 @@ import {
   getFieldValues,
   getUpdatedFields,
   sectionsWithAutoComplete,
+  fieldsWithAutoComplete,
 } from './helpers';
 import yup, { combinedSchema } from './schemas';
 import { AxiosResponse } from 'axios';
@@ -377,13 +378,11 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
       ({ field = '' }) => field && !field.split('--')[2]?.includes('Modal'),
     );
 
-    if (fieldsWithoutModalOverride && fieldsWithoutModalOverride.length > 0) {
+    if (fieldsWithoutModalOverride.length > 0) {
       const fieldNames = fieldsWithoutModalOverride.map((fieldObj: any) => fieldObj.field);
 
       if (
         validatingApplicant &&
-        fieldsWithoutModalOverride &&
-        fieldsWithoutModalOverride.length > 0 &&
         ((fieldNames.includes(applicantFieldNames.AFFILIATION) &&
           find(fieldsWithoutModalOverride, { field: applicantFieldNames.AFFILIATION })?.value !==
             applicantData[applicantFieldNames.AFFILIATION]) ||
@@ -464,8 +463,9 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
 
       const fieldsForPatch = fieldsResults.filter(
         (fieldObj: any) => fieldObj.shouldPatch || fieldObj.fieldName.includes('address'),
+        // address fields can be autofilled, and should be patched
       );
-      // address fields can be autofilled, and should be patched
+
       const valuesForPatch = fieldsForPatch.map((fieldObj: any) =>
         getValueByFieldTypeToPublish(
           fieldObj.results,
@@ -478,12 +478,13 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
         const [key, value] = Object.entries(curr)[0];
         return {
           ...acc,
-          [key]: Array.isArray(value) || typeof value !== 'object'
-            ? value
-            : {
-                ...(acc[key] || {}),
-                ...(value as object),
-              },
+          [key]:
+            Array.isArray(value) || typeof value !== 'object'
+              ? value
+              : {
+                  ...(acc[key] || {}),
+                  ...(value as object),
+                },
         };
       }, {});
 
@@ -705,14 +706,18 @@ export const useLocalValidation = (
 
     if (eventType && field && fieldType) {
       const [fieldName, fieldIndex] = field.split('--');
+      const isList = sectionName === 'collaborators';
 
       switch (eventType) {
         case 'blur': {
-          if (sectionsWithAutoComplete.includes(sectionName) && fieldType !== 'select-one') {
-            // NOTE select-one is excluded because it needs its own autocomplete logic
-            const isList = sectionName === 'collaborators';
+          if (
+            sectionsWithAutoComplete.includes(sectionName) &&
+            fieldsWithAutoComplete.includes(isList ? fieldIndex : fieldName)
+          ) {
             const oldValues = getFieldValues(storedFields, isList);
             const newValues = getFieldValues(localState[sectionName].fields, isList);
+            // get ALL fields that have changed since last GET
+            // if updatedFields.length > 1, autocomplete happened
             const updatedFields = getUpdatedFields(oldValues, newValues);
 
             // this works for applicant, representative, collaborators.

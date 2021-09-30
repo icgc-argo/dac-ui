@@ -379,16 +379,30 @@ export const checkMatchingApplicant = (
 // The applicant does not need to be added as a collaborator
 
 export const sectionsWithAutoComplete = ['applicant', 'collaborators', 'representative'];
+export const fieldsWithAutoComplete = [
+  'address_cityAndProvince',
+  'address_postalCode',
+  'address_streetAddress',
+  'info_firstName',
+  'info_googleEmail',
+  'info_institutionEmail',
+  'info_lastName',
+  'info_middleName',
+];
 
 export const getFieldValues = (fieldsObj: any, isList: boolean): { [key: string]: any } => {
+  // format data from state into an object where old and new values can be compared,
+  // and field names are formatted properly for the validator & API
   const fields = isList ? fieldsObj.list?.innerType?.fields : fieldsObj;
-  return Object.keys(fields).reduce(
-    (acc, curr) => ({
-      ...acc,
-      [`${isList ? 'list--' : ''}${curr}`]: fields[curr],
-    }),
-    {},
-  );
+  return Object.keys(fields)
+    .filter((field: string) => fieldsWithAutoComplete.includes(field))
+    .reduce(
+      (acc: any, curr: string) => ({
+        ...acc,
+        [`${isList ? 'list--' : ''}${curr}`]: fields[curr],
+      }),
+      {},
+    );
 };
 
 export const getUpdatedFields = (oldFields: any, newFields: any): string[] =>
