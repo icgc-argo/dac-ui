@@ -722,8 +722,6 @@ export const useLocalValidation = (
             // if updatedFields.length > 1, autocomplete happened
             const updatedFields = getUpdatedFields(oldValues, newValues);
 
-            // this works for applicant, representative, collaborators.
-            // it's less broad than non-autocomplete blur events.
             const fieldsForValidator = updatedFields.map((updatedField: any) => {
               const [updatedFieldName, updatedFieldIndex] = updatedField.split('--');
               const fieldObj = isList
@@ -795,7 +793,7 @@ export const useLocalValidation = (
           } else if (fieldType.includes('Modal')) {
             fieldValidator([{ field, value }]);
           } else if (fieldType === 'select-one' && eventType === 'change') {
-            // assume potential autofill event here, like on blur for other fields.
+            // this is the equivalent of a blur/save event for this field.
             const changes = await fieldValidator([
               { field, value: value[0], shouldPersistResults: true },
             ]);
