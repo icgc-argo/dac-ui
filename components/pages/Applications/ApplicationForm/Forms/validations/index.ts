@@ -461,8 +461,6 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
         };
       });
 
-      console.log(fieldsResults);
-
       const fieldsForPatch = fieldsResults.filter(
         (fieldObj: any) =>
           fieldObj.shouldPatch || fieldsWithAutoComplete.includes(fieldObj.fieldName),
@@ -476,7 +474,7 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
         ),
       );
 
-      const sectionForPatch = valuesForPatch.reduce((acc, curr, idx, array) => {
+      const sectionForPatch = valuesForPatch.reduce((acc, curr) => {
         // reduce/flatten valuesForPatch array for API
         // i.e. put all address changes in one `address: {}` object
         const [key, value] = Object.entries(curr)[0];
