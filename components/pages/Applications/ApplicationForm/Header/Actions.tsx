@@ -26,7 +26,7 @@ import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import urlJoin from 'url-join';
 import { isEqual } from 'lodash';
 import { useAuthContext } from 'global/hooks';
-import { API, APPLICATIONS_PATH } from 'global/constants';
+import { API, APPLICATIONS_PATH, APPROVED_APP_CLOSED_CHECK } from 'global/constants';
 import { AxiosError } from 'axios';
 import { ApplicationState } from '../../types';
 import { CustomLoadingButton, generatePDFDocument } from '../Forms/common';
@@ -73,11 +73,13 @@ const HeaderActions = ({
   primaryAffiliation = '',
   state,
   refetchAllData,
+  approvedAtUtc,
 }: {
   appId: string;
   primaryAffiliation: string;
   state: ApplicationState;
   refetchAllData: RefetchDataFunction;
+  approvedAtUtc: string;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();
   const { fetchWithAuth } = useAuthContext();
@@ -115,6 +117,9 @@ const HeaderActions = ({
       .finally(() => {
         dismissModal();
         setIsSubmitting(false);
+        if (approvedAtUtc) {
+          localStorage.setItem(APPROVED_APP_CLOSED_CHECK, 'true');
+        }
       });
   };
 

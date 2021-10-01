@@ -31,6 +31,7 @@ export const DATE_RANGE_DISPLAY_FORMAT = 'Y-MM-dd';
 export const DATE_TEXT_FORMAT = 'MMM. dd, yyyy';
 
 export const SUBMISSION_SUCCESS_CHECK = 'daco.submission-success-check';
+export const APPROVED_APP_CLOSED_CHECK = 'daco.approved-app-closed-check';
 
 export * from './externalPaths';
 export * from './internalPaths';
