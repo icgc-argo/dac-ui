@@ -22,14 +22,16 @@ import { NextPageContext } from 'next';
 import { AppContext } from 'next/app';
 import Root from 'components/Root';
 import { PageConfigProps, PageWithConfig } from 'global/utils/pages/types';
-import { EGO_JWT_KEY, SUBMISSION_SUCCESS_CHECK } from 'global/constants';
+import { APPROVED_APP_CLOSED_CHECK, EGO_JWT_KEY, SUBMISSION_SUCCESS_CHECK } from 'global/constants';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
 import Router, { useRouter } from 'next/router';
 import Maintenance from 'components/pages/Error/Maintenance';
 import { getConfig } from 'global/config';
 
 const resetFlashData = () => {
-  [SUBMISSION_SUCCESS_CHECK].forEach((key) => localStorage.setItem(key, ''));
+  [SUBMISSION_SUCCESS_CHECK, APPROVED_APP_CLOSED_CHECK].forEach((key) =>
+    localStorage.setItem(key, ''),
+  );
 };
 
 const App = ({
