@@ -73,4 +73,5 @@ export const API = {
   APP_PACKAGE: '/assets/APP_PACKAGE',
   APPLICATIONS: '/applications',
   HEALTH: '/health',
+  COLLABORATOR_APPS: '/collaborators/applications',
 };
