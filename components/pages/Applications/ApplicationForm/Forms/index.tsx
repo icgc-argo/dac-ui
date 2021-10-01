@@ -252,6 +252,16 @@ const ApplicationFormsBase = ({
                     }
                   }
 
+                  input:not([type]) {
+                    // text inputs have no type
+                    line-height: 32px;
+                  }
+
+                  [class*='Uikit-InputBox'] {
+                    // remove padding on country box
+                    padding: 0;
+                  }
+
                   &.vertical {
                     margin-bottom: 20px;
                   }

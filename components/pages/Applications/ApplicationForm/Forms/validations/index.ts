@@ -18,7 +18,7 @@
  */
 
 import { Dispatch, useCallback, useEffect, useReducer, useState } from 'react';
-import { isEqual, isNull, omit } from 'lodash';
+import { find, isEqual, isNull, omit } from 'lodash';
 import merge from 'deepmerge';
 
 import { AuthAPIFetchFunction } from 'components/pages/Applications/types';
@@ -47,6 +47,10 @@ import {
   schemaValidator,
   sectionFieldsSeeder,
   getValueByFieldTypeToValidate,
+  getFieldValues,
+  getUpdatedFields,
+  sectionsWithAutoComplete,
+  fieldsWithAutoComplete,
 } from './helpers';
 import yup, { combinedSchema } from './schemas';
 import { AxiosResponse } from 'axios';
@@ -264,7 +268,7 @@ export const validationReducer = (
 export const validator: FormSectionValidatorFunction_Main = (formState, dispatch, apiFetcher) => (
   origin,
   reasonToValidate,
-) => async (field, value, shouldPersistResults) => {
+) => async (fieldsToValidate: any = []) => {
   const validatingApplicant = origin === 'applicant';
   const applicantData = formState.sections.applicant.fields;
 
@@ -326,11 +330,14 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
         type: 'sectionOverall',
         value: true,
       });
-  } else if (field) {
-    const [fieldName, fieldIndex, fieldOverride] = field.split('--');
-    const fieldIsArray = !Number.isNaN(Number(fieldIndex));
+  } else if (fieldsToValidate.length > 0) {
+    const fieldsWithModalOverride = fieldsToValidate.filter(
+      ({ field = '' }) => field && field.split('--')[2]?.includes('Modal'),
+    );
 
-    if (fieldOverride?.includes('Modal')) {
+    for (const { field = '', value = '' } of fieldsWithModalOverride) {
+      const fieldName = field.split('--')[0];
+      const fieldOverride = field.split('--')[2];
       const error =
         value &&
         Object.keys(formState.sections[origin].fields[fieldName].innerType?.fields).reduce(
@@ -365,15 +372,26 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
         value,
         error,
       });
-    } else {
+    }
+
+    const fieldsWithoutModalOverride = fieldsToValidate.filter(
+      ({ field = '' }) => field && !field.split('--')[2]?.includes('Modal'),
+    );
+
+    if (fieldsWithoutModalOverride.length > 0) {
+      const fieldNames = fieldsWithoutModalOverride.map((fieldObj: any) => fieldObj.field);
+
       if (
         validatingApplicant &&
-        ((field.includes(applicantFieldNames.AFFILIATION) &&
-          value !== applicantData[applicantFieldNames.AFFILIATION]) ||
-          (field.includes(applicantFieldNames.EMAIL) &&
-            value !== applicantData[applicantFieldNames.EMAIL]) ||
-          (field.includes(applicantFieldNames.GMAIL) &&
-            value !== applicantData[applicantFieldNames.GMAIL]))
+        ((fieldNames.includes(applicantFieldNames.AFFILIATION) &&
+          find(fieldsWithoutModalOverride, { field: applicantFieldNames.AFFILIATION })?.value !==
+            applicantData[applicantFieldNames.AFFILIATION]) ||
+          (fieldNames.includes(applicantFieldNames.EMAIL) &&
+            find(fieldsWithoutModalOverride, { field: applicantFieldNames.EMAIL })?.value !==
+              applicantData[applicantFieldNames.EMAIL]) ||
+          (fieldNames.includes(applicantFieldNames.GMAIL) &&
+            find(fieldsWithoutModalOverride, { field: applicantFieldNames.GMAIL })?.value !==
+              applicantData[applicantFieldNames.GMAIL]))
       ) {
         dispatch({
           field: 'validated',
@@ -383,54 +401,104 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
         });
       }
 
-      const { error } = fieldOverride
-        ? { error: null } // TODO: this validation will be handled in ticket #138
-        : await schemaValidator(
-            yup.reach(
-              combinedSchema[origin],
-              fieldIndex && fieldOverride !== 'overall' ? `${fieldName}.${fieldIndex}` : fieldName,
-            ),
-            value,
-          );
-
-      const nextValue = {
-        ...(error
-          ? { error }
-          : !validatingApplicant && checkMatchingApplicant(origin, field, value, applicantData)),
-        value,
-      };
-
-      const results = {
-        field,
-        section: origin,
-        type: formState.sections[origin]?.fields?.[fieldName]?.type,
-        ...(fieldIsArray
-          ? {
-              error,
-              value: {
-                [fieldIndex]: nextValue,
-              },
-            }
-          : nextValue),
-      } as FormValidationAction;
-
-      if (shouldPersistResults) {
-        dispatch(results);
-
-        if (formState.sections[origin]?.fields?.[fieldName]?.meta?.shape !== 'modal') {
-          await apiFetcher({
-            method: 'PATCH',
-            data: {
-              sections: {
-                [origin]: getValueByFieldTypeToPublish(
-                  results,
-                  formState.sections[origin]?.fields?.[fieldName]?.meta,
-                  formState.sections[origin]?.fields?.[fieldName]?.value,
+      const fieldsWithErrors = await Promise.all(
+        fieldsWithoutModalOverride.map(async (fieldItem: any) => {
+          const { field, value } = fieldItem;
+          const [fieldName, fieldIndex, fieldOverride] = field.split('--');
+          const { error } = fieldOverride
+            ? { error: null } // TODO: this validation will be handled in ticket #138
+            : await schemaValidator(
+                yup.reach(
+                  combinedSchema[origin],
+                  fieldIndex && fieldOverride !== 'overall'
+                    ? `${fieldName}.${fieldIndex}`
+                    : fieldName,
                 ),
-              },
-              // __v: formState.__v,
-            },
-          }).then(({ data, ...response } = {} as AxiosResponse<any>) => {
+                value,
+              );
+          return {
+            ...fieldItem,
+            error,
+          };
+        }),
+      );
+
+      const fieldsResults = fieldsWithErrors.map((fieldObj: any) => {
+        const [fieldName, fieldIndex] = fieldObj.field.split('--');
+        const fieldIsArray = !Number.isNaN(Number(fieldIndex));
+
+        const nextValue = {
+          ...(fieldObj.error
+            ? { error: fieldObj.error }
+            : !validatingApplicant &&
+              checkMatchingApplicant(origin, fieldObj.field, fieldObj.value, applicantData)),
+          value: fieldObj.value,
+        };
+
+        const results = {
+          field: fieldObj.field,
+          section: origin,
+          type: formState.sections[origin]?.fields?.[fieldName]?.type,
+          ...(fieldIsArray
+            ? {
+                error: fieldObj.error,
+                value: {
+                  [fieldIndex]: nextValue,
+                },
+              }
+            : nextValue),
+        } as FormValidationAction;
+
+        fieldObj.shouldPersistResults && dispatch(results);
+
+        const isModalShape =
+          formState.sections[origin]?.fields?.[fieldName]?.meta?.shape === 'modal';
+
+        return {
+          fieldName,
+          results,
+          shouldPatch: fieldObj.shouldPersistResults && !isModalShape,
+        };
+      });
+
+      const fieldsForPatch = fieldsResults.filter(
+        (fieldObj: any) =>
+          fieldObj.shouldPatch || fieldsWithAutoComplete.includes(fieldObj.fieldName),
+      );
+
+      const valuesForPatch = fieldsForPatch.map((fieldObj: any) =>
+        getValueByFieldTypeToPublish(
+          fieldObj.results,
+          formState.sections[origin]?.fields?.[fieldObj.fieldName]?.meta,
+          formState.sections[origin]?.fields?.[fieldObj.fieldName]?.value,
+        ),
+      );
+
+      const sectionForPatch = valuesForPatch.reduce((acc, curr) => {
+        // reduce/flatten valuesForPatch array for API
+        // i.e. put all address changes in one `address: {}` object
+        const [key, value] = Object.entries(curr)[0];
+        return {
+          ...acc,
+          [key]:
+            Array.isArray(value) || typeof value !== 'object'
+              ? value
+              : {
+                  ...(acc[key] || {}),
+                  ...(value as object),
+                },
+        };
+      }, {});
+
+      if (Object.keys(sectionForPatch).length > 0) {
+        await apiFetcher({
+          method: 'PATCH',
+          data: {
+            sections: { [origin]: sectionForPatch },
+            // __v: formState.__v,
+          },
+        })
+          .then(({ data, ...response } = {} as AxiosResponse<any>) => {
             data
               ? (!['', SECTION_STATUS.INCOMPLETE, SECTION_STATUS.PRISTINE].includes(
                   data.sections[origin].meta.status || '',
@@ -451,11 +519,11 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
                 );
 
             return data;
-          });
-        }
+          })
+          .catch((err) => console.error(err));
       }
 
-      return results;
+      return fieldsResults.map((fieldObj) => fieldObj.results as FormValidationAction);
     }
   }
 };
@@ -558,72 +626,76 @@ export const useLocalValidation = (
   }, [storedFields]);
 
   const updateLocalState = useCallback(
-    ({ error, field, value, type }: FormValidationAction) => {
-      const validatingPrimaryAffiliation = field.includes('info_primaryAffiliation');
-      const [fieldName, fieldIndex, fieldOverride] = field.split('--');
-      const currentSectionData = localState[sectionName];
-      const currentSectionFields = currentSectionData?.fields;
-      const currentField = currentSectionFields[fieldName];
-      const oldValue = currentField.value;
+    (changes: FormValidationAction[] = []) => {
+      const newState = changes.reduce((acc, curr: FormValidationAction) => {
+        const { error, field = '', value, type } = curr;
+        const validatingPrimaryAffiliation = field.includes('info_primaryAffiliation');
+        const [fieldName, fieldIndex, fieldOverride] = field.split('--');
 
-      const newState = {
-        ...localState,
-        [sectionName]: {
-          ...currentSectionData,
-          fields: {
-            ...currentSectionFields,
-            [fieldName]:
-              type === 'remove'
-                ? storedFields[fieldName]
-                : {
-                    ...currentField,
-                    ...((type === 'array' && currentField.innerType?.type === 'object') ||
-                    currentField.meta?.shape === 'modal'
-                      ? {
-                          innerType: {
-                            ...currentField.innerType,
-                            fields: {
-                              ...currentField.innerType?.fields,
-                              [fieldIndex]: {
-                                ...currentField.innerType?.fields[fieldIndex],
-                                ...(value[fieldIndex] || { value }),
-                                // ensure affiliation validation is applied before allowing "save"
-                                error: validatingPrimaryAffiliation ? error || [''] : error,
+        const currentSection = acc[sectionName];
+        const currentSectionFields = acc[sectionName]?.fields;
+        const currentField = currentSectionFields[fieldName];
+        const oldValue = currentField?.value || '';
+
+        return {
+          ...acc,
+          [sectionName]: {
+            ...currentSection,
+            fields: {
+              ...currentSectionFields,
+              [fieldName]:
+                type === 'remove'
+                  ? storedFields[fieldName]
+                  : {
+                      ...currentField,
+                      ...((type === 'array' && currentField.innerType?.type === 'object') ||
+                      currentField?.meta?.shape === 'modal'
+                        ? {
+                            innerType: {
+                              ...currentField.innerType,
+                              fields: {
+                                ...currentField.innerType?.fields,
+                                [fieldIndex]: {
+                                  ...currentField.innerType?.fields[fieldIndex],
+                                  ...(value[fieldIndex] || { value }),
+                                  // ensure affiliation validation is applied before allowing "save"
+                                  error: validatingPrimaryAffiliation ? error || [''] : error,
+                                },
                               },
                             },
-                          },
-                        }
-                      : type === 'object'
-                      ? {
-                          fields: {
-                            ...currentField.fields,
-                            [fieldIndex]: {
-                              ...currentField.fields[fieldIndex],
-                              error,
-                              value,
+                          }
+                        : type === 'object'
+                        ? {
+                            fields: {
+                              ...currentField.fields,
+                              [fieldIndex]: {
+                                ...currentField.fields[fieldIndex],
+                                error,
+                                value,
+                              },
                             },
-                          },
-                        }
-                      : {
-                          error,
-                          value:
-                            oldValue && typeof oldValue === 'object'
-                              ? {
-                                  ...oldValue,
-                                  ...([fieldOverride, type].includes('remove')
-                                    ? {
-                                        [fieldIndex]: {
-                                          value: null,
-                                        },
-                                      }
-                                    : value),
-                                }
-                              : value,
-                        }),
-                  },
+                          }
+                        : {
+                            error,
+                            value:
+                              oldValue && typeof oldValue === 'object'
+                                ? {
+                                    ...oldValue,
+                                    ...([fieldOverride, type].includes('remove')
+                                      ? {
+                                          [fieldIndex]: {
+                                            value: null,
+                                          },
+                                        }
+                                      : value),
+                                  }
+                                : value,
+                          }),
+                    },
+            },
           },
-        },
-      } as FormValidationState_AllSectionsObj;
+        };
+      }, localState as FormValidationState_AllSectionsObj);
 
       setLocalState(newState);
       return newState;
@@ -636,55 +708,101 @@ export const useLocalValidation = (
 
     if (eventType && field && fieldType) {
       const [fieldName, fieldIndex] = field.split('--');
+      const isList = sectionName === 'collaborators';
 
       switch (eventType) {
         case 'blur': {
-          const fieldValue = storedFields[fieldName]?.value;
-          const fieldValueAtIndex = fieldIndex && fieldValue?.[fieldIndex];
+          if (
+            sectionsWithAutoComplete.includes(sectionName) &&
+            fieldsWithAutoComplete.includes(isList ? fieldIndex : fieldName)
+          ) {
+            const oldValues = getFieldValues(storedFields, isList);
+            const newValues = getFieldValues(localState[sectionName].fields, isList);
+            // get ALL fields that have changed since last GET
+            // if updatedFields.length > 1, autocomplete happened
+            const updatedFields = getUpdatedFields(oldValues, newValues);
 
-          const shouldPersistData =
-            !!fieldType &&
-            ['select-one', 'text', 'textarea'].includes(fieldType) &&
-            value !==
-              (fieldValueAtIndex
-                ? fieldValueAtIndex.hasOwnProperty('value')
-                  ? fieldValueAtIndex.value
-                  : fieldValueAtIndex
-                : fieldValue);
+            const fieldsForValidator = updatedFields.map((updatedField: any) => {
+              const [updatedFieldName, updatedFieldIndex] = updatedField.split('--');
+              const fieldObj = isList
+                ? localState[sectionName].fields.list?.innerType?.fields[updatedFieldIndex]
+                : localState[sectionName].fields[updatedFieldName];
 
-          const valueIsText = ['select-one', 'text'].includes(fieldType);
+              return {
+                field: updatedField,
+                shouldPersistResults: fieldObj.type === 'string',
+                value: fieldObj.type === 'string' ? (fieldObj.value || '').trim() : fieldObj.value,
+              };
+            });
 
-          const changes = await fieldValidator(
-            field,
-            valueIsText ? (value || '').trim() : value,
-            shouldPersistData,
-          );
+            const changes = await fieldValidator(fieldsForValidator);
 
-          changes && updateLocalState(changes);
+            changes && updateLocalState(changes);
+          } else {
+            const oldValue = storedFields[fieldName]?.value;
+            const oldValueSubField = fieldIndex && oldValue?.[fieldIndex];
+
+            const valueIsText = ['select-one', 'text', 'textarea'].includes(fieldType);
+
+            const shouldPersistResults =
+              !!fieldType &&
+              valueIsText &&
+              value !==
+                (oldValueSubField
+                  ? oldValueSubField.hasOwnProperty('value')
+                    ? oldValueSubField.value
+                    : oldValueSubField
+                  : oldValue);
+
+            const changes = await fieldValidator([
+              {
+                field,
+                value: valueIsText ? (value || '').trim() : value,
+                shouldPersistResults,
+              },
+            ]);
+
+            changes && updateLocalState(changes);
+          }
           break;
         }
 
         case 'change':
         case 'mousedown': {
           if ('text' === fieldType) {
-            updateLocalState({
-              field,
-              value: fieldIndex
-                ? {
-                    [fieldIndex]: { value },
-                  }
-                : value,
-            } as FormValidationAction);
+            updateLocalState([
+              {
+                field,
+                value: fieldIndex
+                  ? {
+                      [fieldIndex]: { value },
+                    }
+                  : value,
+              },
+            ] as FormValidationAction[]);
           } else if ('remove' === fieldType) {
-            const changes = await fieldValidator(field, null, !!'remove');
+            const changes = await fieldValidator([
+              {
+                field,
+                value: null,
+                shouldPersistResults: !!'remove',
+              },
+            ]);
 
             changes && updateLocalState(changes);
           } else if (fieldType.includes('Modal')) {
-            fieldValidator(field, value);
-          } else if (fieldType !== 'select-one') {
-            const shouldPersistData = ['checkbox', 'radio'].includes(fieldType);
+            fieldValidator([{ field, value }]);
+          } else if (fieldType === 'select-one' && eventType === 'change') {
+            // this is the equivalent of a blur/save event for this field.
+            const changes = await fieldValidator([
+              { field, value: value[0], shouldPersistResults: true },
+            ]);
 
-            const changes = await fieldValidator(field, value, shouldPersistData);
+            changes && updateLocalState(changes);
+          } else if (fieldType !== 'select-one') {
+            const shouldPersistResults = ['checkbox', 'radio'].includes(fieldType);
+
+            const changes = await fieldValidator([{ field, value, shouldPersistResults }]);
 
             changes && updateLocalState(changes);
           }

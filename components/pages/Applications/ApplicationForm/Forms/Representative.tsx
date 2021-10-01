@@ -98,6 +98,7 @@ const Representative = ({
             <Input
               aria-label="First Name"
               id="info_firstName"
+              name="info_firstName"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
               value={localState.info_firstName?.value}
@@ -116,6 +117,7 @@ const Representative = ({
             <Input
               aria-label="Middle Name"
               id="info_middleName"
+              name="info_middleName"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
               value={localState.info_middleName?.value}
@@ -136,6 +138,7 @@ const Representative = ({
             <Input
               aria-label="Last Name"
               id="info_lastName"
+              name="info_lastName"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
               value={localState.info_lastName?.value}
@@ -154,6 +157,7 @@ const Representative = ({
             <Input
               aria-label="Suffix, e.g. Jr., Sr., MD."
               id="info_suffix"
+              name="info_suffix"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
               placeholder="e.g. Jr., Sr., MD."
@@ -175,6 +179,7 @@ const Representative = ({
             <Input
               aria-label="Primary Affiliation"
               id="info_primaryAffiliation"
+              name="info_primaryAffiliation"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
               value={localState.info_primaryAffiliation?.value}
@@ -197,6 +202,7 @@ const Representative = ({
             <Input
               aria-label="Institutional Email"
               id="info_institutionEmail"
+              name="info_institutionEmail"
               onBlur={validateFieldTouched}
               onChange={validateFieldTouched}
               value={localState.info_institutionEmail?.value}
@@ -218,6 +224,7 @@ const Representative = ({
           <Input
             aria-label="Position Title"
             id="info_positionTitle"
+            name="info_positionTitle"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             value={localState.info_positionTitle?.value}
@@ -287,6 +294,7 @@ const Representative = ({
           <Input
             aria-label="Building, e.g. MaRS Centre, South Tower"
             id="address_building"
+            name="address_building"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             placeholder="e.g. MaRS Centre, South Tower"
@@ -306,6 +314,7 @@ const Representative = ({
           <Input
             aria-label="Street Address, e.g. 101 College Street, Suite 800"
             id="address_streetAddress"
+            name="address_streetAddress"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             placeholder="e.g. 101 College Street, Suite 800"
@@ -327,6 +336,7 @@ const Representative = ({
           <Input
             aria-label="City and Province/State"
             id="address_cityAndProvince"
+            name="address_cityAndProvince"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             placeholder="e.g. Toronto, Ontario"
@@ -348,6 +358,7 @@ const Representative = ({
           <Input
             aria-label="Postal/Zip Code"
             id="address_postalCode"
+            name="address_postalCode"
             onBlur={validateFieldTouched}
             onChange={validateFieldTouched}
             value={addressState.address_postalCode?.value}

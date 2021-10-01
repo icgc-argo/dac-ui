@@ -249,6 +249,7 @@ export type FormValidationActionTypes =
 export type FormValidationAction = {
   error?: any;
   field: string;
+  fieldType?: string;
   section: FormSectionNames;
   type: FormValidationActionTypes;
   value?: any;
@@ -282,7 +283,7 @@ export type FormValidationStateParameters = FormValidationState_Base & {
   __seeded: boolean;
 };
 
-export type FormSectionUpdateLocalStateFunction = (fieldData: FormValidationAction) => void;
+export type FormSectionUpdateLocalStateFunction = (fieldData: FormValidationAction[]) => void;
 
 export type FormFieldDataFromEvent = (
   event: ChangeEvent<HTMLInputElement>,
@@ -308,11 +309,15 @@ export type FormFieldDataFromEvent = (
 
 export type FormFieldValidationTriggerFunction = (event: any) => Promise<void>;
 
+export type FormValidationFunctionArguments = {
+  field?: string;
+  value?: any;
+  shouldPersistResults?: Boolean;
+};
+
 export type FormFieldValidatorFunction = (
-  field?: string,
-  value?: any,
-  shouldPersistData?: Boolean,
-) => Promise<FormValidationAction | void>;
+  fieldsToValidate?: FormValidationFunctionArguments[],
+) => Promise<FormValidationAction[] | undefined>;
 
 export type FormSectionValidationTriggerReasons = 'initialValidation' | 'notShowingOverall';
 
