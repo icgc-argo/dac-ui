@@ -42,8 +42,15 @@ enum VisibleModalOption {
 }
 
 // EXPIRED and RENEWING handling is tbd, CLOSED excludes Action buttons
-const getPdfButtonText: (state: ApplicationState) => string = (state) => {
+const getPdfButtonText: (state: ApplicationState, approvedAtUtc: string) => string = (
+  state,
+  approvedAtUtc,
+) => {
   const text = 'PDF';
+
+  if (ApplicationState.CLOSED.includes(state) && !!approvedAtUtc) {
+    return `SIGNED ${text}`;
+  }
 
   if (
     [
@@ -87,7 +94,7 @@ const HeaderActions = ({
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const pdfButtonText = getPdfButtonText(state);
+  const pdfButtonText = getPdfButtonText(state, approvedAtUtc);
 
   const closeApplicationVisible = [
     ApplicationState.DRAFT,
