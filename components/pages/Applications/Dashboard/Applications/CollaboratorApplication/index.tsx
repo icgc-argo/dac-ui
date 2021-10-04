@@ -1,9 +1,16 @@
 import { css } from '@emotion/core';
 import Table from '@icgc-argo/uikit/Table';
+import { IndividualInfo } from 'components/pages/Applications/types';
 import { createRef } from 'react';
 import DashboardCard from '../../Card';
+import { UPLOAD_DATE_FORMAT } from '../InProgress/constants';
+import { getFormattedDate } from '../InProgress/helpers';
 
-const CollaboratorApplication = () => {
+const CollaboratorApplication = ({
+  data,
+}: {
+  data: { appId: string; applicant: Partial<IndividualInfo>; expiresAtUtc: string }[];
+}) => {
   const containerRef = createRef<HTMLDivElement>();
   return (
     <DashboardCard
@@ -21,25 +28,24 @@ const CollaboratorApplication = () => {
       )}
     >
       <Table
-        data={[
-          {
-            appId: 'DACO-1234',
-            expiresAtUtc: '2012-04-23T18:25:43.511Z',
-            institution: 'OICR',
-            applicant: 'bob',
-          },
-        ]}
+        data={data}
         columns={[
           {
             accessor: 'appId',
             Header: 'Application #',
           },
           {
-            accessor: 'institution',
+            accessor: 'applicant.info.primaryAffiliation',
             Header: 'Institution',
           },
-          { accessor: 'applicant', Header: 'Applicant' },
-          { accessor: 'expiresAtUtc', Header: 'Access Expiry' },
+          { accessor: 'applicant.info.displayName', Header: 'Applicant' },
+          {
+            accessor: 'expiresAtUtc',
+            Header: 'Access Expiry',
+            Cell: ({ value }: { value: string }) => (
+              <span>{getFormattedDate(value, UPLOAD_DATE_FORMAT)}</span>
+            ),
+          },
         ]}
         parentRef={containerRef}
         showPagination={false}
