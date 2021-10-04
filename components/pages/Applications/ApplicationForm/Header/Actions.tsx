@@ -26,7 +26,7 @@ import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import urlJoin from 'url-join';
 import { isEqual } from 'lodash';
 import { useAuthContext } from 'global/hooks';
-import { API, APPLICATIONS_PATH } from 'global/constants';
+import { API, APPLICATIONS_PATH, APPROVED_APP_CLOSED_CHECK } from 'global/constants';
 import { AxiosError } from 'axios';
 import { ApplicationState } from '../../types';
 import { CustomLoadingButton, generatePDFDocument } from '../Forms/common';
@@ -42,8 +42,15 @@ enum VisibleModalOption {
 }
 
 // EXPIRED and RENEWING handling is tbd, CLOSED excludes Action buttons
-const getPdfButtonText: (state: ApplicationState) => string = (state) => {
+const getPdfButtonText: (state: ApplicationState, approvedAtUtc: string) => string = (
+  state,
+  approvedAtUtc,
+) => {
   const text = 'PDF';
+
+  if (ApplicationState.CLOSED.includes(state) && !!approvedAtUtc) {
+    return `SIGNED ${text}`;
+  }
 
   if (
     [
@@ -73,11 +80,13 @@ const HeaderActions = ({
   primaryAffiliation = '',
   state,
   refetchAllData,
+  approvedAtUtc,
 }: {
   appId: string;
   primaryAffiliation: string;
   state: ApplicationState;
   refetchAllData: RefetchDataFunction;
+  approvedAtUtc: string;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();
   const { fetchWithAuth } = useAuthContext();
@@ -85,7 +94,7 @@ const HeaderActions = ({
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const pdfButtonText = getPdfButtonText(state);
+  const pdfButtonText = getPdfButtonText(state, approvedAtUtc);
 
   const closeApplicationVisible = [
     ApplicationState.DRAFT,
@@ -93,6 +102,8 @@ const HeaderActions = ({
     ApplicationState.REVISIONS_REQUESTED,
     ApplicationState.APPROVED,
   ].includes(state);
+
+  const isClosedPreApproval = state === ApplicationState.CLOSED && !approvedAtUtc;
 
   const dismissModal = () => setVisibleModal(VisibleModalOption.NONE);
 
@@ -115,6 +126,9 @@ const HeaderActions = ({
       .finally(() => {
         dismissModal();
         setIsSubmitting(false);
+        if (approvedAtUtc) {
+          localStorage.setItem(APPROVED_APP_CLOSED_CHECK, 'true');
+        }
       });
   };
 
@@ -197,71 +211,73 @@ const HeaderActions = ({
             Close Application
           </Button>
         )}
-        <Button
-          // setting width on button & CustomLoadingButton to prevent resize on loading state
-          css={css`
-            width: ${PDF_BUTTON_WIDTH}px;
-          `}
-          isAsync
-          Loader={(props: any) => <CustomLoadingButton text={pdfButtonText} {...props} />}
-          variant="secondary"
-          isLoading={pdfIsLoading}
-          onClick={async () => {
-            setPdfIsLoading(true);
-            const isDownloadZip = [
-              ApplicationState.REVIEW,
-              ApplicationState.APPROVED,
-              ApplicationState.REJECTED,
-            ].includes(state);
-            const downloadUrl = urlJoin(
-              API.APPLICATIONS,
-              appId,
-              isDownloadZip ? API.APP_PACKAGE : '',
-            );
-            const data = await fetchWithAuth({
-              url: downloadUrl,
-              ...(isDownloadZip ? { responseType: 'blob' } : {}),
-            })
-              .then((res: any) => {
-                if (res.data && isDownloadZip) {
-                  const downloadUrl = window.URL.createObjectURL(new Blob([res.data]));
-                  const filename = res.headers['content-disposition'].split('"')[1];
-                  const link = document.createElement('a');
-                  link.href = downloadUrl;
-                  link.setAttribute('download', filename);
-                  document.body.appendChild(link);
-                  link.click();
-                  link.remove();
-                  setPdfIsLoading(false);
-                  return {};
-                } else {
-                  return res.data;
-                }
-              })
-              .catch((err: AxiosError) => {
-                console.error('Application fetch failed, pdf or zip not generated.', err);
-                setPdfIsLoading(false);
-                return null;
-              });
-            // if data fetch fails, do not proceed to pdf generation
-            if (data && !isDownloadZip) {
-              // reset loading state after generate is done
-              await generatePDFDocument(data);
-              setPdfIsLoading(false);
-            }
-          }}
-        >
-          <Icon
+        {!isClosedPreApproval && (
+          <Button
+            // setting width on button & CustomLoadingButton to prevent resize on loading state
             css={css`
-              margin-bottom: -2px;
+              width: ${PDF_BUTTON_WIDTH}px;
             `}
-            fill={theme.colors.accent2_dark}
-            height="12px"
-            width="12px"
-            name="download"
-          />{' '}
-          {pdfButtonText}
-        </Button>
+            isAsync
+            Loader={(props: any) => <CustomLoadingButton text={pdfButtonText} {...props} />}
+            variant="secondary"
+            isLoading={pdfIsLoading}
+            onClick={async () => {
+              setPdfIsLoading(true);
+              const isDownloadZip = [
+                ApplicationState.REVIEW,
+                ApplicationState.APPROVED,
+                ApplicationState.REJECTED,
+              ].includes(state);
+              const downloadUrl = urlJoin(
+                API.APPLICATIONS,
+                appId,
+                isDownloadZip ? API.APP_PACKAGE : '',
+              );
+              const data = await fetchWithAuth({
+                url: downloadUrl,
+                ...(isDownloadZip ? { responseType: 'blob' } : {}),
+              })
+                .then((res: any) => {
+                  if (res.data && isDownloadZip) {
+                    const downloadUrl = window.URL.createObjectURL(new Blob([res.data]));
+                    const filename = res.headers['content-disposition'].split('"')[1];
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.setAttribute('download', filename);
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    setPdfIsLoading(false);
+                    return {};
+                  } else {
+                    return res.data;
+                  }
+                })
+                .catch((err: AxiosError) => {
+                  console.error('Application fetch failed, pdf or zip not generated.', err);
+                  setPdfIsLoading(false);
+                  return null;
+                });
+              // if data fetch fails, do not proceed to pdf generation
+              if (data && !isDownloadZip) {
+                // reset loading state after generate is done
+                await generatePDFDocument(data);
+                setPdfIsLoading(false);
+              }
+            }}
+          >
+            <Icon
+              css={css`
+                margin-bottom: -2px;
+              `}
+              fill={theme.colors.accent2_dark}
+              height="12px"
+              width="12px"
+              name="download"
+            />{' '}
+            {pdfButtonText}
+          </Button>
+        )}
       </section>
     </>
   );

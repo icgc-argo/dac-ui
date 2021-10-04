@@ -112,6 +112,7 @@ const ApplicationHeader = ({
           primaryAffiliation={primaryAffiliation}
           state={state}
           refetchAllData={refetchAllData}
+          approvedAtUtc={approvedAtUtc}
         />
       </div>
     </PageHeader>

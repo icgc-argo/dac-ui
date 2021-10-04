@@ -26,6 +26,7 @@ import { UikitTheme } from '@icgc-argo/uikit/index';
 import { ContentBody, ContentBox } from '@icgc-argo/uikit/PageLayout';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
+import Notification from '@icgc-argo/uikit/notifications/Notification';
 
 import { sectionsOrder } from './constants';
 import { enabledSections, sectionSelector } from './helpers';
@@ -37,9 +38,10 @@ import {
   FormValidationStateParameters,
   FORM_STATES,
 } from './types';
-import Notification from '@icgc-argo/uikit/notifications/Notification';
-import { SUBMISSION_SUCCESS_CHECK } from 'global/constants';
+import { SUBMISSION_SUCCESS_CHECK, APPROVED_APP_CLOSED_CHECK } from 'global/constants';
 import { ApplicationState } from 'components/pages/Applications/types';
+import { getConfig } from 'global/config';
+import Link from '@icgc-argo/uikit/Link';
 
 type QueryType = {
   query: {
@@ -49,6 +51,13 @@ type QueryType = {
 
 type SetLastUpdated = (lastUpdatedAtUtc: string) => void;
 
+const notificationStyle = css`
+  margin: 0 auto 25px auto;
+  max-width: 1200px;
+  min-width: 665px;
+  width: 100%;
+`;
+
 const getActiveSection = (sectionFromQuery?: FormSectionNames): FormSectionNames => {
   if (!sectionFromQuery) return sectionsOrder[0];
   const isValidSectionFromQuery = sectionsOrder.includes(sectionFromQuery);
@@ -56,7 +65,7 @@ const getActiveSection = (sectionFromQuery?: FormSectionNames): FormSectionNames
   return isValidSectionFromQuery
     ? sectionFromQuery
     : ((sectionFromQuery &&
-      console.info('Section initially queried was not found', sectionFromQuery),
+        console.info('Section initially queried was not found', sectionFromQuery),
       sectionsOrder[0]) as FormSectionNames);
 };
 
@@ -75,6 +84,7 @@ const ApplicationFormsBase = ({
   formState: FormValidationStateParameters;
   validateSection: FormSectionValidatorFunction_Origin;
 }): ReactElement => {
+  const { NEXT_PUBLIC_DACO_SURVEY_URL } = getConfig();
   const {
     query: { section: sectionFromQuery = '' as FormSectionNames },
   }: QueryType = useRouter();
@@ -119,13 +129,13 @@ const ApplicationFormsBase = ({
 
     selectedSection === 'collaborators'
       ? formState.sections[selectedSection]?.meta.showOverall ||
-      triggerSectionValidation('notShowingOverall', selectedSection)
+        triggerSectionValidation('notShowingOverall', selectedSection)
       : sectionsOrder.forEach(
-        (section) =>
-          // validates all other section that doen't already show overall status.
-          !(formState.sections[section]?.meta.showOverall || selectedSection === section) &&
-          triggerSectionValidation('notShowingOverall', section),
-      );
+          (section) =>
+            // validates all other section that doen't already show overall status.
+            !(formState.sections[section]?.meta.showOverall || selectedSection === section) &&
+            triggerSectionValidation('notShowingOverall', section),
+        );
   }, [formState.lastUpdatedAtUtc]);
 
   const sectionIndex = sectionsOrder.indexOf(selectedSection);
@@ -168,15 +178,46 @@ const ApplicationFormsBase = ({
                 router.push(`/applications/${appId}?section=${selectedSection}`);
               }
             }}
-            css={css`
-            margin: 0 auto 25px auto;
-            max-width: 1200px;
-            min-width: 665px;
-            width: 100%;
-          `}
+            css={notificationStyle}
           />
         )}
 
+      {JSON.parse(localStorage.getItem(APPROVED_APP_CLOSED_CHECK) || 'false') && (
+        <Notification
+          variant="SUCCESS"
+          size="MD"
+          interactionType="CLOSE"
+          onInteraction={() => {
+            localStorage.setItem(APPROVED_APP_CLOSED_CHECK, 'false');
+            router.push(`/applications/${appId}?section=${selectedSection}`);
+          }}
+          title="Your Application has been Closed"
+          content={
+            <div
+              css={css`
+                margin-top: 10px;
+              `}
+            >
+              <span>
+                Access to ICGC Controlled Data will be removed for this project team within the next
+                24 hours.
+              </span>
+              <br />
+              <br />
+              <strong>
+                You are required to complete a final report as per the conditions of the Data Access
+                Agreement.{' '}
+                <Link href={NEXT_PUBLIC_DACO_SURVEY_URL} target="_blank">
+                  Click here to fill out the report
+                </Link>
+              </strong>
+              , describing your successes and challenges with accessing ICGC Controlled Data and the
+              outcomes of your research project.
+            </div>
+          }
+          css={notificationStyle}
+        />
+      )}
       <ContentBox
         css={css`
           box-sizing: border-box;
@@ -250,6 +291,16 @@ const ApplicationFormsBase = ({
                     & ~ p {
                       margin-top: 5px 0 0;
                     }
+                  }
+
+                  input:not([type]) {
+                    // text inputs have no type
+                    line-height: 32px;
+                  }
+
+                  [class*='Uikit-InputBox'] {
+                    // remove padding on country box
+                    padding: 0;
                   }
 
                   &.vertical {

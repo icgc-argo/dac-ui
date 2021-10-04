@@ -17,21 +17,37 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import packageJson from 'package.json';
+import { useEffect, useState } from 'react';
+import { AxiosError, AxiosResponse, Method } from 'axios';
+import useAuthContext from './useAuthContext';
+import { API } from 'global/constants/externalPaths';
 
-export const APP_VERSION = packageJson.version;
+const useGetCollabApplications = () => {
+  const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
+  const [error, setError] = useState<AxiosError | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-export const EGO_JWT_KEY = 'egoJwt';
+  const { fetchWithAuth, isLoading: isTokenLoading, token } = useAuthContext();
 
-export const ADMIN_APPLICATIONS_LABEL = 'Manage Applications';
-export const APPLICANT_APPLICATIONS_LABEL = 'My Applications';
+  useEffect(() => {
+    if (token && !isTokenLoading) {
+      fetchWithAuth({
+        method: 'GET' as Method,
+        url: API.COLLABORATOR_APPS,
+      })
+        .then((res: AxiosResponse) => {
+          setResponse(res);
+        })
+        .catch((err: AxiosError) => {
+          setError(err);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, []);
 
-export const DATE_RANGE_DISPLAY_FORMAT = 'Y-MM-dd';
+  return { error, isLoading, response };
+};
 
-export const DATE_TEXT_FORMAT = 'MMM. dd, yyyy';
-
-export const SUBMISSION_SUCCESS_CHECK = 'daco.submission-success-check';
-export const APPROVED_APP_CLOSED_CHECK = 'daco.approved-app-closed-check';
-
-export * from './externalPaths';
-export * from './internalPaths';
+export default useGetCollabApplications;

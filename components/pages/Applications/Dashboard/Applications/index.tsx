@@ -26,6 +26,8 @@ import { useGetApplications } from 'global/hooks';
 import Loader from 'components/Loader';
 import router from 'next/router';
 import { ERROR_PATH } from 'global/constants';
+import CollaboratorApplication from './CollaboratorApplication';
+import useGetCollabApplications from 'global/hooks/useGetCollabApplications';
 
 const Applications = () => {
   const { error, isLoading, response } = useGetApplications({
@@ -35,6 +37,12 @@ const Applications = () => {
   if (error) {
     router.push(ERROR_PATH);
   }
+
+  const {
+    error: collabError,
+    isLoading: collabAppsLoading,
+    response: collabResponse,
+  } = useGetCollabApplications();
 
   const applications = response?.data?.items || [];
 
@@ -57,6 +65,9 @@ const Applications = () => {
         applications.map((application: ApplicationsResponseItem) => (
           <InProgress application={application} key={application.appId} />
         ))}
+      {!collabAppsLoading && !collabError && collabResponse?.data.length > 0 && (
+        <CollaboratorApplication data={collabResponse?.data} />
+      )}
       <StartApplication />
     </div>
   );

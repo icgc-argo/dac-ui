@@ -29,6 +29,9 @@ import { DATE_TEXT_FORMAT } from 'global/constants';
 import { ApplicationsResponseItem } from 'components/pages/Applications/types';
 import { pick } from 'lodash';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import Link from '@icgc-argo/uikit/Link';
+import { Row } from 'react-grid-system';
+import { getConfig } from 'global/config';
 
 export interface StatusDates {
   lastUpdatedAtUtc: string;
@@ -40,6 +43,7 @@ export interface StatusDates {
 
 const InProgress = ({ application }: { application: ApplicationsResponseItem }) => {
   const theme = useTheme();
+  const { NEXT_PUBLIC_DACO_SURVEY_URL } = getConfig();
 
   const {
     appId,
@@ -70,11 +74,11 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
       >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
     ) : null;
 
-  const statusError = revisionsRequested &&
-    [
-      ApplicationState.REVISIONS_REQUESTED,
-      ApplicationState.SIGN_AND_SUBMIT
-    ].includes(state as ApplicationState);
+  const statusError =
+    revisionsRequested &&
+    [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
+      state as ApplicationState,
+    );
 
   return (
     <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={expiryDate}>
@@ -90,6 +94,8 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
           as="div"
           css={css`
             margin-top: 28px;
+            margin-bottom: 30px;
+            height: 47px;
           `}
         >
           <div
@@ -111,7 +117,35 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
           </div>
         </Typography>
 
-        <ButtonGroup appId={appId} state={state as ApplicationState} />
+        <Row
+          style={{
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            margin: 0,
+            height: '50px',
+          }}
+        >
+          <ButtonGroup appId={appId} state={state as ApplicationState} />
+          {approvedAtUtc && state === ApplicationState.CLOSED && (
+            <div
+              css={(theme) => css`
+                padding: 6px 10px 6px 14px;
+                background-color: ${theme.colors.secondary_4};
+                border: 1px solid ${theme.colors.secondary_2};
+                border-radius: 8px;
+                width: 300px;
+                align-self: center;
+              `}
+            >
+              <Typography variant="data" bold>
+                <Link href={NEXT_PUBLIC_DACO_SURVEY_URL} target="_blank">
+                  Please fill out the required final report
+                </Link>{' '}
+                describing your experience with ICGC Controlled Data.
+              </Typography>
+            </div>
+          )}
+        </Row>
       </div>
     </DashboardCard>
   );

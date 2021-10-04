@@ -44,7 +44,10 @@ const icons = {
   reset: <Icon fill="white" height="12px" width="10px" name="reset" />,
 };
 
-const getButtonConfig = (appId = '', state = ''): { content: string; link: string; icon: any }[] => {
+const getButtonConfig = (
+  appId = '',
+  state = '',
+): { content: string; link: string; icon: any }[] => {
   const link = urlJoin(APPLICATIONS_PATH, appId);
   switch (state) {
     case ApplicationState.DRAFT:
@@ -102,7 +105,6 @@ const getButtonConfig = (appId = '', state = ''): { content: string; link: strin
 const ButtonGroup = ({ appId, state }: { appId: string; state: ApplicationState }) => (
   <div
     css={css`
-      margin-top: 35px;
       display: flex;
     `}
   >
@@ -113,7 +115,7 @@ const ButtonGroup = ({ appId, state }: { appId: string; state: ApplicationState 
           size="sm"
           onClick={() => router.push(link)}
           css={css`
-            margin-left: ${index ? '8px !important;' : 0}
+            margin-left: ${index ? '8px !important;' : 0};
           `}
         >
           <span
