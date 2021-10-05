@@ -30,7 +30,6 @@ import { ApplicationsResponseItem } from 'components/pages/Applications/types';
 import { pick } from 'lodash';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Link from '@icgc-argo/uikit/Link';
-import { Row } from 'react-grid-system';
 import { getConfig } from 'global/config';
 
 export interface StatusDates {
@@ -117,35 +116,47 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
           </div>
         </Typography>
 
-        <Row
-          style={{
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            margin: 0,
-            height: '50px',
-          }}
+        <div
+          css={css`
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin: 0;
+            height: 50px;
+            flex-wrap: nowrap;
+          `}
         >
-          <ButtonGroup appId={appId} state={state as ApplicationState} />
-          {approvedAtUtc && state === ApplicationState.CLOSED && (
-            <div
-              css={(theme) => css`
-                padding: 6px 10px 6px 14px;
-                background-color: ${theme.colors.secondary_4};
-                border: 1px solid ${theme.colors.secondary_2};
-                border-radius: 8px;
-                width: 300px;
-                align-self: center;
-              `}
-            >
-              <Typography variant="data" bold>
-                <Link href={NEXT_PUBLIC_DACO_SURVEY_URL} target="_blank">
-                  Please fill out the required final report
-                </Link>{' '}
-                describing your experience with ICGC Controlled Data.
-              </Typography>
-            </div>
-          )}
-        </Row>
+          <div
+            css={css`
+              min-width: 160px;
+            `}
+          >
+            <ButtonGroup appId={appId} state={state as ApplicationState} />
+          </div>
+          <div
+            css={css`
+              max-width: 330px;
+            `}
+          >
+            {approvedAtUtc && state === ApplicationState.CLOSED && (
+              <div
+                css={(theme) => css`
+                  padding: 6px 10px 6px 14px;
+                  background-color: ${theme.colors.secondary_4};
+                  border: 1px solid ${theme.colors.secondary_2};
+                  border-radius: 8px;
+                `}
+              >
+                <Typography variant="data" bold>
+                  <Link href={NEXT_PUBLIC_DACO_SURVEY_URL} target="_blank">
+                    Please fill out the required final report
+                  </Link>{' '}
+                  describing your experience with ICGC Controlled Data.
+                </Typography>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </DashboardCard>
   );

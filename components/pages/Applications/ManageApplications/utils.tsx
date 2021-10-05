@@ -34,6 +34,7 @@ import {
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { css } from '@icgc-argo/uikit';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import router from 'next/router';
 
 export const stringifySort = (sortArr: ApplicationsSort[]) =>
   sortArr.map(({ field, order }) => `${field}:${order}`).join(', ');
@@ -74,7 +75,9 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
     accessor: 'appId',
     Cell: ({ original }: { original: ApplicationRecord }) =>
       original.appId ? (
-        <Link href={urlJoin(APPLICATIONS_PATH, original.appId)}>{original.appId}</Link>
+        <Link onClick={() => router.push(urlJoin(APPLICATIONS_PATH, original.appId))}>
+          {original.appId}
+        </Link>
       ) : null,
   },
   {
