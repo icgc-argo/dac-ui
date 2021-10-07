@@ -75,17 +75,19 @@ const makeFieldState = (fieldState: RequestRevisionProperties, action: any) => {
   switch (action.type) {
     case 'detailsBlur': {
       return ({
-        error: action.payload.length < MINIMUM_DETAILS_LENGTH
+        error: action.payload.length > 0 && action.payload.length < MINIMUM_DETAILS_LENGTH
           ? ERROR_TEXT
-          : fieldState.error
+          : fieldState.error,
+        requested: action.payload.length > 0,
       });
     }
     case 'detailsChange': {
       return ({
         details: action.payload,
-        error: action.payload.length >= MINIMUM_DETAILS_LENGTH
-          ? initialFieldState.error
-          : fieldState.error
+        error: action.payload.length > 0 && action.payload.length < MINIMUM_DETAILS_LENGTH
+          ? fieldState.error
+          : initialFieldState.error,
+        requested: true,
       });
     }
     case 'detailsClick': {
@@ -93,13 +95,13 @@ const makeFieldState = (fieldState: RequestRevisionProperties, action: any) => {
         requested: true,
       });
     }
-    case 'requestedClick': {
-      return ({
-        details: initialFieldState.details,
-        error: initialFieldState.error,
-        requested: !fieldState.requested,
-      });
-    }
+    // case 'requestedClick': {
+    //   return ({
+    //     details: initialFieldState.details,
+    //     error: initialFieldState.error,
+    //     requested: !fieldState.requested,
+    //   });
+    // }
     default: {
       return fieldState;
     }
