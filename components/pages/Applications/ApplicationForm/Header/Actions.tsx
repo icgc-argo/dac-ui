@@ -140,9 +140,6 @@ const HeaderActions = ({
       .finally(() => {
         dismissModal();
         setIsSubmitting(false);
-        if (approvedAtUtc) {
-          localStorage.setItem(APPROVED_APP_CLOSED_CHECK, 'true');
-        }
       });
   };
 
