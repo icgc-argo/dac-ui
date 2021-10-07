@@ -95,13 +95,6 @@ const makeFieldState = (fieldState: RequestRevisionProperties, action: any) => {
         requested: true,
       });
     }
-    // case 'requestedClick': {
-    //   return ({
-    //     details: initialFieldState.details,
-    //     error: initialFieldState.error,
-    //     requested: !fieldState.requested,
-    //   });
-    // }
     default: {
       return fieldState;
     }

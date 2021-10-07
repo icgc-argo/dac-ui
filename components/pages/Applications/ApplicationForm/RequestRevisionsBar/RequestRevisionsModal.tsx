@@ -96,7 +96,7 @@ const ModalSection = ({
   return (
     <div
       css={css`
-        background: ${details.length > 0 || requested
+        background: ${requested
           ? theme.colors.secondary_4
           : fieldDisabled
             ? theme.colors.grey_3
@@ -166,7 +166,7 @@ const RequestRevisionsModal = ({
     setIsLoading(true);
     fetchWithAuth({
       data: {
-        revisionRequest: Object.entries(fields).reduce((acc, curr) => ({
+        revisionRequest: Object.entries(fields).reduce((acc, curr: any) => ({
           ...acc,
           [curr[0]]: {
             details: curr[1].details,
@@ -236,7 +236,6 @@ const RequestRevisionsModal = ({
       </FormControl>
     </Modal>
   );
-
 };
 
 export default RequestRevisionsModal;
