@@ -204,7 +204,7 @@ const RequestRevisionsModal = ({
             margin-top: 0;
           `}
       >
-        Check off the fields that have issues and provide the revisions details that will be emailed to the applicant.
+        Please provide the revision details for the sections that have issues. These details will be emailed to the applicant.
       </Typography>
 
       {Object.keys(fields).map((field => {
