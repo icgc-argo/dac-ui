@@ -224,7 +224,6 @@ const HeaderActions = ({
             onClick={async () => {
               setPdfIsLoading(true);
               const isDownloadZip = [
-                ApplicationState.REVISIONS_REQUESTED,
                 ApplicationState.REVIEW,
                 ApplicationState.APPROVED,
                 ApplicationState.REJECTED,
