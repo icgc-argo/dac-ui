@@ -29,6 +29,7 @@ import useTheme from '@icgc-argo/uikit/utils/useTheme';
 import {
   RequestRevisionsFieldTitles,
   RequestRevisionsFieldNames,
+  RequestRevisionProperties,
 } from './types';
 
 import useRequestRevisionsReducer, { SECONDARY_FIELDS } from './useRequestRevisionsReducer';
@@ -166,7 +167,7 @@ const RequestRevisionsModal = ({
     setIsLoading(true);
     fetchWithAuth({
       data: {
-        revisionRequest: Object.entries(fields).reduce((acc, curr: any) => ({
+        revisionRequest: Object.entries(fields).reduce((acc, curr: [string, RequestRevisionProperties]) => ({
           ...acc,
           [curr[0]]: {
             details: curr[1].details,
