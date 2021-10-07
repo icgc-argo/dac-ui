@@ -29,6 +29,8 @@ import {
 import { UserWithId } from '../types';
 import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
+import { useToaster } from './useToaster';
+import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
 
 type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
@@ -41,12 +43,12 @@ type T_AuthContext = {
 };
 
 const AuthContext = createContext<T_AuthContext>({
-  cancelFetchWithAuth: () => { },
+  cancelFetchWithAuth: () => {},
   token: '',
   isLoading: false,
-  logout: () => { },
+  logout: () => {},
   user: undefined,
-  fetchWithAuth: () => { },
+  fetchWithAuth: () => {},
   permissions: [],
 });
 
@@ -63,6 +65,7 @@ export const AuthProvider = ({
   const [token, setTokenState] = useState<string>(egoJwt);
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const router = useRouter();
+  const toaster = useToaster();
 
   const removeToken = () => {
     localStorage.removeItem(EGO_JWT_KEY);
@@ -128,6 +131,12 @@ export const AuthProvider = ({
 
     return axios(config)
       .catch((error) => {
+        // status code outside 2xx range
+        toaster.addToast({
+          title: 'Something went wrong!',
+          variant: TOAST_VARIANTS.ERROR,
+          content: 'Please try performing your action again.',
+        });
         // TODO: log errors somewhere not visible to the user?
         // Leaving this log here pre-release, for troubleshooting
         console.error('Error in fetchWithAuth', { error });
