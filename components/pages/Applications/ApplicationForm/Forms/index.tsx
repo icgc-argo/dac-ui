@@ -65,7 +65,7 @@ const getActiveSection = (sectionFromQuery?: FormSectionNames): FormSectionNames
   return isValidSectionFromQuery
     ? sectionFromQuery
     : ((sectionFromQuery &&
-        console.info('Section initially queried was not found', sectionFromQuery),
+      console.info('Section initially queried was not found', sectionFromQuery),
       sectionsOrder[0]) as FormSectionNames);
 };
 
@@ -84,7 +84,16 @@ const ApplicationFormsBase = ({
   formState: FormValidationStateParameters;
   validateSection: FormSectionValidatorFunction_Origin;
 }): ReactElement => {
+  const [showAppHistory, setShowAppHistory] = useState(false);
+  useEffect(() => {
+    const localShowAppHistory = localStorage.getItem('showAppHistory') === 'true';
+    setShowAppHistory(localShowAppHistory);
+  }, []);
+
   const { NEXT_PUBLIC_DACO_SURVEY_URL } = getConfig();
+
+  console.log({ showAppHistory });
+
   const {
     query: { section: sectionFromQuery = '' as FormSectionNames },
   }: QueryType = useRouter();
@@ -129,13 +138,13 @@ const ApplicationFormsBase = ({
 
     selectedSection === 'collaborators'
       ? formState.sections[selectedSection]?.meta.showOverall ||
-        triggerSectionValidation('notShowingOverall', selectedSection)
+      triggerSectionValidation('notShowingOverall', selectedSection)
       : sectionsOrder.forEach(
-          (section) =>
-            // validates all other section that doen't already show overall status.
-            !(formState.sections[section]?.meta.showOverall || selectedSection === section) &&
-            triggerSectionValidation('notShowingOverall', section),
-        );
+        (section) =>
+          // validates all other section that doen't already show overall status.
+          !(formState.sections[section]?.meta.showOverall || selectedSection === section) &&
+          triggerSectionValidation('notShowingOverall', section),
+      );
   }, [formState.lastUpdatedAtUtc]);
 
   const sectionIndex = sectionsOrder.indexOf(selectedSection);
@@ -357,6 +366,7 @@ const ApplicationFormsBase = ({
               align-items: center;
               border-bottom: 1px solid ${theme.colors.grey_2};
               display: flex;
+              justify-content: space-between;
               min-height: 45px;
               padding: 0 40px;
             `}
@@ -378,6 +388,33 @@ const ApplicationFormsBase = ({
               />
               Application for Controlled Data Access
             </Typography>
+
+            <Button
+              css={css`
+                border: 0 none;
+                padding: 0;
+                &:hover {
+                  background: transparent;
+                  text-decoration: underline;
+                }
+              `}
+              variant="secondary"
+            >
+              <div css={css`
+                align-items: center;
+                display: flex;
+              `}>
+                <Icon
+                  css={css`
+                    margin-right: 2px;
+                  `}
+                  fill={theme.colors.accent2_dark}
+                  height="14px"
+                  name="calendar"
+                />
+                <span>Application History</span>
+              </div>
+            </Button>
           </header>
 
           {sectionSelector({
