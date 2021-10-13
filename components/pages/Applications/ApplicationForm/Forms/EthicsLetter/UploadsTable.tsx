@@ -157,7 +157,10 @@ const UploadsTable = ({
   };
 
   const checkForDuplicate = (filename: string) =>
-    localState.approvalLetterDocs.value.some((approvalLetter) => approvalLetter.name === filename);
+    localState.approvalLetterDocs.value.some(
+      (approvalLetter: { name: string; objectId: string; uploadedAtUtc: string }) =>
+        approvalLetter.name === filename,
+    );
 
   const handleFileUpload = (event: any) => {
     const file = event.target.files?.[0];
@@ -301,7 +304,11 @@ const UploadsTable = ({
                 type="file"
                 accept=".pdf, .doc, .docx"
                 onChange={handleFileUpload}
-                onClick={() => (fileInputRef.current.value = null)}
+                onClick={() => {
+                  if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                  }
+                }}
                 css={css`
                   display: none;
                 `}
