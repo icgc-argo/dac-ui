@@ -103,7 +103,7 @@ const UploadsTable = ({
   const [modalVisibility, setModalVisibility] = useState(ModalStates.NONE);
 
   const [isFileUploadInProgress, setFileUploadInProgress] = useState(false);
-  console.log('seleceted', selectedFile);
+
   // make button work as input
   const selectFile = () => {
     const fp = fileInputRef.current;
