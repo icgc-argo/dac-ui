@@ -32,6 +32,7 @@ import Table from '@icgc-argo/uikit/Table';
 import Typography from '@icgc-argo/uikit/Typography';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Modal from '@icgc-argo/uikit/Modal';
+import { BANNER_VARIANTS } from '@icgc-argo/uikit/notifications/Banner';
 
 import { API, DATE_RANGE_DISPLAY_FORMAT } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
@@ -47,6 +48,7 @@ import {
 } from '../types';
 import pluralize from 'pluralize';
 import { CustomLoadingButton } from '../common';
+import Banner from '@icgc-argo/uikit/notifications/Banner';
 
 const VALID_FILE_TYPE = [
   'application/msword',
@@ -55,14 +57,21 @@ const VALID_FILE_TYPE = [
 ];
 const MAX_FILE_SIZE = 5242880;
 
+enum ModalStates {
+  CONFIRMATION = 'confirmation',
+  DUPLICATE = 'duplicate',
+  CONFIRMATION_DUPLICATE = 'confirmation_duplicate',
+  NONE = 'none',
+}
+
 // ethics letters are in an object on initial load.
 // after the user uploads a new letter it becomes an array.
 const getEthicsLetters = (value: any) =>
   Array.isArray(value)
     ? value
     : typeof value === 'undefined'
-      ? [] // handle undefined approvalLetterDocs just in case
-      : Object.values(value);
+    ? [] // handle undefined approvalLetterDocs just in case
+    : Object.values(value);
 
 const UploadsTable = ({
   appId,
@@ -91,7 +100,7 @@ const UploadsTable = ({
   const [letterError, setLetterError] = useState(false); // !!localState.approvalLetterDocs?.error
 
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalVisibility, setModalVisibility] = useState(ModalStates.NONE);
 
   const [isFileUploadInProgress, setFileUploadInProgress] = useState(false);
 
@@ -104,6 +113,7 @@ const UploadsTable = ({
   };
 
   const submitFile = (file?: File) => {
+    setFileUploadInProgress(true);
     setLetterError(false);
     const formData = new FormData();
     const fileToUpload = file || selectedFile;
@@ -146,13 +156,26 @@ const UploadsTable = ({
       });
   };
 
+  const checkForDuplicate = (filename: string) =>
+    localState.approvalLetterDocs.value.some(
+      (approvalLetter: { name: string; objectId: string; uploadedAtUtc: string }) =>
+        approvalLetter.name === filename,
+    );
+
   const handleFileUpload = (event: any) => {
     const file = event.target.files?.[0];
-    if (file && file.size <= MAX_FILE_SIZE && VALID_FILE_TYPE.includes(file.type)) {
-      setFileUploadInProgress(true);
+    const isDuplicate = checkForDuplicate(file.name);
+    const isValidFile = file && file.size <= MAX_FILE_SIZE && VALID_FILE_TYPE.includes(file.type);
+
+    if (isValidFile) {
       setSelectedFile(file);
-      if (isRequiredPostApproval) {
-        setIsModalVisible(true);
+
+      if (isRequiredPostApproval && isDuplicate) {
+        setModalVisibility(ModalStates.CONFIRMATION_DUPLICATE);
+      } else if (isRequiredPostApproval) {
+        setModalVisibility(ModalStates.CONFIRMATION);
+      } else if (isDuplicate) {
+        setModalVisibility(ModalStates.DUPLICATE);
       } else {
         // state doesn't update fast enough so pass file as an argument
         submitFile(file);
@@ -165,7 +188,7 @@ const UploadsTable = ({
 
   const dismissModal = () => {
     setSelectedFile(undefined);
-    setIsModalVisible(false);
+    setModalVisibility(ModalStates.NONE);
   };
 
   useEffect(() => {
@@ -280,6 +303,11 @@ const UploadsTable = ({
                 type="file"
                 accept=".pdf, .doc, .docx"
                 onChange={handleFileUpload}
+                onClick={() => {
+                  if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                  }
+                }}
                 css={css`
                   display: none;
                 `}
@@ -316,34 +344,34 @@ const UploadsTable = ({
               ...(isRequiredPostApproval
                 ? []
                 : [
-                  {
-                    accessor: 'objectId',
-                    Cell: ({ value }: { value: string }) => (
-                      <Button
-                        css={css`
+                    {
+                      accessor: 'objectId',
+                      Cell: ({ value }: { value: string }) => (
+                        <Button
+                          css={css`
                             label: action_delete;
                             height: 30px;
                             margin: 0 auto;
                             width: 30px;
                           `}
-                        disabled={isSectionDisabled}
-                        onClick={handleFileDelete(value)}
-                        size="sm"
-                        variant="text"
-                      >
-                        <Icon
-                          css={css`
+                          disabled={isSectionDisabled}
+                          onClick={handleFileDelete(value)}
+                          size="sm"
+                          variant="text"
+                        >
+                          <Icon
+                            css={css`
                               margin-bottom: -3px;
                             `}
-                          fill={isSectionDisabled ? 'grey_1' : 'accent2'}
-                          name="trash"
-                        />
-                      </Button>
-                    ),
-                    Header: 'Actions',
-                    width: 60,
-                  },
-                ]),
+                            fill={isSectionDisabled ? 'grey_1' : 'accent2'}
+                            name="trash"
+                          />
+                        </Button>
+                      ),
+                      Header: 'Actions',
+                      width: 60,
+                    },
+                  ]),
             ]}
             css={css`
               margin-top: 10px;
@@ -376,7 +404,7 @@ const UploadsTable = ({
           </ContentPlaceholder>
         )}
       </div>
-      {isModalVisible && (
+      {modalVisibility !== ModalStates.NONE && (
         <ModalPortal>
           <Modal
             title="Are you sure you want to upload?"
@@ -388,11 +416,35 @@ const UploadsTable = ({
             onCloseClick={dismissModal}
             actionButtonText="Yes, upload"
           >
-            <Typography>
-              Are you sure you want to upload <strong>{selectedFile?.name}</strong> to this
-              application? If so, the ICGC DACO will be notified to review the new ethics letter and
-              they will contact you if there are any concerns.
-            </Typography>
+            <div
+              css={css`
+                max-width: 580px;
+              `}
+            >
+              {[ModalStates.CONFIRMATION_DUPLICATE, ModalStates.DUPLICATE].includes(
+                modalVisibility,
+              ) && (
+                <Banner
+                  variant={BANNER_VARIANTS.WARNING}
+                  content={
+                    <div>
+                      There is already a file uploaded named {selectedFile?.name}. Uploading this
+                      new file will replace the old file with the same name.
+                    </div>
+                  }
+                />
+              )}
+
+              {[ModalStates.CONFIRMATION, ModalStates.CONFIRMATION_DUPLICATE].includes(
+                modalVisibility,
+              ) && (
+                <Typography>
+                  Are you sure you want to upload <strong>{selectedFile?.name}</strong> to this
+                  application? If so, the ICGC DACO will be notified to review the new ethics letter
+                  and they will contact you if there are any concerns.
+                </Typography>
+              )}
+            </div>
           </Modal>
         </ModalPortal>
       )}
