@@ -26,7 +26,7 @@ import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import urlJoin from 'url-join';
 import { isEqual } from 'lodash';
 import { useAuthContext } from 'global/hooks';
-import { API, APPLICATIONS_PATH } from 'global/constants';
+import { API, APPLICATIONS_PATH, APPROVED_APP_CLOSED_CHECK } from 'global/constants';
 import { AxiosError } from 'axios';
 import { ApplicationState } from '../../types';
 import { CustomLoadingButton, generatePDFDocument } from '../Forms/common';
@@ -140,6 +140,9 @@ const HeaderActions = ({
       .finally(() => {
         dismissModal();
         setIsSubmitting(false);
+        if (approvedAtUtc) {
+          localStorage.setItem(APPROVED_APP_CLOSED_CHECK, 'true');
+        }
       });
   };
 
