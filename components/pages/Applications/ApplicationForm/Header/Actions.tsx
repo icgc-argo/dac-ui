@@ -227,6 +227,7 @@ const HeaderActions = ({
                 ApplicationState.REVIEW,
                 ApplicationState.APPROVED,
                 ApplicationState.REJECTED,
+                ApplicationState.CLOSED,
               ].includes(state);
               const downloadUrl = urlJoin(
                 API.APPLICATIONS,
