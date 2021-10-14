@@ -166,7 +166,6 @@ const UploadsTable = ({
     const file = event.target.files?.[0];
     const isDuplicate = checkForDuplicate(file.name);
     const isValidFile = file && file.size <= MAX_FILE_SIZE && VALID_FILE_TYPE.includes(file.type);
-    console.log('file', file, isDuplicate);
 
     if (isValidFile) {
       setSelectedFile(file);
@@ -429,8 +428,8 @@ const UploadsTable = ({
                   variant={BANNER_VARIANTS.WARNING}
                   content={
                     <div>
-                      There is already a file uploaded named {`${selectedFile?.name}`}. Uploading
-                      this new file will replace the old file with the same name.
+                      There is already a file uploaded named {selectedFile?.name}. Uploading this
+                      new file will replace the old file with the same name.
                     </div>
                   }
                 />
