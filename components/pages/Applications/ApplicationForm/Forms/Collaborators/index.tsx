@@ -59,6 +59,7 @@ import TableComponent from './TableComponent';
 import ErrorBanner, { AddCollaboratorError, CollaboratorErrorCodes } from './ErrorBanner';
 import { useToaster } from 'global/hooks/useToaster';
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
+import { ModalStates } from './constants';
 
 const Collaborators = ({
   appId,
@@ -220,11 +221,6 @@ const Collaborators = ({
       type: 'change',
     });
   };
-
-  enum ModalStates {
-    EDIT_COLLABORATOR = 'EDIT_COLLABORATOR',
-    ADD_COLLABORATOR = 'ADD_COLLABORATOR',
-  }
 
   const handleTableActions = (action: 'edit' | 'remove', collaboratorId: string) => () => {
     validateFieldTouched({
