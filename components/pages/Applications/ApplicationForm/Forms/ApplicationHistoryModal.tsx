@@ -14,14 +14,10 @@ const AppHistoryModal = ({
 }) => {
   const containerRef = createRef<HTMLDivElement>();
   return (
-    <ModalPortal>
+    <ModalPortal modalWidth="100%">
       <Modal
         actionVisible={false}
         cancelText="close"
-        css={css`
-          background: magenta;
-          width: 100%;
-        `}
         onCancelClick={onClose}
         onCloseClick={onClose}
         title="Application History"
@@ -50,18 +46,336 @@ const AppHistoryModal = ({
             },
           ]}
           css={css`
-              margin-top: 10px;
-            `}
+            margin-top: 10px;
+          `}
           data={[{
-            // TODO get real data
             actionPerformedBy: 'Submitter',
             appStatus: 'Created',
             appType: 'New',
             date: '2019-09-10',
-          }]}
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },
+          {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          }, {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },
+          {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },
+          {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },
+          {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          }, {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },
+          {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          }, {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },
+          {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          }, {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },
+          {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          }, {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },
+          {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          }, {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },
+          {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          }, {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },
+          {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },
+          {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },
+          {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          }, {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },
+          {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          }, {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },
+          {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          }, {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },
+          {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          }, {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },
+          {
+            actionPerformedBy: 'Submitter',
+            appStatus: 'Created',
+            appType: 'New',
+            date: '2019-09-10',
+          },
+          {
+            actionPerformedBy: 'Submitter 2',
+            appStatus: 'Approved',
+            appType: 'New',
+            date: '2019-01-10',
+          },]}
           defaultSorted={[{ id: 'date', desc: false }]}
           parentRef={containerRef}
-          showPagination={false}
+          showPagination
           stripped
           withOutsideBorder
         />

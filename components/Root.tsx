@@ -57,48 +57,51 @@ const useMounted = () => {
   }, []);
   return mounted;
 };
-export const ModalPortal = ({ children }: { children: React.ReactElement }) => {
+export const ModalPortal = ({ children, modalWidth = 'auto' }: { children: React.ReactElement, modalWidth?: string }) => {
   const ref = modalPortalRef.current;
   const mounted = useMounted();
   return ref
     ? ReactDOM.createPortal(
-        <div
-          id="modalContainer"
+      <div
+        id="modalContainer"
+        css={css`
+          transition: all 0.2s;
+          opacity: ${mounted ? 1 : 0};
+          #modal-action-btn_google-logo {
+            position: relative;
+            padding-left: 34px;
+            &::before {
+              position: absolute;
+              display: block;
+              content: ' ';
+              background-image: url('/icons-google.svg');
+              background-size: 18px 19px;
+              background-repeat: no-repeat;
+              height: 18px;
+              width: 19px;
+              left: 11px;
+            }
+          }
+        `}
+      >
+        <Modal.Overlay
           css={css`
-            transition: all 0.2s;
-            opacity: ${mounted ? 1 : 0};
-            #modal-action-btn_google-logo {
-              position: relative;
-              padding-left: 34px;
-              &::before {
-                position: absolute;
-                display: block;
-                content: ' ';
-                background-image: url('/icons-google.svg');
-                background-size: 18px 19px;
-                background-repeat: no-repeat;
-                height: 18px;
-                width: 19px;
-                left: 11px;
-              }
+            ${fillAvailableWidth}
+            ${fillAvailableHeight}
+            > div { /* selects Uikit ModalContainer component */
+              width: ${modalWidth};
+            }
+            @media (min-width: 768px) {
+              width: 100vw;
+              height: 100vh;
             }
           `}
         >
-          <Modal.Overlay
-            css={css`
-              ${fillAvailableWidth}
-              ${fillAvailableHeight}
-            @media (min-width: 768px) {
-                width: 100vw;
-                height: 100vh;
-              }
-            `}
-          >
-            {children}
-          </Modal.Overlay>
-        </div>,
-        ref,
-      )
+          {children}
+        </Modal.Overlay>
+      </div>,
+      ref,
+    )
     : null;
 };
 
