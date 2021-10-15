@@ -42,6 +42,12 @@ import { SUBMISSION_SUCCESS_CHECK, APPROVED_APP_CLOSED_CHECK } from 'global/cons
 import { ApplicationState } from 'components/pages/Applications/types';
 import { getConfig } from 'global/config';
 import Link from '@icgc-argo/uikit/Link';
+import ApplicationHistoryModal from './ApplicationHistoryModal';
+
+enum VisibleModalOption {
+  NONE = 'NONE',
+  APPLICATION_HISTORY = 'APPLICATION_HISTORY',
+}
 
 type QueryType = {
   query: {
@@ -84,15 +90,17 @@ const ApplicationFormsBase = ({
   formState: FormValidationStateParameters;
   validateSection: FormSectionValidatorFunction_Origin;
 }): ReactElement => {
-  const [showAppHistory, setShowAppHistory] = useState(false);
+  // start application history feature flag
+  const [showApplicationHistoryButton, setShowApplicationHistoryButton] = useState<boolean>(false);
   useEffect(() => {
-    const localShowAppHistory = localStorage.getItem('showAppHistory') === 'true';
-    setShowAppHistory(localShowAppHistory);
-  }, []);
+    const localFlag = localStorage.getItem('SHOW_APP_HISTORY');
+    setShowApplicationHistoryButton(localFlag === 'true');
+  });
+  // end application history feature flag
+
+  const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
 
   const { NEXT_PUBLIC_DACO_SURVEY_URL } = getConfig();
-
-  console.log({ showAppHistory });
 
   const {
     query: { section: sectionFromQuery = '' as FormSectionNames },
@@ -173,285 +181,301 @@ const ApplicationFormsBase = ({
   };
 
   return (
-    <ContentBody>
-      {JSON.parse(localStorage.getItem(SUBMISSION_SUCCESS_CHECK) || 'false') &&
-        [ApplicationState.REVIEW].includes(applicationState) && (
+    <>
+      <ContentBody>
+        {JSON.parse(localStorage.getItem(SUBMISSION_SUCCESS_CHECK) || 'false') &&
+          [ApplicationState.REVIEW].includes(applicationState) && (
+            <Notification
+              title="Your Application has been Submitted"
+              content="The ICGC DACO has been notified for review and you should hear back within ten business days regarding the status of your application."
+              interactionType="CLOSE"
+              variant="SUCCESS"
+              onInteraction={({ type }) => {
+                if (type === 'CLOSE') {
+                  localStorage.setItem(SUBMISSION_SUCCESS_CHECK, 'false');
+                  router.push(`/applications/${appId}?section=${selectedSection}`);
+                }
+              }}
+              css={notificationStyle}
+            />
+          )}
+
+        {JSON.parse(localStorage.getItem(APPROVED_APP_CLOSED_CHECK) || 'false') && (
           <Notification
-            title="Your Application has been Submitted"
-            content="The ICGC DACO has been notified for review and you should hear back within ten business days regarding the status of your application."
-            interactionType="CLOSE"
             variant="SUCCESS"
-            onInteraction={({ type }) => {
-              if (type === 'CLOSE') {
-                localStorage.setItem(SUBMISSION_SUCCESS_CHECK, 'false');
-                router.push(`/applications/${appId}?section=${selectedSection}`);
-              }
+            size="MD"
+            interactionType="CLOSE"
+            onInteraction={() => {
+              localStorage.setItem(APPROVED_APP_CLOSED_CHECK, 'false');
+              router.push(`/applications/${appId}?section=${selectedSection}`);
             }}
+            title="Your Application has been Closed"
+            content={
+              <div
+                css={css`
+                  margin-top: 10px;
+                `}
+              >
+                <span>
+                  Access to ICGC Controlled Data will be removed for this project team within the next
+                  24 hours.
+                </span>
+                <br />
+                <br />
+                <strong>
+                  You are required to complete a final report as per the conditions of the Data Access
+                  Agreement.{' '}
+                  <Link href={NEXT_PUBLIC_DACO_SURVEY_URL} target="_blank">
+                    Click here to fill out the report
+                  </Link>
+                </strong>
+                , describing your successes and challenges with accessing ICGC Controlled Data and the
+                outcomes of your research project.
+              </div>
+            }
             css={notificationStyle}
           />
         )}
-
-      {JSON.parse(localStorage.getItem(APPROVED_APP_CLOSED_CHECK) || 'false') && (
-        <Notification
-          variant="SUCCESS"
-          size="MD"
-          interactionType="CLOSE"
-          onInteraction={() => {
-            localStorage.setItem(APPROVED_APP_CLOSED_CHECK, 'false');
-            router.push(`/applications/${appId}?section=${selectedSection}`);
-          }}
-          title="Your Application has been Closed"
-          content={
-            <div
-              css={css`
-                margin-top: 10px;
-              `}
-            >
-              <span>
-                Access to ICGC Controlled Data will be removed for this project team within the next
-                24 hours.
-              </span>
-              <br />
-              <br />
-              <strong>
-                You are required to complete a final report as per the conditions of the Data Access
-                Agreement.{' '}
-                <Link href={NEXT_PUBLIC_DACO_SURVEY_URL} target="_blank">
-                  Click here to fill out the report
-                </Link>
-              </strong>
-              , describing your successes and challenges with accessing ICGC Controlled Data and the
-              outcomes of your research project.
-            </div>
-          }
-          css={notificationStyle}
-        />
-      )}
-      <ContentBox
-        css={css`
-          box-sizing: border-box;
-          display: flex;
-          margin: 10px auto;
-          max-width: 1200px;
-          min-width: 665px;
-          width: 100%;
-        `}
-      >
-        <Outline
-          sections={sectionsOrder}
-          selectedSection={selectedSection}
-          setSelectedSection={handleSectionChange}
-          formState={formState}
-        />
-
-        <div
+        <ContentBox
           css={css`
-            border-radius: 0 8px 8px 0;
+            box-sizing: border-box;
             display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            margin: -8px 0;
-            margin-right: -8px;
-            min-width: 460px;
+            margin: 10px auto;
+            max-width: 1200px;
+            min-width: 665px;
             width: 100%;
+          `}
+        >
+          <Outline
+            sections={sectionsOrder}
+            selectedSection={selectedSection}
+            setSelectedSection={handleSectionChange}
+            formState={formState}
+          />
 
-            > article {
-              height: 100%;
-              padding: 30px 40px 40px;
+          <div
+            css={css`
+              border-radius: 0 8px 8px 0;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+              margin: -8px 0;
+              margin-right: -8px;
+              min-width: 460px;
+              width: 100%;
 
-              h2 {
-                font-size: 20px;
-                margin-top: 0;
-              }
+              > article {
+                height: 100%;
+                padding: 30px 40px 40px;
 
-              > section {
-                p {
-                  margin: 0;
-
-                  & + [class*='FormControl'] {
-                    margin-top: 10px;
-
-                    &.closer {
-                      margin-top: 13px;
-                    }
-                  }
-
-                  &:not(:last-of-type) {
-                    margin-bottom: 23px;
-
-                    & + [class*='FormControl'].closer {
-                      margin-top: -10px;
-                    }
-                  }
-
-                  + [class*='DoubleFieldRow'],
-                  + [class*='FormControl'] {
-                    margin-top: 20px;
-                  }
+                h2 {
+                  font-size: 20px;
+                  margin-top: 0;
                 }
 
-                // for the horizontal design in this app
-                [class*='FormControl'] {
-                  width: 100%;
+                > section {
+                  p {
+                    margin: 0;
 
-                  > label {
-                    line-height: 1rem;
+                    & + [class*='FormControl'] {
+                      margin-top: 10px;
 
-                    & ~ p {
-                      margin-top: 5px 0 0;
-                    }
-                  }
-
-                  input:not([type]) {
-                    // text inputs have no type
-                    line-height: 32px;
-                  }
-
-                  [class*='Uikit-InputBox'] {
-                    // remove padding on country box
-                    padding: 0;
-                  }
-
-                  &.vertical {
-                    margin-bottom: 20px;
-                  }
-
-                  &:not(.vertical) {
-                    align-items: center;
-                    display: flex;
-                    flex-wrap: wrap;
-
-                    > label {
-                      margin: 0 5px 0 0;
-                      flex-shrink: 0;
-                      width: 140px;
-
-                      & ~ p {
-                        margin-left: 150px;
+                      &.closer {
+                        margin-top: 13px;
                       }
                     }
 
-                    > div {
-                      flex-grow: 1;
+                    &:not(:last-of-type) {
+                      margin-bottom: 23px;
+
+                      & + [class*='FormControl'].closer {
+                        margin-top: -10px;
+                      }
                     }
 
-                    > p {
-                      flex-basis: 100%;
-                    }
-
-                    + p {
-                      margin-top: 30px;
+                    + [class*='DoubleFieldRow'],
+                    + [class*='FormControl'] {
+                      margin-top: 20px;
                     }
                   }
 
-                  textarea {
-                    font-size: 12px;
-                    line-height: 13px;
-                  }
-                }
-
-                [class*='DoubleFieldRow'] {
-                  margin-bottom: 10px;
-
+                  // for the horizontal design in this app
                   [class*='FormControl'] {
-                    margin-bottom: 0;
+                    width: 100%;
+
+                    > label {
+                      line-height: 1rem;
+
+                      & ~ p {
+                        margin-top: 5px 0 0;
+                      }
+                    }
+
+                    input:not([type]) {
+                      // text inputs have no type
+                      line-height: 32px;
+                    }
+
+                    [class*='Uikit-InputBox'] {
+                      // remove padding on country box
+                      padding: 0;
+                    }
+
+                    &.vertical {
+                      margin-bottom: 20px;
+                    }
+
+                    &:not(.vertical) {
+                      align-items: center;
+                      display: flex;
+                      flex-wrap: wrap;
+
+                      > label {
+                        margin: 0 5px 0 0;
+                        flex-shrink: 0;
+                        width: 140px;
+
+                        & ~ p {
+                          margin-left: 150px;
+                        }
+                      }
+
+                      > div {
+                        flex-grow: 1;
+                      }
+
+                      > p {
+                        flex-basis: 100%;
+                      }
+
+                      + p {
+                        margin-top: 30px;
+                      }
+                    }
+
+                    textarea {
+                      font-size: 12px;
+                      line-height: 13px;
+                    }
+                  }
+
+                  [class*='DoubleFieldRow'] {
+                    margin-bottom: 10px;
+
+                    [class*='FormControl'] {
+                      margin-bottom: 0;
+                    }
                   }
                 }
               }
-            }
-          `}
-        >
-          <header
-            css={css`
-              align-items: center;
-              border-bottom: 1px solid ${theme.colors.grey_2};
-              display: flex;
-              justify-content: space-between;
-              min-height: 45px;
-              padding: 0 40px;
             `}
           >
-            <Typography
-              component="h1"
+            <header
               css={css`
-                margin: 0;
-              `}
-              variant="subtitle"
-            >
-              <Icon
-                css={css`
-                  margin-bottom: -5px;
-                  margin-right: 8px;
-                `}
-                fill={theme.colors.secondary}
-                name="form"
-              />
-              Application for Controlled Data Access
-            </Typography>
-
-            <Button
-              css={css`
-                border: 0 none;
-                padding: 0;
-                &:hover {
-                  background: transparent;
-                  text-decoration: underline;
-                }
-              `}
-              variant="secondary"
-            >
-              <div css={css`
                 align-items: center;
+                border-bottom: 1px solid ${theme.colors.grey_2};
                 display: flex;
-              `}>
+                justify-content: space-between;
+                min-height: 45px;
+                padding: 0 40px;
+              `}
+            >
+              <Typography
+                component="h1"
+                css={css`
+                  margin: 0;
+                `}
+                variant="subtitle"
+              >
                 <Icon
                   css={css`
-                    margin-right: 2px;
+                    margin-bottom: -5px;
+                    margin-right: 8px;
                   `}
-                  fill={theme.colors.accent2_dark}
-                  height="14px"
-                  name="calendar"
+                  fill={theme.colors.secondary}
+                  name="form"
                 />
-                <span>Application History</span>
-              </div>
-            </Button>
-          </header>
+                Application for Controlled Data Access
+              </Typography>
 
-          {sectionSelector({
-            formState,
-            isLoading,
-            selectedSection,
-            validator: validateSection,
-            appId,
-          })}
+              {showApplicationHistoryButton && (
+                <Button
+                  css={css`
+                  border: 0 none;
+                  padding: 0;
+                  &:hover {
+                    background: transparent;
+                    text-decoration: underline;
+                  }
+                `}
+                  onClick={() => {
+                    setVisibleModal(VisibleModalOption.APPLICATION_HISTORY);
+                  }}
+                  variant="secondary"
+                >
+                  <div
+                    css={css`
+                    align-items: center;
+                    display: flex;
+                  `}
+                  >
+                    <Icon
+                      css={css`
+                      margin-right: 2px;
+                    `}
+                      fill={theme.colors.accent2_dark}
+                      height="14px"
+                      name="calendar"
+                    />
+                    <span>Application History</span>
+                  </div>
+                </Button>
+              )}
 
-          <footer
-            css={css`
-              align-items: center;
-              border-top: 1px solid ${theme.colors.grey_2};
-              display: flex;
-              justify-content: space-between;
-              min-height: 45px;
-              padding: 0 40px;
-            `}
-          >
-            {sectionsBefore.length > 0 && (
-              <Button onClick={handlePreviousNextSectionClick('previous')} size="sm">
-                <Icon fill={theme.colors.white} height="9px" name="chevron_left" /> Previous Section
-              </Button>
-            )}
+            </header>
 
-            <>&nbsp;</>
+            {sectionSelector({
+              formState,
+              isLoading,
+              selectedSection,
+              validator: validateSection,
+              appId,
+            })}
 
-            {sectionsAfter.length > 0 && (
-              <Button onClick={handlePreviousNextSectionClick('next')} size="sm">
-                Next Section <Icon fill={theme.colors.white} height="9px" name="chevron_right" />
-              </Button>
-            )}
-          </footer>
-        </div>
-      </ContentBox>
-    </ContentBody>
+            <footer
+              css={css`
+                align-items: center;
+                border-top: 1px solid ${theme.colors.grey_2};
+                display: flex;
+                justify-content: space-between;
+                min-height: 45px;
+                padding: 0 40px;
+              `}
+            >
+              {sectionsBefore.length > 0 && (
+                <Button onClick={handlePreviousNextSectionClick('previous')} size="sm">
+                  <Icon fill={theme.colors.white} height="9px" name="chevron_left" /> Previous Section
+                </Button>
+              )}
+
+              <>&nbsp;</>
+
+              {sectionsAfter.length > 0 && (
+                <Button onClick={handlePreviousNextSectionClick('next')} size="sm">
+                  Next Section <Icon fill={theme.colors.white} height="9px" name="chevron_right" />
+                </Button>
+              )}
+            </footer>
+          </div>
+        </ContentBox>
+      </ContentBody>
+      {visibleModal === VisibleModalOption.APPLICATION_HISTORY && (
+        <ApplicationHistoryModal
+          appId={appId}
+          onClose={() => setVisibleModal(VisibleModalOption.NONE)}
+        />
+      )}
+    </>
   );
 };
 
