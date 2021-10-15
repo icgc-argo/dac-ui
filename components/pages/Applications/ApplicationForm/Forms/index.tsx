@@ -401,13 +401,13 @@ const ApplicationFormsBase = ({
               {showApplicationHistoryButton && (
                 <Button
                   css={css`
-                  border: 0 none;
-                  padding: 0;
-                  &:hover {
-                    background: transparent;
-                    text-decoration: underline;
-                  }
-                `}
+                    border: 0 none;
+                    padding: 0;
+                    &:hover {
+                      background: transparent;
+                      text-decoration: underline;
+                    }
+                  `}
                   onClick={() => {
                     setVisibleModal(VisibleModalOption.APPLICATION_HISTORY);
                   }}
@@ -415,14 +415,14 @@ const ApplicationFormsBase = ({
                 >
                   <div
                     css={css`
-                    align-items: center;
-                    display: flex;
-                  `}
+                      align-items: center;
+                      display: flex;
+                    `}
                   >
                     <Icon
                       css={css`
-                      margin-right: 2px;
-                    `}
+                        margin-right: 2px;
+                      `}
                       fill={theme.colors.accent2_dark}
                       height="14px"
                       name="calendar"
