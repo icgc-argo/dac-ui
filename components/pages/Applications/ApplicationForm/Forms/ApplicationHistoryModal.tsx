@@ -27,7 +27,12 @@ const AppHistoryModal = ({
         </Typography>
         <Table
           columns={[
-            // TODO accessor names are TBD
+            /* TODO in API data hook-up ticket
+            - real data
+            - real accessor names
+            - showPagination={false}
+            - see ManageApplications table for API/state-driven pagination
+            */
             {
               accessor: 'date',
               Header: 'Day of Status Change',
