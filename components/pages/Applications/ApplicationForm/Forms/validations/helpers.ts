@@ -107,6 +107,15 @@ export const maxWords = (max: number) => ({
   test: (value: string) => countWordsInString(value) <= max,
 });
 
+export const minWords = (min: number) => ({
+  message: 'Please enter at least ${min} words.',
+  name: `min${min}Words`,
+  params: {
+    min,
+  },
+  test: (value: string) => countWordsInString(value) >= min,
+});
+
 export const schemaValidator = (fieldSchema: any, value: any) =>
   fieldSchema.validate(value).catch((error: yup.ValidationError) => ({
     error: error?.errors?.length > 0 ? error.errors : error.message,
