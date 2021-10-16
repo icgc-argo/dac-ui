@@ -40,7 +40,7 @@ import router from 'next/router';
 import { API } from 'global/constants';
 
 const textareaStyle = css`
-/* copied UIKIT textarea styles because textarea wasn't programatically updating.
+  /* copied UIKIT textarea styles because textarea wasn't programatically updating.
 the value got "stuck" in an emotion component prop inside the textarea. */
   background: #fff;
   border: 1px solid #babcc2;
@@ -76,22 +76,20 @@ const ModalSection = ({
   error,
   fieldDisabled,
   fieldName,
-  title
-}:
-  {
-    requested: boolean;
-    details: string;
-    dispatch: any;
-    // TODO revisit dispatch type in data hookup ticket
-    error: string;
-    fieldDisabled: boolean;
-    fieldName: string;
-    title: string;
-  }
-) => {
+  title,
+}: {
+  requested: boolean;
+  details: string;
+  dispatch: any;
+  // TODO revisit dispatch type in data hookup ticket
+  error: string;
+  fieldDisabled: boolean;
+  fieldName: string;
+  title: string;
+}) => {
   const theme = useTheme();
   const dispatchArgs = {
-    fieldName: fieldName as RequestRevisionsFieldNames
+    fieldName: fieldName as RequestRevisionsFieldNames,
   };
 
   return (
@@ -100,8 +98,8 @@ const ModalSection = ({
         background: ${requested
           ? theme.colors.secondary_4
           : fieldDisabled
-            ? theme.colors.grey_3
-            : theme.colors.white};
+          ? theme.colors.grey_3
+          : theme.colors.white};
         border: 1px solid ${theme.colors.grey_2};
         display: flex;
         margin-bottom: 5px;
@@ -131,8 +129,12 @@ const ModalSection = ({
           id={`${title}-textarea`}
           className={`${error ? 'error' : ''} ${fieldDisabled ? 'disabled' : ''}`}
           css={textareaStyle}
-          onBlur={(e) => dispatch({ payload: e.target.value, type: 'detailsBlur', ...dispatchArgs })}
-          onChange={(e) => dispatch({ payload: e.target.value, type: 'detailsChange', ...dispatchArgs })}
+          onBlur={(e) =>
+            dispatch({ payload: e.target.value, type: 'detailsBlur', ...dispatchArgs })
+          }
+          onChange={(e) =>
+            dispatch({ payload: e.target.value, type: 'detailsChange', ...dispatchArgs })
+          }
           onClick={() => dispatch({ type: 'detailsClick', ...dispatchArgs })}
           readOnly={fieldDisabled} // making the field disabled will block click events
           value={details}
@@ -152,7 +154,7 @@ const ModalSection = ({
 
 const RequestRevisionsModal = ({
   appId,
-  dismissModal
+  dismissModal,
 }: {
   appId: string;
   dismissModal: () => any | void;
@@ -167,17 +169,20 @@ const RequestRevisionsModal = ({
     setIsLoading(true);
     fetchWithAuth({
       data: {
-        revisionRequest: Object.entries(fields).reduce((acc, curr: [string, RequestRevisionProperties]) => ({
-          ...acc,
-          [curr[0]]: {
-            details: curr[1].details,
-            requested: curr[1].requested,
-          }
-        }), {}),
+        revisionRequest: Object.entries(fields).reduce(
+          (acc, curr: [string, RequestRevisionProperties]) => ({
+            ...acc,
+            [curr[0]]: {
+              details: curr[1].details,
+              requested: curr[1].requested,
+            },
+          }),
+          {},
+        ),
         state: 'REVISIONS REQUESTED',
       },
       method: 'PATCH',
-      url: urlJoin(API.APPLICATIONS, appId)
+      url: urlJoin(API.APPLICATIONS, appId),
     })
       .then(() => {
         router.reload();
@@ -202,13 +207,14 @@ const RequestRevisionsModal = ({
       <Typography
         bold
         css={css`
-            margin-top: 0;
-          `}
+          margin-top: 0;
+        `}
       >
-        Please provide the revision details for the sections that have issues. These details will be emailed to the applicant.
+        Please provide the revision details for the sections that have issues. These details will be
+        emailed to the applicant.
       </Typography>
 
-      {Object.keys(fields).map((field => {
+      {Object.keys(fields).map((field) => {
         const fieldName = field as RequestRevisionsFieldNames;
         return (
           <ModalSection
@@ -216,14 +222,13 @@ const RequestRevisionsModal = ({
             details={fields[fieldName].details}
             dispatch={dispatch}
             error={fields[fieldName].error}
-            fieldDisabled={SECONDARY_FIELDS.includes(fieldName)
-              && !isSecondaryFieldsEnabled}
+            fieldDisabled={SECONDARY_FIELDS.includes(fieldName) && !isSecondaryFieldsEnabled}
             fieldName={fieldName}
             key={fieldName}
             title={RequestRevisionsFieldTitles[fieldName]}
           />
-        )
-      }))}
+        );
+      })}
 
       <FormControl error={!!error}>
         <FormHelperText

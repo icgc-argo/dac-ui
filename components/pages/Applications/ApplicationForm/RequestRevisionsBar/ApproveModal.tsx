@@ -53,10 +53,10 @@ const ApproveModal = ({
     setIsLoading(true);
     fetchWithAuth({
       data: {
-        state: 'APPROVED'
+        state: 'APPROVED',
       },
       method: 'PATCH',
-      url: urlJoin(API.APPLICATIONS, appId)
+      url: urlJoin(API.APPLICATIONS, appId),
     })
       .then(() => {
         router.reload();
@@ -79,13 +79,18 @@ const ApproveModal = ({
       title="Are you sure you want to APPROVE the application?"
     >
       <Typography>
-        Are you sure you want to approve <strong>Application: {appId} ({primaryAffiliation})?</strong>
+        Are you sure you want to approve{' '}
+        <strong>
+          Application: {appId} ({primaryAffiliation})?
+        </strong>
       </Typography>
       <Typography>
-        If so, the applicant and collaborators will be notified and will receive access to ICGC Controlled Data for the following time period:
+        If so, the applicant and collaborators will be notified and will receive access to ICGC
+        Controlled Data for the following time period:
       </Typography>
       <Typography>
-        <strong>Start Date:</strong> {startDate} &nbsp; | &nbsp; <strong>End Date:</strong> {endDate}
+        <strong>Start Date:</strong> {startDate} &nbsp; | &nbsp; <strong>End Date:</strong>{' '}
+        {endDate}
       </Typography>
       <FormControl error={!!error}>
         <FormHelperText

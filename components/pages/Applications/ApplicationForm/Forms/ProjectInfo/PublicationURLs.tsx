@@ -93,77 +93,72 @@ const PublicationURLs = ({
             () => ({ value: '' }),
           ),
         ),
-      ).map(
-        (item, index) => {
-          if (item.value === null) return false;
-          const isDuplicate = duplicateUrls.includes(item.value);
-          return (
-            <DoubleFieldRow
-              actions={
-                index >= minPublications ? (
-                  <Button
+      ).map((item, index) => {
+        if (item.value === null) return false;
+        const isDuplicate = duplicateUrls.includes(item.value);
+        return (
+          <DoubleFieldRow
+            actions={
+              index >= minPublications ? (
+                <Button
+                  css={css`
+                    label: action_remove;
+                    height: 30px;
+                    margin: 0 -5px 0 5px;
+                    width: 30px;
+                  `}
+                  disabled={isSectionDisabled}
+                  onClick={changePublicationsCount('remove', `publicationsURLs--${index}--remove`)}
+                  size="sm"
+                  variant="text"
+                >
+                  <Icon
                     css={css`
-                      label: action_remove;
-                      height: 30px;
-                      margin: 0 -5px 0 5px;
-                      width: 30px;
+                      margin-bottom: -3px;
                     `}
-                    disabled={isSectionDisabled}
-                    onClick={changePublicationsCount(
-                      'remove',
-                      `publicationsURLs--${index}--remove`,
-                    )}
-                    size="sm"
-                    variant="text"
-                  >
-                    <Icon
-                      css={css`
-                        margin-bottom: -3px;
-                      `}
-                      fill={isSectionDisabled ? 'grey_1' : 'accent2'}
-                      name="trash"
-                    />
-                  </Button>
-                ) : (
-                  <div
-                    css={css`
-                      width: 30px;
-                    `}
+                    fill={isSectionDisabled ? 'grey_1' : 'accent2'}
+                    name="trash"
                   />
-                )
-              }
-              css={(theme: UikitTheme) => css`
-                border: 1px solid ${theme.colors.grey_2};
-                label: DoubleFieldRow;
-                margin: 10px 0;
-                padding: 10px;
-              `}
-              key={`publicationsURLs--${index}`}
-            >
-              <FormControl
-                disabled={isSectionDisabled}
-                error={!!item.error || isDuplicate}
-                required={isRequired(innerType as FormFieldType)}
-              >
-                <InputLabel htmlFor="title">Publication URL</InputLabel>
-
-                <Input
-                  aria-label="Project Title"
-                  id={`publicationsURLs--${index}`}
-                  onBlur={validateFieldTouched}
-                  onChange={validateFieldTouched}
-                  value={item.value}
+                </Button>
+              ) : (
+                <div
+                  css={css`
+                    width: 30px;
+                  `}
                 />
+              )
+            }
+            css={(theme: UikitTheme) => css`
+              border: 1px solid ${theme.colors.grey_2};
+              label: DoubleFieldRow;
+              margin: 10px 0;
+              padding: 10px;
+            `}
+            key={`publicationsURLs--${index}`}
+          >
+            <FormControl
+              disabled={isSectionDisabled}
+              error={!!item.error || isDuplicate}
+              required={isRequired(innerType as FormFieldType)}
+            >
+              <InputLabel htmlFor="title">Publication URL</InputLabel>
 
-                <FormHelperText onErrorOnly>
-                  {item.error?.[0] !== 'this field must have at least 3 items' && item.error?.[0]}
-                  {isDuplicate && 'Publication URLs must be unique.'}
-                </FormHelperText>
-              </FormControl>
-            </DoubleFieldRow>
-          );
-        }
-      )}
+              <Input
+                aria-label="Project Title"
+                id={`publicationsURLs--${index}`}
+                onBlur={validateFieldTouched}
+                onChange={validateFieldTouched}
+                value={item.value}
+              />
+
+              <FormHelperText onErrorOnly>
+                {item.error?.[0] !== 'this field must have at least 3 items' && item.error?.[0]}
+                {isDuplicate && 'Publication URLs must be unique.'}
+              </FormHelperText>
+            </FormControl>
+          </DoubleFieldRow>
+        );
+      })}
 
       <Button
         onClick={changePublicationsCount('add')}

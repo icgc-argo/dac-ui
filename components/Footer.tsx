@@ -20,7 +20,7 @@
 import { css } from '@icgc-argo/uikit';
 import { styled, UikitTheme } from '@icgc-argo/uikit/index';
 import Link from '@icgc-argo/uikit/Link';
-import Image from 'next/image'
+import Image from 'next/image';
 import {
   CONTACT_PAGE,
   CONTROLLED_DATA_USERS_PAGE,
@@ -206,7 +206,12 @@ const Footer = () => {
             href={GLASGOW_UNI_LINK}
             target="_blank"
           >
-            <Image src={footerGlasgowLogo} width="122px" height="38px" alt="University of Glasgow logo" />
+            <Image
+              src={footerGlasgowLogo}
+              width="122px"
+              height="38px"
+              alt="University of Glasgow logo"
+            />
           </Link>
           <Link href={OICR_LINK} target="_blank">
             <Image src={footerOicrLogo} width="72px" height="52px" alt="OICR logo" />

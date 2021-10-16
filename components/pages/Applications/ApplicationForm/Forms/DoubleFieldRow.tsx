@@ -46,12 +46,13 @@ const DoubleFieldRow = ({
         }
 
         ${actions
-        ? ``
-        : `
+          ? ``
+          : `
           flex-wrap : wrap;
 
-          ${helpText &&
-        `
+          ${
+            helpText &&
+            `
             > figure {
               margin-top: 5px;
               margin-left: 150px;
@@ -62,17 +63,17 @@ const DoubleFieldRow = ({
               }
             }
           `
-        }
+          }
         `}
       }
       @media (min-width: 1120px) {
         ${helpText || actions
-        ? `
+          ? `
           > [class*='FormControl'] {
             width: 100%;
           }
         `
-        : `
+          : `
           > :first-of-type ~ :last-of-type {
             margin-left: 7px;
             width: 50%;
@@ -88,9 +89,9 @@ const DoubleFieldRow = ({
   >
     {Array.isArray(children)
       ? children.map((child) =>
-        // check for &nbsp; in case they want half-row-long fields
-        child === ' ' ? <div key="emptyFiller" className="emptyFiller" /> : child,
-      )
+          // check for &nbsp; in case they want half-row-long fields
+          child === ' ' ? <div key="emptyFiller" className="emptyFiller" /> : child,
+        )
       : children}
 
     {actions || (helpText && <FormFieldHelpBubble tail="left" text={helpText} width="320px" />)}

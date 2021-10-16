@@ -271,31 +271,31 @@ const UIContainer = ({ children }: { children: ReactNode }) => <div>{children}</
 export const getStaticComponents = (isPdf: boolean) => {
   return isPdf
     ? {
-      TextComponent: PDFParagraph,
-      TitleComponent: PDFTitle,
-      LinkComponent: PDFLink,
-      SectionComponent: View,
-      ContainerComponent: PDFLayout,
-      SectionTitle,
-      UnorderedListComponent: View,
-      OrderedListComponent: View,
-      ListComponent: PDFText,
-      GenericContainer: View,
-      BannerComponent: PDFBanner,
-    }
+        TextComponent: PDFParagraph,
+        TitleComponent: PDFTitle,
+        LinkComponent: PDFLink,
+        SectionComponent: View,
+        ContainerComponent: PDFLayout,
+        SectionTitle,
+        UnorderedListComponent: View,
+        OrderedListComponent: View,
+        ListComponent: PDFText,
+        GenericContainer: View,
+        BannerComponent: PDFBanner,
+      }
     : {
-      TextComponent: Typography,
-      TitleComponent: UITitle,
-      LinkComponent: Link,
-      SectionComponent: Section,
-      ContainerComponent: Section,
-      SectionTitle: UISectionTitle,
-      UnorderedListComponent: Ul,
-      OrderedListComponent: Ol,
-      ListComponent: Li,
-      GenericContainer: UIContainer,
-      BannerComponent: Banner,
-    };
+        TextComponent: Typography,
+        TitleComponent: UITitle,
+        LinkComponent: Link,
+        SectionComponent: Section,
+        ContainerComponent: Section,
+        SectionTitle: UISectionTitle,
+        UnorderedListComponent: Ul,
+        OrderedListComponent: Ol,
+        ListComponent: Li,
+        GenericContainer: UIContainer,
+        BannerComponent: Banner,
+      };
 };
 
 export const getStreetAddress = (street?: string, building?: string) => {

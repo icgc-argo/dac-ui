@@ -25,7 +25,7 @@ import { getConfig } from 'global/config';
 const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
 
 const axiosInstance = axios.create({
-  validateStatus: (status: number) => status === 200
+  validateStatus: (status: number) => status === 200,
 });
 
 const useHealthAPI = () => {
@@ -34,7 +34,8 @@ const useHealthAPI = () => {
   const [error, setError] = useState<AxiosError | undefined>(undefined);
 
   useEffect(() => {
-    axiosInstance.get(API.HEALTH, { baseURL: NEXT_PUBLIC_DAC_API_ROOT })
+    axiosInstance
+      .get(API.HEALTH, { baseURL: NEXT_PUBLIC_DAC_API_ROOT })
       .then((res: AxiosResponse | undefined) => {
         setResponse(res);
       })
