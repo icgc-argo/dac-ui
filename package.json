@@ -6,7 +6,6 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "mock-server": "npx json-server --watch mock/db.json --port 3001",
     "type-check": "tsc -p ./tsconfig.json",
     "prettier-staged": "pretty-quick --staged"
   },
