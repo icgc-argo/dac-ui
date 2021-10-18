@@ -20,7 +20,6 @@
 import { css } from '@emotion/core';
 import { useState } from 'react';
 
-
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 import Modal from '@icgc-argo/uikit/Modal';
@@ -30,6 +29,7 @@ import useTheme from '@icgc-argo/uikit/utils/useTheme';
 import {
   RequestRevisionsFieldTitles,
   RequestRevisionsFieldNames,
+  RequestRevisionProperties,
 } from './types';
 
 import useRequestRevisionsReducer, { SECONDARY_FIELDS } from './useRequestRevisionsReducer';
@@ -38,7 +38,6 @@ import { useAuthContext } from 'global/hooks';
 import urlJoin from 'url-join';
 import router from 'next/router';
 import { API } from 'global/constants';
-
 
 const textareaStyle = css`
 /* copied UIKIT textarea styles because textarea wasn't programatically updating.
@@ -110,17 +109,6 @@ const ModalSection = ({
         justify-content: space-between;
       `}
     >
-      <input
-        checked={requested}
-        css={css`
-          margin-top: 13px;
-        `}
-        disabled={fieldDisabled}
-        id={`${title}-checkbox`}
-        onChange={() => dispatch({ type: 'requestedClick', ...dispatchArgs })}
-        type="checkbox"
-        value={title}
-      />
       <Typography
         bold
         css={css`
@@ -129,7 +117,7 @@ const ModalSection = ({
           padding: 0 11px 0 8px;
         `}
       >
-        <label htmlFor={`${title}-${requested ? 'checkbox' : 'textarea'}`}>{title}</label>
+        <label htmlFor={`${title}-textarea`}>{title}</label>
       </Typography>
       <FormControl
         css={css`
@@ -179,11 +167,11 @@ const RequestRevisionsModal = ({
     setIsLoading(true);
     fetchWithAuth({
       data: {
-        revisionRequest: Object.entries(fields).reduce((acc, curr) => ({
+        revisionRequest: Object.entries(fields).reduce((acc, curr: [string, RequestRevisionProperties]) => ({
           ...acc,
           [curr[0]]: {
             details: curr[1].details,
-            requested: curr[1].requested
+            requested: curr[1].requested,
           }
         }), {}),
         state: 'REVISIONS REQUESTED',
@@ -214,11 +202,12 @@ const RequestRevisionsModal = ({
       <Typography
         bold
         css={css`
-          margin-top: 0;
-        `}
+            margin-top: 0;
+          `}
       >
-        Check off the fields that have issues and provide the revisions details that will be emailed to the applicant.
+        Please provide the revision details for the sections that have issues. These details will be emailed to the applicant.
       </Typography>
+
       {Object.keys(fields).map((field => {
         const fieldName = field as RequestRevisionsFieldNames;
         return (
@@ -235,6 +224,7 @@ const RequestRevisionsModal = ({
           />
         )
       }))}
+
       <FormControl error={!!error}>
         <FormHelperText
           css={css`

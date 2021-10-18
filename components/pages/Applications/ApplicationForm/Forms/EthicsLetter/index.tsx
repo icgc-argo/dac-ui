@@ -54,10 +54,11 @@ const EthicsLetter = ({
   validateFieldTouched: FormFieldValidationTriggerFunction;
   applicationState: ApplicationState;
 }): ReactElement => {
+  const isApplicationApproved = applicationState === ApplicationState.APPROVED;
+
   // applicant made ethics letter required (option 2)
   // and application has been approved
-  const isRequiredPostApproval =
-    !isSectionDisabled && applicationState === ApplicationState.APPROVED;
+  const isRequiredPostApproval = !isSectionDisabled && isApplicationApproved;
 
   const [selectedRadioValue, setSelectedRadioValue] = useState(
     localState.declaredAsRequired?.value || null,
@@ -136,6 +137,7 @@ const EthicsLetter = ({
             refetchAllData={refetchAllData}
             required={isRequired(localState.approvalLetterDocs)}
             isRequiredPostApproval={isRequiredPostApproval}
+            isApplicationApproved={isApplicationApproved}
           />
         )}
       </section>

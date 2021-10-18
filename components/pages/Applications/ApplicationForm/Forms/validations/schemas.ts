@@ -20,7 +20,12 @@
 import * as yup from 'yup';
 import { countriesList } from '../constants';
 import { FormSectionNames } from '../types';
-import { transformContriesToValidationOptions, maxWords, uniquePublicationURLs } from './helpers';
+import {
+  transformContriesToValidationOptions,
+  maxWords,
+  minWords,
+  uniquePublicationURLs,
+} from './helpers';
 
 export const countryNameMsg = 'Please select a country from the list.';
 export const requiredMsg = 'Please fill out the required field.';
@@ -184,7 +189,7 @@ export const projectInfoSchema = yup.object().shape({
     .meta({ shape: 'publicationURLsArray', filler: '', type: 'string' })
     .test(uniquePublicationURLs)
     .min(3),
-  summary: yup.string().default('').trim().test(maxWords(200)).required(),
+  summary: yup.string().default('').trim().test(maxWords(200)).test(minWords(100)).required(),
   title: yup.string().default('').trim().required(),
   website: yup
     .string()
