@@ -17,24 +17,16 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React, { useState } from 'react';
-import { css } from '@emotion/core';
-
-import { ContentHeader } from '@icgc-argo/uikit/PageLayout';
-import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
-import Button from '@icgc-argo/uikit/Button';
-import Icon from '@icgc-argo/uikit/Icon';
-
-import { instructionBoxButtonContentStyle, instructionBoxButtonIconStyle } from 'global/styles';
 import { ModalPortal } from 'components/Root';
-
 import RequestRevisionsModal from './RequestRevisionsModal';
 import ApproveModal from './ApproveModal';
 import RejectModal from './RejectModal';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import ActionBar from './ActionBar';
+import ApplicationActions from './ApplicationActions';
+import { useState } from 'react';
 
-enum VisibleModalOption {
+export enum VisibleModalOption {
   NONE = 'NONE',
   APPROVAL = 'APPROVAL',
   REJECTION = 'REJECTION',
@@ -42,8 +34,6 @@ enum VisibleModalOption {
 }
 
 const RequestRevisionsBar = ({ data }: { data: any }) => {
-  const theme = useTheme();
-
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
 
   const {
@@ -52,7 +42,7 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
     state,
   } = data;
 
-  const buttonsDisabled = [
+  const applicationActionsDisabled = [
     ApplicationState.APPROVED,
     ApplicationState.REVISIONS_REQUESTED,
     ApplicationState.REJECTED,
@@ -88,60 +78,10 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
         </ModalPortal>
       )}
       <ActionBar>
-        <Button
-          disabled={buttonsDisabled}
-          onClick={() => {
-            setVisibleModal(VisibleModalOption.APPROVAL);
-          }}
-          size="sm"
-        >
-          <span css={instructionBoxButtonContentStyle}>
-            <Icon
-              css={css`
-                margin-right: 1px;
-                margin-left: -4px;
-              `}
-              fill={theme.colors.white}
-              height="12px"
-              name="checkmark"
-            />
-            Approve
-          </span>
-        </Button>
-        <Button
-          disabled={buttonsDisabled}
-          onClick={() => {
-            setVisibleModal(VisibleModalOption.REVISIONS);
-          }}
-          size="sm"
-        >
-          <span css={instructionBoxButtonContentStyle}>
-            <Icon
-              css={instructionBoxButtonIconStyle}
-              fill={theme.colors.white}
-              height="9px"
-              name="edit"
-            />
-            Request Revisions
-          </span>
-        </Button>
-        <Button
-          disabled={buttonsDisabled}
-          onClick={() => {
-            setVisibleModal(VisibleModalOption.REJECTION);
-          }}
-          size="sm"
-        >
-          <span css={instructionBoxButtonContentStyle}>
-            <Icon
-              css={instructionBoxButtonIconStyle}
-              fill={theme.colors.white}
-              height="10px"
-              name="times"
-            />
-            Reject
-          </span>
-        </Button>
+        <ApplicationActions
+          disabled={applicationActionsDisabled}
+          setVisibleModal={setVisibleModal}
+        />
       </ActionBar>
     </>
   );
