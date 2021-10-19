@@ -24,7 +24,8 @@ import RejectModal from './RejectModal';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import ActionBar from './ActionBar';
 import ApplicationActions from './ApplicationActions';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import PDFActions from './PDFActions';
 
 export enum VisibleModalOption {
   NONE = 'NONE',
@@ -48,6 +49,8 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
     ApplicationState.REJECTED,
     ApplicationState.CLOSED,
   ].includes(state);
+
+  const isApproved = ApplicationState.APPROVED === state;
 
   return (
     <>
@@ -78,10 +81,14 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
         </ModalPortal>
       )}
       <ActionBar>
-        <ApplicationActions
-          disabled={applicationActionsDisabled}
-          setVisibleModal={setVisibleModal}
-        />
+        {isApproved ? (
+          <PDFActions />
+        ) : (
+          <ApplicationActions
+            disabled={applicationActionsDisabled}
+            setVisibleModal={setVisibleModal}
+          />
+        )}
       </ActionBar>
     </>
   );
