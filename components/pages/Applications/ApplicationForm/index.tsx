@@ -32,6 +32,8 @@ import router from 'next/router';
 import { ERROR_PATH } from 'global/constants/internalPaths';
 import { useFormValidation } from './Forms/validations';
 
+export type SetLastUpdated = (lastUpdatedAtUtc: string) => void;
+
 const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
   const [data, setData] = useState<any>(undefined);
   const [isAppLoading, setIsAppLoading] = useState<boolean>(true);

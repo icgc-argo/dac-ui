@@ -3,13 +3,13 @@ import { ContentHeader } from '@icgc-argo/uikit/PageLayout';
 import useTheme from '@icgc-argo/uikit/utils/useTheme';
 import React from 'react';
 
-const ActionBar = ({ children }) => {
+const ActionBar = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme();
 
   return (
     <ContentHeader
       css={css`
-        border: 1px solid black;
+        border: 0 none;
         height: auto;
         line-height: 1;
         margin-bottom: -16px;
