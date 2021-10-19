@@ -48,6 +48,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
       url: urlJoin(API.APPLICATIONS, appId),
     })
       .then((res: AxiosResponse) => {
+        console.log('res', res);
         setData(res.data);
       })
       .catch((err: AxiosError) => {
@@ -64,7 +65,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
   ) : (
     <>
       <ApplicationHeader refetchAllData={formState.__refetchAllData} data={data} />
-      {isAdmin && <RequestRevisionsBar data={data} />}
+      {isAdmin && <RequestRevisionsBar data={data} setLastUpdated={setLastUpdated} />}
       <ApplicationFormsBase
         appId={appId}
         applicationState={data?.state}
