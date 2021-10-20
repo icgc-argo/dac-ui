@@ -29,6 +29,8 @@ import { useState } from 'react';
 import { ApprovedDoc } from '../../types';
 import { CustomLoadingButton } from '../Forms/common';
 import { DOCUMENT_TYPES } from '../Forms/types';
+import { format as formatDate } from 'date-fns';
+import { API_DEFAULT_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
 
 const PDFActions = ({
   appId,
@@ -58,7 +60,8 @@ const PDFActions = ({
     })
       .then(() => {
         setIsDeleting(false);
-        setLastUpdated(Date.now());
+        const d = formatDate(new Date(), API_DEFAULT_DATE_FORMAT);
+        setLastUpdated(d);
       })
       .catch((err: AxiosError) => {
         console.error('File could not be deleted.', err);
