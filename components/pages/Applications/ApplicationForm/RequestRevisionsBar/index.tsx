@@ -17,46 +17,44 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { useState } from 'react';
-import { css } from '@emotion/core';
-
-import { ContentHeader } from '@icgc-argo/uikit/PageLayout';
-import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
-import Button from '@icgc-argo/uikit/Button';
-import Icon from '@icgc-argo/uikit/Icon';
-
-import { instructionBoxButtonContentStyle, instructionBoxButtonIconStyle } from 'global/styles';
 import { ModalPortal } from 'components/Root';
-
 import RequestRevisionsModal from './RequestRevisionsModal';
 import ApproveModal from './ApproveModal';
 import RejectModal from './RejectModal';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
+import ActionBar from './ActionBar';
+import ApplicationActions from './ApplicationActions';
+import { useState } from 'react';
+import PDFActions from './PDFActions';
+import { ApplicationData } from '../../types';
+import { SetLastUpdated } from '../types';
+import { VisibleModalOption } from './types';
 
-enum VisibleModalOption {
-  NONE = 'NONE',
-  APPROVAL = 'APPROVAL',
-  REJECTION = 'REJECTION',
-  REVISIONS = 'REVISIONS',
-}
-
-const RequestRevisionsBar = ({ data }: { data: any }) => {
-  const theme = useTheme();
-
+const RequestRevisionsBar = ({
+  data,
+  setLastUpdated,
+}: {
+  data: ApplicationData;
+  setLastUpdated: SetLastUpdated;
+}) => {
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
-
   const {
     appId,
     sections: { applicant: { info: { primaryAffiliation = '' } = {} } = {} },
     state,
+    approvedAppDocs,
   } = data;
 
-  const buttonsDisabled = [
+  const applicationActionsDisabled = [
     ApplicationState.APPROVED,
     ApplicationState.REVISIONS_REQUESTED,
     ApplicationState.REJECTED,
     ApplicationState.CLOSED,
   ].includes(state);
+
+  const isApproved = ApplicationState.APPROVED === state;
+
+  const currentApprovedDoc = approvedAppDocs.find((doc) => doc.isCurrent);
 
   return (
     <>
@@ -86,100 +84,20 @@ const RequestRevisionsBar = ({ data }: { data: any }) => {
           />
         </ModalPortal>
       )}
-      <ContentHeader
-        css={css`
-          border: 0 none;
-          height: auto;
-          line-height: 1;
-          margin-bottom: -16px;
-          margin-top: 16px;
-        `}
-      >
-        <div
-          css={css`
-            align-items: center;
-            background: ${theme.colors.warning_3};
-            border-radius: 8px;
-            box-sizing: border-box;
-            display: flex;
-            height: auto;
-            justify-content: space-between;
-            margin: 0 auto;
-            max-width: 1200px;
-            min-width: 665px;
-            padding: 8px 10px 8px 16px;
-            width: 100%;
-          `}
-        >
-          <div>{/* Expiry placeholder */}</div>
-          <div
-            css={css`
-              display: flex;
-              > button {
-                margin-right: 8px;
-                &:last-child {
-                  margin-right: 0;
-                }
-              }
-            `}
-          >
-            <Button
-              disabled={buttonsDisabled}
-              onClick={() => {
-                setVisibleModal(VisibleModalOption.APPROVAL);
-              }}
-              size="sm"
-            >
-              <span css={instructionBoxButtonContentStyle}>
-                <Icon
-                  css={css`
-                    margin-right: 1px;
-                    margin-left: -4px;
-                  `}
-                  fill={theme.colors.white}
-                  height="12px"
-                  name="checkmark"
-                />
-                Approve
-              </span>
-            </Button>
-            <Button
-              disabled={buttonsDisabled}
-              onClick={() => {
-                setVisibleModal(VisibleModalOption.REVISIONS);
-              }}
-              size="sm"
-            >
-              <span css={instructionBoxButtonContentStyle}>
-                <Icon
-                  css={instructionBoxButtonIconStyle}
-                  fill={theme.colors.white}
-                  height="9px"
-                  name="edit"
-                />
-                Request Revisions
-              </span>
-            </Button>
-            <Button
-              disabled={buttonsDisabled}
-              onClick={() => {
-                setVisibleModal(VisibleModalOption.REJECTION);
-              }}
-              size="sm"
-            >
-              <span css={instructionBoxButtonContentStyle}>
-                <Icon
-                  css={instructionBoxButtonIconStyle}
-                  fill={theme.colors.white}
-                  height="10px"
-                  name="times"
-                />
-                Reject
-              </span>
-            </Button>
-          </div>
-        </div>
-      </ContentHeader>
+      <ActionBar>
+        {isApproved ? (
+          <PDFActions
+            appId={appId}
+            currentDoc={currentApprovedDoc}
+            setLastUpdated={setLastUpdated}
+          />
+        ) : (
+          <ApplicationActions
+            disabled={applicationActionsDisabled}
+            setVisibleModal={setVisibleModal}
+          />
+        )}
+      </ActionBar>
     </>
   );
 };

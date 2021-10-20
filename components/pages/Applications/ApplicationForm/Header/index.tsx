@@ -21,23 +21,22 @@ import { ReactElement } from 'react';
 import { format } from 'date-fns';
 import { css } from '@icgc-argo/uikit';
 import { UikitTheme } from '@icgc-argo/uikit/index';
-
 import PageHeader from 'components/PageHeader';
 import { DATE_TEXT_FORMAT } from 'global/constants';
-
 import Actions from './Actions';
 import Details from './Details';
 import Progress from './Progress';
 import { RefetchDataFunction } from '../Forms/types';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
+import { ApplicationData } from '../../types';
 
 export type ApplicationExpiry = { date: string; isExpired: boolean };
 
 const ApplicationHeader = ({
-  data = {},
+  data,
   refetchAllData,
 }: {
-  data: any;
+  data: ApplicationData;
   refetchAllData: RefetchDataFunction;
 }): ReactElement => {
   const {
@@ -50,19 +49,23 @@ const ApplicationHeader = ({
     approvedAtUtc,
     sections: { applicant: { info: { displayName = '', primaryAffiliation = '' } = {} } = {} } = {},
     state,
+    approvedAppDocs,
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
+  const currentApprovedDoc = approvedAppDocs.find((doc) => doc.isCurrent);
 
   const showRevisionsRequestedFlag =
     revisionsRequested &&
     [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state);
 
   // only pass expiry for applications that have been approved
-  const expiry: ApplicationExpiry = approvedAtUtc && {
-    date: format(new Date(closedAtUtc || expiresAtUtc || ''), DATE_TEXT_FORMAT),
-    isExpired: closedAtUtc ? true : false,
-  };
+  const expiry = approvedAtUtc
+    ? {
+        date: format(new Date(closedAtUtc || expiresAtUtc || ''), DATE_TEXT_FORMAT),
+        isExpired: closedAtUtc ? true : false,
+      }
+    : undefined;
 
   return (
     <PageHeader>
@@ -113,6 +116,7 @@ const ApplicationHeader = ({
           state={state}
           refetchAllData={refetchAllData}
           approvedAtUtc={approvedAtUtc}
+          currentApprovedDoc={currentApprovedDoc}
         />
       </div>
     </PageHeader>

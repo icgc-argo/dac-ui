@@ -216,6 +216,13 @@ interface Appendices {
 
 export interface ApplicationData {
   appId: string;
+  approvedAppDocs: ApprovedDoc[];
+  createdAtUtc: string;
+  lastUpdatedAtUtc: string;
+  expiresAtUtc: string;
+  closedAtUtc: string;
+  revisionsRequested: boolean;
+  approvedAtUtc: string;
   state: ApplicationState;
   sections: {
     terms: Terms;
@@ -255,3 +262,11 @@ export type AuthAPIFetchFunction = (options?: {
   data?: any;
   method?: Method;
 }) => Promise<AxiosResponse<any>>;
+
+export type ApprovedDoc = {
+  approvedAppDocObjId: string;
+  uploadedAtUtc: string;
+  approvedAppDocName: string;
+  isCurrent: boolean;
+  approvedAtUtc: string;
+};
