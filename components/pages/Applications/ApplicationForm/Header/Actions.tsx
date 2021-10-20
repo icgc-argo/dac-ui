@@ -108,7 +108,7 @@ const HeaderActions = ({
   const pdfButtonText = getPdfButtonText(
     state,
     approvedAtUtc,
-    currentApprovedDoc?.approvedAppDocObjId,
+    currentApprovedDoc ? currentApprovedDoc.approvedAppDocObjId : '',
   );
 
   const closeApplicationVisible = [
