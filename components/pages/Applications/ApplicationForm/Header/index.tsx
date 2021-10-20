@@ -53,7 +53,7 @@ const ApplicationHeader = ({
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
-  const currentApprovedDoc = approvedAppDocs.filter((doc) => doc.isCurrent)[0];
+  const currentApprovedDoc = approvedAppDocs.find((doc) => doc.isCurrent);
 
   const showRevisionsRequestedFlag =
     revisionsRequested &&

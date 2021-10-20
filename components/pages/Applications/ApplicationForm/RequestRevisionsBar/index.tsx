@@ -60,7 +60,7 @@ const RequestRevisionsBar = ({
 
   const isApproved = ApplicationState.APPROVED === state;
 
-  const currentApprovedDoc = approvedAppDocs.filter((doc) => doc.isCurrent)[0];
+  const currentApprovedDoc = approvedAppDocs.find((doc) => doc.isCurrent);
 
   return (
     <>
