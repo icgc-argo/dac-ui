@@ -29,7 +29,7 @@ const ApplicationActions = ({
   setVisibleModal,
 }: {
   disabled: boolean;
-  setVisibleModal: any;
+  setVisibleModal: (type: VisibleModalOption) => void;
 }) => {
   const theme = useTheme();
   return (

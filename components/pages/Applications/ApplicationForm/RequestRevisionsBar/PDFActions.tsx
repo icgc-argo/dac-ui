@@ -31,6 +31,7 @@ import { CustomLoadingButton } from '../Forms/common';
 import { DOCUMENT_TYPES } from '../Forms/types';
 import { format as formatDate } from 'date-fns';
 import { API_DEFAULT_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
+import { SetLastUpdated } from '../types';
 
 const PDFActions = ({
   appId,
@@ -39,7 +40,7 @@ const PDFActions = ({
 }: {
   appId: string;
   currentDoc: ApprovedDoc;
-  setLastUpdated: any;
+  setLastUpdated: SetLastUpdated;
 }) => {
   const theme = useTheme();
   const { fetchWithAuth } = useAuthContext();
@@ -75,7 +76,7 @@ const PDFActions = ({
         text="Upload Approved PDF"
         url={`${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.APPROVED_PDF}/upload`}
         onUpload={() => {
-          setLastUpdated(Date.now());
+          setLastUpdated(formatDate(new Date(), API_DEFAULT_DATE_FORMAT));
         }}
         validators={[pdfValidator]}
       />

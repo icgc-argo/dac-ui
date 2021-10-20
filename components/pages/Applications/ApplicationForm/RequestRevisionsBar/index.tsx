@@ -26,8 +26,8 @@ import ActionBar from './ActionBar';
 import ApplicationActions from './ApplicationActions';
 import { useState } from 'react';
 import PDFActions from './PDFActions';
-import { SetLastUpdated } from '..';
 import { ApplicationData } from '../../types';
+import { SetLastUpdated } from '../types';
 
 export enum VisibleModalOption {
   NONE = 'NONE',

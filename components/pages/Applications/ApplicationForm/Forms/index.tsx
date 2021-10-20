@@ -43,7 +43,7 @@ import { ApplicationState } from 'components/pages/Applications/types';
 import { getConfig } from 'global/config';
 import Link from '@icgc-argo/uikit/Link';
 import ApplicationHistoryModal from './ApplicationHistoryModal';
-import { SetLastUpdated } from '..';
+import { SetLastUpdated } from '../types';
 
 enum VisibleModalOption {
   NONE = 'NONE',
