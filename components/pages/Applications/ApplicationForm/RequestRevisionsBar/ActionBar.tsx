@@ -55,7 +55,7 @@ const ActionBar = ({ children }: { children: React.ReactNode }) => {
         <div
           css={css`
             display: flex;
-            > button {
+            button {
               margin-right: 8px;
               &:last-child {
                 margin-right: 0;

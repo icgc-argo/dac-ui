@@ -32,6 +32,8 @@ import { DOCUMENT_TYPES } from '../Forms/types';
 import { format as formatDate } from 'date-fns';
 import { API_DEFAULT_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
 import { SetLastUpdated } from '../types';
+import { css } from '@icgc-argo/uikit';
+import Typography from '@icgc-argo/uikit/Typography';
 
 const PDFActions = ({
   appId,
@@ -46,6 +48,7 @@ const PDFActions = ({
   const { fetchWithAuth } = useAuthContext();
 
   const [isDeleting, setIsDeleting] = useState(false);
+  const [uploadError, setUploadError] = useState(false);
 
   const docId = currentDoc ? currentDoc?.approvedAppDocObjId : '';
 
@@ -71,13 +74,33 @@ const PDFActions = ({
   };
 
   return (
-    <>
+    <div
+      css={css`
+        display: flex;
+        align-items: center;
+      `}
+    >
+      {uploadError ? (
+        <Typography
+          variant="data"
+          css={css`
+            margin-right: 14px;
+            color: ${theme.colors.error_1};
+          `}
+        >
+          Please upload a pdf file that is 5MB or less.
+        </Typography>
+      ) : (
+        ''
+      )}
       <UploadButton
         text="Upload Approved PDF"
         url={`${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.APPROVED_PDF}/upload`}
         onUpload={() => {
+          setUploadError(false);
           setLastUpdated(formatDate(new Date(), API_DEFAULT_DATE_FORMAT));
         }}
+        onUploadError={() => setUploadError(true)}
         validators={[pdfValidator]}
       />
       <Button
@@ -99,7 +122,7 @@ const PDFActions = ({
           Remove approved pdf
         </span>
       </Button>
-    </>
+    </div>
   );
 };
 
