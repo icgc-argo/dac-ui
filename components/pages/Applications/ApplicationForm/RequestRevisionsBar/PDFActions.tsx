@@ -77,7 +77,6 @@ const PDFActions = ({
         onUpload={() => {
           setLastUpdated(Date.now());
         }}
-        onUploadError={() => console.log('error upload')}
         validators={[pdfValidator]}
       />
       <Button

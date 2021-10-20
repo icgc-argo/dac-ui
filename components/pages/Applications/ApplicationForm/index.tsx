@@ -49,7 +49,6 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
       url: urlJoin(API.APPLICATIONS, appId),
     })
       .then((res: AxiosResponse) => {
-        console.log('res', res);
         setData(res.data);
       })
       .catch((err: AxiosError) => {
