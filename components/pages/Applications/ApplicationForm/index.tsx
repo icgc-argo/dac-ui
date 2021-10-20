@@ -34,7 +34,7 @@ import { ApplicationData } from '../types';
 const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
   const [data, setData] = useState<ApplicationData | undefined>(undefined);
   const [isAppLoading, setIsAppLoading] = useState<boolean>(true);
-  const [lastUpdated, setLastUpdated] = useState<string | undefined>(undefined);
+  const [lastUpdated, setLastUpdated] = useState<string>('');
 
   const { fetchWithAuth } = useAuthContext();
 
