@@ -20,22 +20,21 @@
 import { ReactElement, useEffect, useState } from 'react';
 import { Method, AxiosResponse, AxiosError } from 'axios';
 import urlJoin from 'url-join';
-
 import Loader from 'components/Loader';
 import { useAuthContext } from 'global/hooks';
 import { API } from 'global/constants';
-
 import ApplicationHeader from './Header';
 import ApplicationFormsBase from './Forms';
 import RequestRevisionsBar from './RequestRevisionsBar';
 import router from 'next/router';
 import { ERROR_PATH } from 'global/constants/internalPaths';
 import { useFormValidation } from './Forms/validations';
+import { ApplicationData } from '../types';
 
 export type SetLastUpdated = (lastUpdatedAtUtc: string) => void;
 
 const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
-  const [data, setData] = useState<any>(undefined);
+  const [data, setData] = useState<ApplicationData | undefined>(undefined);
   const [isAppLoading, setIsAppLoading] = useState<boolean>(true);
   const [lastUpdated, setLastUpdated] = useState<string | undefined>(undefined);
 
@@ -64,7 +63,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
 
   return isAppLoading || (data && Object.values(data).length < 1) ? (
     <Loader />
-  ) : (
+  ) : data ? (
     <>
       <ApplicationHeader refetchAllData={formState.__refetchAllData} data={data} />
       {isAdmin && <RequestRevisionsBar data={data} setLastUpdated={setLastUpdated} />}
@@ -77,6 +76,8 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
         validateSection={validateSection}
       />
     </>
+  ) : (
+    <div></div>
   );
 };
 
