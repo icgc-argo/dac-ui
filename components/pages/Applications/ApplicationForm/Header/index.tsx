@@ -21,23 +21,22 @@ import { ReactElement } from 'react';
 import { format } from 'date-fns';
 import { css } from '@icgc-argo/uikit';
 import { UikitTheme } from '@icgc-argo/uikit/index';
-
 import PageHeader from 'components/PageHeader';
 import { DATE_TEXT_FORMAT } from 'global/constants';
-
 import Actions from './Actions';
 import Details from './Details';
 import Progress from './Progress';
 import { RefetchDataFunction } from '../Forms/types';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
+import { ApplicationData } from '../../types';
 
 export type ApplicationExpiry = { date: string; isExpired: boolean };
 
 const ApplicationHeader = ({
-  data = {},
+  data,
   refetchAllData,
 }: {
-  data: any;
+  data: ApplicationData;
   refetchAllData: RefetchDataFunction;
 }): ReactElement => {
   const {
@@ -50,9 +49,11 @@ const ApplicationHeader = ({
     approvedAtUtc,
     sections: { applicant: { info: { displayName = '', primaryAffiliation = '' } = {} } = {} } = {},
     state,
+    approvedAppDocs,
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
+  const currentApprovedDoc = approvedAppDocs.filter((doc) => doc.isCurrent)[0];
 
   const showRevisionsRequestedFlag =
     revisionsRequested &&
@@ -113,6 +114,7 @@ const ApplicationHeader = ({
           state={state}
           refetchAllData={refetchAllData}
           approvedAtUtc={approvedAtUtc}
+          currentApprovedDoc={currentApprovedDoc}
         />
       </div>
     </PageHeader>

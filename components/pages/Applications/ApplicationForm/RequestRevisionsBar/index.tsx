@@ -27,6 +27,7 @@ import ApplicationActions from './ApplicationActions';
 import { useState } from 'react';
 import PDFActions from './PDFActions';
 import { SetLastUpdated } from '..';
+import { ApplicationData } from '../../types';
 
 export enum VisibleModalOption {
   NONE = 'NONE',
@@ -39,16 +40,15 @@ const RequestRevisionsBar = ({
   data,
   setLastUpdated,
 }: {
-  data: any;
+  data: ApplicationData;
   setLastUpdated: SetLastUpdated;
 }) => {
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
-  console.log('rr bar', data);
   const {
     appId,
     sections: { applicant: { info: { primaryAffiliation = '' } = {} } = {} },
     state,
-    approvedAppDoc,
+    approvedAppDocs,
   } = data;
 
   const applicationActionsDisabled = [
@@ -59,6 +59,8 @@ const RequestRevisionsBar = ({
   ].includes(state);
 
   const isApproved = ApplicationState.APPROVED === state;
+
+  const currentApprovedDoc = approvedAppDocs.filter((doc) => doc.isCurrent)[0];
 
   return (
     <>
@@ -90,7 +92,11 @@ const RequestRevisionsBar = ({
       )}
       <ActionBar>
         {isApproved ? (
-          <PDFActions appId={appId} doc={approvedAppDoc} setLastUpdated={setLastUpdated} />
+          <PDFActions
+            appId={appId}
+            currentDoc={currentApprovedDoc}
+            setLastUpdated={setLastUpdated}
+          />
         ) : (
           <ApplicationActions
             disabled={applicationActionsDisabled}
