@@ -39,7 +39,7 @@ const PDFActions = ({
   setLastUpdated,
 }: {
   appId: string;
-  currentDoc: ApprovedDoc;
+  currentDoc: ApprovedDoc | undefined;
   setLastUpdated: SetLastUpdated;
 }) => {
   const theme = useTheme();

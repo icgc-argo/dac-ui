@@ -97,7 +97,7 @@ const HeaderActions = ({
   state: ApplicationState;
   refetchAllData: RefetchDataFunction;
   approvedAtUtc: string;
-  currentApprovedDoc: ApprovedDoc;
+  currentApprovedDoc: ApprovedDoc | undefined;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();
   const { fetchWithAuth } = useAuthContext();
