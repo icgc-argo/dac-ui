@@ -53,7 +53,7 @@ const HeaderDetails = ({
   createdAt?: string;
   appId: string;
   lastUpdated?: string;
-  expiry?: ApplicationExpiry;
+  expiry?: ApplicationExpiry | undefined;
 }): ReactElement => {
   return (
     <section

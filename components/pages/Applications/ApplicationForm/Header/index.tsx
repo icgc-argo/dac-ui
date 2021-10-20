@@ -60,10 +60,12 @@ const ApplicationHeader = ({
     [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state);
 
   // only pass expiry for applications that have been approved
-  const expiry: ApplicationExpiry = approvedAtUtc && {
-    date: format(new Date(closedAtUtc || expiresAtUtc || ''), DATE_TEXT_FORMAT),
-    isExpired: closedAtUtc ? true : false,
-  };
+  const expiry = approvedAtUtc
+    ? {
+        date: format(new Date(closedAtUtc || expiresAtUtc || ''), DATE_TEXT_FORMAT),
+        isExpired: closedAtUtc ? true : false,
+      }
+    : undefined;
 
   return (
     <PageHeader>
