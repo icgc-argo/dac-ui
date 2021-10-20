@@ -22,4 +22,4 @@ export const FILE_DATE_FORMAT = 'yyyyMMdd';
 export const TIME_DAY_AND_DATE_FORMAT = "EEE. MMM. dd, yyyy 'at' h:mm aaaa";
 export const UPLOAD_DATE_FORMAT = 'yyyy-MM-dd';
 // API_DEFAULT_DATE_FORMAT is ISO8601
-export const API_DEFAULT_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
+export const API_DEFAULT_DATE_FORMAT = "yyyy-MM-ddTHH:mm:ss'Z'";
