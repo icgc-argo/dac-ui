@@ -44,3 +44,10 @@ export type RequestRevisionsState = {
   isSendEnabled: boolean;
   fields: RequestRevisionsFieldsState;
 };
+
+export enum VisibleModalOption {
+  NONE = 'NONE',
+  APPROVAL = 'APPROVAL',
+  REJECTION = 'REJECTION',
+  REVISIONS = 'REVISIONS',
+}

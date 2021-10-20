@@ -47,7 +47,7 @@ const PDFActions = ({
 
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const docId = currentDoc?.approvedAppDocObjId;
+  const docId = currentDoc ? currentDoc?.approvedAppDocObjId : '';
 
   const deleteDocument = (docId: string) => {
     if (!docId) {

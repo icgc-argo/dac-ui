@@ -22,7 +22,7 @@ import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import { instructionBoxButtonContentStyle, instructionBoxButtonIconStyle } from 'global/styles';
-import { VisibleModalOption } from '.';
+import { VisibleModalOption } from './types';
 
 const ApplicationActions = ({
   disabled,

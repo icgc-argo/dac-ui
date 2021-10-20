@@ -28,13 +28,7 @@ import { useState } from 'react';
 import PDFActions from './PDFActions';
 import { ApplicationData } from '../../types';
 import { SetLastUpdated } from '../types';
-
-export enum VisibleModalOption {
-  NONE = 'NONE',
-  APPROVAL = 'APPROVAL',
-  REJECTION = 'REJECTION',
-  REVISIONS = 'REVISIONS',
-}
+import { VisibleModalOption } from './types';
 
 const RequestRevisionsBar = ({
   data,
