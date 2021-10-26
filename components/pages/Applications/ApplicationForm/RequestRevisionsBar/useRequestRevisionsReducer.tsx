@@ -85,36 +85,36 @@ const checkSendEnabled = (fields: any) =>
 
 const makeFieldState = (fieldState: RequestRevisionProperties, action: RequestRevisionsAction) => {
   const checkRequested = (details: string) => details.length > 0;
-  const checkDetailsLength = (details: string) => details.length > 0 &&
-    details.length < MINIMUM_DETAILS_LENGTH;
+  const checkDetailsLength = (details: string) =>
+    details.length > 0 && details.length < MINIMUM_DETAILS_LENGTH;
 
   switch (action.type) {
     case 'detailsBlur': {
-      return ({
+      return {
         error: checkDetailsLength(fieldState.details)
-          // add error on blur
-          ? ERROR_TEXT
+          ? // add error on blur
+            ERROR_TEXT
           : fieldState.error,
         focus: checkRequested(fieldState.details),
         requested: checkRequested(fieldState.details),
-      });
+      };
     }
     case 'detailsChange': {
       return {
         details: action.payload,
         error: checkDetailsLength(action.payload)
-          // keep or remove error on change,
-          // but don't add error
-          ? fieldState.error
+          ? // keep or remove error on change,
+            // but don't add error
+            fieldState.error
           : initialFieldState.error,
         focus: true,
         requested: checkRequested(action.payload),
       };
     }
     case 'detailsClick': {
-      return ({
+      return {
         focus: true,
-      });
+      };
     }
     default: {
       return fieldState;
@@ -148,12 +148,12 @@ const requestRevisionsReducer = (state: RequestRevisionsState, action: any) => {
       ...(isSecondaryFieldsEnabled
         ? {}
         : SECONDARY_FIELDS.reduce(
-          (acc, curr) => ({
-            ...acc,
-            [curr]: initialFieldState,
-          }),
-          {},
-        )),
+            (acc, curr) => ({
+              ...acc,
+              [curr]: initialFieldState,
+            }),
+            {},
+          )),
     },
     isSecondaryFieldsEnabled,
     isSendEnabled: checkSendEnabled(nextState.fields),

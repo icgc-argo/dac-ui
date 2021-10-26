@@ -76,7 +76,7 @@ const ModalSection = ({
   focus,
   fieldDisabled,
   fieldName,
-  title
+  title,
 }: {
   details: string;
   dispatch: any;
@@ -98,8 +98,8 @@ const ModalSection = ({
         background: ${focus
           ? theme.colors.secondary_4
           : fieldDisabled
-            ? theme.colors.grey_3
-            : theme.colors.white};
+          ? theme.colors.grey_3
+          : theme.colors.white};
         border: 1px solid ${theme.colors.grey_2};
         display: flex;
         margin-bottom: 5px;
@@ -129,9 +129,7 @@ const ModalSection = ({
           id={`${title}-textarea`}
           className={`${error ? 'error' : ''} ${fieldDisabled ? 'disabled' : ''}`}
           css={textareaStyle}
-          onBlur={() =>
-            dispatch({ type: 'detailsBlur', ...dispatchArgs })
-          }
+          onBlur={() => dispatch({ type: 'detailsBlur', ...dispatchArgs })}
           onChange={(e) =>
             dispatch({ payload: e.target.value, type: 'detailsChange', ...dispatchArgs })
           }
@@ -222,8 +220,7 @@ const RequestRevisionsModal = ({
             dispatch={dispatch}
             error={fields[fieldName].error}
             focus={fields[fieldName].focus}
-            fieldDisabled={SECONDARY_FIELDS.includes(fieldName)
-              && !isSecondaryFieldsEnabled}
+            fieldDisabled={SECONDARY_FIELDS.includes(fieldName) && !isSecondaryFieldsEnabled}
             fieldName={fieldName}
             key={fieldName}
             title={RequestRevisionsFieldTitles[fieldName]}
