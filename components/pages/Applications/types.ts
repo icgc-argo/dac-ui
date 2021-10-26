@@ -31,6 +31,7 @@ export type ApplicationRecord = {
   lastUpdated: string;
   status: string;
   country: string;
+  currentApprovedAppDoc: boolean;
 };
 
 export enum ApplicationState {
@@ -102,6 +103,7 @@ export type ApplicationsResponseItem = {
   closedAtUtc: string;
   approvedAtUtc: string;
   revisionsRequested: boolean;
+  currentApprovedAppDoc: boolean;
 };
 
 export type ApplicationDataByField = {
@@ -256,6 +258,7 @@ export enum ApplicationsField {
   state = 'state',
   appNumber = 'appNumber',
   'applicant.address.country' = 'country',
+  currentApprovedAppDoc = 'currentApprovedAppDoc',
 }
 
 export type AuthAPIFetchFunction = (options?: {
