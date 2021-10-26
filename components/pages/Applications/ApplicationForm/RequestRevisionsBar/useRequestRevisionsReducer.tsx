@@ -26,6 +26,7 @@ import {
   RequestRevisionsFieldsState,
   RequestRevisionsFieldTitles,
   RequestRevisionsState,
+  RequestRevisionsAction,
 } from './types';
 
 export const MINIMUM_DETAILS_LENGTH = 10;
@@ -71,7 +72,7 @@ const findPartiallyCompleteFields = (fields: any) => find(
 const checkSendEnabled = (fields: any) => !!findCompleteFields(fields) &&
   !findPartiallyCompleteFields(fields);
 
-const makeFieldState = (fieldState: RequestRevisionProperties, action: any) => {
+const makeFieldState = (fieldState: RequestRevisionProperties, action: RequestRevisionsAction) => {
   switch (action.type) {
     case 'detailsBlur': {
       return ({

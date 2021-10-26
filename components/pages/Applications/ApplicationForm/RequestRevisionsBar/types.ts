@@ -51,3 +51,8 @@ export enum VisibleModalOption {
   REJECTION = 'REJECTION',
   REVISIONS = 'REVISIONS',
 }
+
+export type RequestRevisionsAction = {
+  payload: string;
+  type: 'detailsBlur' | 'detailsChange' | 'detailsClick';
+};
