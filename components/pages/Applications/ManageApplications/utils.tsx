@@ -51,6 +51,7 @@ export const fieldDisplayNames = {
   lastUpdatedAtUtc: 'Last Updated',
   state: 'Status',
   'ethics.declaredAsRequired': 'Ethics Letter',
+  currentApprovedAppDoc: 'Approved PDF',
 };
 
 export const formatTableData = (data: ApplicationsResponseItem[]) =>
@@ -61,6 +62,7 @@ export const formatTableData = (data: ApplicationsResponseItem[]) =>
     applicant: datum.applicant.info.displayName,
     googleEmail: datum.applicant.info.googleEmail,
     ethicsLetter: datum.ethics.declaredAsRequired,
+    currentApprovedAppDoc: datum.currentApprovedAppDoc,
     accessExpiry: datum.closedAtUtc || datum.expiresAtUtc,
     lastUpdated: datum.lastUpdatedAtUtc,
     status: datum.state,
@@ -104,6 +106,12 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
     Header: fieldDisplayNames['ethics.declaredAsRequired'],
     id: ApplicationsField['ethics.declaredAsRequired'],
     Cell: ({ original }: { original: ApplicationRecord }) => (original.ethicsLetter ? 'Yes' : 'No'),
+  },
+  {
+    Header: fieldDisplayNames['currentApprovedAppDoc'],
+    id: ApplicationsField['currentApprovedAppDoc'],
+    Cell: ({ original }: { original: ApplicationRecord }) =>
+      original.currentApprovedAppDoc ? 'Yes' : null,
   },
   {
     Header: fieldDisplayNames.expiresAtUtc,

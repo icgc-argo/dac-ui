@@ -43,8 +43,9 @@ const ApplyForAccessModal = ({
         actionButtonId="modal-action-btn_google-logo"
       >
         <Typography>
-          For authorization, we require a valid Google email address (Gmail or GSuite). This will be the email address you will use to log in
-          to ICGC DACO, ICGC ARGO, and ICGC 25K and will be the email address associated with ICGC Controlled Data Access.
+          For authorization, we require a valid Google email address (Gmail or GSuite). This will be
+          the email address you will use to log in to ICGC DACO, ICGC ARGO, and ICGC 25K and will be
+          the email address associated with ICGC Controlled Data Access.
         </Typography>
       </Modal>
     </ModalPortal>
