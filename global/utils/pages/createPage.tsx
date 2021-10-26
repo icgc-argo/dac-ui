@@ -29,8 +29,8 @@ export const createPage = <P extends {} = any>({
   isPublic = false,
 }: CreatePageConfigs) => (
   page: React.ComponentType<P> & CreatePageConfigs = () => <div>Here's a page</div>,
-  ): PageWithConfig => {
-    page.getInitialProps = getInitialProps || (async () => []);
-    page.isPublic = isPublic;
-    return page as PageWithConfig;
-  };
+): PageWithConfig => {
+  page.getInitialProps = getInitialProps || (async () => []);
+  page.isPublic = isPublic;
+  return page as PageWithConfig;
+};

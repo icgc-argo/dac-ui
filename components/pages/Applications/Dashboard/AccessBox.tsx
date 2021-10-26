@@ -38,10 +38,10 @@ const IconWithText = styled('div')`
 const getConfig = (hasAccess: boolean): { iconName: string; fontColor: string; iconText: string } =>
   hasAccess
     ? {
-      iconName: '/icons-checkmark.svg',
-      fontColor: 'accent1_dark',
-      iconText: 'ICGC DACO Approved!',
-    }
+        iconName: '/icons-checkmark.svg',
+        fontColor: 'accent1_dark',
+        iconText: 'ICGC DACO Approved!',
+      }
     : { iconName: '/icons-controlled-data.svg', fontColor: 'primary', iconText: 'No Access' };
 
 const AccessBox = ({ hasAccess = false }: { hasAccess?: boolean }) => {
