@@ -109,7 +109,7 @@ const makeFieldState = (fieldState: RequestRevisionProperties, action: RequestRe
           : initialFieldState.error,
         focus: true,
         requested: checkRequested(action.payload),
-      });
+      };
     }
     case 'detailsClick': {
       return ({
@@ -148,12 +148,12 @@ const requestRevisionsReducer = (state: RequestRevisionsState, action: any) => {
       ...(isSecondaryFieldsEnabled
         ? {}
         : SECONDARY_FIELDS.reduce(
-            (acc, curr) => ({
-              ...acc,
-              [curr]: initialFieldState,
-            }),
-            {},
-          )),
+          (acc, curr) => ({
+            ...acc,
+            [curr]: initialFieldState,
+          }),
+          {},
+        )),
     },
     isSecondaryFieldsEnabled,
     isSendEnabled: checkSendEnabled(nextState.fields),

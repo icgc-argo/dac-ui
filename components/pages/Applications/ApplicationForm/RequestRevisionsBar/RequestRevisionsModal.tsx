@@ -100,8 +100,8 @@ const ModalSection = ({
         background: ${focus
           ? theme.colors.secondary_4
           : fieldDisabled
-          ? theme.colors.grey_3
-          : theme.colors.white};
+            ? theme.colors.grey_3
+            : theme.colors.white};
         border: 1px solid ${theme.colors.grey_2};
         display: flex;
         margin-bottom: 5px;
