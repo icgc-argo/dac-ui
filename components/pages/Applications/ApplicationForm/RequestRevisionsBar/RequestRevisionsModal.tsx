@@ -77,18 +77,16 @@ const ModalSection = ({
   fieldDisabled,
   fieldName,
   title
-}:
-  {
-    details: string;
-    dispatch: any;
-    // TODO revisit dispatch type in data hookup ticket
-    error: string;
-    focus: boolean;
-    fieldDisabled: boolean;
-    fieldName: string;
-    title: string;
-  }
-) => {
+}: {
+  details: string;
+  dispatch: any;
+  // TODO revisit dispatch type in data hookup ticket
+  error: string;
+  focus: boolean;
+  fieldDisabled: boolean;
+  fieldName: string;
+  title: string;
+}) => {
   const theme = useTheme();
   const dispatchArgs = {
     fieldName: fieldName as RequestRevisionsFieldNames,
