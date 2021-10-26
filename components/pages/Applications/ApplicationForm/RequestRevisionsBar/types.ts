@@ -32,6 +32,7 @@ export type RequestRevisionsFieldNames = keyof typeof RequestRevisionsFieldTitle
 export type RequestRevisionProperties = {
   details: string;
   error: string;
+  focus: boolean;
   requested: boolean;
 };
 

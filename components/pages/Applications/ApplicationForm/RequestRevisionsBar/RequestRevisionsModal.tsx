@@ -70,20 +70,20 @@ the value got "stuck" in an emotion component prop inside the textarea. */
 `;
 
 const ModalSection = ({
-  requested,
   details,
   dispatch,
   error,
+  focus,
   fieldDisabled,
   fieldName,
   title
 }:
   {
-    requested: boolean;
     details: string;
     dispatch: any;
     // TODO revisit dispatch type in data hookup ticket
     error: string;
+    focus: boolean;
     fieldDisabled: boolean;
     fieldName: string;
     title: string;
@@ -97,7 +97,7 @@ const ModalSection = ({
   return (
     <div
       css={css`
-        background: ${requested
+        background: ${focus
           ? theme.colors.secondary_4
           : fieldDisabled
             ? theme.colors.grey_3
@@ -131,7 +131,7 @@ const ModalSection = ({
           id={`${title}-textarea`}
           className={`${error ? 'error' : ''} ${fieldDisabled ? 'disabled' : ''}`}
           css={textareaStyle}
-          onBlur={(e) => dispatch({ payload: e.target.value, type: 'detailsBlur', ...dispatchArgs })}
+          onBlur={() => dispatch({ type: 'detailsBlur', ...dispatchArgs })}
           onChange={(e) => dispatch({ payload: e.target.value, type: 'detailsChange', ...dispatchArgs })}
           onClick={() => dispatch({ type: 'detailsClick', ...dispatchArgs })}
           readOnly={fieldDisabled} // making the field disabled will block click events
@@ -212,10 +212,10 @@ const RequestRevisionsModal = ({
         const fieldName = field as RequestRevisionsFieldNames;
         return (
           <ModalSection
-            requested={fields[fieldName].requested}
             details={fields[fieldName].details}
             dispatch={dispatch}
             error={fields[fieldName].error}
+            focus={fields[fieldName].focus}
             fieldDisabled={SECONDARY_FIELDS.includes(fieldName)
               && !isSecondaryFieldsEnabled}
             fieldName={fieldName}

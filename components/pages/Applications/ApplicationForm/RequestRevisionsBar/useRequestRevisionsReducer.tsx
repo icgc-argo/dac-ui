@@ -37,6 +37,7 @@ const ERROR_TEXT = `Message must be at least ${MINIMUM_DETAILS_LENGTH} character
 const initialFieldState: RequestRevisionProperties = {
   details: '',
   error: '',
+  focus: false,
   requested: false,
 };
 
@@ -73,27 +74,36 @@ const checkSendEnabled = (fields: any) => !!findCompleteFields(fields) &&
   !findPartiallyCompleteFields(fields);
 
 const makeFieldState = (fieldState: RequestRevisionProperties, action: RequestRevisionsAction) => {
+  const checkRequested = (details: string) => details.length > 0;
+  const checkDetailsLength = (details: string) => details.length > 0 &&
+    details.length < MINIMUM_DETAILS_LENGTH;
+
   switch (action.type) {
     case 'detailsBlur': {
       return ({
-        error: action.payload.length > 0 && action.payload.length < MINIMUM_DETAILS_LENGTH
+        error: checkDetailsLength(fieldState.details)
+          // add error on blur
           ? ERROR_TEXT
           : fieldState.error,
-        requested: action.payload.length > 0,
+        focus: checkRequested(fieldState.details),
+        requested: checkRequested(fieldState.details),
       });
     }
     case 'detailsChange': {
       return ({
         details: action.payload,
-        error: action.payload.length > 0 && action.payload.length < MINIMUM_DETAILS_LENGTH
+        error: checkDetailsLength(action.payload)
+          // keep or remove error on change,
+          // but don't add error
           ? fieldState.error
           : initialFieldState.error,
-        requested: true,
+        focus: true,
+        requested: checkRequested(action.payload),
       });
     }
     case 'detailsClick': {
       return ({
-        requested: true,
+        focus: true,
       });
     }
     default: {
