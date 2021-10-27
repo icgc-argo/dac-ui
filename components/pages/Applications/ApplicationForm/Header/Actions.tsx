@@ -138,14 +138,6 @@ const HeaderActions = ({
       .then(() => {
         refetchAllData();
         router.push(`${APPLICATIONS_PATH}/${appId}?section=terms`);
-        toaster.addToast({
-          variant: TOAST_VARIANTS.SUCCESS,
-          title: 'Application has been Closed',
-          content: isApplicationApproved
-            ? 'Access to ICGC Controlled Data will be removed for this project team within the next 24 hours.'
-            : '',
-          interactionType: 'CLOSE',
-        });
       })
       .catch((err: AxiosError) => {
         console.error('Failed to submit.', err);
