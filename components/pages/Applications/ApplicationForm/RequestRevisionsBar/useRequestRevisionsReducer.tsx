@@ -26,6 +26,7 @@ import {
   RequestRevisionsFieldsState,
   RequestRevisionsFieldTitles,
   RequestRevisionsState,
+  RequestRevisionsAction,
 } from './types';
 
 export const MINIMUM_DETAILS_LENGTH = 10;
@@ -36,6 +37,7 @@ const ERROR_TEXT = `Message must be at least ${MINIMUM_DETAILS_LENGTH} character
 const initialFieldState: RequestRevisionProperties = {
   details: '',
   error: '',
+  focus: false,
   requested: false,
 };
 
@@ -81,30 +83,37 @@ const findPartiallyCompleteFields = (fields: any) =>
 const checkSendEnabled = (fields: any) =>
   !!findCompleteFields(fields) && !findPartiallyCompleteFields(fields);
 
-const makeFieldState = (fieldState: RequestRevisionProperties, action: any) => {
+const makeFieldState = (fieldState: RequestRevisionProperties, action: RequestRevisionsAction) => {
+  const checkRequested = (details: string) => details.length > 0;
+  const checkDetailsLength = (details: string) =>
+    details.length > 0 && details.length < MINIMUM_DETAILS_LENGTH;
+
   switch (action.type) {
     case 'detailsBlur': {
       return {
-        error:
-          action.payload.length > 0 && action.payload.length < MINIMUM_DETAILS_LENGTH
-            ? ERROR_TEXT
-            : fieldState.error,
-        requested: action.payload.length > 0,
+        error: checkDetailsLength(fieldState.details)
+          ? // add error on blur
+            ERROR_TEXT
+          : fieldState.error,
+        focus: checkRequested(fieldState.details),
+        requested: checkRequested(fieldState.details),
       };
     }
     case 'detailsChange': {
       return {
         details: action.payload,
-        error:
-          action.payload.length > 0 && action.payload.length < MINIMUM_DETAILS_LENGTH
-            ? fieldState.error
-            : initialFieldState.error,
-        requested: true,
+        error: checkDetailsLength(action.payload)
+          ? // keep or remove error on change,
+            // but don't add error
+            fieldState.error
+          : initialFieldState.error,
+        focus: true,
+        requested: checkRequested(action.payload),
       };
     }
     case 'detailsClick': {
       return {
-        requested: true,
+        focus: true,
       };
     }
     default: {
