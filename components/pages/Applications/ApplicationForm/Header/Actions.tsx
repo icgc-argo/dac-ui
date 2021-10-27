@@ -35,8 +35,6 @@ import Modal from '@icgc-argo/uikit/Modal';
 import router from 'next/router';
 import { RefetchDataFunction } from '../Forms/types';
 import Banner from '@icgc-argo/uikit/notifications/Banner';
-import { useToaster } from 'global/hooks/useToaster';
-import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -121,8 +119,6 @@ const HeaderActions = ({
   const isClosedPreApproval = state === ApplicationState.CLOSED && !approvedAtUtc;
 
   const dismissModal = () => setVisibleModal(VisibleModalOption.NONE);
-
-  const toaster = useToaster();
 
   const isApplicationApproved = state === ApplicationState.APPROVED;
 
