@@ -39,61 +39,73 @@ const initialFieldState: RequestRevisionProperties = {
   requested: false,
 };
 
-const initialStateFields = Object.keys(RequestRevisionsFieldTitles).reduce((acc, curr) => ({
-  ...acc,
-  [curr]: initialFieldState
-}), {}) as RequestRevisionsFieldsState;
+const initialStateFields = Object.keys(RequestRevisionsFieldTitles).reduce(
+  (acc, curr) => ({
+    ...acc,
+    [curr]: initialFieldState,
+  }),
+  {},
+) as RequestRevisionsFieldsState;
 
 const initialState: RequestRevisionsState = {
   isSecondaryFieldsEnabled: false,
   isSendEnabled: false,
-  fields: { ...initialStateFields }
+  fields: { ...initialStateFields },
 };
 
-const getOnlyPrimaryFieldsState = (fields: any) => Object.keys(RequestRevisionsFieldTitles)
-  .filter(title => !SECONDARY_FIELDS.includes(title as RequestRevisionsFieldNames))
-  .reduce((acc, curr) => ({
-    ...acc,
-    [curr]: { ...fields[curr as RequestRevisionsFieldNames] },
-  }), {}) as RequestRevisionsFieldsState;
+const getOnlyPrimaryFieldsState = (fields: any) =>
+  Object.keys(RequestRevisionsFieldTitles)
+    .filter((title) => !SECONDARY_FIELDS.includes(title as RequestRevisionsFieldNames))
+    .reduce(
+      (acc, curr) => ({
+        ...acc,
+        [curr]: { ...fields[curr as RequestRevisionsFieldNames] },
+      }),
+      {},
+    ) as RequestRevisionsFieldsState;
 
-const findCompleteFields = (fields: any) => find(
-  Object.values(fields), (field: any) => field.requested &&
-    field.details &&
-    field.details.length >= MINIMUM_DETAILS_LENGTH
-);
+const findCompleteFields = (fields: any) =>
+  find(
+    Object.values(fields),
+    (field: any) =>
+      field.requested && field.details && field.details.length >= MINIMUM_DETAILS_LENGTH,
+  );
 
-const findPartiallyCompleteFields = (fields: any) => find(
-  Object.values(fields), (item: any) => item.requested &&
-    (!item.details || item.details.length < MINIMUM_DETAILS_LENGTH)
-);
+const findPartiallyCompleteFields = (fields: any) =>
+  find(
+    Object.values(fields),
+    (item: any) =>
+      item.requested && (!item.details || item.details.length < MINIMUM_DETAILS_LENGTH),
+  );
 
-const checkSendEnabled = (fields: any) => !!findCompleteFields(fields) &&
-  !findPartiallyCompleteFields(fields);
+const checkSendEnabled = (fields: any) =>
+  !!findCompleteFields(fields) && !findPartiallyCompleteFields(fields);
 
 const makeFieldState = (fieldState: RequestRevisionProperties, action: any) => {
   switch (action.type) {
     case 'detailsBlur': {
-      return ({
-        error: action.payload.length > 0 && action.payload.length < MINIMUM_DETAILS_LENGTH
-          ? ERROR_TEXT
-          : fieldState.error,
+      return {
+        error:
+          action.payload.length > 0 && action.payload.length < MINIMUM_DETAILS_LENGTH
+            ? ERROR_TEXT
+            : fieldState.error,
         requested: action.payload.length > 0,
-      });
+      };
     }
     case 'detailsChange': {
-      return ({
+      return {
         details: action.payload,
-        error: action.payload.length > 0 && action.payload.length < MINIMUM_DETAILS_LENGTH
-          ? fieldState.error
-          : initialFieldState.error,
+        error:
+          action.payload.length > 0 && action.payload.length < MINIMUM_DETAILS_LENGTH
+            ? fieldState.error
+            : initialFieldState.error,
         requested: true,
-      });
+      };
     }
     case 'detailsClick': {
-      return ({
+      return {
         requested: true,
-      });
+      };
     }
     default: {
       return fieldState;
@@ -113,8 +125,8 @@ const requestRevisionsReducer = (state: RequestRevisionsState, action: any) => {
       [action.fieldName]: {
         ...state.fields[fieldName],
         ...newFieldState,
-      }
-    }
+      },
+    },
   };
 
   const primaryFields = getOnlyPrimaryFieldsState(nextState.fields);
@@ -124,16 +136,19 @@ const requestRevisionsReducer = (state: RequestRevisionsState, action: any) => {
     ...nextState,
     fields: {
       ...nextState.fields,
-      ...isSecondaryFieldsEnabled
+      ...(isSecondaryFieldsEnabled
         ? {}
-        : SECONDARY_FIELDS.reduce((acc, curr) => ({
-          ...acc,
-          [curr]: initialFieldState
-        }), {})
+        : SECONDARY_FIELDS.reduce(
+            (acc, curr) => ({
+              ...acc,
+              [curr]: initialFieldState,
+            }),
+            {},
+          )),
     },
     isSecondaryFieldsEnabled,
     isSendEnabled: checkSendEnabled(nextState.fields),
-  }
+  };
 };
 
 const useRequestRevisionsReducer = () => {

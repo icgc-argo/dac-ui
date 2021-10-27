@@ -55,7 +55,7 @@ const RejectModal = ({
         denialReason,
       },
       method: 'PATCH',
-      url: urlJoin(API.APPLICATIONS, appId)
+      url: urlJoin(API.APPLICATIONS, appId),
     })
       .then(() => {
         router.reload();
@@ -78,13 +78,15 @@ const RejectModal = ({
       title="Are you sure you want to REJECT this application?"
     >
       <Typography>
-        Are you sure you want to reject <strong>Application: {appId} ({primaryAffiliation})?</strong> If so, the applicant will be notified and will be unable to reopen this application.
+        Are you sure you want to reject{' '}
+        <strong>
+          Application: {appId} ({primaryAffiliation})?
+        </strong>{' '}
+        If so, the applicant will be notified and will be unable to reopen this application.
       </Typography>
 
       <FormControl>
-        <InputLabel htmlFor="denialReason">
-          Details from the ICGC DACO Team (optional):
-        </InputLabel>
+        <InputLabel htmlFor="denialReason">Details from the ICGC DACO Team (optional):</InputLabel>
         <Textarea
           aria-label="Details from the ICGC DACO Team (optional)"
           id="denialReason"

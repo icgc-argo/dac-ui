@@ -43,6 +43,7 @@ import { ApplicationState } from 'components/pages/Applications/types';
 import { getConfig } from 'global/config';
 import Link from '@icgc-argo/uikit/Link';
 import ApplicationHistoryModal from './ApplicationHistoryModal';
+import { SetLastUpdated } from '../types';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -54,8 +55,6 @@ type QueryType = {
     section?: FormSectionNames;
   };
 };
-
-type SetLastUpdated = (lastUpdatedAtUtc: string) => void;
 
 const notificationStyle = css`
   margin: 0 auto 25px auto;
@@ -71,7 +70,7 @@ const getActiveSection = (sectionFromQuery?: FormSectionNames): FormSectionNames
   return isValidSectionFromQuery
     ? sectionFromQuery
     : ((sectionFromQuery &&
-      console.info('Section initially queried was not found', sectionFromQuery),
+        console.info('Section initially queried was not found', sectionFromQuery),
       sectionsOrder[0]) as FormSectionNames);
 };
 
@@ -146,13 +145,13 @@ const ApplicationFormsBase = ({
 
     selectedSection === 'collaborators'
       ? formState.sections[selectedSection]?.meta.showOverall ||
-      triggerSectionValidation('notShowingOverall', selectedSection)
+        triggerSectionValidation('notShowingOverall', selectedSection)
       : sectionsOrder.forEach(
-        (section) =>
-          // validates all other section that doen't already show overall status.
-          !(formState.sections[section]?.meta.showOverall || selectedSection === section) &&
-          triggerSectionValidation('notShowingOverall', section),
-      );
+          (section) =>
+            // validates all other section that doen't already show overall status.
+            !(formState.sections[section]?.meta.showOverall || selectedSection === section) &&
+            triggerSectionValidation('notShowingOverall', section),
+        );
   }, [formState.lastUpdatedAtUtc]);
 
   const sectionIndex = sectionsOrder.indexOf(selectedSection);
@@ -217,20 +216,20 @@ const ApplicationFormsBase = ({
                 `}
               >
                 <span>
-                  Access to ICGC Controlled Data will be removed for this project team within the next
-                  24 hours.
+                  Access to ICGC Controlled Data will be removed for this project team within the
+                  next 24 hours.
                 </span>
                 <br />
                 <br />
                 <strong>
-                  You are required to complete a final report as per the conditions of the Data Access
-                  Agreement.{' '}
+                  You are required to complete a final report as per the conditions of the Data
+                  Access Agreement.{' '}
                   <Link href={NEXT_PUBLIC_DACO_SURVEY_URL} target="_blank">
                     Click here to fill out the report
                   </Link>
                 </strong>
-                , describing your successes and challenges with accessing ICGC Controlled Data and the
-                outcomes of your research project.
+                , describing your successes and challenges with accessing ICGC Controlled Data and
+                the outcomes of your research project.
               </div>
             }
             css={notificationStyle}
@@ -431,7 +430,6 @@ const ApplicationFormsBase = ({
                   </div>
                 </Button>
               )}
-
             </header>
 
             {sectionSelector({
@@ -454,7 +452,8 @@ const ApplicationFormsBase = ({
             >
               {sectionsBefore.length > 0 && (
                 <Button onClick={handlePreviousNextSectionClick('previous')} size="sm">
-                  <Icon fill={theme.colors.white} height="9px" name="chevron_left" /> Previous Section
+                  <Icon fill={theme.colors.white} height="9px" name="chevron_left" /> Previous
+                  Section
                 </Button>
               )}
 

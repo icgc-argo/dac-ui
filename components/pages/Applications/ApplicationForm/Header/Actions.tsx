@@ -28,7 +28,7 @@ import { isEqual } from 'lodash';
 import { useAuthContext } from 'global/hooks';
 import { API, APPLICATIONS_PATH, APPROVED_APP_CLOSED_CHECK } from 'global/constants';
 import { AxiosError } from 'axios';
-import { ApplicationState } from '../../types';
+import { ApplicationState, ApprovedDoc } from '../../types';
 import { CustomLoadingButton, generatePDFDocument } from '../Forms/common';
 import { ModalPortal } from 'components/Root';
 import Modal from '@icgc-argo/uikit/Modal';
@@ -44,10 +44,11 @@ enum VisibleModalOption {
 }
 
 // EXPIRED and RENEWING handling is tbd, CLOSED excludes Action buttons
-const getPdfButtonText: (state: ApplicationState, approvedAtUtc: string) => string = (
-  state,
-  approvedAtUtc,
-) => {
+const getPdfButtonText: (
+  state: ApplicationState,
+  approvedAtUtc: string,
+  approvedAppDocObjId: string,
+) => string = (state, approvedAtUtc, approvedAppDocObjId) => {
   const text = 'PDF';
 
   if (ApplicationState.CLOSED.includes(state) && !!approvedAtUtc) {
@@ -63,9 +64,15 @@ const getPdfButtonText: (state: ApplicationState, approvedAtUtc: string) => stri
   ) {
     return `DRAFT ${text}`;
   }
+
   if (isEqual(state, ApplicationState.SIGN_AND_SUBMIT)) {
     return `FINALIZED ${text}`;
   }
+
+  if (!!approvedAppDocObjId) {
+    return `APPROVED ${text}`;
+  }
+
   if (
     [ApplicationState.REVIEW, ApplicationState.APPROVED, ApplicationState.REJECTED].includes(state)
   ) {
@@ -83,12 +90,14 @@ const HeaderActions = ({
   state,
   refetchAllData,
   approvedAtUtc,
+  currentApprovedDoc,
 }: {
   appId: string;
   primaryAffiliation: string;
   state: ApplicationState;
   refetchAllData: RefetchDataFunction;
   approvedAtUtc: string;
+  currentApprovedDoc: ApprovedDoc | undefined;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();
   const { fetchWithAuth } = useAuthContext();
@@ -96,7 +105,11 @@ const HeaderActions = ({
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const pdfButtonText = getPdfButtonText(state, approvedAtUtc);
+  const pdfButtonText = getPdfButtonText(
+    state,
+    approvedAtUtc,
+    currentApprovedDoc ? currentApprovedDoc.approvedAppDocObjId : '',
+  );
 
   const closeApplicationVisible = [
     ApplicationState.DRAFT,

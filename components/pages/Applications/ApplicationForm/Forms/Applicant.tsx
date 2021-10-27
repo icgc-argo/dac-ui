@@ -51,9 +51,7 @@ const Applicant = ({
       <StaticApplicant />
 
       <section>
-        <SectionTitle>
-          {FORM_TEXT.applicant.title}
-        </SectionTitle>
+        <SectionTitle>{FORM_TEXT.applicant.title}</SectionTitle>
 
         <DoubleFieldRow>
           <FormControl
@@ -268,9 +266,7 @@ const Applicant = ({
       </section>
 
       <section>
-        <SectionTitle>
-          INSTITUTION/COMPANY MAILING ADDRESS
-        </SectionTitle>
+        <SectionTitle>INSTITUTION/COMPANY MAILING ADDRESS</SectionTitle>
 
         <FormControl
           disabled={isSectionDisabled}

@@ -335,4 +335,5 @@ export type FormSectionValidatorFunction_Main = (
 export enum DOCUMENT_TYPES {
   SIGNED_APP = 'SIGNED_APP',
   ETHICS = 'ETHICS',
+  APPROVED_PDF = 'APPROVED_PDF',
 }

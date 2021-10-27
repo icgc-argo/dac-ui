@@ -31,6 +31,7 @@ export type ApplicationRecord = {
   lastUpdated: string;
   status: string;
   country: string;
+  currentApprovedAppDoc: boolean;
 };
 
 export enum ApplicationState {
@@ -102,6 +103,7 @@ export type ApplicationsResponseItem = {
   closedAtUtc: string;
   approvedAtUtc: string;
   revisionsRequested: boolean;
+  currentApprovedAppDoc: boolean;
 };
 
 export type ApplicationDataByField = {
@@ -216,6 +218,13 @@ interface Appendices {
 
 export interface ApplicationData {
   appId: string;
+  approvedAppDocs: ApprovedDoc[];
+  createdAtUtc: string;
+  lastUpdatedAtUtc: string;
+  expiresAtUtc: string;
+  closedAtUtc: string;
+  revisionsRequested: boolean;
+  approvedAtUtc: string;
   state: ApplicationState;
   sections: {
     terms: Terms;
@@ -249,9 +258,18 @@ export enum ApplicationsField {
   state = 'state',
   appNumber = 'appNumber',
   'applicant.address.country' = 'country',
+  currentApprovedAppDoc = 'currentApprovedAppDoc',
 }
 
 export type AuthAPIFetchFunction = (options?: {
   data?: any;
   method?: Method;
 }) => Promise<AxiosResponse<any>>;
+
+export type ApprovedDoc = {
+  approvedAppDocObjId: string;
+  uploadedAtUtc: string;
+  approvedAppDocName: string;
+  isCurrent: boolean;
+  approvedAtUtc: string;
+};

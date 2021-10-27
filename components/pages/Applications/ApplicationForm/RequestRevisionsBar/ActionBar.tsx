@@ -17,51 +17,57 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import css from '@emotion/css';
+import { ContentHeader } from '@icgc-argo/uikit/PageLayout';
+import useTheme from '@icgc-argo/uikit/utils/useTheme';
 import React from 'react';
-import './button.css';
 
-export interface ButtonProps {
-  /**
-   * Is this the principal call to action on the page?
-   */
-  primary?: boolean;
-  /**
-   * What background color to use
-   */
-  backgroundColor?: string;
-  /**
-   * How large should the button be?
-   */
-  size?: 'small' | 'medium' | 'large';
-  /**
-   * Button contents
-   */
-  label: string;
-  /**
-   * Optional click handler
-   */
-  onClick?: () => void;
-}
+const ActionBar = ({ children }: { children: React.ReactNode }) => {
+  const theme = useTheme();
 
-/**
- * Primary UI component for user interaction
- */
-export const Button: React.FC<ButtonProps> = ({
-  primary = false,
-  size = 'medium',
-  backgroundColor,
-  label,
-  ...props
-}) => {
-  const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
   return (
-    <button
-      type="button"
-      className={['storybook-button', `storybook-button--${size}`, mode].join(' ')}
-      style={{ backgroundColor }}
-      {...props}
+    <ContentHeader
+      css={css`
+        border: 0 none;
+        height: auto;
+        line-height: 1;
+        margin-bottom: -16px;
+        margin-top: 16px;
+      `}
     >
-      {label}
-    </button>
+      <div
+        css={css`
+          align-items: center;
+          background: ${theme.colors.warning_3};
+          border-radius: 8px;
+          box-sizing: border-box;
+          display: flex;
+          height: auto;
+          justify-content: space-between;
+          margin: 0 auto;
+          max-width: 1200px;
+          min-width: 665px;
+          padding: 8px 10px 8px 16px;
+          width: 100%;
+        `}
+      >
+        <div>{/* Expiry placeholder */}</div>
+        <div
+          css={css`
+            display: flex;
+            button {
+              margin-right: 8px;
+              &:last-child {
+                margin-right: 0;
+              }
+            }
+          `}
+        >
+          {children}
+        </div>
+      </div>
+    </ContentHeader>
   );
 };
+
+export default ActionBar;

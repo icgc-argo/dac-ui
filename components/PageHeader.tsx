@@ -31,26 +31,27 @@ const PageHeader = ({ children }: { children: ReactElement | string }): ReactEle
       justify-content: space-between;
     `}
   >
-    {typeof children === 'string'
-      ? (
-        <Container
+    {typeof children === 'string' ? (
+      <Container
+        css={css`
+          width: 100%;
+        `}
+      >
+        <Typography
+          component="h1"
           css={css`
-            width: 100%;
-          `}>
-          <Typography
-            component="h1"
-            css={css`
-              font-size: 24px;
-              line-height: 28px;
-              margin: 15px 0 13px;
-              text-align: left;
-            `}
-          >
-            {children}
-          </Typography>
-        </Container>
-      )
-      : children}
+            font-size: 24px;
+            line-height: 28px;
+            margin: 15px 0 13px;
+            text-align: left;
+          `}
+        >
+          {children}
+        </Typography>
+      </Container>
+    ) : (
+      children
+    )}
   </ContentHeader>
 );
 
