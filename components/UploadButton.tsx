@@ -84,10 +84,6 @@ const UploadButton = ({
         .finally(() => {
           setUploadInProgress(false);
         });
-    } else {
-      console.warn('invalid file');
-      setUploadError(true);
-      onUploadError();
     }
   };
 
