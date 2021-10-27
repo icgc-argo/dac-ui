@@ -35,8 +35,6 @@ import Modal from '@icgc-argo/uikit/Modal';
 import router from 'next/router';
 import { RefetchDataFunction } from '../Forms/types';
 import Banner from '@icgc-argo/uikit/notifications/Banner';
-import { useToaster } from 'global/hooks/useToaster';
-import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -122,8 +120,6 @@ const HeaderActions = ({
 
   const dismissModal = () => setVisibleModal(VisibleModalOption.NONE);
 
-  const toaster = useToaster();
-
   const isApplicationApproved = state === ApplicationState.APPROVED;
 
   const submit = () => {
@@ -138,14 +134,6 @@ const HeaderActions = ({
       .then(() => {
         refetchAllData();
         router.push(`${APPLICATIONS_PATH}/${appId}?section=terms`);
-        toaster.addToast({
-          variant: TOAST_VARIANTS.SUCCESS,
-          title: 'Application has been Closed',
-          content: isApplicationApproved
-            ? 'Access to ICGC Controlled Data will be removed for this project team within the next 24 hours.'
-            : '',
-          interactionType: 'CLOSE',
-        });
       })
       .catch((err: AxiosError) => {
         console.error('Failed to submit.', err);
