@@ -62,7 +62,6 @@ const UploadButton = ({
 
   const handleFileUpload = (e: any) => {
     const file = e.target.files?.[0];
-
     if (file && validators.every((v: (file: any) => boolean) => v(file))) {
       setUploadError(false);
       setUploadInProgress(true);
@@ -84,10 +83,9 @@ const UploadButton = ({
         .finally(() => {
           setUploadInProgress(false);
         });
-    } else {
-      console.warn('invalid file');
-      setUploadError(true);
-      onUploadError();
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 

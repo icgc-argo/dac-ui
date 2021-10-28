@@ -49,6 +49,10 @@ const getPdfButtonText: (
 ) => string = (state, approvedAtUtc, approvedAppDocObjId) => {
   const text = 'PDF';
 
+  if (!!approvedAppDocObjId) {
+    return `APPROVED ${text}`;
+  }
+
   if (ApplicationState.CLOSED.includes(state) && !!approvedAtUtc) {
     return `SIGNED ${text}`;
   }
@@ -65,10 +69,6 @@ const getPdfButtonText: (
 
   if (isEqual(state, ApplicationState.SIGN_AND_SUBMIT)) {
     return `FINALIZED ${text}`;
-  }
-
-  if (!!approvedAppDocObjId) {
-    return `APPROVED ${text}`;
   }
 
   if (
