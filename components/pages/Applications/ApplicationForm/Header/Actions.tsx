@@ -35,6 +35,7 @@ import Modal from '@icgc-argo/uikit/Modal';
 import router from 'next/router';
 import { RefetchDataFunction } from '../Forms/types';
 import Banner from '@icgc-argo/uikit/notifications/Banner';
+import { createDownloadInWindow } from 'global/utils/helpers';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -255,14 +256,9 @@ const HeaderActions = ({
               })
                 .then((res: any) => {
                   if (res.data && isDownloadZip) {
-                    const downloadUrl = window.URL.createObjectURL(new Blob([res.data]));
+                    const blob = new Blob([res.data]);
                     const filename = res.headers['content-disposition'].split('"')[1];
-                    const link = document.createElement('a');
-                    link.href = downloadUrl;
-                    link.setAttribute('download', filename);
-                    document.body.appendChild(link);
-                    link.click();
-                    link.remove();
+                    createDownloadInWindow(filename, blob);
                     setPdfIsLoading(false);
                     return {};
                   } else {
