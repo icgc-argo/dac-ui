@@ -89,14 +89,6 @@ const ApplicationFormsBase = ({
   formState: FormValidationStateParameters;
   validateSection: FormSectionValidatorFunction_Origin;
 }): ReactElement => {
-  // start application history feature flag
-  const [showApplicationHistoryButton, setShowApplicationHistoryButton] = useState<boolean>(false);
-  useEffect(() => {
-    const localFlag = localStorage.getItem('SHOW_APP_HISTORY');
-    setShowApplicationHistoryButton(localFlag === 'true');
-  });
-  // end application history feature flag
-
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
 
   const { NEXT_PUBLIC_DACO_SURVEY_URL } = getConfig();
@@ -397,39 +389,37 @@ const ApplicationFormsBase = ({
                 Application for Controlled Data Access
               </Typography>
 
-              {showApplicationHistoryButton && (
-                <Button
+              <Button
+                css={css`
+                  border: 0 none;
+                  padding: 0;
+                  &:hover {
+                    background: transparent;
+                    text-decoration: underline;
+                  }
+                `}
+                onClick={() => {
+                  setVisibleModal(VisibleModalOption.APPLICATION_HISTORY);
+                }}
+                variant="secondary"
+              >
+                <div
                   css={css`
-                    border: 0 none;
-                    padding: 0;
-                    &:hover {
-                      background: transparent;
-                      text-decoration: underline;
-                    }
+                    align-items: center;
+                    display: flex;
                   `}
-                  onClick={() => {
-                    setVisibleModal(VisibleModalOption.APPLICATION_HISTORY);
-                  }}
-                  variant="secondary"
                 >
-                  <div
+                  <Icon
                     css={css`
-                      align-items: center;
-                      display: flex;
+                      margin-right: 2px;
                     `}
-                  >
-                    <Icon
-                      css={css`
-                        margin-right: 2px;
-                      `}
-                      fill={theme.colors.accent2_dark}
-                      height="14px"
-                      name="calendar"
-                    />
-                    <span>Application History</span>
-                  </div>
-                </Button>
-              )}
+                    fill={theme.colors.accent2_dark}
+                    height="14px"
+                    name="calendar"
+                  />
+                  <span>Application History</span>
+                </div>
+              </Button>
             </header>
 
             {sectionSelector({

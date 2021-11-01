@@ -1,371 +1,79 @@
-import { createRef } from 'react';
+import { createRef, useEffect, useState } from 'react';
 import { css } from '@emotion/core';
 import Modal from '@icgc-argo/uikit/Modal';
 import Table from '@icgc-argo/uikit/Table';
 import Typography from '@icgc-argo/uikit/Typography';
-import { ModalPortal } from 'components/Root';
+import { capitalize } from 'lodash';
+import urlJoin from 'url-join';
+import Banner from '@icgc-argo/uikit/notifications/Banner';
+import { AxiosResponse, AxiosError } from 'axios';
+import { format } from 'date-fns';
 
-const testColumns = [
+import { ModalPortal } from 'components/Root';
+import { useAuthContext } from 'global/hooks';
+import { API, DATE_RANGE_DISPLAY_FORMAT } from 'global/constants';
+import { UpdateEvent, UserViewApplicationUpdate } from './types';
+
+const columns = [
   {
     accessor: 'date',
-    Header: 'Day of Status Change',
+    Header: 'Date of Status Change',
+    Cell: ({ original }: { original: UserViewApplicationUpdate }) =>
+      format(new Date(original.date), DATE_RANGE_DISPLAY_FORMAT),
   },
   {
-    accessor: 'appStatus',
+    accessor: 'eventType',
     Header: 'Application Status',
+    Cell: ({ original }: { original: UserViewApplicationUpdate }) => {
+      if (original.eventType === UpdateEvent.SUBMITTED) {
+        return 'Submitted for Review';
+      } else {
+        return original.eventType
+          .replace(/_/g, ' ')
+          .split(' ')
+          .map((word) => capitalize(word))
+          .join(' ');
+      }
+    },
   },
   {
-    accessor: 'appType',
+    accessor: 'applicationInfo.appType',
     Header: 'Application Type',
+    Cell: ({ original }: { original: UserViewApplicationUpdate }) =>
+      capitalize(original.applicationInfo.appType),
   },
   {
-    accessor: 'actionPerformedBy',
+    accessor: 'author.role', // non-admin users are shown author role only, not id
     Header: 'Action Performed By',
+    Cell: ({ original }: { original: UserViewApplicationUpdate }) =>
+      capitalize(original.author.role),
   },
 ];
 
-const testData = [
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  }, {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  }, {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  }, {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  }, {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  }, {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  },
-  {
-    actionPerformedBy: 'Submitter',
-    appStatus: 'Created',
-    appType: 'New',
-    date: '2019-09-10',
-  },
-  {
-    actionPerformedBy: 'Submitter 2',
-    appStatus: 'Approved',
-    appType: 'New',
-    date: '2019-01-10',
-  }
-];
-
-const AppHistoryModal = ({
-  appId,
-  onClose,
-}: {
-  appId: string;
-  onClose: any;
-}) => {
+const AppHistoryModal = ({ appId, onClose }: { appId: string; onClose: any }) => {
   const containerRef = createRef<HTMLDivElement>();
+  const [historyData, setHistoryData] = useState<UserViewApplicationUpdate[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [loadingError, setLoadingError] = useState<boolean>(false);
+  const { fetchWithAuth } = useAuthContext();
+
+  useEffect(() => {
+    fetchWithAuth({
+      appId,
+      url: urlJoin(API.APPLICATIONS, appId),
+    })
+      .then((res: AxiosResponse) => {
+        setHistoryData(res.data.updates);
+      })
+      .catch((err: AxiosError) => {
+        console.warn('Error retrieving application history: ', err);
+        setLoadingError(true);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
+
   return (
     <ModalPortal modalWidth="100%">
       <Modal
@@ -375,30 +83,38 @@ const AppHistoryModal = ({
         onCloseClick={onClose}
         title="Application History"
       >
-        <Typography css={css`width: 500px`}>
+        {loadingError && (
+          <Banner
+            variant="ERROR"
+            size="SM"
+            title="Something went wrong"
+            content="Could not load application history data. Please close the modal and try again."
+          />
+        )}
+        <Typography
+          css={css`
+            width: 500px;
+          `}
+        >
           The following shows the lifecycle of Application: {appId}.
         </Typography>
-        <Table
-          /* TODO in API data hook-up ticket
-          - real data
-          - real accessor names
-          - showPagination={false}
-          - see ManageApplications table for API/state-driven pagination
-          */
-          columns={testColumns}
-          css={css`
-            margin-top: 10px;
-          `}
-          data={testData}
-          defaultSorted={[{ id: 'date', desc: false }]}
-          parentRef={containerRef}
-          showPagination
-          stripped
-          withOutsideBorder
-        />
+        {!isLoading && (
+          <Table
+            css={css`
+              margin-top: 10px;
+            `}
+            columns={columns}
+            data={historyData}
+            sortable={false}
+            parentRef={containerRef}
+            showPagination={false}
+            stripped
+            withOutsideBorder
+          />
+        )}
       </Modal>
     </ModalPortal>
-  )
+  );
 };
 
 export default AppHistoryModal;
