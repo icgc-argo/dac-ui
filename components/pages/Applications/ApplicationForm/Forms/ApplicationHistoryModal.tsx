@@ -28,6 +28,7 @@ const columns = [
       if (original.eventType === UpdateEvent.SUBMITTED) {
         return 'Submitted for Review';
       } else {
+        // dac-api returns these as string enums, so just formatting from uppercase to capitalized for each word, for nicer text display
         return original.eventType
           .replace(/_/g, ' ')
           .split(' ')
