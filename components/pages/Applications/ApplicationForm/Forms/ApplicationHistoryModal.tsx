@@ -3,7 +3,7 @@ import { css } from '@emotion/core';
 import Modal from '@icgc-argo/uikit/Modal';
 import Table from '@icgc-argo/uikit/Table';
 import Typography from '@icgc-argo/uikit/Typography';
-import { capitalize } from 'lodash';
+import { capitalize, startCase } from 'lodash';
 import urlJoin from 'url-join';
 import Banner from '@icgc-argo/uikit/notifications/Banner';
 import { AxiosResponse, AxiosError } from 'axios';
@@ -29,11 +29,7 @@ const columns = [
         return 'Submitted for Review';
       } else {
         // dac-api returns these as string enums, so just formatting from uppercase to capitalized for each word, for nicer text display
-        return original.eventType
-          .replace(/_/g, ' ')
-          .split(' ')
-          .map((word) => capitalize(word))
-          .join(' ');
+        return startCase(original.eventType.toLowerCase());
       }
     },
   },
