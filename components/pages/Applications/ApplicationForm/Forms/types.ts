@@ -338,7 +338,7 @@ export enum DOCUMENT_TYPES {
   APPROVED_PDF = 'APPROVED_PDF',
 }
 
-enum DacoRole {
+export enum DacoRole {
   SUBMITTER = 'SUBMITTER',
   ADMIN = 'ADMIN',
 }

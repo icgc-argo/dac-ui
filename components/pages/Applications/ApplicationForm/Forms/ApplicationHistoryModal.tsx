@@ -12,7 +12,7 @@ import { format } from 'date-fns';
 import { ModalPortal } from 'components/Root';
 import { useAuthContext } from 'global/hooks';
 import { API, DATE_RANGE_DISPLAY_FORMAT } from 'global/constants';
-import { UpdateEvent, UserViewApplicationUpdate } from './types';
+import { DacoRole, UpdateEvent, UserViewApplicationUpdate } from './types';
 
 const columns = [
   {
@@ -43,7 +43,9 @@ const columns = [
     accessor: 'author.role', // non-admin users are shown author role only, not id
     Header: 'Action Performed By',
     Cell: ({ original }: { original: UserViewApplicationUpdate }) =>
-      capitalize(original.author.role),
+      original.author.role === DacoRole.ADMIN
+        ? 'DACO Administrator'
+        : capitalize(original.author.role),
   },
 ];
 
