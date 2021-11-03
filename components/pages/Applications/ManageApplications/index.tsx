@@ -47,11 +47,16 @@ import {
 } from './utils';
 
 import PageHeader from 'components/PageHeader';
-import { useGetApplications } from 'global/hooks';
+import { useAuthContext, useGetApplications } from 'global/hooks';
 import GenericError from 'components/pages/Error/Generic';
 import Icon from '@icgc-argo/uikit/Icon';
 import Input from '@icgc-argo/uikit/form/Input';
 import useDebounce from 'global/hooks/useDebounce';
+import Button from '@icgc-argo/uikit/Button';
+import { instructionBoxButtonContentStyle, instructionBoxButtonIconStyle } from 'global/styles';
+import { AxiosError, AxiosResponse } from 'axios';
+import { createDownloadInWindow } from 'global/utils/helpers';
+import { CustomLoadingButton } from '../ApplicationForm/Forms/common';
 
 const getDefaultSort = (applicationSorts: ApplicationsSort[]) =>
   applicationSorts.map(({ field, order }) => ({ id: field, desc: order === 'desc' }));
@@ -118,6 +123,7 @@ const ManageApplications = (): ReactElement => {
     searchQuery,
   } = useManageApplicationsState();
 
+  const { fetchWithAuth } = useAuthContext();
   const theme = useTheme();
   const containerRef = React.createRef<HTMLDivElement>();
 
@@ -157,6 +163,8 @@ const ManageApplications = (): ReactElement => {
       icon: <img src="/icons-toc-errors.svg" width="18px" height="18px" />,
     },
   ];
+
+  const [tsvIsLoading, setTsvIsLoading] = useState(false);
 
   return (
     <>
@@ -244,6 +252,56 @@ const ManageApplications = (): ReactElement => {
                       justify-content: flex-end;
                     `}
                   >
+                    <Button
+                      isAsync
+                      size="sm"
+                      variant="secondary"
+                      css={css`
+                        margin-right: 10px;
+                      `}
+                      isLoading={tsvIsLoading}
+                      Loader={(props: any) => (
+                        <CustomLoadingButton text="Application History" {...props} />
+                      )}
+                      onClick={async () => {
+                        setTsvIsLoading(true);
+                        fetchWithAuth({
+                          url: '/export/application-history',
+                        })
+                          .then((response: AxiosResponse) => {
+                            const contentDispositionHeader =
+                              response.headers['content-disposition'];
+                            if (!contentDispositionHeader) {
+                              throw Error('Missing content-disposition header.');
+                            }
+                            const filename = contentDispositionHeader
+                              .split('filename=')[1]
+                              .replace(/['"]+/g, '');
+
+                            const blob = new Blob([response.data], {
+                              type: response.config.responseType || 'application/octet-stream',
+                            });
+
+                            createDownloadInWindow(filename, blob);
+                          })
+                          .catch((err: AxiosError) => {
+                            console.warn('Could not download application history, ', err);
+                          })
+                          .finally(() => {
+                            setTsvIsLoading(false);
+                          });
+                      }}
+                    >
+                      <span css={instructionBoxButtonContentStyle}>
+                        <Icon
+                          name="download"
+                          fill="accent2_dark"
+                          height="12px"
+                          css={instructionBoxButtonIconStyle}
+                        />
+                        Application History
+                      </span>
+                    </Button>
                     {/* <Button
                         size="sm"
                         variant="secondary"

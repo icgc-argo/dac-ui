@@ -35,8 +35,7 @@ import Modal from '@icgc-argo/uikit/Modal';
 import router from 'next/router';
 import { RefetchDataFunction } from '../Forms/types';
 import Banner from '@icgc-argo/uikit/notifications/Banner';
-import { useToaster } from 'global/hooks/useToaster';
-import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
+import { createDownloadInWindow } from 'global/utils/helpers';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -50,6 +49,10 @@ const getPdfButtonText: (
   approvedAppDocObjId: string,
 ) => string = (state, approvedAtUtc, approvedAppDocObjId) => {
   const text = 'PDF';
+
+  if (!!approvedAppDocObjId) {
+    return `APPROVED ${text}`;
+  }
 
   if (ApplicationState.CLOSED.includes(state) && !!approvedAtUtc) {
     return `SIGNED ${text}`;
@@ -67,10 +70,6 @@ const getPdfButtonText: (
 
   if (isEqual(state, ApplicationState.SIGN_AND_SUBMIT)) {
     return `FINALIZED ${text}`;
-  }
-
-  if (!!approvedAppDocObjId) {
-    return `APPROVED ${text}`;
   }
 
   if (
@@ -122,8 +121,6 @@ const HeaderActions = ({
 
   const dismissModal = () => setVisibleModal(VisibleModalOption.NONE);
 
-  const toaster = useToaster();
-
   const isApplicationApproved = state === ApplicationState.APPROVED;
 
   const submit = () => {
@@ -138,14 +135,6 @@ const HeaderActions = ({
       .then(() => {
         refetchAllData();
         router.push(`${APPLICATIONS_PATH}/${appId}?section=terms`);
-        toaster.addToast({
-          variant: TOAST_VARIANTS.SUCCESS,
-          title: 'Application has been Closed',
-          content: isApplicationApproved
-            ? 'Access to ICGC Controlled Data will be removed for this project team within the next 24 hours.'
-            : '',
-          interactionType: 'CLOSE',
-        });
       })
       .catch((err: AxiosError) => {
         console.error('Failed to submit.', err);
@@ -267,14 +256,9 @@ const HeaderActions = ({
               })
                 .then((res: any) => {
                   if (res.data && isDownloadZip) {
-                    const downloadUrl = window.URL.createObjectURL(new Blob([res.data]));
+                    const blob = new Blob([res.data]);
                     const filename = res.headers['content-disposition'].split('"')[1];
-                    const link = document.createElement('a');
-                    link.href = downloadUrl;
-                    link.setAttribute('download', filename);
-                    document.body.appendChild(link);
-                    link.click();
-                    link.remove();
+                    createDownloadInWindow(filename, blob);
                     setPdfIsLoading(false);
                     return {};
                   } else {

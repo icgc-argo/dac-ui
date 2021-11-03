@@ -337,3 +337,41 @@ export enum DOCUMENT_TYPES {
   ETHICS = 'ETHICS',
   APPROVED_PDF = 'APPROVED_PDF',
 }
+
+export enum DacoRole {
+  SUBMITTER = 'SUBMITTER',
+  ADMIN = 'ADMIN',
+}
+
+type UpdateAuthor = {
+  role: DacoRole;
+};
+
+enum AppType {
+  NEW = 'NEW',
+  RENEWAL = 'RENEWAL',
+}
+
+interface ApplicationInfo {
+  appType: AppType;
+}
+
+// to differentiate update events from app State
+export enum UpdateEvent {
+  CREATED = 'CREATED',
+  SUBMITTED = 'SUBMITTED',
+  PAUSED = 'PAUSED',
+  REVISIONS_REQUESTED = 'REVISIONS REQUESTED',
+  ATTESTED = 'ATTESTED',
+  APPROVED = 'APPROVED',
+  EXPIRED = 'EXPIRED',
+  REJECTED = 'REJECTED',
+  CLOSED = 'CLOSED',
+}
+
+export interface UserViewApplicationUpdate {
+  author: Partial<UpdateAuthor>;
+  eventType: UpdateEvent;
+  date: Date;
+  applicationInfo: Partial<ApplicationInfo>;
+}

@@ -32,6 +32,7 @@ export type RequestRevisionsFieldNames = keyof typeof RequestRevisionsFieldTitle
 export type RequestRevisionProperties = {
   details: string;
   error: string;
+  focus: boolean;
   requested: boolean;
 };
 
@@ -51,3 +52,8 @@ export enum VisibleModalOption {
   REJECTION = 'REJECTION',
   REVISIONS = 'REVISIONS',
 }
+
+export type RequestRevisionsAction = {
+  payload: string;
+  type: 'detailsBlur' | 'detailsChange' | 'detailsClick';
+};

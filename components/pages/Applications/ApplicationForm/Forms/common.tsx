@@ -69,7 +69,7 @@ export const CustomLoadingButton = ({ text, variant }: { text: string; variant: 
         align-items: center;
         justify-content: center;
         color: ${color};
-        width: 130px;
+        min-width: 130px;
       `}
     >
       <Icon
