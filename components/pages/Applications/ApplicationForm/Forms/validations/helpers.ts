@@ -330,6 +330,7 @@ export const transformToSelectOptions = (list: Array<string | number>) => [
 export const uniquePublicationURLs = {
   name: `uniquePublicationURLs`,
   test: (value: string[] | undefined, { createError }: yup.TestContext<AnyObject>) => {
+    // assume 3+ valid URLs, due to previous tests.
     const valid = new Set(value).size === value?.length;
     if (valid) return valid;
     return createError({
