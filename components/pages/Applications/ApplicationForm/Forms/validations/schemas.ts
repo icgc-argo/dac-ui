@@ -174,9 +174,6 @@ export const projectInfoSchema = yup.object().shape({
   aims: yup.string().default('').trim().test(maxWords(200)).required(),
   background: yup.string().default('').trim().test(maxWords(200)).required(),
   methodology: yup.string().default('').trim().test(maxWords(200)).required(),
-  'publicationsURLs[0]': yup.string().default('').trim().required(),
-  'publicationsURLs[1]': yup.string().default('').trim().required(),
-  'publicationsURLs[2]': yup.string().default('').trim().required(),
   publicationsURLs: yup
     .array(
       yup
@@ -185,7 +182,8 @@ export const projectInfoSchema = yup.object().shape({
         .trim()
         .url(
           'Please enter a valid url. Must begin with http:// or https://, for example, https://platform.icgc-argo.org/.',
-        ),
+        )
+        .required(),
     )
     .default(['', '', ''])
     .meta({ shape: 'publicationURLsArray', filler: '', type: 'string' })
