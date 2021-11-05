@@ -134,18 +134,16 @@ const PublicationURLs = ({
             <FormControl
               disabled={isSectionDisabled}
               error={!!item.error}
-              required={isRequired(innerType as FormFieldType) && index < minPublications}
+              required={isRequired(innerType as FormFieldType)}
             >
-              <InputLabel htmlFor="title">Publication URL</InputLabel>
-
+              <InputLabel htmlFor={`publicationsURLs--${index}`}>Publication URL</InputLabel>
               <Input
-                aria-label="Project Title"
+                aria-label="Publication URL"
                 id={`publicationsURLs--${index}`}
                 onBlur={validateFieldTouched}
                 onChange={validateFieldTouched}
                 value={item.value}
               />
-
               <FormHelperText onErrorOnly>
                 {item.error?.[0] !== 'this field must have at least 3 items' && item.error?.[0]}
               </FormHelperText>
