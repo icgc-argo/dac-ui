@@ -36,14 +36,16 @@ const Appendices = ({
   isSectionDisabled,
   localState,
   validateFieldTouched,
+  sectionLastUpdatedAt,
 }: {
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_Appendices;
   validateFieldTouched: FormFieldValidationTriggerFunction;
+  sectionLastUpdatedAt: string;
 }): ReactElement => {
   return (
     <article>
-      <StaticAppendices />
+      <StaticAppendices sectionLastUpdatedAt={sectionLastUpdatedAt} />
 
       <section>
         <ICGCPolicies />

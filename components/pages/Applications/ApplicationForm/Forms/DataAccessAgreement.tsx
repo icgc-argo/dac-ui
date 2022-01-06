@@ -37,14 +37,16 @@ const DataAccessAgreement = ({
   isSectionDisabled,
   localState,
   validateFieldTouched,
+  sectionLastUpdatedAt,
 }: {
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_DataAccessAgreements;
   validateFieldTouched: FormFieldValidationTriggerFunction;
+  sectionLastUpdatedAt: string;
 }): ReactElement => {
   return (
     <article>
-      <StaticDataAccessAgreement />
+      <StaticDataAccessAgreement sectionLastUpdatedAt={sectionLastUpdatedAt} />
 
       <section>
         <StaticDataAgreementsFormSection />

@@ -28,6 +28,7 @@ import { BANNER_VARIANTS } from '@icgc-argo/uikit/notifications/Banner';
 import Table from './Table';
 import { ApplicationData, ApprovalDoc } from '../../Applications/types';
 import { isNull } from 'lodash';
+import { StaticComponentProps } from './types';
 
 const StaticAttachLetterMessage = ({ isPdf = false }: { isPdf: boolean }) => {
   const { GenericContainer, TextComponent } = getStaticComponents(isPdf);
@@ -103,7 +104,7 @@ const PdfEthicsFormData = ({ data }: { data?: ApplicationData }) => {
   );
 };
 
-const StaticEthics = ({ isPdf = false, data }: { isPdf?: boolean; data?: ApplicationData }) => {
+const StaticEthics = ({ isPdf = false, data, sectionLastUpdatedAt }: StaticComponentProps) => {
   const {
     ContainerComponent,
     SectionComponent,
@@ -118,7 +119,7 @@ const StaticEthics = ({ isPdf = false, data }: { isPdf?: boolean; data?: Applica
       state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
-      <TitleComponent>E. Ethics</TitleComponent>
+      <TitleComponent sectionLastUpdatedAt={sectionLastUpdatedAt}>E. Ethics</TitleComponent>
 
       <SectionComponent>
         <TextComponent>

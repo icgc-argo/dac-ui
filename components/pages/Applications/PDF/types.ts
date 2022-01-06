@@ -17,6 +17,8 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import { ApplicationData } from '../types';
+
 export enum FieldAccessor {
   DISPLAY_NAME = 'displayName',
   PRIMARY_AFFILIATION = 'primaryAffiliation',
@@ -64,4 +66,10 @@ export enum PdfFieldName {
 
 export type PdfFormField = {
   [key in PdfField]: { fieldName: PdfFieldName; fieldKey: FieldAccessor };
+};
+
+export type StaticComponentProps = {
+  isPdf?: boolean;
+  data?: ApplicationData;
+  sectionLastUpdatedAt?: string;
 };

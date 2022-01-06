@@ -67,6 +67,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
       <ApplicationFormsBase
         appId={appId}
         applicationState={data?.state}
+        sectionData={data?.sections}
         setLastUpdated={setLastUpdated}
         isLoading={isFormLoading}
         formState={formState}

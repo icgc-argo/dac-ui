@@ -29,6 +29,8 @@ import FilledCheckbox from './icons/FilledCheckbox';
 import { FieldAccessor, PdfField, PdfFieldName, PdfFormField } from './types';
 import Banner from '@icgc-argo/uikit/notifications/Banner';
 import { css } from '@icgc-argo/uikit';
+import { DATE_TEXT_FORMAT } from 'global/constants';
+import { format } from 'date-fns';
 
 const WorkSansBold = require('public/fonts/WorkSans-Bold.ttf').default;
 const WorkSansLight = require('public/fonts/WorkSans-Light.ttf').default;
@@ -242,11 +244,39 @@ const Ol = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const UITitle = ({ children }: { children: ReactNode }) => (
-  <Typography bold component="h2">
-    {children}
-  </Typography>
-);
+export const UITitle = ({
+  children,
+  sectionLastUpdatedAt,
+}: {
+  children: ReactNode;
+  sectionLastUpdatedAt?: string;
+}) => {
+  return (
+    <Typography
+      bold
+      component="h2"
+      css={css`
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      `}
+    >
+      {children}
+      {sectionLastUpdatedAt && (
+        <Typography
+          variant="data"
+          css={(theme) =>
+            css`
+              color: ${theme.colors.secondary_dark};
+            `
+          }
+        >
+          Last updated: {format(new Date(sectionLastUpdatedAt), DATE_TEXT_FORMAT)}
+        </Typography>
+      )}
+    </Typography>
+  );
+};
 
 export const UISectionTitle = ({ children }: { children: ReactNode }) => {
   return (

@@ -28,9 +28,9 @@ import { CONTROLLED_DATA_USERS_PAGE, POLICIES_PAGE } from 'global/constants';
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
 import { getStaticComponents, Checkbox, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
-import { ApplicationData } from '../types';
+import { StaticComponentProps } from './types';
 
-const StaticTerms = ({ isPdf = false, data }: { isPdf?: boolean; data?: ApplicationData }) => {
+const StaticTerms = ({ isPdf = false, data, sectionLastUpdatedAt }: StaticComponentProps) => {
   const {
     TextComponent,
     TitleComponent,
@@ -48,7 +48,7 @@ const StaticTerms = ({ isPdf = false, data }: { isPdf?: boolean; data?: Applicat
       state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
-      <TitleComponent>Application Terms</TitleComponent>
+      <TitleComponent sectionLastUpdatedAt={sectionLastUpdatedAt}>Application Terms</TitleComponent>
 
       <SectionComponent>
         <TextComponent

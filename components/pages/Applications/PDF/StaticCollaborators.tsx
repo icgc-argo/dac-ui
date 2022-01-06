@@ -30,6 +30,7 @@ import FORM_TEXT from './textConstants';
 import { View } from '@react-pdf/renderer';
 import VerticalTable from './VerticalTable';
 import { ApplicationData, CollaboratorType } from '../types';
+import { StaticComponentProps } from './types';
 
 const personnelFields = [
   PdfFormFields.NAME,
@@ -116,10 +117,8 @@ const PdfCollaboratorsFormData = ({ data }: { data?: ApplicationData }) => {
 const StaticCollaborators = ({
   isPdf = false,
   data,
-}: {
-  isPdf?: boolean;
-  data?: ApplicationData;
-}) => {
+  sectionLastUpdatedAt,
+}: StaticComponentProps) => {
   const {
     ContainerComponent,
     SectionComponent,
@@ -133,7 +132,7 @@ const StaticCollaborators = ({
       state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
-      <TitleComponent>C. Collaborators</TitleComponent>
+      <TitleComponent sectionLastUpdatedAt={sectionLastUpdatedAt}>C. Collaborators</TitleComponent>
 
       <SectionComponent>
         <TextComponent style={{ marginBottom: isPdf ? '20pt' : '43px' }}>

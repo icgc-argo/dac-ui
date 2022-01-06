@@ -46,15 +46,17 @@ const ProjectInfo = ({
   isSectionDisabled,
   localState,
   validateFieldTouched,
+  sectionLastUpdatedAt,
 }: {
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_ProjectInfo;
   validateFieldTouched: FormFieldValidationTriggerFunction;
+  sectionLastUpdatedAt: string;
 }): ReactElement => {
   const { SectionTitle } = getStaticComponents(false);
   return (
     <article>
-      <StaticProjectInfo />
+      <StaticProjectInfo sectionLastUpdatedAt={sectionLastUpdatedAt} />
 
       <section>
         <SectionTitle>{FORM_TEXT.project_info.basic_info}</SectionTitle>
