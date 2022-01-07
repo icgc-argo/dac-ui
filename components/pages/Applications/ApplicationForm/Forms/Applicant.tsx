@@ -40,15 +40,17 @@ const Applicant = ({
   isSectionDisabled,
   localState,
   validateFieldTouched,
+  sectionLastUpdatedAt,
 }: {
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_Applicant;
   validateFieldTouched: FormFieldValidationTriggerFunction;
+  sectionLastUpdatedAt: string;
 }): ReactElement => {
   const { SectionTitle } = getStaticComponents(false);
   return (
     <article>
-      <StaticApplicant />
+      <StaticApplicant sectionLastUpdatedAt={sectionLastUpdatedAt} />
 
       <section>
         <SectionTitle>{FORM_TEXT.applicant.title}</SectionTitle>
@@ -264,7 +266,6 @@ const Applicant = ({
           <FormHelperText onErrorOnly>{localState.info_positionTitle?.error?.[0]}</FormHelperText>
         </FormControl>
       </section>
-
       <section>
         <SectionTitle>INSTITUTION/COMPANY MAILING ADDRESS</SectionTitle>
 

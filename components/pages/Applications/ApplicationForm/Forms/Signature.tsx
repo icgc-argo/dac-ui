@@ -44,7 +44,7 @@ import Link from '@icgc-argo/uikit/Link';
 import { CustomLoadingButton, generatePDFDocument } from './common';
 import urlJoin from 'url-join';
 import { ApplicationState } from '../../types';
-import { getStaticComponents } from '../../PDF/common';
+import { getStaticComponents, UITitle } from '../../PDF/common';
 import router from 'next/router';
 
 const FormControl = styled(Control)`
@@ -64,6 +64,7 @@ const Signature = ({
   refetchAllData,
   primaryAffiliation,
   isSectionDisabled,
+  sectionLastUpdatedAt,
 }: {
   appId: string;
   localState: FormSectionValidationState_Signature;
@@ -71,6 +72,7 @@ const Signature = ({
   primaryAffiliation: string;
   applicationState: ApplicationState;
   isSectionDisabled: boolean;
+  sectionLastUpdatedAt: string;
 }): ReactElement => {
   const theme = useTheme();
   const { signedAppDocObjId, signedDocName, uploadedAtUtc } = localState;
@@ -175,9 +177,8 @@ const Signature = ({
 
   return (
     <article>
-      <Typography bold component="h2">
-        Sign & Submit
-      </Typography>
+      <UITitle sectionLastUpdatedAt={sectionLastUpdatedAt}>Sign & Submit</UITitle>
+
       <section
         css={css`
           ol {

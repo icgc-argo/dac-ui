@@ -23,8 +23,9 @@ import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessag
 import { Checkbox, getStaticComponents, PDFLink, styles } from './common';
 import FORM_TEXT from './textConstants';
 import { View, Text } from '@react-pdf/renderer';
-import { AppendixAgreement, ApplicationData } from '../types';
+import { AppendixAgreement } from '../types';
 import { appendicesLinks } from 'global/constants';
+import { StaticComponentProps } from './types';
 
 export const ICGCPolicies = ({ isPdf = false }: { isPdf?: boolean }) => {
   const { SectionTitle } = getStaticComponents(isPdf);
@@ -59,7 +60,7 @@ const Appendix = ({ agreement }: { agreement: AppendixAgreement }) => {
   );
 };
 
-const StaticAppendices = ({ isPdf = false, data }: { isPdf?: boolean; data?: ApplicationData }) => {
+const StaticAppendices = ({ isPdf = false, data, sectionLastUpdatedAt }: StaticComponentProps) => {
   const {
     ContainerComponent,
     SectionComponent,
@@ -73,7 +74,7 @@ const StaticAppendices = ({ isPdf = false, data }: { isPdf?: boolean; data?: App
       state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
-      <TitleComponent>G. Appendices</TitleComponent>
+      <TitleComponent sectionLastUpdatedAt={sectionLastUpdatedAt}>G. Appendices</TitleComponent>
 
       <SectionComponent>
         <TextComponent>Please review and agree to the following Appendices.</TextComponent>

@@ -23,10 +23,10 @@ import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessag
 import { Checkbox, getStaticComponents, styles } from './common';
 import FORM_TEXT from './textConstants';
 import { View, Text } from '@react-pdf/renderer';
-import { ApplicationData } from '../types';
 import Typography from '@icgc-argo/uikit/Typography';
 import { css } from '@icgc-argo/uikit';
 import { DataAccessAgreement } from '../../Applications/types';
+import { StaticComponentProps } from './types';
 
 const PdfDataAccessFormData = ({ data }: { data?: DataAccessAgreement }) => {
   const CheckboxText = ({ text }: { text: string }) => (
@@ -70,10 +70,8 @@ export const StaticDataAgreementsFormSection = ({ isPdf = false }: { isPdf?: boo
 const StaticDataAccessAgreement = ({
   isPdf = false,
   data,
-}: {
-  isPdf?: boolean;
-  data?: ApplicationData;
-}) => {
+  sectionLastUpdatedAt,
+}: StaticComponentProps) => {
   const {
     ContainerComponent,
     SectionComponent,
@@ -199,7 +197,9 @@ const StaticDataAccessAgreement = ({
       state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
-      <TitleComponent>F. Data Access Agreement</TitleComponent>
+      <TitleComponent sectionLastUpdatedAt={sectionLastUpdatedAt}>
+        F. Data Access Agreement
+      </TitleComponent>
 
       <SectionComponent>
         <TextComponent>

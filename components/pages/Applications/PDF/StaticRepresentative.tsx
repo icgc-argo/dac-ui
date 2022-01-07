@@ -31,6 +31,7 @@ import FORM_TEXT from './textConstants';
 import { View } from '@react-pdf/renderer';
 import VerticalTable from './VerticalTable';
 import { ApplicationData } from '../types';
+import { StaticComponentProps } from './types';
 
 const PdfRepFormData = ({ data }: { data?: ApplicationData }) => {
   const repFields = [
@@ -88,10 +89,8 @@ const PdfRepFormData = ({ data }: { data?: ApplicationData }) => {
 const StaticRepresentative = ({
   isPdf = false,
   data,
-}: {
-  isPdf?: boolean;
-  data?: ApplicationData;
-}) => {
+  sectionLastUpdatedAt,
+}: StaticComponentProps) => {
   const {
     TextComponent,
     TitleComponent,
@@ -105,7 +104,9 @@ const StaticRepresentative = ({
       state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
-      <TitleComponent>B. Institutional Representative</TitleComponent>
+      <TitleComponent sectionLastUpdatedAt={sectionLastUpdatedAt}>
+        B. Institutional Representative
+      </TitleComponent>
       <SectionComponent>
         <TextComponent>
           An Institutional Representative is a qualified representative of a legal entity{' '}

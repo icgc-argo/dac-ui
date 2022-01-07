@@ -33,8 +33,8 @@ import {
 import FORM_TEXT from './textConstants';
 import { View } from '@react-pdf/renderer';
 import VerticalTable, { DataCell } from './VerticalTable';
-import { FieldAccessor, PdfFieldName } from './types';
-import { ApplicationData, ApplicationDataByField } from '../types';
+import { FieldAccessor, PdfFieldName, StaticComponentProps } from './types';
+import { ApplicationDataByField } from '../types';
 
 const MIN_PUBLICATION_FIELDS = 3;
 
@@ -304,13 +304,7 @@ export const StaticPublications = ({ isPdf = false }: { isPdf?: boolean }) => {
     </SectionComponent>
   );
 };
-const StaticProjectInfo = ({
-  isPdf = false,
-  data,
-}: {
-  isPdf?: boolean;
-  data?: ApplicationData;
-}) => {
+const StaticProjectInfo = ({ isPdf = false, data, sectionLastUpdatedAt }: StaticComponentProps) => {
   const {
     ContainerComponent,
     SectionComponent,
@@ -324,7 +318,9 @@ const StaticProjectInfo = ({
       state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
-      <TitleComponent>D. Project Information</TitleComponent>
+      <TitleComponent sectionLastUpdatedAt={sectionLastUpdatedAt}>
+        D. Project Information
+      </TitleComponent>
 
       <SectionComponent>
         <TextComponent>

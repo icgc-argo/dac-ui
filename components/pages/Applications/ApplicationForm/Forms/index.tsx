@@ -39,7 +39,7 @@ import {
   FORM_STATES,
 } from './types';
 import { SUBMISSION_SUCCESS_CHECK, APPROVED_APP_CLOSED_CHECK } from 'global/constants';
-import { ApplicationState } from 'components/pages/Applications/types';
+import { ApplicationData, ApplicationState } from 'components/pages/Applications/types';
 import { getConfig } from 'global/config';
 import Link from '@icgc-argo/uikit/Link';
 import ApplicationHistoryModal from './ApplicationHistoryModal';
@@ -81,6 +81,7 @@ const ApplicationFormsBase = ({
   isLoading,
   formState,
   validateSection,
+  sectionData,
 }: {
   appId: string;
   applicationState: ApplicationState;
@@ -88,6 +89,7 @@ const ApplicationFormsBase = ({
   isLoading: boolean;
   formState: FormValidationStateParameters;
   validateSection: FormSectionValidatorFunction_Origin;
+  sectionData: ApplicationData['sections'];
 }): ReactElement => {
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
 
@@ -428,6 +430,7 @@ const ApplicationFormsBase = ({
               selectedSection,
               validator: validateSection,
               appId,
+              sectionData,
             })}
 
             <footer

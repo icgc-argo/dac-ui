@@ -45,11 +45,13 @@ const Representative = ({
   isSectionDisabled,
   localState,
   validateFieldTouched,
+  sectionLastUpdatedAt,
 }: {
   applicantAddress?: FormSectionValidationState_Applicant;
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_Representative;
   validateFieldTouched: FormFieldValidationTriggerFunction;
+  sectionLastUpdatedAt: string;
 }): ReactElement => {
   const addressSameAsApplicant = !!localState.addressSameAsApplicant?.value;
   const isAddressDisabled = isSectionDisabled || addressSameAsApplicant;
@@ -59,7 +61,7 @@ const Representative = ({
 
   return (
     <article>
-      <StaticRepresentative />
+      <StaticRepresentative sectionLastUpdatedAt={sectionLastUpdatedAt} />
 
       <section>
         <SectionTitle>{FORM_TEXT.representative.title}</SectionTitle>
