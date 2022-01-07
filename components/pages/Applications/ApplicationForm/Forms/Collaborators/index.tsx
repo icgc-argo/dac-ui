@@ -68,6 +68,7 @@ const Collaborators = ({
   refetchAllData,
   applicationState,
   validateFieldTouched,
+  sectionLastUpdatedAt,
 }: {
   appId: string;
   isSectionDisabled: boolean;
@@ -75,6 +76,7 @@ const Collaborators = ({
   refetchAllData: (action?: Partial<FormValidationAction>) => void;
   applicationState: ApplicationState;
   validateFieldTouched: FormFieldValidationTriggerFunction;
+  sectionLastUpdatedAt: string;
 }): ReactElement => {
   const [collaboratorCount, setCollaboratorCount] = useState(0);
   const [modalVisible, setModalVisible] = useState<ModalStates | string | null>(null);
@@ -266,7 +268,7 @@ const Collaborators = ({
 
   return (
     <article>
-      <StaticCollaborators />
+      <StaticCollaborators sectionLastUpdatedAt={sectionLastUpdatedAt} />
 
       <section
         css={css`

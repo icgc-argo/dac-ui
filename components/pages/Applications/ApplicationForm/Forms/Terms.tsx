@@ -34,17 +34,19 @@ const Terms = ({
   isSectionDisabled,
   localState,
   validateFieldTouched,
+  sectionLastUpdatedAt,
 }: {
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_Terms;
   validateFieldTouched: FormFieldValidationTriggerFunction;
+  sectionLastUpdatedAt: string;
 }): ReactElement => {
   const { SectionTitle } = getStaticComponents(false);
 
   return (
     <article>
       <section>
-        <StaticTerms />
+        <StaticTerms sectionLastUpdatedAt={sectionLastUpdatedAt} />
       </section>
       <section>
         <SectionTitle>{FORM_TEXT.terms.title}</SectionTitle>

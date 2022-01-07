@@ -26,6 +26,7 @@ import FORM_TEXT from './textConstants';
 import VerticalTable from './VerticalTable';
 import { getStreetAddress } from './common';
 import { ApplicationData } from '../types';
+import { StaticComponentProps } from './types';
 
 const PdfApplicantFormData = ({ data }: { data?: ApplicationData }) => {
   const applicantFields = [
@@ -75,7 +76,7 @@ const PdfApplicantFormData = ({ data }: { data?: ApplicationData }) => {
   );
 };
 
-const StaticApplicant = ({ isPdf = false, data }: { isPdf?: boolean; data?: ApplicationData }) => {
+const StaticApplicant = ({ isPdf = false, data, sectionLastUpdatedAt }: StaticComponentProps) => {
   const {
     TextComponent,
     TitleComponent,
@@ -89,7 +90,9 @@ const StaticApplicant = ({ isPdf = false, data }: { isPdf?: boolean; data?: Appl
       state={data?.state}
       applicant={data?.sections.applicant.info}
     >
-      <TitleComponent>A. Applicant Information (Principal Investigator)</TitleComponent>
+      <TitleComponent sectionLastUpdatedAt={sectionLastUpdatedAt}>
+        A. Applicant Information (Principal Investigator)
+      </TitleComponent>
       <SectionComponent>
         <TextComponent>
           Qualified applicants for access to the ICGC Controlled Data{' '}

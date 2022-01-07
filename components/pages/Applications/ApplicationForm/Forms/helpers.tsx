@@ -32,6 +32,7 @@ import {
 } from './types';
 import { useLocalValidation } from './validations';
 import { pickBy } from 'lodash';
+import { ApplicationData } from '../../types';
 
 export const enabledSections = (
   sections: FormSectionNames[],
@@ -47,12 +48,14 @@ export const sectionSelector = ({
   selectedSection,
   validator,
   appId,
+  sectionData,
 }: {
   formState: FormValidationStateParameters;
   isLoading: boolean;
   selectedSection: FormSectionNames;
   validator: FormSectionValidatorFunction_Origin;
   appId: string;
+  sectionData: ApplicationData['sections'];
 }) => {
   const SectionComponent = sectionsData[selectedSection]?.component;
   const {
@@ -94,6 +97,7 @@ export const sectionSelector = ({
       primaryAffiliation={primaryAffiliation}
       refetchAllData={formState.__refetchAllData}
       validateFieldTouched={validateFieldTouched}
+      sectionLastUpdatedAt={sectionData[selectedSection].meta.lastUpdatedAtUtc}
     />
   ) : (
     `Section not implemented: "${selectedSection}"`

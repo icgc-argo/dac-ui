@@ -130,14 +130,21 @@ interface Address {
   postalCode: string;
   streetAddress: string;
 }
-
+export interface Meta {
+  status: string;
+  errorsList: string[];
+  updated?: boolean;
+  lastUpdatedAtUtc?: string;
+}
 interface Terms {
   agreement: Agreement;
+  meta: Meta;
 }
 
 interface Individual {
   address: Address;
   info: IndividualInfo;
+  meta: Meta;
 }
 
 export interface ApprovalDoc {
@@ -154,6 +161,7 @@ export interface ProjectInfo {
   [FieldAccessor.WEBSITE]: string;
   [FieldAccessor.TITLE]: string;
   [FieldAccessor.SUMMARY]: string;
+  meta: Meta;
 }
 
 export enum DataAccessAgreementEnum {
@@ -187,19 +195,23 @@ interface Representative {
   address?: Address;
   info: IndividualInfo;
   addressSameAsApplicant: boolean;
+  meta: Meta;
 }
 
 interface Collaborators {
   list: Collaborator[];
+  meta: Meta;
 }
 
 interface EthicsLetter {
   declaredAsRequired: boolean;
   approvalLetterDocs: ApprovalDoc[];
+  meta: Meta;
 }
 
 export interface DataAccessAgreement {
   agreements: DataAccessAgreement[];
+  meta: Meta;
 }
 
 export enum AppendixEnum {
@@ -214,8 +226,15 @@ export interface AppendixAgreement extends Agreement {
 
 interface Appendices {
   agreements: AppendixAgreement[];
+  meta: Meta;
 }
 
+interface Signature {
+  meta: Meta;
+  signedDocName: string;
+  signedAppDocObjId: string;
+  uploadedAtUtc: string;
+}
 export interface ApplicationData {
   appId: string;
   approvedAppDocs: ApprovedDoc[];
@@ -235,6 +254,7 @@ export interface ApplicationData {
     ethicsLetter: EthicsLetter;
     dataAccessAgreement: DataAccessAgreement;
     appendices: Appendices;
+    signature: Signature;
   };
 }
 

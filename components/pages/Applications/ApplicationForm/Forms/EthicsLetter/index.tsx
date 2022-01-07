@@ -46,6 +46,7 @@ const EthicsLetter = ({
   refetchAllData,
   validateFieldTouched,
   applicationState,
+  sectionLastUpdatedAt,
 }: {
   appId: string;
   isSectionDisabled: boolean;
@@ -53,6 +54,7 @@ const EthicsLetter = ({
   refetchAllData: (action?: Partial<FormValidationAction>) => void;
   validateFieldTouched: FormFieldValidationTriggerFunction;
   applicationState: ApplicationState;
+  sectionLastUpdatedAt: string;
 }): ReactElement => {
   const isApplicationApproved = applicationState === ApplicationState.APPROVED;
 
@@ -91,7 +93,7 @@ const EthicsLetter = ({
 
   return (
     <article>
-      <StaticEthics />
+      <StaticEthics sectionLastUpdatedAt={sectionLastUpdatedAt} />
 
       <section>
         <SectionTitle>{FORM_TEXT.ethics.title}</SectionTitle>
