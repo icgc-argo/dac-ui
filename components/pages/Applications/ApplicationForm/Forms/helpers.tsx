@@ -98,6 +98,7 @@ export const sectionSelector = ({
       refetchAllData={formState.__refetchAllData}
       validateFieldTouched={validateFieldTouched}
       sectionLastUpdatedAt={sectionData[selectedSection].meta.lastUpdatedAtUtc}
+      errorsList={sectionData[selectedSection].meta.errorsList}
     />
   ) : (
     `Section not implemented: "${selectedSection}"`
