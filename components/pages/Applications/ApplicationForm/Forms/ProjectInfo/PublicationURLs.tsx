@@ -32,6 +32,7 @@ import DoubleFieldRow from '../DoubleFieldRow';
 import { FormFieldType } from '../types';
 import { getMin, isRequired } from '../validations';
 import { StaticPublications } from 'components/pages/Applications/PDF/StaticProjectInfo';
+import { requiredMsg } from '../validations/schemas';
 
 //const ID = 'publicationsURLs';
 
@@ -41,6 +42,7 @@ const PublicationURLs = ({
   innerType,
   isSectionDisabled,
   validateFieldTouched,
+  errorsList,
   ...props
 }: FormFieldType & Record<string, any>): ReactElement => {
   const minPublications = getMin(props) || 3;
@@ -52,8 +54,16 @@ const PublicationURLs = ({
       ? Object.values(fields).filter((item: any) => item?.value !== null).length
       : 0;
     setPublicationsCount(Math.max(newPublicationsCount, publicationsCount));
-    setHasThreeValidURLs(newPublicationsCount >= minPublications && !error?.length);
-  }, [error, fields]);
+    setHasThreeValidURLs(
+      newPublicationsCount >= minPublications &&
+        !errorsList.filter((err: { field: string; message: string }) =>
+          err.field.includes('publications'),
+        ).length &&
+        !error?.length,
+    );
+    // not watching error prop as this sometimes causes count discrepancies when removing an extra pub field that contains an error
+    // watching errorsList will still disable the 'add another' button when existing fields contain errors
+  }, [fields, errorsList]);
 
   const changePublicationsCount = (change: 'add' | 'remove', publicationField?: string) => () => {
     if (change === 'remove') {
@@ -71,14 +81,9 @@ const PublicationURLs = ({
     }
   };
 
-  const duplicateUrls = Object.values(fields)
-    .map((field: any) => field.value.trim())
-    .filter((value, index, array) => value && array.indexOf(value) !== index);
-
   return (
     <section>
       <StaticPublications />
-
       {Object.values<FormFieldType>(
         Object.entries(fields || {}).reduce(
           (urlsAcc, [index, item]) => ({
@@ -95,7 +100,10 @@ const PublicationURLs = ({
         ),
       ).map((item, index) => {
         if (item.value === null) return false;
-        const isDuplicate = duplicateUrls.includes(item.value);
+        const itemError = errorsList.find((error: { field: string; message: string }) => {
+          return error.field === `publications.${index}`;
+        });
+
         return (
           <DoubleFieldRow
             actions={
@@ -138,7 +146,7 @@ const PublicationURLs = ({
           >
             <FormControl
               disabled={isSectionDisabled}
-              error={!!item.error || isDuplicate}
+              error={!!itemError || item.error?.[0] === requiredMsg}
               required={isRequired(innerType as FormFieldType)}
             >
               <InputLabel htmlFor="title">Publication URL</InputLabel>
@@ -152,8 +160,11 @@ const PublicationURLs = ({
               />
 
               <FormHelperText onErrorOnly>
-                {item.error?.[0] !== 'this field must have at least 3 items' && item.error?.[0]}
-                {isDuplicate && 'Publication URLs must be unique.'}
+                {itemError
+                  ? itemError.message
+                  : item.error && item.error[0] === requiredMsg
+                  ? item.error[0]
+                  : null}
               </FormHelperText>
             </FormControl>
           </DoubleFieldRow>

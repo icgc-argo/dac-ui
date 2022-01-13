@@ -47,11 +47,13 @@ const ProjectInfo = ({
   localState,
   validateFieldTouched,
   sectionLastUpdatedAt,
+  errorsList,
 }: {
   isSectionDisabled: boolean;
   localState: FormSectionValidationState_ProjectInfo;
   validateFieldTouched: FormFieldValidationTriggerFunction;
   sectionLastUpdatedAt: string;
+  errorsList?: string[];
 }): ReactElement => {
   const { SectionTitle } = getStaticComponents(false);
   return (
@@ -212,6 +214,7 @@ const ProjectInfo = ({
         {...localState.publicationsURLs}
         isSectionDisabled={isSectionDisabled}
         validateFieldTouched={validateFieldTouched}
+        errorsList={errorsList}
       />
     </article>
   );
