@@ -22,7 +22,6 @@ import { Text, View, Font, StyleSheet } from '@react-pdf/renderer';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import Typography from '@icgc-argo/uikit/Typography';
 import Link from '@icgc-argo/uikit/Link';
-import { SerializedStyles } from '@emotion/core';
 import { format } from 'date-fns';
 import Button from '@icgc-argo/uikit/Button';
 import { css } from '@icgc-argo/uikit';
