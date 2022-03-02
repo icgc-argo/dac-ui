@@ -22,15 +22,16 @@ import { Text, View, Font, StyleSheet } from '@react-pdf/renderer';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import Typography from '@icgc-argo/uikit/Typography';
 import Link from '@icgc-argo/uikit/Link';
+import { format } from 'date-fns';
+import Button from '@icgc-argo/uikit/Button';
+import { css } from '@icgc-argo/uikit';
+import Banner from '@icgc-argo/uikit/notifications/Banner';
 
 import PDFLayout from './PdfLayout';
 import EmptyCheckbox from './icons/EmptyCheckbox';
 import FilledCheckbox from './icons/FilledCheckbox';
 import { FieldAccessor, PdfField, PdfFieldName, PdfFormField } from './types';
-import Banner from '@icgc-argo/uikit/notifications/Banner';
-import { css } from '@icgc-argo/uikit';
 import { DATE_TEXT_FORMAT } from 'global/constants';
-import { format } from 'date-fns';
 
 const WorkSansBold = require('public/fonts/WorkSans-Bold.ttf').default;
 const WorkSansLight = require('public/fonts/WorkSans-Light.ttf').default;
@@ -278,7 +279,7 @@ export const UITitle = ({
   );
 };
 
-export const UISectionTitle = ({ children }: { children: ReactNode }) => {
+export const UISectionTitle = ({ children, style }: { children: ReactNode; style?: string }) => {
   return (
     <Typography
       bold
@@ -288,6 +289,7 @@ export const UISectionTitle = ({ children }: { children: ReactNode }) => {
         border-top: 1px solid ${defaultTheme.colors.grey_2};
         margin-top: 32px;
         padding-top: 12px;
+        ${style ? style : ''}
       `}
     >
       {children}
@@ -297,6 +299,36 @@ export const UISectionTitle = ({ children }: { children: ReactNode }) => {
 
 // using div element instead of React.Fragment to allow props
 const UIContainer = ({ children }: { children: ReactNode }) => <div>{children}</div>;
+
+const UILinkButton = ({
+  href,
+  target,
+  children,
+}: {
+  href: string;
+  target?: string;
+  children: ReactNode;
+}) => {
+  return (
+    <a
+      css={css`
+        text-decoration: none;
+      `}
+      href={href}
+      target={target}
+    >
+      <Button
+        css={css`
+          padding: 2px 10px;
+        `}
+      >
+        {children}
+      </Button>
+    </a>
+  );
+};
+
+const EmptyElement = () => <View style={{ display: 'none' }} />;
 
 export const getStaticComponents = (isPdf: boolean) => {
   return isPdf
@@ -312,6 +344,7 @@ export const getStaticComponents = (isPdf: boolean) => {
         ListComponent: PDFText,
         GenericContainer: View,
         BannerComponent: PDFBanner,
+        ButtonComponent: EmptyElement,
       }
     : {
         TextComponent: Typography,
@@ -325,6 +358,7 @@ export const getStaticComponents = (isPdf: boolean) => {
         ListComponent: Li,
         GenericContainer: UIContainer,
         BannerComponent: Banner,
+        ButtonComponent: UILinkButton,
       };
 };
 
