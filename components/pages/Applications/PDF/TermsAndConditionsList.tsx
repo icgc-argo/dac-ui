@@ -7,11 +7,7 @@ const { NEXT_PUBLIC_DACO_EMAIL_ADDRESS } = getConfig();
 const termsAndConditionsList = (
   ListComponent: (props: any) => JSX.Element,
   LinkComponent: ForwardRefExoticComponent<any> | ((props: any) => JSX.Element),
-  TextComponent: any, // typing this for UIKit portion is messy and not particularly useful in this case
-  // TextComponent:
-  //   | ((props: any) => JSX.Element)
-  //   | ComponentType<{ props: any } & Partial<any>>
-  //   | ((props: any) => Element),
+  TextComponent: ((props: any) => JSX.Element) | React.ComponentType<any>,
 ) => [
   ({ count }: { count: number }) => (
     <ListComponent count={count}>
