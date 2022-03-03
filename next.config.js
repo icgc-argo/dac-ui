@@ -36,6 +36,7 @@ module.exports = withPlugins([withTranspileModules, [withImages], [withFonts]], 
     NEXT_PUBLIC_ARGO_PLATFORM_ROOT: process.env.NEXT_PUBLIC_ARGO_PLATFORM_ROOT,
     NEXT_PUBLIC_MAINTENANCE_MODE_ON: process.env.NEXT_PUBLIC_MAINTENANCE_MODE_ON,
     NEXT_PUBLIC_DACO_SURVEY_URL: process.env.NEXT_PUBLIC_DACO_SURVEY_URL,
+    NEXT_PUBLIC_DACO_EMAIL_ADDRESS: process.env.NEXT_PUBLIC_DACO_EMAIL_ADDRESS,
   },
   ...(USE_DAC_API_PROXY
     ? {

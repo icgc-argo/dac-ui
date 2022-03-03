@@ -27,6 +27,14 @@ import Typography from '@icgc-argo/uikit/Typography';
 import { css } from '@icgc-argo/uikit';
 import { DataAccessAgreement } from '../../Applications/types';
 import { StaticComponentProps } from './types';
+import {
+  DATA_ACCESS_COMPLIANCE_PAGE,
+  DATA_ACCESS_FRAMEWORK_PAGE,
+  POLICIES_PAGE,
+  PROJECT_LIST_PAGE,
+} from 'global/constants';
+import { getConfig } from 'global/config';
+import termsAndConditionsList from './TermsAndConditionsList';
 
 const PdfDataAccessFormData = ({ data }: { data?: DataAccessAgreement }) => {
   const CheckboxText = ({ text }: { text: string }) => (
@@ -81,116 +89,9 @@ const StaticDataAccessAgreement = ({
     LinkComponent,
     ListComponent,
   } = getStaticComponents(isPdf);
-
+  const { NEXT_PUBLIC_ARGO_ROOT } = getConfig();
   const ListAsTypography = isPdf ? View : Typography;
 
-  const termsAndConditions = [
-    ({ count }: { count: number }) => (
-      <ListComponent count={count}>
-        The User and the User Institution(s) agree to use the ICGC Controlled Data in compliance
-        with all ICGC Goals, Structure, Policies and Guidelines including section E. 1 "Informed
-        Consent, Access and Ethical Oversight", December 2012 document, included as Appendix I of
-        this application form.
-      </ListComponent>
-    ),
-    ({ count }: { count: number }) => (
-      <ListComponent count={count}>
-        The User and the User Institution(s) agree to only use the ICGC Controlled Data for the
-        objectives and analyses outlined in section D "Research Project" and as approved by their
-        ethics committee(s) in the letter requested in section E "Ethics" of this application form
-        (if so required).
-      </ListComponent>
-    ),
-    ({ count }: { count: number }) => (
-      <ListComponent count={count}>
-        The User and the User Institution(s) agree to preserve, at all times, the confidentiality of
-        the information and ICGC Controlled Data. In particular, they undertake not to use, or
-        attempt to use the ICGC Controlled Data to compromise or otherwise infringe the
-        confidentiality of information on Research Participants.
-      </ListComponent>
-    ),
-    ({ count }: { count: number }) => (
-      <ListComponent count={count}>
-        The User and the User Institution(s) agree to protect the confidentiality of Research
-        Participants in any research papers or publications that they prepare by taking all
-        reasonable care to limit the possibility of identification.
-      </ListComponent>
-    ),
-    ({ count }: { count: number }) => (
-      <ListComponent count={count}>
-        The User and the User Institution(s) agree not to link or combine the ICGC Controlled Data
-        provided under this agreement to other information or archived data available in a way that
-        could re-identify the Research Participants, even if access to that data has been formally
-        granted to the User and the User Institution(s), or is freely available without restriction.
-      </ListComponent>
-    ),
-    ({ count }: { count: number }) => (
-      <ListComponent count={count}>
-        The User and the User Institution(s) agree not to transfer or disclose the ICGC Controlled
-        Data, in whole or part, or any material derived from the ICGC Controlled Data, to anyone not
-        listed in section C "Collaborators" of this application form, except as necessary for data
-        safety monitoring, national audits or as otherwise required by law. Should the User or the
-        User Institution(s) wish to share the ICGC Controlled Data with an External Collaborator,
-        the External Collaborator must complete a separate Collaborator's Form for Access to the
-        ICGC Controlled Data.
-      </ListComponent>
-    ),
-    ({ count }: { count: number }) => (
-      <ListComponent count={count}>
-        Without limiting Section G of the application, the User and the User Institution(s) accept
-        that the Consortium, the member institutions including producers, depositors, or copyright
-        holders, or the funders of the ICGC Controlled Data or any part of the ICGC Controlled Data
-        supplied bear no responsibility for the further analysis or interpretation of these ICGC
-        Controlled Data, over and above that published by the Consortium.
-      </ListComponent>
-    ),
-    ({ count }: { count: number }) => (
-      <ListComponent count={count}>
-        The User and the User Institution(s) agree to follow the Fort Lauderdale Guidelines, the
-        Toronto Statement, as well as the GA4GH Framework for Responsible Sharing of Genomic and
-        Health-Related Data included as Appendices II, III, and VII of this access document. This
-        includes but is not limited to recognizing the contribution of the Consortium and including
-        a proper acknowledgement in all reports or publications resulting from the User and the User
-        Institutions use of the ICGC Controlled Data.
-      </ListComponent>
-    ),
-    ({ count }: { count: number }) => (
-      <ListComponent count={count}>
-        The User and the User Institution(s) agree to follow the Consortium Publication Policy
-        available in the policy section of the ICGC website. This includes respecting the moratorium
-        period applicable to global data analyses. Information on the moratorium is included at
-        Appendix IV of the application and on the website of individual member projects.
-      </ListComponent>
-    ),
-    ({ count }: { count: number }) => (
-      <ListComponent count={count}>
-        The User and the User Institution(s) agree not to make intellectual property claims on the
-        ICGC Controlled Data (including somatic mutations) and not to use intellectual property
-        protection in way that would prevent or block access to, or use of, any element of the ICGC
-        Controlled Data, or conclusion drawn directly from the ICGC Controlled Data.
-      </ListComponent>
-    ),
-    ({ count }: { count: number }) => (
-      <ListComponent count={count}>
-        The User and the User Institution(s) can elect to perform further research that would add
-        intellectual and resource capital to the ICGC Controlled Data and decide to obtain
-        intellectual property rights on these downstream discoveries. In this case, the User and the
-        User Institution(s) agree to implement licensing policies that will not obstruct further
-        research and to follow the U.S. National Institutes of Health’s, Best Practices for the
-        Licensing of Genomic Inventions or a similar national guideline that is in conformity with
-        the OECD, Guidelines for the Licensing of the Genetic Inventions. These two policies (NIH
-        and OECD) are included as Appendices V and VI of this application form.
-      </ListComponent>
-    ),
-    ({ count }: { count: number }) => (
-      <ListComponent count={count}>
-        Pursuant to Section F of the application, the User and the User Institution(s) agree to
-        destroy/discard any ICGC Controlled Data held, once it is no longer used for the project
-        described in this application form unless obligated to retain the ICGC Controlled Data for
-        archival purposes in conformity with national audits or legal requirements.
-      </ListComponent>
-    ),
-  ];
   return (
     <ContainerComponent
       appId={data?.appId}
@@ -203,6 +104,46 @@ const StaticDataAccessAgreement = ({
 
       <SectionComponent>
         <TextComponent>
+          This application form must be completed by the applicant and the legal entity with which
+          you are affiliated ("You") prior to being granted access to International Cancer Genome
+          Consortium ("ICGC") controlled data (the "ICGC Controlled Data" as further defined in
+          Section F of this application). To receive access, You must complete this entire
+          application form and agree to its terms by signing this application. All sections, as well
+          as Appendices I through III, are integral components of this application. Your Research
+          Project (as defined below) will be checked for conformity with the{' '}
+          <LinkComponent target="_blank" href={POLICIES_PAGE}>
+            goals and policies of ICGC ARGO{' '}
+          </LinkComponent>
+          including, but not limited to, policies concerning the purpose and relevance of the
+          research, the protection of the participants and the security of the participants' data.
+          The terms You accept in this application, form an agreement between You and The University
+          Court of the University of Glasgow, incorporated under the Universities (Scotland) Act
+          1889 and having its principal office at University Avenue, Glasgow G12 8QQ, a registered
+          Scottish charity in terms of Section 13(2) of the Charities and Trustee Investment
+          (Scotland) Act 2005 (Charity Number SC004401, Charity Name 'University of Glasgow Court')
+          ("University") which is the legal entity that administrates the ICGC Controlled Data on
+          behalf of ICGC member programs. University includes its employees, officers, directors,
+          contractors, subcontractors and agents (including the DACO, as defined immediately below).{' '}
+        </TextComponent>
+        <TextComponent style={{ marginTop: '10pt' }}>
+          If the Data Access Compliance Office of the ICGC (the "DACO"), approves your application,
+          access to the ICGC Controlled Data will be granted for a two (2) year period starting from
+          the date You are approved for access. You may apply for written approval to extend the
+          term of this agreement by resubmitting your application for renewal.{' '}
+        </TextComponent>
+        <TextComponent>
+          If your application is approved, You agree that Your application information will be
+          included in a public registry containing project details and lay summaries of the
+          scientific abstracts of applicants having been granted access to ICGC Controlled Data.{' '}
+        </TextComponent>
+        <TextComponent>
+          You agree you have read the{' '}
+          <LinkComponent target="_blank" href={DATA_ACCESS_COMPLIANCE_PAGE}>
+            DACO Policies and Procedures
+          </LinkComponent>{' '}
+          document prior to completing this application.
+        </TextComponent>
+        <TextComponent>
           This agreement governs the terms of access to the{' '}
           <TextComponent bold component="span" style={{ fontWeight: 600 }}>
             ICGC Controlled Data
@@ -210,7 +151,6 @@ const StaticDataAccessAgreement = ({
           (further defined below). In signing this agreement, you agree to be bound by the terms and
           conditions of access set out therein.
         </TextComponent>
-
         <TextComponent>
           For the sake of clarity, the terms of access set out in this agreement apply to the User
           and to the User Institution(s) (as defined below). The current agreement is limited to the{' '}
@@ -220,7 +160,6 @@ const StaticDataAccessAgreement = ({
           (as defined below) and does not cover other data generated at the different centres
           participating in the project.
         </TextComponent>
-
         {!isPdf && <RequiredFieldsMessage />}
       </SectionComponent>
       <SectionComponent
@@ -252,7 +191,7 @@ const StaticDataAccessAgreement = ({
             }
           `}
         >
-          <ListComponent style={{ marginBottom: '10pt' }}>
+          <ListComponent style={{ marginBottom: 0 }}>
             <TextComponent
               className="definition-category"
               component="span"
@@ -262,13 +201,23 @@ const StaticDataAccessAgreement = ({
             </TextComponent>{' '}
             <TextComponent as="span">
               The International Cancer Genome Consortium (ICGC), an international confederation of
-              members working to create a catalogue of changes, including mutations in cancer. A
-              list of{' '}
+              members which is currently in its third phase of work: aiming to uniformly analyze
+              specimens from 100,000 donors with high quality clinical data in order to address
+              outstanding questions that are vital to the quest to defeat cancer.{' '}
             </TextComponent>
-            <LinkComponent href="#" rel="noopener noreferrer" target="_blank">
-              ICGC members can be found on icgc-argo.org
-            </LinkComponent>
-            <TextComponent as="span">.</TextComponent>
+          </ListComponent>
+          <ListComponent style={{ marginBottom: '10pt', marginTop: '7pt' }}>
+            <TextComponent as="span">
+              A list of ICGC ARGO members can be found on the Consortium website:{' '}
+              <LinkComponent
+                href={PROJECT_LIST_PAGE}
+                rel="noopener noreferrer"
+                target="_blank"
+                showHref={false}
+              >
+                {PROJECT_LIST_PAGE}
+              </LinkComponent>
+            </TextComponent>
           </ListComponent>
           <ListComponent style={{ marginBottom: '10pt' }}>
             <TextComponent
@@ -276,13 +225,11 @@ const StaticDataAccessAgreement = ({
               component="span"
               style={styles.highlighted}
             >
-              Data Producer:
-            </TextComponent>{' '}
+              Data Producer:{' '}
+            </TextComponent>
             <TextComponent as="span">
               An ICGC participating center, responsible for the development, organization, and
-              oversight of a local database. External Collaborator: A collaborator of the User,
-              working for an institution other than the User Institution(s) (see below for
-              definitions of User and User Institution(s)).
+              oversight of a local database.
             </TextComponent>
           </ListComponent>
           <ListComponent style={{ marginBottom: '10pt' }}>
@@ -291,12 +238,11 @@ const StaticDataAccessAgreement = ({
               component="span"
               style={styles.highlighted}
             >
-              ICGC Controlled Data:
-            </TextComponent>{' '}
+              External Collaborator:{' '}
+            </TextComponent>
             <TextComponent as="span">
-              The Controlled Access Datasets of the Consortium as defined in section E 1.3 "Access"
-              of the Consortium's Goals, Structure, Policies and Guidelines, April 2008 document
-              including 2010 and 2012 updates, included as Appendix I of this application form.
+              A collaborator of the User, working for an institution other than the User
+              Institution(s) (see below for definitions of User and User Institution(s)).
             </TextComponent>
           </ListComponent>
           <ListComponent style={{ marginBottom: '10pt' }}>
@@ -305,11 +251,31 @@ const StaticDataAccessAgreement = ({
               component="span"
               style={styles.highlighted}
             >
-              Publications:
-            </TextComponent>{' '}
+              ICGC Controlled Data:{' '}
+            </TextComponent>
+            <TextComponent as="span">
+              The Controlled Access Datasets of the Consortium as defined in section{' '}
+              <LinkComponent target="_blank" href={DATA_ACCESS_FRAMEWORK_PAGE}>
+                E8.1 Data Access Framework of the Consortium's Policies and Guidelines
+              </LinkComponent>
+              . Current versions are published on the website at{' '}
+              <LinkComponent target="_blank" href={NEXT_PUBLIC_ARGO_ROOT} showHref={false}>
+                www.icgc-argo.org
+              </LinkComponent>
+              .
+            </TextComponent>
+          </ListComponent>
+          <ListComponent style={{ marginBottom: '10pt' }}>
+            <TextComponent
+              className="definition-category"
+              component="span"
+              style={styles.highlighted}
+            >
+              Publications:{' '}
+            </TextComponent>
             <TextComponent as="span">
               Includes, without limitation, articles published in print journals, electronic
-              journals, reviews, books, posters and other written and verbal presentation of
+              journals, reviews, books, posters and other written and verbal presentations of
               research.
             </TextComponent>
           </ListComponent>
@@ -319,10 +285,11 @@ const StaticDataAccessAgreement = ({
               component="span"
               style={styles.highlighted}
             >
-              Research Participant:
-            </TextComponent>{' '}
+              Research Participant:{' '}
+            </TextComponent>
             <TextComponent as="span">
-              An individual having contributed their personal data to an ICGC program.
+              An individual having contributed their personal data to an ICGC project, also referred
+              to as a Donor.
             </TextComponent>
           </ListComponent>
           <ListComponent style={{ marginBottom: '10pt' }}>
@@ -331,8 +298,8 @@ const StaticDataAccessAgreement = ({
               component="span"
               style={styles.highlighted}
             >
-              User:
-            </TextComponent>{' '}
+              User:{' '}
+            </TextComponent>
             <TextComponent as="span">
               An applicant (principal investigator), having signed this Data Access Agreement, whose
               User Institution has co-signed this Data Access Agreement, both of them having
@@ -345,8 +312,8 @@ const StaticDataAccessAgreement = ({
               component="span"
               style={styles.highlighted}
             >
-              User Institution(s):
-            </TextComponent>{' '}
+              User Institution(s):{' '}
+            </TextComponent>
             <TextComponent as="span">
               Institution(s) at which the User is employed, affiliated or enrolled. A representative
               of it has co-signed this Data Access Agreement with the User and received
@@ -362,8 +329,8 @@ const StaticDataAccessAgreement = ({
           paddingTop: '5pt',
         }}
       >
-        <SectionTitle>DATA ACCESS TERMS AND CONDITIONS</SectionTitle>
-
+        <SectionTitle>TERMS AND CONDITIONS</SectionTitle>
+        <TextComponent>In signing this Agreement:</TextComponent>
         <ListAsTypography
           style={isPdf ? { width: '95%' } : {}}
           component="ol"
@@ -381,17 +348,20 @@ const StaticDataAccessAgreement = ({
             }
           `}
         >
-          {termsAndConditions.map((TermElement, i) => (
-            <TermElement count={i + 1} key={i} />
-          ))}
+          {termsAndConditionsList(ListComponent, LinkComponent, TextComponent).map(
+            (TermElement, i) => (
+              <TermElement count={i + 1} key={i} />
+            ),
+          )}
         </ListAsTypography>
 
         <TextComponent
+          style={{ paddingTop: '10pt' }}
           css={css`
             padding-bottom: 25px;
           `}
         >
-          Data Access Agreement last updated on: June 12, 2021
+          Data Access Agreement Version 2.0 Published: February 2022
         </TextComponent>
       </SectionComponent>
       {isPdf && (

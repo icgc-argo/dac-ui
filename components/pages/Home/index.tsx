@@ -27,7 +27,6 @@ import { PageHead } from 'components/Head';
 import {
   CONTROLLED_DATA_POLICY,
   DACO_APPLYING_DOCS,
-  HOMEPAGE_ARGO_LINK,
   ICGC_ARGO_FAQS,
   ICGC_DCC_LINK,
   ICGC_PCAWG_LINK,
@@ -200,7 +199,7 @@ const HeroDiv = styled('div')`
 
 const Home = () => {
   const [isAccessModalVisible, setAccessModalVisible] = useState<boolean>(false);
-  const { NEXT_PUBLIC_ARGO_PLATFORM_ROOT } = getConfig();
+  const { NEXT_PUBLIC_ARGO_PLATFORM_ROOT, NEXT_PUBLIC_ARGO_ROOT } = getConfig();
   return (
     <>
       <PageHead title={'Homepage'} />
@@ -270,7 +269,7 @@ const Home = () => {
               <LinkWhite href={NEXT_PUBLIC_ARGO_PLATFORM_ROOT}>ICGC ARGO</LinkWhite> plans to
               uniformly analyze specimens from 100,000 cancer patients with high quality clinical
               data. Learn more about the{' '}
-              <LinkWhite href={HOMEPAGE_ARGO_LINK}>ICGC ARGO project</LinkWhite>.
+              <LinkWhite href={NEXT_PUBLIC_ARGO_ROOT}>ICGC ARGO project</LinkWhite>.
             </LogoParagraphRow>
             <LogoParagraphRow
               Img={<img src="/logo-ICGC-25k.svg" width={'165px'} />}
