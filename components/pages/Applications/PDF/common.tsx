@@ -168,14 +168,16 @@ export const PDFLink = ({
   children,
   href,
   style = {},
+  showHref = true,
 }: {
   children: ReactNode;
   href?: string;
   style?: any;
+  showHref?: boolean;
 }) => {
   return (
     <Text style={{ ...styles.paragraph, ...styles.link, ...style }}>
-      {children} {href && `(${href})`}
+      {children} {href && showHref && `(${href})`}
     </Text>
   );
 };
