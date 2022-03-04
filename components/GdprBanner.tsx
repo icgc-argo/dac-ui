@@ -67,7 +67,7 @@ const GdprBanner = () => {
             This website uses cookies that are required to verify permissions, access controlled
             data, and analyze traffic. Your browser settings may allow you to turn off cookies. If
             you turn off browser cookies, you will not be able to access some features of the ICGC
-            DACO System. By continuing to use our website without changing your browser settings,
+            DACO website. By continuing to use our website without changing your browser settings,
             you consent to our use of cookies in accordance with our Privacy Policy. To learn more
             about how we use cookies on this website, please review our{' '}
             <Link href={PRIVACY_POLICY_PAGE} target="_blank">
