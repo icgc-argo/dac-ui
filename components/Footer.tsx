@@ -56,32 +56,56 @@ const StyledPolicyLink = styled(StyledLink)`
   `}
 `;
 
-const footerLinks: LinkProps[] = [
-  {
-    title: 'Contact Us',
-    href: CONTACT_PAGE,
-  },
-  {
-    title: 'Policies & Guidelines',
-    href: POLICIES_PAGE,
-  },
-  {
-    title: 'Help Guides',
-    href: HELP_PAGE,
-  },
-  {
-    title: 'Controlled Data Users',
-    href: CONTROLLED_DATA_USERS_PAGE,
-  },
-  {
-    title: 'ICGC ARGO Website',
-    href: NEXT_PUBLIC_ARGO_ROOT,
-  },
-  {
-    title: 'ARGO Data Platform',
-    href: NEXT_PUBLIC_ARGO_PLATFORM_ROOT,
-  },
-];
+const footerLinks: () => LinkProps[] = () => {
+  const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
+
+  if (NEXT_PUBLIC_MAINTENANCE_MODE_ON) {
+    return [
+      {
+        title: 'Policies & Guidelines',
+        href: POLICIES_PAGE,
+      },
+      {
+        title: 'Help Guides',
+        href: HELP_PAGE,
+      },
+      {
+        title: 'Controlled Data Users',
+        href: CONTROLLED_DATA_USERS_PAGE,
+      },
+      {
+        title: 'ICGC ARGO Website',
+        href: NEXT_PUBLIC_ARGO_ROOT,
+      },
+    ];
+  }
+  return [
+    {
+      title: 'Contact Us',
+      href: CONTACT_PAGE,
+    },
+    {
+      title: 'Policies & Guidelines',
+      href: POLICIES_PAGE,
+    },
+    {
+      title: 'Help Guides',
+      href: HELP_PAGE,
+    },
+    {
+      title: 'Controlled Data Users',
+      href: CONTROLLED_DATA_USERS_PAGE,
+    },
+    {
+      title: 'ICGC ARGO Website',
+      href: NEXT_PUBLIC_ARGO_ROOT,
+    },
+    {
+      title: 'ARGO Data Platform',
+      href: NEXT_PUBLIC_ARGO_PLATFORM_ROOT,
+    },
+  ];
+};
 
 const policyLinks: LinkProps[] = [
   {
@@ -127,7 +151,7 @@ const LinksSection = () => {
       `}
     >
       <div>
-        {footerLinks.map((link, i) => (
+        {footerLinks().map((link, i) => (
           <span key={`${link.title}-${i}`}>
             <StyledLink href={link.href} target={link.target || '_blank'}>
               {link.title}
