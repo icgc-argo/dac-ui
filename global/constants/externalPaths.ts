@@ -29,12 +29,12 @@ const {
 
 export const DACO_ROOT = 'https://daco.icgc-argo.org';
 export const ARGO_ROOT = NEXT_PUBLIC_ARGO_PLATFORM_ROOT;
-const ARGO_DOCS_ROOT = urlJoin(NEXT_PUBLIC_ARGO_DOCS_ROOT, 'docs');
+const ARGO_DOCS_URL = urlJoin(NEXT_PUBLIC_ARGO_DOCS_ROOT, 'docs');
 
 const ARGO_POLICIES = urlJoin(NEXT_PUBLIC_ARGO_ROOT, 'page');
 export const CONTACT_PAGE = urlJoin(NEXT_PUBLIC_ARGO_PLATFORM_ROOT, 'contact');
 export const POLICIES_PAGE = urlJoin(ARGO_POLICIES, '72/introduction-and-goals');
-export const HELP_PAGE = urlJoin(ARGO_DOCS_ROOT, '/data-access/daco/applying');
+export const HELP_PAGE = urlJoin(ARGO_DOCS_URL, '/data-access/daco/applying');
 export const CONTROLLED_DATA_POLICY = urlJoin(
   ARGO_POLICIES,
   '132/data-access-and-data-use-policies-and-guidelines',
@@ -58,13 +58,13 @@ export const ICGC_PCAWG_LINK = urlJoin(ICGC_DCC_LINK, 'pcawg');
 export const DOCUSIGN_LINK = 'https://www.docusign.ca';
 export const ADOBE_ACROBAT_LINK = 'https://acrobat.adobe.com/us/en/sign.html';
 
-export const ICGC_ARGO_FAQS = urlJoin(ARGO_DOCS_ROOT, '/data-access/daco/daco-faq');
+export const ICGC_ARGO_FAQS = urlJoin(ARGO_DOCS_URL, '/data-access/daco/daco-faq');
 export const DACO_APPLYING_DOCS = urlJoin(
-  ARGO_DOCS_ROOT,
+  ARGO_DOCS_URL,
   '/data-access/daco/applying#eligible-project-guidelines',
 );
-// TODO: provide correct URL
-export const LAY_SUMMARY_GUIDE = urlJoin(ARGO_DOCS_ROOT, '');
+
+export const LAY_SUMMARY_GUIDE = urlJoin(ARGO_DOCS_URL, 'data-access/daco/lay-summary-guide');
 
 const ICGC_ARGO_IP_POLICIES = urlJoin(ARGO_POLICIES, '78/e4-intellectual-property');
 
