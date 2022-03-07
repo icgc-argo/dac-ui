@@ -17,6 +17,12 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import {
+  laySummaryMaxWords,
+  laySummaryMinWords,
+  textareaLimit,
+} from '../ApplicationForm/Forms/validations/schemas';
+
 const FORM_TEXT = {
   terms: {
     title: 'ACKNOWLEDGEMENT',
@@ -43,10 +49,10 @@ const FORM_TEXT = {
     project_lay_summary: 'PROJECT LAY SUMMARY',
     relevant_publications: 'RELEVANT PUBLICATIONS',
     inputLabel: {
-      background: `Background (max. 200 words)`,
-      aims: 'Aims (max. 200 words)',
-      dataUse: 'Use of Data and Methodology (max. 200 words)',
-      laySummary: 'Lay Summary (max. 200 words)',
+      background: `Background (max. ${textareaLimit} words)`,
+      aims: `Aims (max. ${textareaLimit} words)`,
+      dataUse: `Use of Data and Methodology (max. ${textareaLimit} words)`,
+      laySummary: `Lay Summary (min. ${laySummaryMinWords} words, max. ${laySummaryMaxWords} words)`,
     },
   },
   ethics: {

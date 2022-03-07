@@ -19,7 +19,7 @@
 
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 
-import { CONTROLLED_DATA_USERS_PAGE } from 'global/constants';
+import { CONTROLLED_DATA_USERS_PAGE, LAY_SUMMARY_GUIDE } from 'global/constants';
 
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
 import {
@@ -159,29 +159,57 @@ export const LaySummaryBubble = ({ isPdf = false }: { isPdf?: boolean }) => {
     ListComponent,
     GenericContainer,
     TextComponent,
+    LinkComponent,
   } = getStaticComponents(isPdf);
   return (
     <GenericContainer style={styles.bubbleContainer} wrap={false}>
       <TextComponent as="span" style={{ margin: 0 }}>
-        Provide a short project summary targeted towards the general public, including ICGC data
-        donors.
+        Provide a summary of your project targeted towards the general public.
+      </TextComponent>
+      <TextComponent as="span" bold style={{ display: 'block', fontWeight: 600, margin: 0 }}>
+        When writing your lay summary:
       </TextComponent>
       <UnorderedListComponent>
         <ListComponent asListItem style={{ width: '95%' }}>
-          Describe your project as if you were describing to a friend who is not an expert.
+          Develop the language in your lay summary as if you are describing the project to someone
+          outside your field.
         </ListComponent>
         <ListComponent asListItem style={{ width: '95%' }}>
-          Scientific terminology such as "germline," "non-coding regions," "somatic," and
-          "whole-genome/whole-exome/next-generation sequencing" should therefore be described or
-          defined in lay terms.
+          Define any technical terms used.
+        </ListComponent>
+        <ListComponent asListItem>
+          We strongly recommend you use an online readability tool such as{' '}
+          <LinkComponent
+            bold
+            href="https://www.readabilityformulas.com/"
+            target="_blank"
+            style={{ fontWeight: 600 }}
+          >
+            www.readabilityformulas.com
+          </LinkComponent>{' '}
+          to assess the reading grade of your text. The reading grade level to be aimed at for the
+          lay summaries is grade 8 or 9.
+        </ListComponent>
+        <ListComponent asListItem>
+          Explain in plain language why you are asking the research question, what you expect to
+          find out and how you plan to use the findings.
         </ListComponent>
         <ListComponent asListItem style={{ width: '95%' }}>
-          In addition to explaining the background and objectives of your research project,{' '}
+          Consider the 3 key elements when developing your lay summary:{' '}
           <TextComponent as="span" bold>
-            please clearly explain how the ICGC Controlled Data will be used
+            structure and content, readability, and language guide.{' '}
           </TextComponent>
           <TextComponent as="span" style={{ margin: 0 }}>
-            .
+            Finding it challenging?{' '}
+            <LinkComponent
+              bold
+              href={LAY_SUMMARY_GUIDE}
+              target="_blank"
+              style={{ fontWeight: 600 }}
+            >
+              Read our lay summary guide
+            </LinkComponent>
+            , which includes before and after examples of real lay summaries.
           </TextComponent>
         </ListComponent>
       </UnorderedListComponent>
@@ -237,9 +265,14 @@ export const StaticResearchSummary = ({ isPdf = false }: { isPdf?: boolean }) =>
 };
 
 export const StaticLaySummary = ({ isPdf = false }: { isPdf?: boolean }) => {
-  const { SectionComponent, TextComponent, SectionTitle, LinkComponent } = getStaticComponents(
-    isPdf,
-  );
+  const {
+    SectionComponent,
+    TextComponent,
+    SectionTitle,
+    LinkComponent,
+    ButtonComponent,
+  } = getStaticComponents(isPdf);
+
   return (
     <SectionComponent
       style={{
@@ -249,7 +282,18 @@ export const StaticLaySummary = ({ isPdf = false }: { isPdf?: boolean }) => {
         marginBottom: '15pt',
       }}
     >
-      <SectionTitle>PROJECT LAY SUMMARY</SectionTitle>
+      <SectionTitle
+        style={`
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        `}
+      >
+        PROJECT LAY SUMMARY
+        <ButtonComponent href={LAY_SUMMARY_GUIDE} target="_blank">
+          How to write a lay summary
+        </ButtonComponent>
+      </SectionTitle>
 
       <TextComponent>
         The lay summaries of ICGC DACO approved projects are posted on the{' '}

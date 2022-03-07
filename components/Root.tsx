@@ -30,6 +30,7 @@ import { PageContext } from 'global/hooks/usePageContext';
 import DefaultPageLayout from './DefaultPageLayout';
 import { ToasterContext, useToastState } from 'global/hooks/useToaster';
 import ToastStack from '@icgc-argo/uikit/notifications/ToastStack';
+import GdprBanner from './GdprBanner';
 
 /**
  * The global portal where modals will show up
@@ -57,51 +58,58 @@ const useMounted = () => {
   }, []);
   return mounted;
 };
-export const ModalPortal = ({ children, modalWidth = 'auto' }: { children: React.ReactElement, modalWidth?: string }) => {
+export const ModalPortal = ({
+  children,
+  modalWidth = 'auto',
+}: {
+  children: React.ReactElement;
+  modalWidth?: string;
+}) => {
   const ref = modalPortalRef.current;
   const mounted = useMounted();
   return ref
     ? ReactDOM.createPortal(
-      <div
-        id="modalContainer"
-        css={css`
-          transition: all 0.2s;
-          opacity: ${mounted ? 1 : 0};
-          #modal-action-btn_google-logo {
-            position: relative;
-            padding-left: 34px;
-            &::before {
-              position: absolute;
-              display: block;
-              content: ' ';
-              background-image: url('/icons-google.svg');
-              background-size: 18px 19px;
-              background-repeat: no-repeat;
-              height: 18px;
-              width: 19px;
-              left: 11px;
-            }
-          }
-        `}
-      >
-        <Modal.Overlay
+        <div
+          id="modalContainer"
           css={css`
-            ${fillAvailableWidth}
-            ${fillAvailableHeight}
-            > div { /* selects Uikit ModalContainer component */
-              width: ${modalWidth};
-            }
-            @media (min-width: 768px) {
-              width: 100vw;
-              height: 100vh;
+            transition: all 0.2s;
+            opacity: ${mounted ? 1 : 0};
+            #modal-action-btn_google-logo {
+              position: relative;
+              padding-left: 34px;
+              &::before {
+                position: absolute;
+                display: block;
+                content: ' ';
+                background-image: url('/icons-google.svg');
+                background-size: 18px 19px;
+                background-repeat: no-repeat;
+                height: 18px;
+                width: 19px;
+                left: 11px;
+              }
             }
           `}
         >
-          {children}
-        </Modal.Overlay>
-      </div>,
-      ref,
-    )
+          <Modal.Overlay
+            css={css`
+              ${fillAvailableWidth}
+              ${fillAvailableHeight}
+            > div {
+                /* selects Uikit ModalContainer component */
+                width: ${modalWidth};
+              }
+              @media (min-width: 768px) {
+                width: 100vw;
+                height: 100vh;
+              }
+            `}
+          >
+            {children}
+          </Modal.Overlay>
+        </div>,
+        ref,
+      )
     : null;
 };
 
@@ -181,6 +189,7 @@ const Root = ({
                 `}
                 ref={modalPortalRef}
               />
+              <GdprBanner />
               <DefaultPageLayout>{children}</DefaultPageLayout>
             </ToastProvider>
           </ThemeProvider>
