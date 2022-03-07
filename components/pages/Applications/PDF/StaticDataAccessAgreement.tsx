@@ -302,7 +302,7 @@ const StaticDataAccessAgreement = ({
             </TextComponent>
             <TextComponent as="span">
               An applicant (principal investigator), having signed this Data Access Agreement, whose
-              User Institution has co-signed this Data Access Agreement, both of them having
+              User Institution has co- signed this Data Access Agreement, both of them having
               received acknowledgement of its acceptance.
             </TextComponent>
           </ListComponent>
