@@ -79,11 +79,7 @@ export const AuthProvider = ({
   };
 
   if (token) {
-    if (!isValidJwt(token)) {
-      // if (egoJwt && token === egoJwt) {
-      //   logout();
-      // }
-    } else if (isValidJwt(token) && !egoJwt) {
+    if (isValidJwt(token) && !egoJwt) {
       setTokenState('');
     }
   } else if (isValidJwt(egoJwt)) {
