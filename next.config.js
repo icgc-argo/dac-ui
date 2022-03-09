@@ -26,7 +26,7 @@ const USE_DAC_API_PROXY = process.env.USE_DAC_API_PROXY === 'true';
 
 module.exports = withPlugins([withTranspileModules, [withImages], [withFonts]], {
   exportPathMap: async function (defaultPathMap, { dev, dir, outDir, distDir, buildId }) {
-    return { '/': { page: '/', query: { showMaintenancePage: true } } };
+    return { '/': { page: '/maintenance' } };
   },
   inlineImageLimit: 10240,
   trailingSlash: true,
