@@ -6,8 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "export": "next export",
     "type-check": "tsc -p ./tsconfig.json",
-    "prettier-staged": "pretty-quick --staged"
+    "prettier-staged": "pretty-quick --staged",
+    "export-maintenance": "rm -rf ./out && npm run build && EXPORT_PATH=/maintenance next export"
   },
   "dependencies": {
     "@emotion/babel-plugin": "^11.3.0",
