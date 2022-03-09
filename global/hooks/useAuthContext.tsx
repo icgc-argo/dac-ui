@@ -121,7 +121,7 @@ export const AuthProvider = ({
         if (isValidJwt(refreshedJwt)) {
           console.log('FETCH refreshed token is valid');
           setTokenState(refreshedJwt);
-          fetchToken = token;
+          fetchToken = refreshedJwt;
         } else {
           console.log('FETCH refreshed token is not valid');
           logout();
