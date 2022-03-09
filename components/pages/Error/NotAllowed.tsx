@@ -19,7 +19,6 @@
 
 import { getConfig } from 'global/config';
 import { Row, Col } from 'react-grid-system';
-import Image from 'next/image';
 import { css } from '@emotion/core';
 import Typography from '@icgc-argo/uikit/Typography';
 import Link from '@icgc-argo/uikit/Link';
@@ -43,7 +42,7 @@ export default function NotAllowed() {
           `}
         >
           4
-          <Image
+          <img
             css={css`
               margin: 0 8px -2px;
             `}
@@ -80,7 +79,7 @@ export default function NotAllowed() {
           text-align: center;
         `}
       >
-        <Image alt="Broken dna" src="/dna-broken.svg" width="276" height="300" />
+        <img alt="Broken dna" src="/dna-broken.svg" width="276" height="300" />
       </Col>
     </Row>
   );

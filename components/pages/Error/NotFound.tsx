@@ -22,7 +22,6 @@ import { getConfig } from 'global/config';
 import { Row, Col } from 'react-grid-system';
 import Typography from '@icgc-argo/uikit/Typography';
 import { css } from '@emotion/core';
-import Image from 'next/image';
 import Link from '@icgc-argo/uikit/Link';
 
 export default function NotFound() {
@@ -45,7 +44,7 @@ export default function NotFound() {
             `}
           >
             4
-            <Image
+            <img
               css={css`
                 margin: 0 8px -2px;
               `}
@@ -77,7 +76,7 @@ export default function NotFound() {
             text-align: center;
           `}
         >
-          <Image alt="Broken dna" src="/dna-broken.svg" width="276" height="300" />
+          <img alt="Broken dna" src="/dna-broken.svg" width="276" height="300" />
         </Col>
       </Row>
     </ErrorLayout>

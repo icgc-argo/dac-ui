@@ -20,7 +20,6 @@
 import ErrorLayout from '.';
 import { Row, Col } from 'react-grid-system';
 import Typography from '@icgc-argo/uikit/Typography';
-import Image from 'next/image';
 import { css } from '@emotion/core';
 
 export default function Maintenance() {
@@ -72,7 +71,7 @@ export default function Maintenance() {
             text-align: center;
           `}
         >
-          <Image alt="Maintenance worker" src="/maintenance.svg" width="367" height="300" />
+          <img alt="Maintenance worker" src="/maintenance.svg" width="367" height="300" />
         </Col>
       </Row>
     </ErrorLayout>
