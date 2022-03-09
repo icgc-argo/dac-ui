@@ -27,6 +27,7 @@ import { isValidJwt } from 'global/utils/egoTokenUtils';
 import Router, { useRouter } from 'next/router';
 import Maintenance from 'components/pages/Error/Maintenance';
 import { getConfig } from 'global/config';
+import refreshJwt from 'global/utils/auth/refreshJwt';
 
 const resetFlashData = () => {
   [SUBMISSION_SUCCESS_CHECK, APPROVED_APP_CLOSED_CHECK].forEach((key) =>
@@ -64,22 +65,43 @@ const App = ({
     };
   }, []);
 
-  useEffect(() => {
-    const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
-    if (isValidJwt(egoJwt)) {
-      setInitialJwt(egoJwt);
-    } else {
-      setInitialJwt('');
-      localStorage.removeItem(EGO_JWT_KEY);
-      // redirect to logout when token is expired/missing only if user is on a non-public page
-      if (!Component.isPublic) {
-        Router.push({
-          pathname: '/',
-          query: { session_expired: true },
-        });
-      }
+  const logout = () => {
+    setInitialJwt('');
+    localStorage.removeItem(EGO_JWT_KEY);
+    // redirect to logout when token is expired/missing only if user is on a non-public page
+    if (!Component.isPublic) {
+      Router.push({
+        pathname: '/',
+        query: { session_expired: true },
+      });
     }
+  };
+
+  useEffect(() => {
+    const handleAuth = async () => {
+      console.log('APP handleAuth');
+      const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
+      if (isValidJwt(egoJwt)) {
+        console.log('APP valid localStorage token', egoJwt.slice(-10));
+        setInitialJwt(egoJwt);
+      } else if (egoJwt) {
+        console.log('APP non valid localStorage token');
+        const refreshedJwt = (await refreshJwt().catch(logout)) as string;
+        if (isValidJwt(refreshedJwt)) {
+          console.log('APP valid refreshed token', refreshedJwt.slice(-10));
+          setInitialJwt(refreshedJwt);
+        } else {
+          console.log('APP non valid refreshed token', refreshedJwt.slice(-10));
+          logout();
+        }
+      } else {
+        console.log('APP no localStorage token');
+        logout();
+      }
+    };
+    handleAuth();
   });
+
   return NEXT_PUBLIC_MAINTENANCE_MODE_ON ? (
     <Maintenance />
   ) : (

@@ -31,6 +31,7 @@ import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
 import { useToaster } from './useToaster';
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
+import refreshJwt from 'global/utils/auth/refreshJwt';
 
 type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
@@ -79,10 +80,10 @@ export const AuthProvider = ({
 
   if (token) {
     if (!isValidJwt(token)) {
-      if (egoJwt && token === egoJwt) {
-        logout();
-      }
-    } else if (!egoJwt) {
+      // if (egoJwt && token === egoJwt) {
+      //   logout();
+      // }
+    } else if (isValidJwt(token) && !egoJwt) {
       setTokenState('');
     }
   } else if (isValidJwt(egoJwt)) {
@@ -95,7 +96,7 @@ export const AuthProvider = ({
 
   const cancelTokenSource = axios.CancelToken.source();
   const cancelFetchWithAuth = cancelTokenSource.cancel;
-  const fetchWithAuth = ({
+  const fetchWithAuth = async ({
     data,
     headers = {},
     method = 'GET' as Method,
@@ -104,14 +105,34 @@ export const AuthProvider = ({
     url,
   }: AxiosRequestConfig) => {
     setLoading(true);
-    if (!url) {
+    if (!url || !token) {
       setLoading(false);
       return Promise.reject(undefined);
     }
 
-    if (!token) {
-      setLoading(false);
-      return Promise.reject(undefined);
+    let fetchToken = token;
+
+    if (!isValidJwt(token)) {
+      console.log('FETCH state token is not valid');
+      const storageToken = localStorage.getItem(EGO_JWT_KEY) || '';
+      if (isValidJwt(storageToken)) {
+        console.log('FETCH localStorage token is valid');
+        setTokenState(storageToken);
+        fetchToken = storageToken;
+      } else {
+        console.log('FETCH localStorage token is not valid');
+        const refreshedJwt = (await refreshJwt().catch(logout)) as string;
+        if (isValidJwt(refreshedJwt)) {
+          console.log('FETCH refreshed token is valid');
+          setTokenState(refreshedJwt);
+          fetchToken = token;
+        } else {
+          console.log('FETCH refreshed token is not valid');
+          logout();
+          setLoading(false);
+          return Promise.reject(undefined);
+        }
+      }
     }
 
     const config: AxiosRequestConfig = {
@@ -121,7 +142,7 @@ export const AuthProvider = ({
       headers: {
         accept: '*/*',
         ...headers,
-        Authorization: `Bearer ${token || ''}`,
+        Authorization: `Bearer ${fetchToken || ''}`,
       },
       method,
       params,
