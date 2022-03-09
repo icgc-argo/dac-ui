@@ -38,11 +38,14 @@ const App = ({
   Component,
   pageProps,
   ctx,
+  showMaintenancePage,
 }: {
   Component: PageWithConfig;
   pageProps: PageConfigProps;
   ctx: NextPageContext;
+  showMaintenancePage: boolean;
 }) => {
+  console.log('REANDERING APP', showMaintenancePage);
   const [initialJwt, setInitialJwt] = useState<string>('');
   const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
 
@@ -80,7 +83,7 @@ const App = ({
       }
     }
   });
-  return NEXT_PUBLIC_MAINTENANCE_MODE_ON ? (
+  return NEXT_PUBLIC_MAINTENANCE_MODE_ON || showMaintenancePage ? (
     <Maintenance />
   ) : (
     <Root egoJwt={initialJwt} pageContext={ctx}>
@@ -92,6 +95,9 @@ const App = ({
 App.getInitialProps = async ({ ctx, Component }: AppContext & { Component: PageWithConfig }) => {
   const pageProps = Component.getInitialProps && (await Component.getInitialProps({ ...ctx }));
   return {
+    // @ts-ignore
+    showMaintenancePage: ctx.showMaintenancePage,
+
     ctx: {
       pathname: ctx.pathname,
       query: ctx.query,
