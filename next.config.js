@@ -25,7 +25,11 @@ const withTranspileModules = require('next-transpile-modules')(['@icgc-argo/uiki
 const USE_DAC_API_PROXY = process.env.USE_DAC_API_PROXY === 'true';
 
 module.exports = withPlugins([withTranspileModules, [withImages], [withFonts]], {
+  exportPathMap: async function (defaultPathMap, { dev, dir, outDir, distDir, buildId }) {
+    return { '/': { page: '/', query: { showMaintenancePage: true } } };
+  },
   inlineImageLimit: 10240,
+  trailingSlash: true,
   publicRuntimeConfig: {
     NEXT_PUBLIC_EGO_API_ROOT: process.env.NEXT_PUBLIC_EGO_API_ROOT,
     NEXT_PUBLIC_EGO_CLIENT_ID: process.env.NEXT_PUBLIC_EGO_CLIENT_ID,
