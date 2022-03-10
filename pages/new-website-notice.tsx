@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2022 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -17,8 +17,9 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export const APPLICATIONS_PATH = '/applications';
-export const LOGGED_IN_PATH = '/logged-in';
-export const PRIVATE_PATHS = [APPLICATIONS_PATH];
-export const ERROR_PATH = '/_error';
-export const NEW_WEBSITE_NOTICE_PATH = '/new-website-notice';
+import NewWebsiteNotice from 'components/pages/NewWebsiteNotice';
+import { createPage } from 'global/utils/pages/createPage';
+
+const V1WebsiteRedirect = createPage({ isPublic: true })(NewWebsiteNotice);
+
+export default V1WebsiteRedirect;
