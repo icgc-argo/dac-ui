@@ -302,8 +302,8 @@ const StaticDataAccessAgreement = ({
             </TextComponent>
             <TextComponent as="span">
               An applicant (principal investigator), having signed this Data Access Agreement, whose
-              User Institution has co- signed this Data Access Agreement, both of them having
-              received acknowledgement of its acceptance.
+              User Institution has cosigned this Data Access Agreement, both of them having received
+              acknowledgement of its acceptance.
             </TextComponent>
           </ListComponent>
           <ListComponent style={{ marginBottom: '10pt' }}>
@@ -316,7 +316,7 @@ const StaticDataAccessAgreement = ({
             </TextComponent>
             <TextComponent as="span">
               Institution(s) at which the User is employed, affiliated or enrolled. A representative
-              of it has co-signed this Data Access Agreement with the User and received
+              of it has cosigned this Data Access Agreement with the User and received
               acknowledgement of its acceptance.
             </TextComponent>
           </ListComponent>
