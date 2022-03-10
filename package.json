@@ -9,7 +9,7 @@
     "export": "next export",
     "type-check": "tsc -p ./tsconfig.json",
     "prettier-staged": "pretty-quick --staged",
-    "export-maintenance": "rm -rf ./out && npm run build && EXPORT_PATH=maintenance next export && rm ./out/maintenance/404.html && rm -r ./out/_next"
+    "export-maintenance": "rm -rf ./out && npm run build && EXPORT_PATH=maintenance NEXT_PUBLIC_MAINTENANCE_MODE_ON=true next export && rm ./out/maintenance/404.html && rm -r ./out/_next"
   },
   "dependencies": {
     "@emotion/babel-plugin": "^11.3.0",

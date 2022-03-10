@@ -25,8 +25,6 @@ import { PageConfigProps, PageWithConfig } from 'global/utils/pages/types';
 import { APPROVED_APP_CLOSED_CHECK, EGO_JWT_KEY, SUBMISSION_SUCCESS_CHECK } from 'global/constants';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
 import Router, { useRouter } from 'next/router';
-import Maintenance from 'components/pages/Error/Maintenance';
-import { getConfig } from 'global/config';
 
 const resetFlashData = () => {
   [SUBMISSION_SUCCESS_CHECK, APPROVED_APP_CLOSED_CHECK].forEach((key) =>
@@ -44,7 +42,6 @@ const App = ({
   ctx: NextPageContext;
 }) => {
   const [initialJwt, setInitialJwt] = useState<string>('');
-  const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
 
   const router = useRouter();
 
@@ -80,9 +77,7 @@ const App = ({
       }
     }
   });
-  return NEXT_PUBLIC_MAINTENANCE_MODE_ON ? (
-    <Maintenance />
-  ) : (
+  return (
     <Root egoJwt={initialJwt} pageContext={ctx}>
       <Component {...pageProps} />
     </Root>
