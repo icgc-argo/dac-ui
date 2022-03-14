@@ -84,8 +84,7 @@ const App = ({
     }
   });
 
-  return (
-  ctx.pathname === NEW_WEBSITE_NOTICE_PATH ? (
+  return ctx.pathname === NEW_WEBSITE_NOTICE_PATH ? (
     <NewWebsiteNotice />
   ) : (
     <Root egoJwt={initialJwt} pageContext={ctx}>
