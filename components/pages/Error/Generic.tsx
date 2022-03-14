@@ -19,7 +19,6 @@
 
 import { css } from '@emotion/core';
 import Typography from '@icgc-argo/uikit/Typography';
-import Image from 'next/image';
 import ErrorLayout from '.';
 
 export default function GenericError() {
@@ -71,7 +70,7 @@ export default function GenericError() {
           </Typography>
         </div>
         <div>
-          <Image alt="Bug in the code" src="/client-error.svg" width="514" height="350" />
+          <img alt="Bug in the code" src="/client-error.svg" width="514" height="350" />
         </div>
       </div>
     </ErrorLayout>

@@ -17,7 +17,6 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import Image from 'next/image';
 import Typography from '@icgc-argo/uikit/Typography';
 import { ThemeProvider } from '@icgc-argo/uikit';
 import { css } from '@icgc-argo/uikit';
@@ -54,7 +53,7 @@ const NewWebsiteNotice = () => {
             `}
           >
             <Link target="_blank" href={DACO_ROOT}>
-              <Image src={icgcDacoLogo} alt="ICGC-DACO logo" width={300} height={44} />
+              <img src={icgcDacoLogo} alt="ICGC-DACO logo" width={300} height={44} />
             </Link>
           </div>
           <div
@@ -167,7 +166,7 @@ const NewWebsiteNotice = () => {
               `}
             >
               <Link target="_blank" href={NEXT_PUBLIC_ARGO_ROOT}>
-                <Image src={argoLogo} width={150} height={59} />
+                <img src={argoLogo} width={150} height={59} />
               </Link>
             </div>
             <div
@@ -176,7 +175,7 @@ const NewWebsiteNotice = () => {
               `}
             >
               <Link target="_blank" href={ICGC_DCC_LINK}>
-                <Image src={icgc25kLogo} width={150} height={49} />
+                <img src={icgc25kLogo} width={150} height={49} />
               </Link>
             </div>
           </div>
