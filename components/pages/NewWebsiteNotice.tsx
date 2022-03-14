@@ -76,7 +76,11 @@ const NewWebsiteNotice = () => {
             >
               Notice of New Website
             </Typography>
-            <Typography>
+            <Typography
+              css={css`
+                padding-bottom: 10px;
+              `}
+            >
               The <strong>ICGC Data Access Compliance Office (ICGC DACO)</strong> is pleased to
               announce the launch of a new website to manage Applications for Access to ICGC
               Controlled Data. The old website, daco.icgc.org has been retired and replaced with a
@@ -96,7 +100,11 @@ const NewWebsiteNotice = () => {
             >
               Instructions for Current Users
             </Typography>
-            <Typography>
+            <Typography
+              css={css`
+                padding-bottom: 10px;
+              `}
+            >
               If you currently have an approved application, you will continue to have access to
               ICGC Controlled Data until the date of expiry. You will not be able to access your
               current application online; however, we will need your help migrating your project
@@ -124,7 +132,11 @@ const NewWebsiteNotice = () => {
             >
               Instructions for New Users
             </Typography>
-            <Typography>
+            <Typography
+              css={css`
+                padding-bottom: 10px;
+              `}
+            >
               If you haven't filled out a DACO Application before, but would like to gain access to
               ICGC Controlled Data for your project team, please proceed to{' '}
               <Link target="_blank" href={DACO_ROOT}>
