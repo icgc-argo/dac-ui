@@ -22,11 +22,17 @@ import { NextPageContext } from 'next';
 import { AppContext } from 'next/app';
 import Root from 'components/Root';
 import { PageConfigProps, PageWithConfig } from 'global/utils/pages/types';
-import { APPROVED_APP_CLOSED_CHECK, EGO_JWT_KEY, SUBMISSION_SUCCESS_CHECK } from 'global/constants';
+import {
+  APPROVED_APP_CLOSED_CHECK,
+  EGO_JWT_KEY,
+  NEW_WEBSITE_NOTICE_PATH,
+  SUBMISSION_SUCCESS_CHECK,
+} from 'global/constants';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
 import Router, { useRouter } from 'next/router';
 import Maintenance from 'components/pages/Error/Maintenance';
 import { getConfig } from 'global/config';
+import NewWebsiteNotice from 'components/pages/NewWebsiteNotice';
 
 const resetFlashData = () => {
   [SUBMISSION_SUCCESS_CHECK, APPROVED_APP_CLOSED_CHECK].forEach((key) =>
@@ -80,8 +86,11 @@ const App = ({
       }
     }
   });
+
   return NEXT_PUBLIC_MAINTENANCE_MODE_ON ? (
     <Maintenance />
+  ) : ctx.pathname === NEW_WEBSITE_NOTICE_PATH ? (
+    <NewWebsiteNotice />
   ) : (
     <Root egoJwt={initialJwt} pageContext={ctx}>
       <Component {...pageProps} />
