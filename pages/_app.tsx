@@ -30,8 +30,6 @@ import {
 } from 'global/constants';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
 import Router, { useRouter } from 'next/router';
-import Maintenance from 'components/pages/Error/Maintenance';
-import { getConfig } from 'global/config';
 import NewWebsiteNotice from 'components/pages/NewWebsiteNotice';
 
 const resetFlashData = () => {
@@ -50,7 +48,6 @@ const App = ({
   ctx: NextPageContext;
 }) => {
   const [initialJwt, setInitialJwt] = useState<string>('');
-  const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
 
   const router = useRouter();
 
@@ -87,9 +84,7 @@ const App = ({
     }
   });
 
-  return NEXT_PUBLIC_MAINTENANCE_MODE_ON ? (
-    <Maintenance />
-  ) : ctx.pathname === NEW_WEBSITE_NOTICE_PATH ? (
+  return ctx.pathname === NEW_WEBSITE_NOTICE_PATH ? (
     <NewWebsiteNotice />
   ) : (
     <Root egoJwt={initialJwt} pageContext={ctx}>
