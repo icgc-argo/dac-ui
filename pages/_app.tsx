@@ -28,6 +28,7 @@ import Router, { useRouter } from 'next/router';
 import Maintenance from 'components/pages/Error/Maintenance';
 import { getConfig } from 'global/config';
 import refreshJwt from 'global/utils/auth/refreshJwt';
+import deleteTokens from 'global/utils/auth/deleteTokens';
 
 const resetFlashData = () => {
   [SUBMISSION_SUCCESS_CHECK, APPROVED_APP_CLOSED_CHECK].forEach((key) =>
@@ -66,8 +67,8 @@ const App = ({
   }, []);
 
   const logout = () => {
+    deleteTokens();
     setInitialJwt('');
-    localStorage.removeItem(EGO_JWT_KEY);
     // redirect to logout when token is expired/missing only if user is on a non-public page
     if (!Component.isPublic) {
       Router.push({

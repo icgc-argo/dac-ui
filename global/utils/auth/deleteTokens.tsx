@@ -17,44 +17,35 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import Queue from 'promise-queue';
-import { EGO_JWT_KEY } from 'global/constants';
-import { isValidJwt } from '../egoTokenUtils';
 import { egoRefreshUrl } from 'global/constants/externalPaths';
+import { EGO_JWT_KEY } from 'global/constants';
 
-var maxConcurrent = 1;
-var maxQueue = Infinity;
-var queue = new Queue(maxConcurrent, maxQueue);
+const deleteTokens = () => {
+  const storedToken = localStorage.getItem(EGO_JWT_KEY) || '';
 
-const refreshJwt = () =>
-  queue.add(() => {
-    // get token from localStorage, not context,
-    // in case another tab got a new JWT.
-    const storedToken = localStorage.getItem(EGO_JWT_KEY) || '';
-    if (isValidJwt(storedToken)) {
-      console.log('REFRESH found valid localStorage token', storedToken.slice(-10));
-      localStorage.setItem(EGO_JWT_KEY, storedToken);
-      return Promise.resolve(storedToken);
-    }
+  console.log('DELETE TOKENS jwt in localStorage', storedToken.slice(-10));
 
-    console.log('REFRESH no valid localStorage token', storedToken.slice(-10));
-
-    return fetch(egoRefreshUrl, {
-      credentials: 'include',
-      headers: {
-        accept: '*/*',
-        authorization: `Bearer ${storedToken}`,
-      },
-      method: 'POST',
+  fetch(egoRefreshUrl, {
+    credentials: 'include',
+    headers: {
+      accept: '*/*',
+      authorization: `Bearer ${storedToken}`,
+    },
+    method: 'DELETE',
+  })
+    .then((res) => {
+      if (res.status !== 200) {
+        throw new Error();
+      }
+      console.log('DELETE REFRESH deleted the refresh token', res);
     })
-      .then((res) => res.text())
-      .then((newJwt) => {
-        if (isValidJwt(newJwt)) {
-          console.log('REFRESH valid refreshed token', newJwt.slice(-10));
-          localStorage.setItem(EGO_JWT_KEY, newJwt);
-        }
-        return newJwt;
-      });
-  });
+    .catch((err) => {
+      console.warn(err);
+    })
+    .finally(() => {
+      console.log('DELETE TOKENS finally delete localStorage jwt');
+      localStorage.removeItem(EGO_JWT_KEY);
+    });
+};
 
-export default refreshJwt;
+export default deleteTokens;

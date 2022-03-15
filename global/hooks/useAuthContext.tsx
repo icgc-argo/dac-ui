@@ -32,6 +32,7 @@ import { getConfig } from 'global/config';
 import { useToaster } from './useToaster';
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
 import refreshJwt from 'global/utils/auth/refreshJwt';
+import deleteTokens from 'global/utils/auth/deleteTokens';
 
 type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
@@ -69,12 +70,13 @@ export const AuthProvider = ({
   const toaster = useToaster();
 
   const removeToken = () => {
-    localStorage.removeItem(EGO_JWT_KEY);
+    deleteTokens();
     setTokenState('');
   };
 
   const logout = ({ manual = false } = {}) => {
-    if (!manual) router.push('/?session_expired=true');
+    console.log('LOGOUT manual?', manual);
+    router.push(`/${manual ? '' : '?session_expired=true'}`);
     removeToken();
   };
 
