@@ -81,18 +81,20 @@ const App = ({
     const handleAuth = async () => {
       console.log('APP handleAuth');
       const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
-      if (isValidJwt(egoJwt)) {
-        console.log('APP valid localStorage token', egoJwt.slice(-10));
-        setInitialJwt(egoJwt);
-      } else if (egoJwt) {
-        console.log('APP non valid localStorage token');
-        const refreshedJwt = (await refreshJwt().catch(logout)) as string;
-        if (isValidJwt(refreshedJwt)) {
-          console.log('APP valid refreshed token', refreshedJwt.slice(-10));
-          setInitialJwt(refreshedJwt);
+      if (egoJwt) {
+        if (isValidJwt(egoJwt)) {
+          console.log('APP valid localStorage token', egoJwt.slice(-10));
+          setInitialJwt(egoJwt);
         } else {
-          console.log('APP non valid refreshed token', refreshedJwt.slice(-10));
-          logout();
+          console.log('APP non valid localStorage token');
+          const refreshedJwt = (await refreshJwt().catch(logout)) as string;
+          if (isValidJwt(refreshedJwt)) {
+            console.log('APP valid refreshed token', refreshedJwt.slice(-10));
+            setInitialJwt(refreshedJwt);
+          } else {
+            console.log('APP non valid refreshed token', refreshedJwt.slice(-10));
+            logout();
+          }
         }
       } else {
         console.log('APP no localStorage token');
