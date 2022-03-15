@@ -30,7 +30,6 @@ import {
 } from 'global/constants';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
 import Router, { useRouter } from 'next/router';
-import { getConfig } from 'global/config';
 import refreshJwt from 'global/utils/auth/refreshJwt';
 import deleteTokens from 'global/utils/auth/deleteTokens';
 import NewWebsiteNotice from 'components/pages/NewWebsiteNotice';
