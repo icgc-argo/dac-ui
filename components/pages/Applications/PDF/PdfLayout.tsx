@@ -25,7 +25,6 @@ import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { PDFLink, styles as commonStyles } from './common';
 import { ApplicationDataByField } from '../types';
-import { DACO_ROOT } from 'global/constants/externalPaths';
 
 const styles = StyleSheet.create({
   page: {
