@@ -37,7 +37,7 @@ type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
   fetchWithAuth: any;
   isLoading: boolean;
-  logout: () => void;
+  logout: ({ manual }: { manual: boolean }) => void;
   permissions: string[];
   token?: string;
   user?: UserWithId | void;
@@ -73,8 +73,8 @@ export const AuthProvider = ({
     setTokenState('');
   };
 
-  const logout = () => {
-    router.push('/?session_expired=true');
+  const logout = ({ manual = false } = {}) => {
+    if (!manual) router.push('/?session_expired=true');
     removeToken();
   };
 
