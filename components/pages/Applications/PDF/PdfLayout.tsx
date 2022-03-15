@@ -25,6 +25,7 @@ import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { PDFLink, styles as commonStyles } from './common';
 import { ApplicationDataByField } from '../types';
+import { getConfig } from 'global/config';
 
 const styles = StyleSheet.create({
   page: {
@@ -88,6 +89,7 @@ const PDFLayout = ({
   state?: string;
   children: ReactNode;
 }) => {
+  const { NEXT_PUBLIC_DACO_ROOT } = getConfig();
   const isDraftState =
     isEqual(state, ApplicationState.DRAFT) || isEqual(state, ApplicationState.REVISIONS_REQUESTED);
 
@@ -101,7 +103,8 @@ const PDFLayout = ({
       <View style={styles.section}>{children}</View>
       <View style={{ ...commonStyles.text, ...styles.footer }} fixed>
         <Text>
-          {appId} created for {displayName} by <PDFLink href={DACO_ROOT}>ICGC-DACO</PDFLink>
+          {appId} created for {displayName} by{' '}
+          <PDFLink href={NEXT_PUBLIC_DACO_ROOT}>ICGC-DACO</PDFLink>
         </Text>
       </View>
     </Page>
