@@ -19,7 +19,6 @@
 
 import { createRef, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 import { some } from 'lodash';
 
 import AppBar, {
@@ -230,7 +229,7 @@ const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
                 align-items: center;
               `}
             >
-              <Image src={navDacoLogo} width="208px" height="30px" alt="ICGC DACO Home" />
+              <img src={navDacoLogo} width="208px" height="30px" alt="ICGC DACO Home" />
             </Link>
           )}
         />

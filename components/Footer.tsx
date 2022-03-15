@@ -20,7 +20,6 @@
 import { css } from '@icgc-argo/uikit';
 import { styled, UikitTheme } from '@icgc-argo/uikit/index';
 import Link from '@icgc-argo/uikit/Link';
-import Image from 'next/image';
 import {
   CONTACT_PAGE,
   CONTROLLED_DATA_USERS_PAGE,
@@ -56,32 +55,56 @@ const StyledPolicyLink = styled(StyledLink)`
   `}
 `;
 
-const footerLinks: LinkProps[] = [
-  {
-    title: 'Contact Us',
-    href: CONTACT_PAGE,
-  },
-  {
-    title: 'Policies & Guidelines',
-    href: POLICIES_PAGE,
-  },
-  {
-    title: 'Help Guides',
-    href: HELP_PAGE,
-  },
-  {
-    title: 'Controlled Data Users',
-    href: CONTROLLED_DATA_USERS_PAGE,
-  },
-  {
-    title: 'ICGC ARGO Website',
-    href: NEXT_PUBLIC_ARGO_ROOT,
-  },
-  {
-    title: 'ARGO Data Platform',
-    href: NEXT_PUBLIC_ARGO_PLATFORM_ROOT,
-  },
-];
+const footerLinks: () => LinkProps[] = () => {
+  const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
+
+  if (NEXT_PUBLIC_MAINTENANCE_MODE_ON) {
+    return [
+      {
+        title: 'Policies & Guidelines',
+        href: POLICIES_PAGE,
+      },
+      {
+        title: 'Help Guides',
+        href: HELP_PAGE,
+      },
+      {
+        title: 'Controlled Data Users',
+        href: CONTROLLED_DATA_USERS_PAGE,
+      },
+      {
+        title: 'ICGC ARGO Website',
+        href: NEXT_PUBLIC_ARGO_ROOT,
+      },
+    ];
+  }
+  return [
+    {
+      title: 'Contact Us',
+      href: CONTACT_PAGE,
+    },
+    {
+      title: 'Policies & Guidelines',
+      href: POLICIES_PAGE,
+    },
+    {
+      title: 'Help Guides',
+      href: HELP_PAGE,
+    },
+    {
+      title: 'Controlled Data Users',
+      href: CONTROLLED_DATA_USERS_PAGE,
+    },
+    {
+      title: 'ICGC ARGO Website',
+      href: NEXT_PUBLIC_ARGO_ROOT,
+    },
+    {
+      title: 'ARGO Data Platform',
+      href: NEXT_PUBLIC_ARGO_PLATFORM_ROOT,
+    },
+  ];
+};
 
 const policyLinks: LinkProps[] = [
   {
@@ -127,7 +150,7 @@ const LinksSection = () => {
       `}
     >
       <div>
-        {footerLinks.map((link, i) => (
+        {footerLinks().map((link, i) => (
           <span key={`${link.title}-${i}`}>
             <StyledLink href={link.href} target={link.target || '_blank'}>
               {link.title}
@@ -188,7 +211,7 @@ const Footer = () => {
         `}
       >
         <Link href={NEXT_PUBLIC_ARGO_ROOT} target="_blank">
-          <Image src={footerArgoLogo} width="214px" height="45px" alt="ICGC-ARGO logo" />
+          <img src={footerArgoLogo} width="214px" height="45px" alt="ICGC-ARGO logo" />
         </Link>
         <LinksSection />
         <div
@@ -206,7 +229,7 @@ const Footer = () => {
             href={GLASGOW_UNI_LINK}
             target="_blank"
           >
-            <Image
+            <img
               src={footerGlasgowLogo}
               width="122px"
               height="38px"
@@ -214,7 +237,7 @@ const Footer = () => {
             />
           </Link>
           <Link href={OICR_LINK} target="_blank">
-            <Image src={footerOicrLogo} width="72px" height="52px" alt="OICR logo" />
+            <img src={footerOicrLogo} width="72px" height="52px" alt="OICR logo" />
           </Link>
         </div>
       </div>

@@ -24,6 +24,7 @@ import { styled } from '@icgc-argo/uikit/index';
 import { PageHead } from './Head';
 import Footer from './Footer';
 import NavBar from './NavBar';
+import { getConfig } from 'global/config';
 
 const ThreeRowPageContainer = styled(PageContainer)`
   background: none;
@@ -37,10 +38,11 @@ const DefaultPageLayout = ({
   className?: string;
   children: ReactNode;
 }): ReactElement => {
+  const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
   return (
     <ThreeRowPageContainer>
       <PageHead />
-      <NavBar />
+      <NavBar hideLinks={NEXT_PUBLIC_MAINTENANCE_MODE_ON} />
       <main className={className}>{children}</main>
       <Footer />
     </ThreeRowPageContainer>

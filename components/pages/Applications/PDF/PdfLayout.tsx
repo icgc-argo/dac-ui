@@ -41,14 +41,16 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexDirection: 'column',
   },
-  watermark: {
+  watermarkContainer: {
+    top: '47%',
+    left: '37%',
     position: 'absolute',
     transform: 'rotate(-45deg)',
+  },
+  watermark: {
     fontFamily: 'WorkSans',
     fontSize: 48,
     fontWeight: 900,
-    top: '47%',
-    left: '37%',
     color: defaultTheme.colors.accent2,
     opacity: 0.2,
     textTransform: 'uppercase',
@@ -70,7 +72,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const Watermark = () => <Text style={styles.watermark}>draft</Text>;
+const Watermark = () => (
+  <View style={styles.watermarkContainer} fixed>
+    <Text style={styles.watermark}>draft</Text>
+  </View>
+);
 
 const PDFLayout = ({
   applicant,
@@ -92,13 +98,13 @@ const PDFLayout = ({
       <View style={{ ...commonStyles.text, ...styles.header }} fixed>
         <Text render={({ pageNumber, totalPages }) => `${pageNumber} of ${totalPages}`} fixed />
       </View>
+      {isDraftState && <Watermark />}
       <View style={styles.section}>{children}</View>
       <View style={{ ...commonStyles.text, ...styles.footer }} fixed>
         <Text>
           {appId} created for {displayName} by <PDFLink href={DACO_ROOT}>ICGC-DACO</PDFLink>
         </Text>
       </View>
-      {isDraftState && <Watermark />}
     </Page>
   );
 };

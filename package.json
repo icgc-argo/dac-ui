@@ -1,13 +1,15 @@
 {
   "name": "dac-ui",
-  "version": "0.35.1",
+  "version": "0.39.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "export": "next export",
     "type-check": "tsc -p ./tsconfig.json",
-    "prettier-staged": "pretty-quick --staged"
+    "prettier-staged": "pretty-quick --staged",
+    "export-maintenance": "rm -rf ./out && npm run build && EXPORT_PATH=maintenance NEXT_PUBLIC_MAINTENANCE_MODE_ON=true next export && rm ./out/maintenance/404.html && rm -r ./out/_next"
   },
   "dependencies": {
     "@emotion/babel-plugin": "^11.3.0",
