@@ -72,11 +72,16 @@ export const appendicesLinks = {
   [AppendixEnum.IP_POLICY]: ICGC_ARGO_IP_POLICIES,
 };
 
+// EGO
 const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
 const egoLoginUrl = new URL(urlJoin(NEXT_PUBLIC_EGO_API_ROOT, 'oauth/login/google'));
 egoLoginUrl.searchParams.append('client_id', NEXT_PUBLIC_EGO_CLIENT_ID);
-
 export const EGO_LOGIN_URL = egoLoginUrl.href;
+
+export const egoRefreshUrl = urlJoin(
+  NEXT_PUBLIC_EGO_API_ROOT,
+  `/oauth/refresh?client_id=${NEXT_PUBLIC_EGO_CLIENT_ID}`,
+);
 
 // API
 export const API = {
