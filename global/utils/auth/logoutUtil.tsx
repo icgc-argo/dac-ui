@@ -34,7 +34,9 @@ const logoutUtil = ({ isManual = false, isPublic = false } = {}) => {
             query: { session_expired: true },
           }),
     }).then(() => {
-      if (isManual) Router.reload;
+      if (isManual) {
+        Router.reload;
+      }
     });
   }
 };

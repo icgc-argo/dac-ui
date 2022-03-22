@@ -98,7 +98,9 @@ const App = ({
         logout();
       }
     };
-    if (!ctx.query?.session_expired) handleAuth();
+    if (!ctx.query?.session_expired) {
+      handleAuth();
+    }
   });
 
   return ctx.pathname === NEW_WEBSITE_NOTICE_PATH ? (
