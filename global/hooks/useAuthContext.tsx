@@ -78,6 +78,7 @@ export const AuthProvider = ({
     console.log('LOGOUT manual?', manual);
     router.push(`/${manual ? '' : '?session_expired=true'}`);
     removeToken();
+    router.reload();
   };
 
   if (token) {

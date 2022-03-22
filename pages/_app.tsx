@@ -79,6 +79,7 @@ const App = ({
         query: { session_expired: true },
       });
     }
+    Router.reload();
   };
 
   useEffect(() => {
