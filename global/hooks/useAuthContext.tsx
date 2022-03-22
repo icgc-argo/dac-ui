@@ -18,7 +18,6 @@
  */
 
 import React, { createContext, useContext, useState } from 'react';
-import { useRouter } from 'next/router';
 import { EGO_JWT_KEY } from '../constants';
 import {
   decodeToken,
@@ -32,13 +31,13 @@ import { getConfig } from 'global/config';
 import { useToaster } from './useToaster';
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
 import refreshJwt from 'global/utils/auth/refreshJwt';
-import deleteTokens from 'global/utils/auth/deleteTokens';
+import logoutUtil from 'global/utils/auth/logoutUtil';
 
 type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
   fetchWithAuth: any;
   isLoading: boolean;
-  logout: ({ manual }: { manual: boolean }) => void;
+  logout: ({ isManual }: { isManual: boolean }) => void;
   permissions: string[];
   token?: string;
   user?: UserWithId | void;
@@ -66,19 +65,12 @@ export const AuthProvider = ({
   const [isLoading, setLoading] = useState<boolean>(true);
   const [token, setTokenState] = useState<string>(egoJwt);
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
-  const router = useRouter();
   const toaster = useToaster();
 
-  const removeToken = () => {
-    deleteTokens();
+  const logout = ({ isManual = false } = {}) => {
+    console.log('LOGOUT manual?', isManual);
     setTokenState('');
-  };
-
-  const logout = ({ manual = false } = {}) => {
-    console.log('LOGOUT manual?', manual);
-    router.push(`/${manual ? '' : '?session_expired=true'}`);
-    removeToken();
-    router.reload();
+    logoutUtil({ isManual });
   };
 
   if (token) {

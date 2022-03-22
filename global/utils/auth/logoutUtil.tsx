@@ -17,37 +17,26 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { egoRefreshUrl } from 'global/constants/externalPaths';
-import { EGO_JWT_KEY } from 'global/constants';
+import deleteTokens from './deleteTokens';
+import Router from 'next/router';
 
-const deleteTokens = () => {
-  const storedToken = localStorage.getItem(EGO_JWT_KEY) || '';
+const logoutUtil = ({ isManual = false, isPublic = false } = {}) => {
+  console.log('logoutUtil');
 
-  console.log('DELETE TOKENS jwt in localStorage', storedToken.slice(-10));
+  deleteTokens();
 
-  if (storedToken) {
-    fetch(egoRefreshUrl, {
-      credentials: 'include',
-      headers: {
-        accept: '*/*',
-        authorization: `Bearer ${storedToken}`,
-      },
-      method: 'DELETE',
-    })
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new Error();
-        }
-        console.log('DELETE REFRESH deleted the refresh token', res);
-      })
-      .catch((err) => {
-        console.warn(err);
-      })
-      .finally(() => {
-        console.log('DELETE TOKENS finally delete localStorage jwt');
-        localStorage.removeItem(EGO_JWT_KEY);
-      });
+  if (isManual || !isPublic) {
+    Router.push({
+      pathname: '/',
+      ...(isManual
+        ? {}
+        : {
+            query: { session_expired: true },
+          }),
+    }).then(() => {
+      if (isManual) Router.reload;
+    });
   }
 };
 
-export default deleteTokens;
+export default logoutUtil;
