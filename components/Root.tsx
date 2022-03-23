@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { css } from '@emotion/core';
 import ReactDOM from 'react-dom';
 
@@ -31,6 +31,7 @@ import DefaultPageLayout from './DefaultPageLayout';
 import { ToasterContext, useToastState } from 'global/hooks/useToaster';
 import ToastStack from '@icgc-argo/uikit/notifications/ToastStack';
 import GdprBanner from './GdprBanner';
+import { NextPageContext } from 'next';
 
 /**
  * The global portal where modals will show up
@@ -166,16 +167,18 @@ const Root = ({
   children,
   pageContext,
   egoJwt = '',
+  setInitialJwt,
 }: {
-  children: any;
-  pageContext: any;
+  children: ReactElement;
+  pageContext: NextPageContext;
   egoJwt?: string;
+  setInitialJwt: (jwt: string) => void;
 }) => {
   return (
     <React.Fragment>
       <CSSGlobalReset />
       <Head />
-      <AuthProvider egoJwt={egoJwt}>
+      <AuthProvider egoJwt={egoJwt} setInitialJwt={setInitialJwt}>
         <PageContext.Provider value={pageContext}>
           <ThemeProvider>
             <ToastProvider>

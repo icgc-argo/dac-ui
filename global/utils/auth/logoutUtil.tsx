@@ -20,10 +20,20 @@
 import deleteTokens from './deleteTokens';
 import Router from 'next/router';
 
-const logoutUtil = ({ isManual = false, isPublic = false } = {}) => {
+const logoutUtil = ({
+  handleTokenState = () => {},
+  isManual = false,
+  isPublic = false,
+}: {
+  handleTokenState: ((jwt: string) => void | PromiseLike<void>) | undefined;
+  isManual: boolean;
+  isPublic?: boolean;
+}) => {
   console.log('logoutUtil');
 
-  deleteTokens();
+  deleteTokens().then(() => {
+    handleTokenState('');
+  });
 
   if (isManual || !isPublic) {
     Router.push({

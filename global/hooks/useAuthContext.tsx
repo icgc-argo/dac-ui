@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { EGO_JWT_KEY } from '../constants';
 import {
   decodeToken,
@@ -56,9 +56,11 @@ const AuthContext = createContext<T_AuthContext>({
 export const AuthProvider = ({
   children,
   egoJwt = '',
+  setInitialJwt,
 }: {
   children: React.ReactElement;
   egoJwt: string;
+  setInitialJwt: (jwt: string) => void;
 }) => {
   // TODO: typing this state as `string` causes a compiler error. the same setup exists in argo but does not cause
   // a type issue. using `any` for now
@@ -67,19 +69,26 @@ export const AuthProvider = ({
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const toaster = useToaster();
 
-  const logout = ({ isManual = false } = {}) => {
-    console.log('LOGOUT manual?', isManual);
-    setTokenState('');
-    logoutUtil({ isManual });
+  const handleTokenState = (jwt: string) => {
+    console.log('AUTH handleTokenState', jwt.slice(-10));
+    setTokenState(jwt);
+    setInitialJwt(jwt);
   };
 
-  if (token) {
-    if (isValidJwt(token) && !egoJwt) {
-      setTokenState('');
+  const logout = ({ isManual = false } = {}) => {
+    console.log('LOGOUT manual?', isManual);
+    logoutUtil({ handleTokenState, isManual });
+  };
+
+  useEffect(() => {
+    if (token) {
+      if (isValidJwt(token) && !egoJwt) {
+        handleTokenState('');
+      }
+    } else if (isValidJwt(egoJwt)) {
+      handleTokenState(egoJwt);
     }
-  } else if (isValidJwt(egoJwt)) {
-    setTokenState(egoJwt);
-  }
+  });
 
   // TODO: decide if we want these for all types of requests or only POST
   axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
@@ -108,14 +117,14 @@ export const AuthProvider = ({
       const storageToken = localStorage.getItem(EGO_JWT_KEY) || '';
       if (isValidJwt(storageToken)) {
         console.log('FETCH localStorage token is valid');
-        setTokenState(storageToken);
+        handleTokenState(storageToken);
         fetchToken = storageToken;
       } else {
         console.log('FETCH localStorage token is not valid');
         const refreshedJwt = (await refreshJwt().catch(logout)) as string;
         if (isValidJwt(refreshedJwt)) {
           console.log('FETCH refreshed token is valid');
-          setTokenState(refreshedJwt);
+          handleTokenState(refreshedJwt);
           fetchToken = refreshedJwt;
         } else {
           console.log('FETCH refreshed token is not valid');

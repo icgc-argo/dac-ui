@@ -106,7 +106,7 @@ const App = ({
   return ctx.pathname === NEW_WEBSITE_NOTICE_PATH ? (
     <NewWebsiteNotice />
   ) : (
-    <Root egoJwt={initialJwt} pageContext={ctx}>
+    <Root egoJwt={initialJwt} pageContext={ctx} setInitialJwt={setInitialJwt}>
       <Component {...pageProps} />
     </Root>
   );

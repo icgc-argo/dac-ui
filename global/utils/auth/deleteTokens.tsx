@@ -26,7 +26,7 @@ const deleteTokens = () => {
   console.log('DELETE TOKENS jwt in localStorage', storedToken.slice(-10));
 
   if (storedToken) {
-    fetch(egoRefreshUrl, {
+    return fetch(egoRefreshUrl, {
       credentials: 'include',
       headers: {
         accept: '*/*',
@@ -47,6 +47,8 @@ const deleteTokens = () => {
         console.log('DELETE TOKENS finally delete localStorage jwt');
         localStorage.removeItem(EGO_JWT_KEY);
       });
+  } else {
+    return Promise.resolve();
   }
 };
 
