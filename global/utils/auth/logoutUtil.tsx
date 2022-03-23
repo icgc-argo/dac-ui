@@ -43,10 +43,6 @@ const logoutUtil = ({
         : {
             query: { session_expired: true },
           }),
-    }).then(() => {
-      if (isManual) {
-        Router.reload;
-      }
     });
   }
 };
