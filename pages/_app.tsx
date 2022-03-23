@@ -29,9 +29,9 @@ import {
   SUBMISSION_SUCCESS_CHECK,
 } from 'global/constants';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import refreshJwt from 'global/utils/auth/refreshJwt';
-import deleteTokens from 'global/utils/auth/deleteTokens';
+import logoutUtil from 'global/utils/auth/logoutUtil';
 import NewWebsiteNotice from 'components/pages/NewWebsiteNotice';
 
 const resetFlashData = () => {
@@ -70,15 +70,8 @@ const App = ({
   }, []);
 
   const logout = () => {
-    deleteTokens();
     setInitialJwt('');
-    // redirect to logout when token is expired/missing only if user is on a non-public page
-    if (!Component.isPublic) {
-      Router.push({
-        pathname: '/',
-        query: { session_expired: true },
-      });
-    }
+    logoutUtil({ isManual: false, isPublic: Component.isPublic });
   };
 
   useEffect(() => {
@@ -105,7 +98,9 @@ const App = ({
         logout();
       }
     };
-    handleAuth();
+    if (!ctx.query?.session_expired) {
+      handleAuth();
+    }
   });
 
   return ctx.pathname === NEW_WEBSITE_NOTICE_PATH ? (
