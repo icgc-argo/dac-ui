@@ -70,8 +70,7 @@ const App = ({
   }, []);
 
   const logout = () => {
-    setInitialJwt('');
-    logoutUtil({ isManual: false, isPublic: Component.isPublic });
+    logoutUtil({ handleTokenState: setInitialJwt, isManual: false, isPublic: Component.isPublic });
   };
 
   useEffect(() => {
