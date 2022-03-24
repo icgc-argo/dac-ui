@@ -32,6 +32,7 @@ import { ToasterContext, useToastState } from 'global/hooks/useToaster';
 import ToastStack from '@icgc-argo/uikit/notifications/ToastStack';
 import GdprBanner from './GdprBanner';
 import { NextPageContext } from 'next';
+import useUserContext from 'global/hooks/useUserContext';
 
 /**
  * The global portal where modals will show up
@@ -174,6 +175,10 @@ const Root = ({
   egoJwt?: string;
   setInitialJwt: (jwt: string) => void;
 }) => {
+  const { userJwt } = useUserContext();
+
+  console.log({ userJwt: userJwt.slice(-10) });
+
   return (
     <React.Fragment>
       <CSSGlobalReset />

@@ -33,6 +33,7 @@ import { useRouter } from 'next/router';
 import refreshJwt from 'global/utils/auth/refreshJwt';
 import logoutUtil from 'global/utils/auth/logoutUtil';
 import NewWebsiteNotice from 'components/pages/NewWebsiteNotice';
+import { UserProvider } from 'global/hooks/useUserContext';
 
 const resetFlashData = () => {
   [SUBMISSION_SUCCESS_CHECK, APPROVED_APP_CLOSED_CHECK].forEach((key) =>
@@ -105,9 +106,12 @@ const App = ({
   return ctx.pathname === NEW_WEBSITE_NOTICE_PATH ? (
     <NewWebsiteNotice />
   ) : (
-    <Root egoJwt={initialJwt} pageContext={ctx} setInitialJwt={setInitialJwt}>
-      <Component {...pageProps} />
-    </Root>
+    <UserProvider ctx={ctx}>
+      {/* TODO: move inside root. this is here so i can debug in root. */}
+      <Root egoJwt={initialJwt} pageContext={ctx} setInitialJwt={setInitialJwt}>
+        <Component {...pageProps} />
+      </Root>
+    </UserProvider>
   );
 };
 
