@@ -17,48 +17,24 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { useEffect } from 'react';
 import { css } from '@emotion/core';
-import urlJoin from 'url-join';
-import Router from 'next/router';
-
 import DnaLoader from '@icgc-argo/uikit/DnaLoader';
-
-import { getConfig } from 'global/config';
-import { APPLICATIONS_PATH, EGO_JWT_KEY } from 'global/constants';
-import { isValidJwt } from 'global/utils/egoTokenUtils';
+import { APPLICATIONS_PATH } from 'global/constants';
+import useAuthContext from 'global/hooks/useAuthContext';
 import { createPage } from 'global/utils/pages/createPage';
+import Router from 'next/router';
+import { useEffect } from 'react';
 
-const fetchEgoToken = () => {
-  const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
-  const egoLoginUrl = urlJoin(
-    NEXT_PUBLIC_EGO_API_ROOT,
-    `/oauth/ego-token?client_id=${NEXT_PUBLIC_EGO_CLIENT_ID}`,
-  );
-
-  fetch(egoLoginUrl, {
-    credentials: 'include',
-    headers: { accept: '*/*' },
-    body: null,
-    method: 'POST',
-  })
-    .then((res) => {
-      if (res.status !== 200) {
-        throw new Error();
-      }
-      return res.text();
-    })
-    .then((jwt) => {
-      if (isValidJwt(jwt)) return localStorage.setItem(EGO_JWT_KEY, jwt);
-      throw new Error('Invalid jwt, cannot login.');
-    })
-    .then(() => Router.push(APPLICATIONS_PATH))
-    .catch((err) => {
-      console.warn(err);
-      localStorage.removeItem(EGO_JWT_KEY);
-      Router.push('/');
-    });
-};
+/**
+ * local storage stuff seperate issue
+ * closing tab
+ * multiple tabs etc
+ * seperate hook probably
+ */
+/**
+ * <AuthorizationProv>
+ * <UserProvider this gets egojwt
+ */
 
 const LoginLoaderPage = createPage({
   getInitialProps: async (ctx) => {
@@ -67,10 +43,25 @@ const LoginLoaderPage = createPage({
   },
   isPublic: true,
 })(() => {
+  const auth = useAuthContext();
+  console.log('auth token state', auth.token);
+
+  if (auth.token) {
+    Router.push(APPLICATIONS_PATH);
+  }
+
   useEffect(() => {
     Router.prefetch(APPLICATIONS_PATH);
-    fetchEgoToken();
+
+    const doFetchStuff = async () => {
+      const jwt = await auth.fetchInitEgo();
+      //console.log('do fetch stuff', jwt);
+    };
+    doFetchStuff();
   }, []);
+
+  /* const auth = useAuthContext();
+  const jwt = auth.fetchInitEgo().then((jwt) => console.log('logged in', jwt)); */
 
   return (
     <div

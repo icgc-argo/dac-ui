@@ -17,21 +17,22 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
+import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
+import { getConfig } from 'global/config';
+import logoutUtil from 'global/utils/auth/logoutUtil';
+import refreshJwt from 'global/utils/auth/refreshJwt';
 import React, { createContext, useContext, useState } from 'react';
+import urlJoin from 'url-join';
 import { EGO_JWT_KEY } from '../constants';
+import { UserWithId } from '../types';
 import {
   decodeToken,
   extractUser,
   getPermissionsFromToken,
   isValidJwt,
 } from '../utils/egoTokenUtils';
-import { UserWithId } from '../types';
-import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
-import { getConfig } from 'global/config';
 import { useToaster } from './useToaster';
-import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
-import refreshJwt from 'global/utils/auth/refreshJwt';
-import logoutUtil from 'global/utils/auth/logoutUtil';
 
 type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
@@ -43,7 +44,7 @@ type T_AuthContext = {
   user?: UserWithId | void;
 };
 
-const AuthContext = createContext<T_AuthContext>({
+const AuthContext = createContext<any>({
   cancelFetchWithAuth: () => {},
   token: '',
   isLoading: false,
@@ -53,17 +54,15 @@ const AuthContext = createContext<T_AuthContext>({
   permissions: [],
 });
 
-export const AuthProvider = ({
-  children,
-  egoJwt = '',
-}: {
-  children: React.ReactElement;
-  egoJwt: string;
-}) => {
+// TODO: decide if we want these for all types of requests or only POST
+axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
+axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // TODO: typing this state as `string` causes a compiler error. the same setup exists in argo but does not cause
   // a type issue. using `any` for now
-  const [isLoading, setLoading] = useState<boolean>(true);
-  const [token, setTokenState] = useState<string>(egoJwt);
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const [token, setTokenState] = useState<any>('');
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const toaster = useToaster();
 
@@ -72,7 +71,7 @@ export const AuthProvider = ({
     setTokenState('');
     logoutUtil({ isManual });
   };
-
+  /* 
   if (token) {
     if (isValidJwt(token) && !egoJwt) {
       setTokenState('');
@@ -80,13 +79,15 @@ export const AuthProvider = ({
   } else if (isValidJwt(egoJwt)) {
     setTokenState(egoJwt);
   }
+ */
 
-  // TODO: decide if we want these for all types of requests or only POST
-  axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
-  axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+  /**
+   * global loader in Root
+   */
 
   const cancelTokenSource = axios.CancelToken.source();
   const cancelFetchWithAuth = cancelTokenSource.cancel;
+
   const fetchWithAuth = async ({
     data,
     headers = {},
@@ -162,8 +163,16 @@ export const AuthProvider = ({
   const userInfo = token ? decodeToken(token) : null;
   const user = userInfo ? extractUser(userInfo) : undefined;
   const permissions = getPermissionsFromToken(token);
+  console.log('permissions', permissions);
+  console.log('user', user);
 
   isLoading && token && user && setLoading(false);
+
+  const fetchInitEgo = async () => {
+    setLoading(true);
+    const jwt = await fetchEgoToken();
+    setTokenState(jwt);
+  };
 
   const authData = {
     cancelFetchWithAuth,
@@ -173,6 +182,7 @@ export const AuthProvider = ({
     permissions,
     token,
     user,
+    fetchInitEgo,
   };
 
   return <AuthContext.Provider value={authData}>{children}</AuthContext.Provider>;
@@ -181,3 +191,40 @@ export const AuthProvider = ({
 export default function useAuthContext() {
   return useContext(AuthContext);
 }
+
+//
+
+export const fetchEgoToken = () => {
+  const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
+  const egoLoginUrl = urlJoin(
+    NEXT_PUBLIC_EGO_API_ROOT,
+    `/oauth/ego-token?client_id=${NEXT_PUBLIC_EGO_CLIENT_ID}`,
+  );
+
+  return (
+    fetch(egoLoginUrl, {
+      credentials: 'include',
+      headers: { accept: '*/*' },
+      body: null,
+      method: 'POST',
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error();
+        }
+        return res.text();
+      })
+      .then((jwt) => {
+        //if (isValidJwt(jwt)) return localStorage.setItem(EGO_JWT_KEY, jwt);
+        console.log('fetch ego token', jwt);
+        return jwt;
+        throw new Error('Invalid jwt, cannot login.');
+      })
+      //.then(() => Router.push(APPLICATIONS_PATH))
+      .catch((err) => {
+        /*  console.warn(err);
+        localStorage.removeItem(EGO_JWT_KEY);
+        Router.push('/'); */
+      })
+  );
+};

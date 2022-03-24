@@ -17,26 +17,23 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { createRef, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { some } from 'lodash';
-
 import AppBar, {
   DropdownMenu,
   Logo,
   MenuGroup,
   MenuItem,
-  Section,
   NavBarElement,
+  Section,
 } from '@icgc-argo/uikit/AppBar';
 import Button from '@icgc-argo/uikit/Button';
-import Typography from '@icgc-argo/uikit/Typography';
+import Icon from '@icgc-argo/uikit/Icon';
 import { css, styled, UikitTheme } from '@icgc-argo/uikit/index';
 import Link from '@icgc-argo/uikit/Link';
-import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import Typography from '@icgc-argo/uikit/Typography';
 import useClickAway from '@icgc-argo/uikit/utils/useClickAway';
-
+import ApplyForAccessModal from 'components/ApplyForAccessModal';
+import { ADMIN_APPLICATIONS_LABEL, APPLICANT_APPLICATIONS_LABEL } from 'global/constants';
 import {
   CONTROLLED_DATA_USERS_PAGE,
   EGO_LOGIN_URL,
@@ -47,9 +44,11 @@ import { APPLICATIONS_PATH, LOGGED_IN_PATH, PRIVATE_PATHS } from 'global/constan
 import { useAuthContext, usePageContext } from 'global/hooks';
 import { UserWithId } from 'global/types';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
-import { ADMIN_APPLICATIONS_LABEL, APPLICANT_APPLICATIONS_LABEL } from 'global/constants';
-import ApplyForAccessModal from 'components/ApplyForAccessModal';
+import { some } from 'lodash';
+import { useRouter } from 'next/router';
+import { createRef, useEffect, useState } from 'react';
 import navDacoLogo from '../public/nav_icgc-daco-logo.png';
+import NextLink from 'next/link';
 
 const StyledMenuItem = styled(MenuItem)`
   ${({ theme }: { theme: UikitTheme }) => `
@@ -251,26 +250,27 @@ const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
       <Section>
         <MenuGroup>
           {user ? (
-            <Link
-              // TODO should be a next link
-              css={css`
-                text-decoration: none;
-              `}
-              href={APPLICATIONS_PATH}
-            >
-              <StyledMenuItem
-                css={(theme: UikitTheme) =>
-                  css`
-                    color: ${theme.colors.secondary};
-                    border-left: 1px solid ${theme.colors.grey_2};
-                    border-right: 1px solid ${theme.colors.grey_2};
-                    border-bottom: 3px solid ${theme.colors.secondary};
-                  `
-                }
+            <NextLink href={APPLICATIONS_PATH}>
+              <Link
+                // TODO should be a next link
+                css={css`
+                  text-decoration: none;
+                `}
               >
-                {applicationsTitle}
-              </StyledMenuItem>
-            </Link>
+                <StyledMenuItem
+                  css={(theme: UikitTheme) =>
+                    css`
+                      color: ${theme.colors.secondary};
+                      border-left: 1px solid ${theme.colors.grey_2};
+                      border-right: 1px solid ${theme.colors.grey_2};
+                      border-bottom: 3px solid ${theme.colors.secondary};
+                    `
+                  }
+                >
+                  {applicationsTitle}
+                </StyledMenuItem>
+              </Link>
+            </NextLink>
           ) : (
             isLoginVisible && (
               <Link

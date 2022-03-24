@@ -17,14 +17,13 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { ReactElement } from 'react';
-import { useRouter } from 'next/router';
-import dynamic from 'next/dynamic';
-
+import { PageHead } from 'components/Head';
 import Loader from 'components/Loader';
 import { useAuthContext } from 'global/hooks';
 import { hasDacoScope, isDacoAdmin } from 'global/utils/egoTokenUtils';
-import { PageHead } from 'components/Head';
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
+import { ReactElement } from 'react';
 
 const ApplicationForm = dynamic(() => import('./ApplicationForm'), { loading: Loader });
 const ManageApplications = dynamic(() => import('./ManageApplications'), { loading: Loader });
@@ -41,6 +40,8 @@ const Application = (): ReactElement => {
     query: { ID: [appId = ''] = [] },
   }: QueryType = useRouter();
   const { isLoading, permissions } = useAuthContext();
+  // whats the context of this isloading? from when? this should be ROOT level component
+  // otherwise we're checking every page if something is loading
 
   const isAdmin = permissions.length > 0 && isDacoAdmin(permissions);
 

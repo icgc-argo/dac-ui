@@ -17,22 +17,18 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { useEffect, useState } from 'react';
-import { NextPageContext } from 'next';
-import { AppContext } from 'next/app';
+import NewWebsiteNotice from 'components/pages/NewWebsiteNotice';
 import Root from 'components/Root';
-import { PageConfigProps, PageWithConfig } from 'global/utils/pages/types';
 import {
   APPROVED_APP_CLOSED_CHECK,
-  EGO_JWT_KEY,
   NEW_WEBSITE_NOTICE_PATH,
   SUBMISSION_SUCCESS_CHECK,
 } from 'global/constants';
-import { isValidJwt } from 'global/utils/egoTokenUtils';
+import { PageConfigProps, PageWithConfig } from 'global/utils/pages/types';
+import { NextPageContext } from 'next';
+import { AppContext } from 'next/app';
 import { useRouter } from 'next/router';
-import refreshJwt from 'global/utils/auth/refreshJwt';
-import logoutUtil from 'global/utils/auth/logoutUtil';
-import NewWebsiteNotice from 'components/pages/NewWebsiteNotice';
+import { useEffect } from 'react';
 
 const resetFlashData = () => {
   [SUBMISSION_SUCCESS_CHECK, APPROVED_APP_CLOSED_CHECK].forEach((key) =>
@@ -49,8 +45,6 @@ const App = ({
   pageProps: PageConfigProps;
   ctx: NextPageContext;
 }) => {
-  const [initialJwt, setInitialJwt] = useState<string>('');
-
   const router = useRouter();
 
   // set up router event listeners
@@ -69,44 +63,10 @@ const App = ({
     };
   }, []);
 
-  const logout = () => {
-    setInitialJwt('');
-    logoutUtil({ isManual: false, isPublic: Component.isPublic });
-  };
-
-  useEffect(() => {
-    const handleAuth = async () => {
-      console.log('APP handleAuth');
-      const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
-      if (egoJwt) {
-        if (isValidJwt(egoJwt)) {
-          console.log('APP valid localStorage token', egoJwt.slice(-10));
-          setInitialJwt(egoJwt);
-        } else {
-          console.log('APP non valid localStorage token');
-          const refreshedJwt = (await refreshJwt().catch(logout)) as string;
-          if (isValidJwt(refreshedJwt)) {
-            console.log('APP valid refreshed token', refreshedJwt.slice(-10));
-            setInitialJwt(refreshedJwt);
-          } else {
-            console.log('APP non valid refreshed token', refreshedJwt.slice(-10));
-            logout();
-          }
-        }
-      } else {
-        console.log('APP no localStorage token');
-        logout();
-      }
-    };
-    if (!ctx.query?.session_expired) {
-      handleAuth();
-    }
-  });
-
   return ctx.pathname === NEW_WEBSITE_NOTICE_PATH ? (
     <NewWebsiteNotice />
   ) : (
-    <Root egoJwt={initialJwt} pageContext={ctx}>
+    <Root pageContext={ctx}>
       <Component {...pageProps} />
     </Root>
   );
