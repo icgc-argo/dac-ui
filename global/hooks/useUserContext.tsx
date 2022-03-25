@@ -72,7 +72,7 @@ export const UserProvider = ({
             handleUserJwt(egoJwt);
             return;
           }
-          throw new Error('Invalid JWT, cannot login.');
+          throw new Error('Invalid JWT, cannot login');
         })
         .then(() => router.push(APPLICATIONS_PATH))
         .catch((err) => {
@@ -106,7 +106,10 @@ export const UserProvider = ({
         logout();
       }
     };
-    if (!ctx.query?.session_expired && ctx.asPath !== LOGGED_IN_PATH) {
+    if (
+      isValidJwt(userJwtState) ||
+      (!ctx.query?.session_expired && ctx.asPath !== LOGGED_IN_PATH)
+    ) {
       handleAuth();
     }
   });

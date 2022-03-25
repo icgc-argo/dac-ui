@@ -84,12 +84,12 @@ const App = ({
           setInitialJwt(egoJwt);
         } else {
           console.log('APP non valid localStorage token');
-          const refreshedJwt = (await refreshJwt().catch(logout)) as string;
+          const refreshedJwt = (await refreshJwt().catch(logout)) || '';
           if (isValidJwt(refreshedJwt)) {
             console.log('APP valid refreshed token', refreshedJwt.slice(-10));
             setInitialJwt(refreshedJwt);
           } else {
-            console.log('APP non valid refreshed token', refreshedJwt.slice(-10));
+            console.log('APP non valid refreshed token');
             logout();
           }
         }
