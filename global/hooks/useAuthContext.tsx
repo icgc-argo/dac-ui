@@ -20,7 +20,6 @@
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
 import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
-import refreshJwt from 'global/utils/auth/refreshJwt';
 import router from 'next/router';
 import Router from 'next/router';
 import React, { createContext, useContext, useState } from 'react';
@@ -59,36 +58,6 @@ const AuthContext = createContext<any>({
 // TODO: decide if we want these for all types of requests or only POST
 axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
-
-const deleteTokens = () => {
-  const storedToken = localStorage.getItem(EGO_JWT_KEY) || '';
-
-  console.log('DELETE TOKENS jwt in localStorage', storedToken.slice(-10));
-
-  if (storedToken) {
-    fetch(egoRefreshUrl, {
-      credentials: 'include',
-      headers: {
-        accept: '*/*',
-        authorization: `Bearer ${storedToken}`,
-      },
-      method: 'DELETE',
-    })
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new Error();
-        }
-        console.log('DELETE REFRESH deleted the refresh token', res);
-      })
-      .catch((err) => {
-        console.warn(err);
-      })
-      .finally(() => {
-        console.log('DELETE TOKENS finally delete localStorage jwt');
-        localStorage.removeItem(EGO_JWT_KEY);
-      });
-  }
-};
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // TODO: typing this state as `string` causes a compiler error. the same setup exists in argo but does not cause
@@ -137,8 +106,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
    * global loader in Root
    */
 
+  // really local storage is our source of truth, hit  it into state just to flow through app
+  // a 2nd tab might have refreshed token
+
   const cancelTokenSource = axios.CancelToken.source();
   const cancelFetchWithAuth = cancelTokenSource.cancel;
+
+  const setToken = (token: string) => {
+    // todo: err handler
+    localStorage.setItem(EGO_JWT_KEY, token);
+    setTokenState(token);
+  };
+
+  const getValidToken = async () => {
+    const token = localStorage.getItem(EGO_JWT_KEY) || '';
+    if (!isValidJwt(token)) {
+      const refreshedJwt = await refreshJwt(token);
+      setToken(refreshedJwt);
+      return refreshedJwt;
+    }
+    return token;
+  };
 
   const fetchWithAuth = async ({
     data,
@@ -149,35 +137,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     url,
   }: AxiosRequestConfig) => {
     setLoading(true);
+
+    // !token should be handled later, probably not even here, just get me a valid token
     if (!url || !token) {
       setLoading(false);
       return Promise.reject(undefined);
     }
 
-    let fetchToken = token;
-
-    if (!isValidJwt(token)) {
-      console.log('FETCH state token is not valid');
-      const storageToken = localStorage.getItem(EGO_JWT_KEY) || '';
-      if (isValidJwt(storageToken)) {
-        console.log('FETCH localStorage token is valid');
-        setTokenState(storageToken);
-        fetchToken = storageToken;
-      } else {
-        console.log('FETCH localStorage token is not valid');
-        const refreshedJwt = (await refreshJwt().catch(logout)) as string;
-        if (isValidJwt(refreshedJwt)) {
-          console.log('FETCH refreshed token is valid');
-          setTokenState(refreshedJwt);
-          fetchToken = refreshedJwt;
-        } else {
+    /*    
+        if (!isValidJwt(refreshedJwt)) {
+          //in what case is our refreshed token not valid
           console.log('FETCH refreshed token is not valid');
           logout();
           setLoading(false);
           return Promise.reject(undefined);
         }
+      } catch (e) {
+        logout();
       }
-    }
+    } */
+
+    const fetchToken = await getValidToken();
+    console.log('fetch token', fetchToken);
 
     const config: AxiosRequestConfig = {
       ...(!['DELETE', 'GET'].includes(method) && { data }),
@@ -223,7 +204,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const fetchInitEgo = async () => {
     setLoading(true);
     const jwt = await fetchEgoToken();
-    setTokenState(jwt);
+    setToken(jwt);
   };
 
   const authData = {
@@ -270,13 +251,66 @@ export const fetchEgoToken = () => {
         //if (isValidJwt(jwt)) return localStorage.setItem(EGO_JWT_KEY, jwt);
         console.log('fetch ego token', jwt);
         return jwt;
-        throw new Error('Invalid jwt, cannot login.');
       })
       //.then(() => Router.push(APPLICATIONS_PATH))
       .catch((err) => {
         /*  console.warn(err);
         localStorage.removeItem(EGO_JWT_KEY);
         Router.push('/'); */
+        throw new Error('Invalid jwt, cannot login.');
       })
   );
 };
+
+const deleteTokens = () => {
+  const storedToken = localStorage.getItem(EGO_JWT_KEY) || '';
+
+  console.log('DELETE TOKENS jwt in localStorage', storedToken.slice(-10));
+
+  if (storedToken) {
+    fetch(egoRefreshUrl, {
+      credentials: 'include',
+      headers: {
+        accept: '*/*',
+        authorization: `Bearer ${storedToken}`,
+      },
+      method: 'DELETE',
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error();
+        }
+        console.log('DELETE REFRESH deleted the refresh token', res);
+      })
+      .catch((err) => {
+        console.warn(err);
+      })
+      .finally(() => {
+        console.log('DELETE TOKENS finally delete localStorage jwt');
+        localStorage.removeItem(EGO_JWT_KEY);
+      });
+  }
+};
+
+const refreshJwt = (invalidToken: string) => {
+  return fetch(egoRefreshUrl, {
+    credentials: 'include',
+    headers: {
+      accept: '*/*',
+      authorization: `Bearer ${invalidToken}`,
+    },
+    method: 'POST',
+  })
+    .then((res) => res.text())
+    .then((token) => {
+      if (isValidJwt(token)) {
+        console.log('REFRESH valid refreshed token', token.slice(-10));
+        return token;
+      } else {
+        console.warn('invalid jwt', token);
+        return '';
+      }
+    });
+};
+
+// TODO: TEST ME <#

@@ -162,15 +162,7 @@ const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const Root = ({
-  children,
-  pageContext,
-  egoJwt = '',
-}: {
-  children: any;
-  pageContext: any;
-  egoJwt?: string;
-}) => {
+const Root = ({ children, pageContext }: { children: any; pageContext: any }) => {
   return (
     <React.Fragment>
       <CSSGlobalReset />
