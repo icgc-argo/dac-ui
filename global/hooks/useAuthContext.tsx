@@ -42,9 +42,10 @@ type T_AuthContext = {
   permissions: string[];
   token?: string;
   user?: UserWithId | void;
+  fetchInitEgo?: any;
 };
 
-const AuthContext = createContext<any>({
+const AuthContext = createContext<T_AuthContext>({
   cancelFetchWithAuth: () => {},
   token: '',
   isLoading: false,

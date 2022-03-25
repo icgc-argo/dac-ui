@@ -54,7 +54,7 @@ const LoginLoaderPage = createPage({
     Router.prefetch(APPLICATIONS_PATH);
     console.log('mounted');
     const doFetchStuff = async () => {
-      const jwt = await auth.fetchInitEgo();
+      await auth.fetchInitEgo();
       //console.log('do fetch stuff', jwt);
     };
     doFetchStuff();
