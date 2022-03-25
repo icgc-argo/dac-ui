@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2022 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -17,28 +17,27 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { css } from '@emotion/core';
+import { getConfig } from 'global/config';
+import urlJoin from 'url-join';
 
-import DnaLoader from '@icgc-argo/uikit/DnaLoader';
-
-import { createPage } from 'global/utils/pages/createPage';
-
-const LoginLoaderPage = createPage({
-  isPublic: true,
-})(() => {
-  return (
-    <div
-      css={css`
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        height: 100%;
-      `}
-    >
-      <DnaLoader />
-    </div>
+const fetchEgoJwt = async (): Promise<string> => {
+  console.log('fetchEgoJwt');
+  const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
+  const egoLoginUrl = urlJoin(
+    NEXT_PUBLIC_EGO_API_ROOT,
+    `/oauth/ego-token?client_id=${NEXT_PUBLIC_EGO_CLIENT_ID}`,
   );
-});
 
-export default LoginLoaderPage;
+  const res = await fetch(egoLoginUrl, {
+    credentials: 'include',
+    headers: { accept: '*/*' },
+    body: null,
+    method: 'POST',
+  });
+  if (res.status !== 200) {
+    throw new Error();
+  }
+  return await res.text();
+};
+
+export default fetchEgoJwt;

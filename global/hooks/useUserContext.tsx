@@ -1,3 +1,24 @@
+/*
+ * Copyright (c) 2022 The Ontario Institute for Cancer Research. All rights reserved
+ *
+ * This program and the accompanying materials are made available under the terms of
+ * the GNU Affero General Public License v3.0. You should have received a copy of the
+ * GNU Affero General Public License along with this program.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+import { APPLICATIONS_PATH, HOMEPAGE_PATH, LOGGED_IN_PATH } from 'global/constants/internalPaths';
+import fetchEgoJwt from 'global/utils/auth/fetchEgoJwt';
 import { getStoredJwt, removeStoredJwt, setStoredToken } from 'global/utils/auth/helpers';
 import refreshJwt from 'global/utils/auth/refreshJwt';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
@@ -24,19 +45,42 @@ export const UserProvider = ({
   children: ReactElement;
   ctx: NextPageContext;
 }) => {
-  const router = useRouter();
   const [userJwtState, setUserJwtState] = useState<T_UserContext['userJwt']>('');
 
-  const logout = () => {
+  const router = useRouter();
+
+  const logout = ({ isManual = false } = {}) => {
+    console.log('🎃 USER logout');
     removeStoredJwt();
     setUserJwtState(userContextDefaultValues.userJwt);
-    router.push('/?session_expired=true');
+    router.push(`${HOMEPAGE_PATH}${isManual ? '' : '?session_expired=true'}`);
   };
 
   const handleUserJwt = (token: string) => {
+    console.log('🎃 USER handleUserJwt', token.slice(-10));
     setUserJwtState(token);
     setStoredToken(token);
   };
+
+  useEffect(() => {
+    if (ctx.asPath === LOGGED_IN_PATH) {
+      console.log('🎃 USER /logged-in');
+      router.prefetch(APPLICATIONS_PATH);
+      fetchEgoJwt()
+        .then((egoJwt = '') => {
+          if (isValidJwt(egoJwt)) {
+            handleUserJwt(egoJwt);
+            return;
+          }
+          throw new Error('Invalid JWT, cannot login.');
+        })
+        .then(() => router.push(APPLICATIONS_PATH))
+        .catch((err) => {
+          console.warn(err);
+          logout();
+        });
+    }
+  }, []);
 
   useEffect(() => {
     const handleAuth = async () => {
@@ -44,11 +88,11 @@ export const UserProvider = ({
       const storedJwt = getStoredJwt();
       if (storedJwt) {
         if (isValidJwt(storedJwt)) {
-          console.log('🎃 USER non valid localStorage token', storedJwt.slice(-10));
+          console.log('🎃 USER valid localStorage token', storedJwt.slice(-10));
           setUserJwtState(storedJwt);
         } else {
           console.log('🎃 USER non valid localStorage token', storedJwt.slice(-10));
-          const refreshedJwt = (await refreshJwt().catch(logout)) as string;
+          const refreshedJwt = (await refreshJwt().catch(logout)) || '';
           if (isValidJwt(refreshedJwt)) {
             console.log('🎃 USER valid refreshed token', refreshedJwt.slice(-10));
             handleUserJwt(refreshedJwt);
@@ -57,11 +101,12 @@ export const UserProvider = ({
             logout();
           }
         }
-      } else if (ctx.asPath !== '/') {
+      } else if (ctx.asPath !== HOMEPAGE_PATH) {
+        console.log('🎃 USER not homepage, not /logged-in, no token');
         logout();
       }
     };
-    if (!ctx.query?.session_expired) {
+    if (!ctx.query?.session_expired && ctx.asPath !== LOGGED_IN_PATH) {
       handleAuth();
     }
   });
