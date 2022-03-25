@@ -217,6 +217,8 @@ const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
         `
       }
     >
+      {' '}
+      <Button onClick={() => logout()}>LOGOUT</Button>
       <Section>
         <Logo
           DomComponent={() => (

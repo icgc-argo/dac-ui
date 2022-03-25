@@ -20,8 +20,8 @@
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
 import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
-import router from 'next/router';
-import Router from 'next/router';
+import { default as router, default as Router } from 'next/router';
+import queryString from 'query-string';
 import React, { createContext, useContext, useState } from 'react';
 import urlJoin from 'url-join';
 import { egoRefreshUrl, EGO_JWT_KEY } from '../constants';
@@ -33,7 +33,6 @@ import {
   isValidJwt,
 } from '../utils/egoTokenUtils';
 import { useToaster } from './useToaster';
-import queryString from 'query-string';
 
 type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
@@ -72,11 +71,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   React.useEffect(() => {
     // multiple tabs, close/reopen window
     const init = async () => {
-      setLoading(true);
-      const jwt = await getValidToken();
-      // jwt will be null if user has not logged in
-      if (jwt !== null) setToken(jwt);
-      setLoading(false);
+      const token = localStorage.getItem(EGO_JWT_KEY);
+      if (token === null) {
+        return null; //user not logged in
+      } else {
+        setLoading(true);
+        const jwt = await getValidToken();
+        console.log('mount auth jwt', jwt);
+        // jwt will be null if user has not logged in
+        if (jwt !== null) setToken(jwt);
+        setLoading(false);
+      }
     };
     init();
   }, []);
@@ -104,10 +109,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     Router.push({ pathname: '/', query: `${SESSION_EXPIRED_KEY}=true` });
   };
 
-  /**
-   * global loader in Root
-   */
-
   const cancelTokenSource = axios.CancelToken.source();
   const cancelFetchWithAuth = cancelTokenSource.cancel;
 
@@ -118,11 +119,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const getValidToken = async () => {
-    const token = localStorage.getItem(EGO_JWT_KEY);
-    if (token === null) {
-      // user not logged in
-      return null;
-    } else if (!isValidJwt(token)) {
+    const token = localStorage.getItem(EGO_JWT_KEY) || '';
+    if (!isValidJwt(token)) {
       const refreshedJwt = await refreshJwt(token);
       setToken(refreshedJwt);
       return refreshedJwt;
@@ -186,12 +184,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const userInfo = token ? decodeToken(token) : null;
   const user = userInfo ? extractUser(userInfo) : undefined;
   const permissions = getPermissionsFromToken(token);
+  console.log('user', user, permissions);
 
   isLoading && token && user && setLoading(false);
 
   const fetchInitEgo = async () => {
-    // if we have a token already, just return it
-    setLoading(true);
     const jwt = await fetchEgoToken();
     setToken(jwt);
   };
@@ -244,7 +241,9 @@ export const fetchEgoToken = () => {
         /*  console.warn(err);
         localStorage.removeItem(EGO_JWT_KEY);
         Router.push('/'); */
-        throw new Error('Invalid jwt, cannot login.');
+        console.warn(err);
+        throw new Error('Invalid jwt, cannot login.', err);
+        // WHY IS THIS THROWING
       })
   );
 };

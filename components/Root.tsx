@@ -25,12 +25,13 @@ import ThemeProvider from '@icgc-argo/uikit/ThemeProvider';
 import Modal from '@icgc-argo/uikit/Modal';
 
 import Head from 'components/Head';
-import { AuthProvider } from 'global/hooks/useAuthContext';
+import useAuthContext, { AuthProvider } from 'global/hooks/useAuthContext';
 import { PageContext } from 'global/hooks/usePageContext';
 import DefaultPageLayout from './DefaultPageLayout';
 import { ToasterContext, useToastState } from 'global/hooks/useToaster';
 import ToastStack from '@icgc-argo/uikit/notifications/ToastStack';
 import GdprBanner from './GdprBanner';
+import Loader from 'components/Loader';
 
 /**
  * The global portal where modals will show up
@@ -162,6 +163,11 @@ const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+const GlobalLoader = ({ children }: { children: React.ReactNode }) => {
+  const auth = useAuthContext();
+  return auth.isLoading ? <Loader /> : <>{children}</>;
+};
+
 const Root = ({ children, pageContext }: { children: any; pageContext: any }) => {
   return (
     <React.Fragment>
@@ -182,7 +188,9 @@ const Root = ({ children, pageContext }: { children: any; pageContext: any }) =>
                 ref={modalPortalRef}
               />
               <GdprBanner />
-              <DefaultPageLayout>{children}</DefaultPageLayout>
+              <DefaultPageLayout>
+                <GlobalLoader>{children}</GlobalLoader>
+              </DefaultPageLayout>
             </ToastProvider>
           </ThemeProvider>
         </PageContext.Provider>

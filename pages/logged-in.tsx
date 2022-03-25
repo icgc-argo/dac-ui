@@ -52,7 +52,7 @@ const LoginLoaderPage = createPage({
 
   useEffect(() => {
     Router.prefetch(APPLICATIONS_PATH);
-
+    console.log('mounted');
     const doFetchStuff = async () => {
       const jwt = await auth.fetchInitEgo();
       //console.log('do fetch stuff', jwt);
@@ -60,10 +60,7 @@ const LoginLoaderPage = createPage({
     doFetchStuff();
   }, []);
 
-  /* const auth = useAuthContext();
-  const jwt = auth.fetchInitEgo().then((jwt) => console.log('logged in', jwt)); */
-  // don't even really need to come back here after login
-  // you could just pop to root with a loader
+  // don't use AuthProv loading state here as it will cause re-mounting of page
   return (
     <div
       css={css`
