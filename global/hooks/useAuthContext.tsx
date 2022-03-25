@@ -38,7 +38,7 @@ type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
   fetchWithAuth: any;
   isLoading: boolean;
-  logout: ({ isManual }: { isManual: boolean }) => void;
+  logout: () => void;
   permissions: string[];
   token?: string;
   user?: UserWithId | void;
@@ -243,8 +243,7 @@ export const fetchEgoToken = () => {
         localStorage.removeItem(EGO_JWT_KEY);
         Router.push('/'); */
         console.warn(err);
-        throw new Error('Invalid jwt, cannot login.', err);
-        // WHY IS THIS THROWING
+        throw new Error('Invalid jwt, cannot login.');
       })
   );
 };
