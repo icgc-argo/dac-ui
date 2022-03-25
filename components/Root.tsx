@@ -175,9 +175,9 @@ const Root = ({
   egoJwt?: string;
   setInitialJwt: (jwt: string) => void;
 }) => {
-  const { userJwt } = useUserContext();
+  const { token } = useUserContext();
 
-  console.log({ userJwt: userJwt.slice(-10) });
+  console.log({ token: token.slice(-10) });
 
   return (
     <React.Fragment>

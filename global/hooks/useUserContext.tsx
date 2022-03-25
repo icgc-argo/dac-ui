@@ -21,19 +21,30 @@ import { APPLICATIONS_PATH, HOMEPAGE_PATH, LOGGED_IN_PATH } from 'global/constan
 import fetchEgoJwt from 'global/utils/auth/fetchEgoJwt';
 import { getStoredJwt, removeStoredJwt, setStoredToken } from 'global/utils/auth/helpers';
 import refreshJwt from 'global/utils/auth/refreshJwt';
-import { isValidJwt } from 'global/utils/egoTokenUtils';
+import {
+  decodeToken,
+  extractUser,
+  getPermissionsFromToken,
+  isValidJwt,
+} from 'global/utils/egoTokenUtils';
 import { NextPageContext } from 'next';
 import { useRouter } from 'next/router';
 import { createContext, ReactElement, useContext, useEffect, useState } from 'react';
 
+// TODO: rename these variables. userJwt, userModel, userPermissions
 type T_UserContext = {
-  logout: () => void;
-  userJwt: string;
+  // logout: () => void;
+  logout: any;
+  token: string;
+  user: any;
+  permissions: any;
 };
 
 const userContextDefaultValues = {
   logout: () => {},
-  userJwt: '',
+  token: '',
+  permissions: [],
+  user: null,
 };
 
 const UserContext = createContext<T_UserContext>(userContextDefaultValues);
@@ -45,14 +56,20 @@ export const UserProvider = ({
   children: ReactElement;
   ctx: NextPageContext;
 }) => {
-  const [userJwtState, setUserJwtState] = useState<T_UserContext['userJwt']>('');
+  const [userJwtState, setUserJwtState] = useState<T_UserContext['token']>(
+    userContextDefaultValues.token,
+  );
+  const [user, setUser] = useState<T_UserContext['user']>(userContextDefaultValues.user);
+  const [permissions, setPermissions] = useState<T_UserContext['permissions']>(
+    userContextDefaultValues.permissions,
+  );
 
   const router = useRouter();
 
   const logout = ({ isManual = false } = {}) => {
     console.log('🎃 USER logout');
     removeStoredJwt();
-    setUserJwtState(userContextDefaultValues.userJwt);
+    setUserJwtState(userContextDefaultValues.token);
     router.push(`${HOMEPAGE_PATH}${isManual ? '' : '?session_expired=true'}`);
   };
 
@@ -63,6 +80,8 @@ export const UserProvider = ({
   };
 
   useEffect(() => {
+    // on page change - doesn't detect navigating to
+    // different sections of an application
     if (ctx.asPath === LOGGED_IN_PATH) {
       console.log('🎃 USER /logged-in');
       router.prefetch(APPLICATIONS_PATH);
@@ -83,6 +102,8 @@ export const UserProvider = ({
   }, []);
 
   useEffect(() => {
+    // on page render - DOES detect navigating to
+    // different sections of an application
     const handleAuth = async () => {
       console.log('🎃 USER handleAuth');
       const storedJwt = getStoredJwt();
@@ -113,11 +134,25 @@ export const UserProvider = ({
       handleAuth();
     }
   });
-  return (
-    <UserContext.Provider value={{ logout, userJwt: userJwtState }}>
-      {children}
-    </UserContext.Provider>
-  );
+
+  useEffect(() => {
+    // on user JWT change
+    // TODO make a reducer to cut down on re-renders
+    const userInfo = userJwtState ? decodeToken(userJwtState) : null;
+    const nextUser = userInfo ? extractUser(userInfo) : undefined;
+    const nextPermissions = getPermissionsFromToken(userJwtState);
+    setUser(nextUser);
+    setPermissions(nextPermissions);
+  }, [userJwtState]);
+
+  const userContextValue = {
+    logout,
+    token: userJwtState,
+    user,
+    permissions,
+  };
+
+  return <UserContext.Provider value={userContextValue}>{children}</UserContext.Provider>;
 };
 
 export default function useUserContext() {
