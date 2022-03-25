@@ -59,6 +59,8 @@ const AuthContext = createContext<any>({
 axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 
+const SESSION_EXPIRED_KEY = 'session_expired';
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // TODO: typing this state as `string` causes a compiler error. the same setup exists in argo but does not cause
   // a type issue. using `any` for now
@@ -67,7 +69,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const toaster = useToaster();
 
-  const SESSION_EXPIRED_KEY = 'session_expired';
+  React.useEffect(() => {
+    // multiple tabs, close/reopen window
+    const init = async () => {
+      setLoading(true);
+      const jwt = await getValidToken();
+      // jwt will be null if user has not logged in
+      if (jwt !== null) setToken(jwt);
+      setLoading(false);
+    };
+    init();
+  }, []);
 
   React.useEffect(() => {
     const handleRouteChange = (url: any) => {
@@ -92,22 +104,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     Router.push({ pathname: '/', query: `${SESSION_EXPIRED_KEY}=true` });
   };
 
-  /* 
-  if (token) {
-    if (isValidJwt(token) && !egoJwt) {
-      setTokenState('');
-    }
-  } else if (isValidJwt(egoJwt)) {
-    setTokenState(egoJwt);
-  }
- */
-
   /**
    * global loader in Root
    */
-
-  // really local storage is our source of truth, hit  it into state just to flow through app
-  // a 2nd tab might have refreshed token
 
   const cancelTokenSource = axios.CancelToken.source();
   const cancelFetchWithAuth = cancelTokenSource.cancel;
@@ -119,8 +118,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const getValidToken = async () => {
-    const token = localStorage.getItem(EGO_JWT_KEY) || '';
-    if (!isValidJwt(token)) {
+    const token = localStorage.getItem(EGO_JWT_KEY);
+    if (token === null) {
+      // user not logged in
+      return null;
+    } else if (!isValidJwt(token)) {
       const refreshedJwt = await refreshJwt(token);
       setToken(refreshedJwt);
       return refreshedJwt;
@@ -144,21 +146,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return Promise.reject(undefined);
     }
 
-    /*    
-        if (!isValidJwt(refreshedJwt)) {
-          //in what case is our refreshed token not valid
-          console.log('FETCH refreshed token is not valid');
-          logout();
-          setLoading(false);
-          return Promise.reject(undefined);
-        }
-      } catch (e) {
-        logout();
-      }
-    } */
+    // todo: in what case is our refreshed token not valid
 
     const fetchToken = await getValidToken();
-    console.log('fetch token', fetchToken);
 
     const config: AxiosRequestConfig = {
       ...(!['DELETE', 'GET'].includes(method) && { data }),
@@ -196,12 +186,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const userInfo = token ? decodeToken(token) : null;
   const user = userInfo ? extractUser(userInfo) : undefined;
   const permissions = getPermissionsFromToken(token);
-  console.log('permissions', permissions);
-  console.log('user', user);
 
   isLoading && token && user && setLoading(false);
 
   const fetchInitEgo = async () => {
+    // if we have a token already, just return it
     setLoading(true);
     const jwt = await fetchEgoToken();
     setToken(jwt);
@@ -224,8 +213,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 export default function useAuthContext() {
   return useContext(AuthContext);
 }
-
-//
 
 export const fetchEgoToken = () => {
   const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();

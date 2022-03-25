@@ -62,7 +62,8 @@ const LoginLoaderPage = createPage({
 
   /* const auth = useAuthContext();
   const jwt = auth.fetchInitEgo().then((jwt) => console.log('logged in', jwt)); */
-
+  // don't even really need to come back here after login
+  // you could just pop to root with a loader
   return (
     <div
       css={css`
