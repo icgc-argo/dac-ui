@@ -175,7 +175,7 @@ const Root = ({
     <React.Fragment>
       <CSSGlobalReset />
       <Head />
-      <AuthProvider egoJwt={egoJwt}>
+      <AuthProvider>
         <PageContext.Provider value={pageContext}>
           <ThemeProvider>
             <ToastProvider>

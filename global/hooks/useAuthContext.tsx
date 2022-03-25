@@ -20,11 +20,12 @@
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
 import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
-import logoutUtil from 'global/utils/auth/logoutUtil';
 import refreshJwt from 'global/utils/auth/refreshJwt';
+import router from 'next/router';
+import Router from 'next/router';
 import React, { createContext, useContext, useState } from 'react';
 import urlJoin from 'url-join';
-import { EGO_JWT_KEY } from '../constants';
+import { egoRefreshUrl, EGO_JWT_KEY } from '../constants';
 import { UserWithId } from '../types';
 import {
   decodeToken,
@@ -33,6 +34,7 @@ import {
   isValidJwt,
 } from '../utils/egoTokenUtils';
 import { useToaster } from './useToaster';
+import queryString from 'query-string';
 
 type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
@@ -58,6 +60,36 @@ const AuthContext = createContext<any>({
 axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 
+const deleteTokens = () => {
+  const storedToken = localStorage.getItem(EGO_JWT_KEY) || '';
+
+  console.log('DELETE TOKENS jwt in localStorage', storedToken.slice(-10));
+
+  if (storedToken) {
+    fetch(egoRefreshUrl, {
+      credentials: 'include',
+      headers: {
+        accept: '*/*',
+        authorization: `Bearer ${storedToken}`,
+      },
+      method: 'DELETE',
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error();
+        }
+        console.log('DELETE REFRESH deleted the refresh token', res);
+      })
+      .catch((err) => {
+        console.warn(err);
+      })
+      .finally(() => {
+        console.log('DELETE TOKENS finally delete localStorage jwt');
+        localStorage.removeItem(EGO_JWT_KEY);
+      });
+  }
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // TODO: typing this state as `string` causes a compiler error. the same setup exists in argo but does not cause
   // a type issue. using `any` for now
@@ -66,11 +98,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const toaster = useToaster();
 
-  const logout = ({ isManual = false } = {}) => {
-    console.log('LOGOUT manual?', isManual);
-    setTokenState('');
-    logoutUtil({ isManual });
+  const SESSION_EXPIRED_KEY = 'session_expired';
+
+  React.useEffect(() => {
+    const handleRouteChange = (url: any) => {
+      // get everything in url after /
+      // /applications, need better url parsing
+      const queries = queryString.parse(url.slice(1));
+      console.log('queryies', queries);
+      if (!!queries[SESSION_EXPIRED_KEY] === true) {
+        deleteTokens();
+        setTokenState('');
+      }
+    };
+
+    router.events.on('routeChangeComplete', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, []);
+
+  const logout = () => {
+    Router.push({ pathname: '/', query: `${SESSION_EXPIRED_KEY}=true` });
   };
+
   /* 
   if (token) {
     if (isValidJwt(token) && !egoJwt) {
