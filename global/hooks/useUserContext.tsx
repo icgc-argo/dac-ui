@@ -38,13 +38,15 @@ type T_UserContext = {
   token: string;
   user: any;
   permissions: any;
+  userLoading: boolean;
 };
 
 const userContextDefaultValues = {
   logout: () => {},
   token: '',
   permissions: [],
-  user: null,
+  user: undefined,
+  userLoading: true,
 };
 
 const UserContext = createContext<T_UserContext>(userContextDefaultValues);
@@ -63,20 +65,33 @@ export const UserProvider = ({
   const [permissions, setPermissions] = useState<T_UserContext['permissions']>(
     userContextDefaultValues.permissions,
   );
+  const [userLoading, setUserLoading] = useState<T_UserContext['userLoading']>(
+    userContextDefaultValues.userLoading,
+  );
 
   const router = useRouter();
 
   const logout = ({ isManual = false } = {}) => {
     console.log('🎃 USER logout');
-    removeStoredJwt();
-    setUserJwtState(userContextDefaultValues.token);
     router.push(`${HOMEPAGE_PATH}${isManual ? '' : '?session_expired=true'}`);
+    removeStoredJwt();
+    handleUserJwt(userContextDefaultValues.token);
+  };
+
+  const handleUserState = (token: string) => {
+    const userInfo = token ? decodeToken(token) : null;
+    const nextUser = userInfo ? extractUser(userInfo) : userContextDefaultValues.user;
+    const nextPermissions = getPermissionsFromToken(token);
+    setUser(nextUser);
+    setPermissions(nextPermissions);
   };
 
   const handleUserJwt = (token: string) => {
+    // TODO reducer?
     console.log('🎃 USER handleUserJwt', token.slice(-10));
     setUserJwtState(token);
     setStoredToken(token);
+    // handleUserState(); NOTE might need this, depending on server latency
   };
 
   useEffect(() => {
@@ -85,6 +100,7 @@ export const UserProvider = ({
     if (ctx.asPath === LOGGED_IN_PATH) {
       console.log('🎃 USER /logged-in');
       router.prefetch(APPLICATIONS_PATH);
+      setUserLoading(true);
       fetchEgoJwt()
         .then((egoJwt = '') => {
           if (isValidJwt(egoJwt)) {
@@ -97,6 +113,9 @@ export const UserProvider = ({
         .catch((err) => {
           console.warn(err);
           logout();
+        })
+        .finally(() => {
+          setUserLoading(false);
         });
     }
   }, []);
@@ -106,6 +125,7 @@ export const UserProvider = ({
     // different sections of an application
     const handleAuth = async () => {
       console.log('🎃 USER handleAuth');
+      setUserLoading(true);
       const storedJwt = getStoredJwt();
       if (storedJwt) {
         if (isValidJwt(storedJwt)) {
@@ -126,6 +146,7 @@ export const UserProvider = ({
         console.log('🎃 USER not homepage, not /logged-in, no token');
         logout();
       }
+      setUserLoading(false);
     };
     if (
       isValidJwt(userJwtState) ||
@@ -136,13 +157,8 @@ export const UserProvider = ({
   });
 
   useEffect(() => {
-    // on user JWT change
-    // TODO make a reducer to cut down on re-renders
-    const userInfo = userJwtState ? decodeToken(userJwtState) : null;
-    const nextUser = userInfo ? extractUser(userInfo) : undefined;
-    const nextPermissions = getPermissionsFromToken(userJwtState);
-    setUser(nextUser);
-    setPermissions(nextPermissions);
+    // populate user state when userJwt updates & initial render
+    handleUserState(userJwtState);
   }, [userJwtState]);
 
   const userContextValue = {
@@ -150,6 +166,7 @@ export const UserProvider = ({
     token: userJwtState,
     user,
     permissions,
+    userLoading,
   };
 
   return <UserContext.Provider value={userContextValue}>{children}</UserContext.Provider>;
