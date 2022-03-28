@@ -17,78 +17,35 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { EGO_JWT_KEY } from '../constants';
-import {
-  decodeToken,
-  extractUser,
-  getPermissionsFromToken,
-  isValidJwt,
-} from '../utils/egoTokenUtils';
-import { UserWithId } from '../types';
+import React, { createContext, useContext, useState } from 'react';
+import { isValidJwt } from '../utils/egoTokenUtils';
 import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
 import { useToaster } from './useToaster';
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
 import refreshJwt from 'global/utils/auth/refreshJwt';
-import logoutUtil from 'global/utils/auth/logoutUtil';
+import useUserContext from './useUserContext';
+import { getStoredJwt } from 'global/utils/auth/helpers';
 
 type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
+  dataLoading: boolean;
   fetchWithAuth: any;
-  isLoading: boolean;
-  logout: ({ isManual }: { isManual: boolean }) => void;
-  permissions: string[];
-  token?: string;
-  user?: UserWithId | void;
 };
 
-const AuthContext = createContext<T_AuthContext>({
+const authContextDefaults = {
   cancelFetchWithAuth: () => {},
-  token: '',
-  isLoading: false,
-  logout: () => {},
-  user: undefined,
+  dataLoading: false,
   fetchWithAuth: () => {},
-  permissions: [],
-});
+};
 
-export const AuthProvider = ({
-  children,
-  egoJwt = '',
-  setInitialJwt,
-}: {
-  children: React.ReactElement;
-  egoJwt: string;
-  setInitialJwt: (jwt: string) => void;
-}) => {
-  // TODO: typing this state as `string` causes a compiler error. the same setup exists in argo but does not cause
-  // a type issue. using `any` for now
-  const [isLoading, setLoading] = useState<boolean>(true);
-  const [token, setTokenState] = useState<string>(egoJwt);
+const AuthContext = createContext<T_AuthContext>(authContextDefaults);
+
+export const AuthProvider = ({ children }: { children: React.ReactElement }) => {
+  const [dataLoading, setDataLoading] = useState<boolean>(authContextDefaults.dataLoading);
+  const { token, logout, handleUserJwt } = useUserContext();
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const toaster = useToaster();
-
-  const handleTokenState = (jwt: string) => {
-    console.log('AUTH handleTokenState', jwt.slice(-10));
-    setTokenState(jwt);
-    setInitialJwt(jwt);
-  };
-
-  const logout = ({ isManual = false } = {}) => {
-    console.log('LOGOUT manual?', isManual);
-    logoutUtil({ handleTokenState, isManual });
-  };
-
-  useEffect(() => {
-    if (token) {
-      if (isValidJwt(token) && !egoJwt) {
-        handleTokenState('');
-      }
-    } else if (isValidJwt(egoJwt)) {
-      handleTokenState(egoJwt);
-    }
-  });
 
   // TODO: decide if we want these for all types of requests or only POST
   axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
@@ -96,6 +53,7 @@ export const AuthProvider = ({
 
   const cancelTokenSource = axios.CancelToken.source();
   const cancelFetchWithAuth = cancelTokenSource.cancel;
+
   const fetchWithAuth = async ({
     data,
     headers = {},
@@ -104,32 +62,32 @@ export const AuthProvider = ({
     responseType,
     url,
   }: AxiosRequestConfig) => {
-    setLoading(true);
+    setDataLoading(true);
     if (!url || !token) {
-      setLoading(false);
+      setDataLoading(false);
       return Promise.reject(undefined);
     }
 
     let fetchToken = token;
 
     if (!isValidJwt(token)) {
-      console.log('FETCH state token is not valid');
-      const storageToken = localStorage.getItem(EGO_JWT_KEY) || '';
+      console.log('🐶 FETCH state token is not valid');
+      const storageToken = getStoredJwt();
       if (isValidJwt(storageToken)) {
-        console.log('FETCH localStorage token is valid');
-        handleTokenState(storageToken);
+        console.log('🐶 FETCH localStorage token is valid');
+        handleUserJwt(storageToken);
         fetchToken = storageToken;
       } else {
-        console.log('FETCH localStorage token is not valid');
+        console.log('🐶 FETCH localStorage token is not valid');
         const refreshedJwt = (await refreshJwt().catch(logout)) as string;
         if (isValidJwt(refreshedJwt)) {
           console.log('FETCH refreshed token is valid');
-          handleTokenState(refreshedJwt);
+          handleUserJwt(refreshedJwt);
           fetchToken = refreshedJwt;
         } else {
-          console.log('FETCH refreshed token is not valid');
+          console.log('🐶 FETCH refreshed token is not valid');
           logout();
-          setLoading(false);
+          setDataLoading(false);
           return Promise.reject(undefined);
         }
       }
@@ -164,24 +122,14 @@ export const AuthProvider = ({
         throw { error };
       })
       .finally(() => {
-        setLoading(false);
+        setDataLoading(false);
       });
   };
 
-  const userInfo = token ? decodeToken(token) : null;
-  const user = userInfo ? extractUser(userInfo) : undefined;
-  const permissions = getPermissionsFromToken(token);
-
-  isLoading && token && user && setLoading(false);
-
   const authData = {
     cancelFetchWithAuth,
+    dataLoading,
     fetchWithAuth,
-    isLoading,
-    logout,
-    permissions,
-    token,
-    user,
   };
 
   return <AuthContext.Provider value={authData}>{children}</AuthContext.Provider>;

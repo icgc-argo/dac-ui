@@ -33,18 +33,21 @@ import { createContext, ReactElement, useContext, useEffect, useState } from 're
 
 // TODO: rename these variables. userJwt, userModel, userPermissions
 type T_UserContext = {
-  // logout: () => void;
+  handleUserJwt: any;
   logout: any;
+  permissions: any;
+  setUserLoading: any;
   token: string;
   user: any;
-  permissions: any;
   userLoading: boolean;
 };
 
 const userContextDefaultValues = {
+  handleUserJwt: () => {},
   logout: () => {},
-  token: '',
   permissions: [],
+  setUserLoading: () => {},
+  token: '',
   user: undefined,
   userLoading: true,
 };
@@ -162,10 +165,12 @@ export const UserProvider = ({
   }, [userJwtState]);
 
   const userContextValue = {
+    handleUserJwt,
     logout,
+    permissions,
+    setUserLoading,
     token: userJwtState,
     user,
-    permissions,
     userLoading,
   };
 

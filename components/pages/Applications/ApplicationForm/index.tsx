@@ -38,7 +38,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
 
   const { fetchWithAuth } = useAuthContext();
 
-  const { isLoading: isFormLoading, formState, validateSection } = useFormValidation(appId);
+  const { formState, validateSection } = useFormValidation(appId);
 
   useEffect(() => {
     fetchWithAuth({
@@ -69,7 +69,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
         applicationState={data?.state}
         sectionData={data?.sections}
         setLastUpdated={setLastUpdated}
-        isLoading={isFormLoading}
+        isLoading={false} // NOTE this was never used, revisit
         formState={formState}
         validateSection={validateSection}
       />
