@@ -24,7 +24,7 @@ import { getConfig } from 'global/config';
 import { useToaster } from './useToaster';
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
 import refreshJwt from 'global/utils/auth/refreshJwt';
-import useUserContext from './useUserContext';
+import useAuthContext from './useAuthContext';
 import { getStoredJwt } from 'global/utils/auth/helpers';
 
 type T_DataContext = {
@@ -43,7 +43,7 @@ const DataContext = createContext<T_DataContext>(dataContextDefaults);
 
 export const DataProvider = ({ children }: { children: React.ReactElement }) => {
   const [dataLoading, setDataLoading] = useState<boolean>(dataContextDefaults.dataLoading);
-  const { token, logout, handleUserJwt } = useUserContext();
+  const { token, logout, handleUserJwt } = useAuthContext();
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const toaster = useToaster();
 

@@ -27,12 +27,12 @@ import {
   getPermissionsFromToken,
   isValidJwt,
 } from 'global/utils/egoTokenUtils';
-import { NextPageContext } from 'next';
 import { useRouter } from 'next/router';
 import { createContext, ReactElement, useContext, useEffect, useState } from 'react';
+import usePageContext from './usePageContext';
 
 // TODO: rename these variables. userJwt, userModel, userPermissions
-type T_UserContext = {
+type T_AuthContext = {
   handleUserJwt: any;
   logout: any;
   permissions: any;
@@ -42,7 +42,7 @@ type T_UserContext = {
   userLoading: boolean;
 };
 
-const userContextDefaultValues = {
+const authContextDefaultValues = {
   handleUserJwt: () => {},
   logout: () => {},
   permissions: [],
@@ -52,25 +52,21 @@ const userContextDefaultValues = {
   userLoading: true,
 };
 
-const UserContext = createContext<T_UserContext>(userContextDefaultValues);
+const AuthContext = createContext<T_AuthContext>(authContextDefaultValues);
 
-export const UserProvider = ({
-  children,
-  ctx,
-}: {
-  children: ReactElement;
-  ctx: NextPageContext;
-}) => {
-  const [userJwtState, setUserJwtState] = useState<T_UserContext['token']>(
-    userContextDefaultValues.token,
+export const AuthProvider = ({ children }: { children: ReactElement }) => {
+  const [userJwtState, setUserJwtState] = useState<T_AuthContext['token']>(
+    authContextDefaultValues.token,
   );
-  const [user, setUser] = useState<T_UserContext['user']>(userContextDefaultValues.user);
-  const [permissions, setPermissions] = useState<T_UserContext['permissions']>(
-    userContextDefaultValues.permissions,
+  const [user, setUser] = useState<T_AuthContext['user']>(authContextDefaultValues.user);
+  const [permissions, setPermissions] = useState<T_AuthContext['permissions']>(
+    authContextDefaultValues.permissions,
   );
-  const [userLoading, setUserLoading] = useState<T_UserContext['userLoading']>(
-    userContextDefaultValues.userLoading,
+  const [userLoading, setUserLoading] = useState<T_AuthContext['userLoading']>(
+    authContextDefaultValues.userLoading,
   );
+
+  const ctx = usePageContext();
 
   const router = useRouter();
 
@@ -78,12 +74,12 @@ export const UserProvider = ({
     console.log('🎃 USER logout');
     router.push(`${HOMEPAGE_PATH}${isManual ? '' : '?session_expired=true'}`);
     removeStoredJwt();
-    handleUserJwt(userContextDefaultValues.token);
+    handleUserJwt(authContextDefaultValues.token);
   };
 
   const handleUserState = (token: string) => {
     const userInfo = token ? decodeToken(token) : null;
-    const nextUser = userInfo ? extractUser(userInfo) : userContextDefaultValues.user;
+    const nextUser = userInfo ? extractUser(userInfo) : authContextDefaultValues.user;
     const nextPermissions = getPermissionsFromToken(token);
     setUser(nextUser);
     setPermissions(nextPermissions);
@@ -164,7 +160,7 @@ export const UserProvider = ({
     handleUserState(userJwtState);
   }, [userJwtState]);
 
-  const userContextValue = {
+  const authContextValue = {
     handleUserJwt,
     logout,
     permissions,
@@ -174,9 +170,9 @@ export const UserProvider = ({
     userLoading,
   };
 
-  return <UserContext.Provider value={userContextValue}>{children}</UserContext.Provider>;
+  return <AuthContext.Provider value={authContextValue}>{children}</AuthContext.Provider>;
 };
 
-export default function useUserContext() {
-  return useContext(UserContext);
+export default function useAuthContext() {
+  return useContext(AuthContext);
 }

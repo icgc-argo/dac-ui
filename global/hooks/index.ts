@@ -21,4 +21,4 @@ export { default as useDataContext } from './useDataContext';
 export { default as useGetApplications } from './useGetApplications';
 export { default as useHealthAPI } from './useHealthAPI';
 export { default as usePageContext } from './usePageContext';
-export { default as useUserContext } from './useUserContext';
+export { default as useAuthContext } from './useAuthContext';

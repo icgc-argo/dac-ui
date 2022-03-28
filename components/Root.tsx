@@ -32,6 +32,7 @@ import { ToasterContext, useToastState } from 'global/hooks/useToaster';
 import ToastStack from '@icgc-argo/uikit/notifications/ToastStack';
 import GdprBanner from './GdprBanner';
 import { NextPageContext } from 'next';
+import { AuthProvider } from 'global/hooks/useAuthContext';
 
 /**
  * The global portal where modals will show up
@@ -166,38 +167,36 @@ const ToastProvider = ({ children }: { children: React.ReactNode }) => {
 const Root = ({
   children,
   pageContext,
-  egoJwt = '',
-  setInitialJwt,
 }: {
   children: ReactElement;
   pageContext: NextPageContext;
-  egoJwt?: string;
-  setInitialJwt: (jwt: string) => void;
 }) => {
   return (
     <React.Fragment>
       <CSSGlobalReset />
       <Head />
-      <DataProvider>
-        <PageContext.Provider value={pageContext}>
-          <ThemeProvider>
-            <ToastProvider>
-              <div
-                css={css`
-                  position: fixed;
-                  left: 0px;
-                  top: 0px;
-                  z-index: 9999;
-                  ${fillAvailableWidth}
-                `}
-                ref={modalPortalRef}
-              />
-              <GdprBanner />
-              <DefaultPageLayout>{children}</DefaultPageLayout>
-            </ToastProvider>
-          </ThemeProvider>
-        </PageContext.Provider>
-      </DataProvider>
+      <PageContext.Provider value={pageContext}>
+        <AuthProvider>
+          <DataProvider>
+            <ThemeProvider>
+              <ToastProvider>
+                <div
+                  css={css`
+                    position: fixed;
+                    left: 0px;
+                    top: 0px;
+                    z-index: 9999;
+                    ${fillAvailableWidth}
+                  `}
+                  ref={modalPortalRef}
+                />
+                <GdprBanner />
+                <DefaultPageLayout>{children}</DefaultPageLayout>
+              </ToastProvider>
+            </ThemeProvider>
+          </DataProvider>
+        </AuthProvider>
+      </PageContext.Provider>
     </React.Fragment>
   );
 };

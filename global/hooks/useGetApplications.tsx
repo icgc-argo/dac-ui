@@ -29,7 +29,7 @@ import {
   stringifyStates,
 } from 'components/pages/Applications/ManageApplications/utils';
 import { API } from 'global/constants/externalPaths';
-import { useDataContext, useUserContext } from 'global/hooks';
+import { useDataContext, useAuthContext } from 'global/hooks';
 
 // use this for "get application(s) on mount/render" fetch requests.
 
@@ -48,7 +48,7 @@ const useGetApplications = ({
 
   const { fetchWithAuth } = useDataContext();
 
-  const { userLoading, token } = useUserContext();
+  const { userLoading, token } = useAuthContext();
 
   useEffect(() => {
     if (token && !userLoading) {

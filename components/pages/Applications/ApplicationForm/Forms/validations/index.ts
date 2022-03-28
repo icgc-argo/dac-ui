@@ -23,7 +23,7 @@ import merge from 'deepmerge';
 
 import { AuthAPIFetchFunction } from 'components/pages/Applications/types';
 import { API } from 'global/constants';
-import { useDataContext, useUserContext } from 'global/hooks';
+import { useDataContext, useAuthContext } from 'global/hooks';
 
 import { applicantFieldNames, sectionsOrder, sectionStatusMapping } from '../constants';
 import {
@@ -531,7 +531,7 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
 export const useFormValidation = (appId: string) => {
   const [triggerFetch, setTriggerFetch] = useState(true);
   const { fetchWithAuth } = useDataContext();
-  const { userLoading } = useUserContext();
+  const { userLoading } = useAuthContext();
   const apiFetcher: AuthAPIFetchFunction = useCallback(
     ({ data, method } = {}) =>
       fetchWithAuth({

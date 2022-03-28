@@ -22,7 +22,7 @@ import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 
 import Loader from 'components/Loader';
-import { useUserContext } from 'global/hooks';
+import { useAuthContext } from 'global/hooks';
 import { hasDacoScope, isDacoAdmin } from 'global/utils/egoTokenUtils';
 import { PageHead } from 'components/Head';
 
@@ -40,7 +40,7 @@ const Application = (): ReactElement => {
   const {
     query: { ID: [appId = ''] = [] },
   }: QueryType = useRouter();
-  const { permissions, userLoading } = useUserContext();
+  const { permissions, userLoading } = useAuthContext();
 
   const isAdmin = permissions.length > 0 && isDacoAdmin(permissions);
 

@@ -20,7 +20,7 @@
 import { useEffect, useState } from 'react';
 import { AxiosError, AxiosResponse, Method } from 'axios';
 import { API } from 'global/constants/externalPaths';
-import { useDataContext, useUserContext } from 'global/hooks';
+import { useDataContext, useAuthContext } from 'global/hooks';
 
 const useGetCollabApplications = () => {
   const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
@@ -29,7 +29,7 @@ const useGetCollabApplications = () => {
 
   const { fetchWithAuth } = useDataContext();
 
-  const { userLoading, token } = useUserContext();
+  const { userLoading, token } = useAuthContext();
 
   useEffect(() => {
     if (token && !userLoading) {

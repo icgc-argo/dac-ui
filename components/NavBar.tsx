@@ -44,7 +44,7 @@ import {
   POLICIES_PAGE,
 } from 'global/constants/externalPaths';
 import { APPLICATIONS_PATH, LOGGED_IN_PATH, PRIVATE_PATHS } from 'global/constants/internalPaths';
-import { useUserContext, usePageContext } from 'global/hooks';
+import { useAuthContext, usePageContext } from 'global/hooks';
 import { UserWithId } from 'global/types';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
 import { ADMIN_APPLICATIONS_LABEL, APPLICANT_APPLICATIONS_LABEL } from 'global/constants';
@@ -177,7 +177,7 @@ const LoginButton = () => {
 
 const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
   const { asPath = '' } = usePageContext();
-  const { user, logout, permissions } = useUserContext();
+  const { user, logout, permissions } = useAuthContext();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = createRef() as React.RefObject<HTMLDivElement>;
   const [isAccessModalVisible, setAccessModalVisible] = useState<boolean>(false);
