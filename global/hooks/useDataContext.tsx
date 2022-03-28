@@ -86,7 +86,7 @@ export const DataProvider = ({ children }: { children: React.ReactElement }) => 
           fetchToken = refreshedJwt;
         } else {
           console.log('🐶 FETCH refreshed token is not valid');
-          logout();
+          logout({ isManual: false });
           setDataLoading(false);
           return Promise.reject(undefined);
         }

@@ -33,10 +33,10 @@ import usePageContext from './usePageContext';
 
 // TODO: rename these variables. userJwt, userModel, userPermissions
 type T_AuthContext = {
-  handleUserJwt: any;
-  logout: any;
-  permissions: any;
-  setUserLoading: any;
+  handleUserJwt: (token: string) => void;
+  logout: ({ isManual }: { isManual?: boolean }) => void;
+  permissions: string[];
+  setUserLoading: (loading: boolean) => void;
   token: string;
   user: any;
   userLoading: boolean;
@@ -111,7 +111,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
         .then(() => router.push(APPLICATIONS_PATH))
         .catch((err) => {
           console.warn(err);
-          logout();
+          logout({ isManual: false });
         })
         .finally(() => {
           setUserLoading(false);
@@ -138,12 +138,12 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
             handleUserJwt(refreshedJwt);
           } else {
             console.log('🎃 USER non valid refreshed token', refreshedJwt.slice(-10));
-            logout();
+            logout({ isManual: false });
           }
         }
       } else if (ctx.asPath !== HOMEPAGE_PATH) {
         console.log('🎃 USER not homepage, not /logged-in, no token');
-        logout();
+        logout({ isManual: false });
       }
       setUserLoading(false);
     };
