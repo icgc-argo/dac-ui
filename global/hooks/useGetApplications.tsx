@@ -21,7 +21,6 @@ import { useEffect, useState } from 'react';
 import { AxiosError, AxiosResponse, Method } from 'axios';
 import urlJoin from 'url-join';
 import { ApplicationsRequestData } from '../../components/pages/Applications/types';
-import useAuthContext from './useAuthContext';
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
@@ -30,6 +29,7 @@ import {
   stringifyStates,
 } from 'components/pages/Applications/ManageApplications/utils';
 import { API } from 'global/constants/externalPaths';
+import { useAuthContext, useUserContext } from 'global/hooks';
 
 // use this for "get application(s) on mount/render" fetch requests.
 
@@ -46,10 +46,12 @@ const useGetApplications = ({
   const [error, setError] = useState<AxiosError | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const { fetchWithAuth, isLoading: isTokenLoading, token } = useAuthContext();
+  const { fetchWithAuth } = useAuthContext();
+
+  const { userLoading, token } = useUserContext();
 
   useEffect(() => {
-    if (token && !isTokenLoading) {
+    if (token && !userLoading) {
       fetchWithAuth({
         method: 'GET' as Method,
         ...(appId
