@@ -19,18 +19,20 @@
 
 import { useEffect, useState } from 'react';
 import { AxiosError, AxiosResponse, Method } from 'axios';
-import useAuthContext from './useAuthContext';
 import { API } from 'global/constants/externalPaths';
+import { useAuthContext, useUserContext } from 'global/hooks';
 
 const useGetCollabApplications = () => {
   const [response, setResponse] = useState<AxiosResponse | undefined>(undefined);
   const [error, setError] = useState<AxiosError | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const { fetchWithAuth, isLoading: isTokenLoading, token } = useAuthContext();
+  const { fetchWithAuth } = useAuthContext();
+
+  const { userLoading, token } = useUserContext();
 
   useEffect(() => {
-    if (token && !isTokenLoading) {
+    if (token && !userLoading) {
       fetchWithAuth({
         method: 'GET' as Method,
         url: API.COLLABORATOR_APPS,
