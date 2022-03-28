@@ -21,7 +21,7 @@ import { ReactElement, useEffect, useState } from 'react';
 import { Method, AxiosResponse, AxiosError } from 'axios';
 import urlJoin from 'url-join';
 import Loader from 'components/Loader';
-import { useAuthContext } from 'global/hooks';
+import { useDataContext } from 'global/hooks';
 import { API } from 'global/constants';
 import ApplicationHeader from './Header';
 import ApplicationFormsBase from './Forms';
@@ -36,7 +36,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
   const [isAppLoading, setIsAppLoading] = useState<boolean>(true);
   const [lastUpdated, setLastUpdated] = useState<string>('');
 
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth } = useDataContext();
 
   const { formState, validateSection } = useFormValidation(appId);
 

@@ -27,22 +27,22 @@ import refreshJwt from 'global/utils/auth/refreshJwt';
 import useUserContext from './useUserContext';
 import { getStoredJwt } from 'global/utils/auth/helpers';
 
-type T_AuthContext = {
+type T_DataContext = {
   cancelFetchWithAuth: Canceler;
   dataLoading: boolean;
   fetchWithAuth: any;
 };
 
-const authContextDefaults = {
+const dataContextDefaults = {
   cancelFetchWithAuth: () => {},
   dataLoading: false,
   fetchWithAuth: () => {},
 };
 
-const AuthContext = createContext<T_AuthContext>(authContextDefaults);
+const DataContext = createContext<T_DataContext>(dataContextDefaults);
 
-export const AuthProvider = ({ children }: { children: React.ReactElement }) => {
-  const [dataLoading, setDataLoading] = useState<boolean>(authContextDefaults.dataLoading);
+export const DataProvider = ({ children }: { children: React.ReactElement }) => {
+  const [dataLoading, setDataLoading] = useState<boolean>(dataContextDefaults.dataLoading);
   const { token, logout, handleUserJwt } = useUserContext();
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const toaster = useToaster();
@@ -132,9 +132,9 @@ export const AuthProvider = ({ children }: { children: React.ReactElement }) => 
     fetchWithAuth,
   };
 
-  return <AuthContext.Provider value={authData}>{children}</AuthContext.Provider>;
+  return <DataContext.Provider value={authData}>{children}</DataContext.Provider>;
 };
 
-export default function useAuthContext() {
-  return useContext(AuthContext);
+export default function useDataContext() {
+  return useContext(DataContext);
 }

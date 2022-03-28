@@ -25,7 +25,7 @@ import { UikitTheme } from '@icgc-argo/uikit/index';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import urlJoin from 'url-join';
 import { isEqual } from 'lodash';
-import { useAuthContext } from 'global/hooks';
+import { useDataContext } from 'global/hooks';
 import { API, APPLICATIONS_PATH, APPROVED_APP_CLOSED_CHECK } from 'global/constants';
 import { AxiosError } from 'axios';
 import { ApplicationState, ApprovedDoc } from '../../types';
@@ -99,7 +99,7 @@ const HeaderActions = ({
   currentApprovedDoc: ApprovedDoc | undefined;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth } = useDataContext();
   const [pdfIsLoading, setPdfIsLoading] = useState<boolean>(false);
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
   const [isSubmitting, setIsSubmitting] = useState(false);

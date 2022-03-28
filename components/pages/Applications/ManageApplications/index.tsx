@@ -47,7 +47,7 @@ import {
 } from './utils';
 
 import PageHeader from 'components/PageHeader';
-import { useAuthContext, useGetApplications } from 'global/hooks';
+import { useDataContext, useGetApplications } from 'global/hooks';
 import GenericError from 'components/pages/Error/Generic';
 import Icon from '@icgc-argo/uikit/Icon';
 import Input from '@icgc-argo/uikit/form/Input';
@@ -123,7 +123,7 @@ const ManageApplications = (): ReactElement => {
     searchQuery,
   } = useManageApplicationsState();
 
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth } = useDataContext();
   const theme = useTheme();
   const containerRef = React.createRef<HTMLDivElement>();
 

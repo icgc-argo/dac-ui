@@ -28,13 +28,13 @@ import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
 
 import { API, APPLICATIONS_PATH, DACO_APPLYING_DOCS } from 'global/constants';
-import { useAuthContext } from 'global/hooks';
+import { useDataContext } from 'global/hooks';
 
 import DashboardCard from '../Card';
 
 const StartApplication = () => {
   const theme = useTheme();
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth } = useDataContext();
   const router = useRouter();
 
   const createNewApplication = () => {

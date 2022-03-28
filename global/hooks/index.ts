@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export { default as useAuthContext } from './useAuthContext';
+export { default as useDataContext } from './useDataContext';
 export { default as useGetApplications } from './useGetApplications';
 export { default as useHealthAPI } from './useHealthAPI';
 export { default as usePageContext } from './usePageContext';

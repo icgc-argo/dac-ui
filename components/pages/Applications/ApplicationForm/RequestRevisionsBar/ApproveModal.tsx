@@ -29,7 +29,7 @@ import Typography from '@icgc-argo/uikit/Typography';
 import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 
-import { useAuthContext } from 'global/hooks';
+import { useDataContext } from 'global/hooks';
 import { API, DATE_TEXT_FORMAT } from 'global/constants';
 
 const ApproveModal = ({
@@ -47,7 +47,7 @@ const ApproveModal = ({
 
   const [error, setError] = useState<AxiosError | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth } = useDataContext();
 
   const submitApproval = () => {
     setIsLoading(true);

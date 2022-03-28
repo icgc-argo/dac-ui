@@ -25,14 +25,13 @@ import ThemeProvider from '@icgc-argo/uikit/ThemeProvider';
 import Modal from '@icgc-argo/uikit/Modal';
 
 import Head from 'components/Head';
-import { AuthProvider } from 'global/hooks/useAuthContext';
+import { DataProvider } from 'global/hooks/useDataContext';
 import { PageContext } from 'global/hooks/usePageContext';
 import DefaultPageLayout from './DefaultPageLayout';
 import { ToasterContext, useToastState } from 'global/hooks/useToaster';
 import ToastStack from '@icgc-argo/uikit/notifications/ToastStack';
 import GdprBanner from './GdprBanner';
 import { NextPageContext } from 'next';
-import useUserContext from 'global/hooks/useUserContext';
 
 /**
  * The global portal where modals will show up
@@ -175,15 +174,11 @@ const Root = ({
   egoJwt?: string;
   setInitialJwt: (jwt: string) => void;
 }) => {
-  const { token } = useUserContext();
-
-  console.log({ token: token.slice(-10) });
-
   return (
     <React.Fragment>
       <CSSGlobalReset />
       <Head />
-      <AuthProvider egoJwt={egoJwt} setInitialJwt={setInitialJwt}>
+      <DataProvider>
         <PageContext.Provider value={pageContext}>
           <ThemeProvider>
             <ToastProvider>
@@ -202,7 +197,7 @@ const Root = ({
             </ToastProvider>
           </ThemeProvider>
         </PageContext.Provider>
-      </AuthProvider>
+      </DataProvider>
     </React.Fragment>
   );
 };

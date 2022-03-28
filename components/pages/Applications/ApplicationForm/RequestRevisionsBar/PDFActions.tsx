@@ -23,7 +23,7 @@ import useTheme from '@icgc-argo/uikit/utils/useTheme';
 import { AxiosError } from 'axios';
 import UploadButton, { pdfValidator } from 'components/UploadButton';
 import { API } from 'global/constants';
-import { useAuthContext } from 'global/hooks';
+import { useDataContext } from 'global/hooks';
 import { instructionBoxButtonContentStyle, instructionBoxButtonIconStyle } from 'global/styles';
 import { useState } from 'react';
 import { ApprovedDoc } from '../../types';
@@ -45,7 +45,7 @@ const PDFActions = ({
   setLastUpdated: SetLastUpdated;
 }) => {
   const theme = useTheme();
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth } = useDataContext();
 
   const [isDeleting, setIsDeleting] = useState(false);
   const [uploadError, setUploadError] = useState(false);

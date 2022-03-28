@@ -44,7 +44,7 @@ import {
 import StaticCollaborators from 'components/pages/Applications/PDF/StaticCollaborators';
 import { ModalPortal } from 'components/Root';
 import { API } from 'global/constants';
-import { useAuthContext } from 'global/hooks';
+import { useDataContext } from 'global/hooks';
 
 import { honorificsList } from '../constants';
 import DoubleFieldRow from '../DoubleFieldRow';
@@ -85,7 +85,7 @@ const Collaborators = ({
     keyof typeof AddCollaboratorError | null
   >(null);
   const containerRef = createRef<HTMLDivElement>();
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth } = useDataContext();
   const theme = useTheme();
   const disableActions = [
     ApplicationState.REVIEW,

@@ -29,7 +29,7 @@ import {
   stringifyStates,
 } from 'components/pages/Applications/ManageApplications/utils';
 import { API } from 'global/constants/externalPaths';
-import { useAuthContext, useUserContext } from 'global/hooks';
+import { useDataContext, useUserContext } from 'global/hooks';
 
 // use this for "get application(s) on mount/render" fetch requests.
 
@@ -46,7 +46,7 @@ const useGetApplications = ({
   const [error, setError] = useState<AxiosError | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth } = useDataContext();
 
   const { userLoading, token } = useUserContext();
 
