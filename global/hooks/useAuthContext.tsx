@@ -18,9 +18,13 @@
  */
 
 import { APPLICATIONS_PATH, HOMEPAGE_PATH, LOGGED_IN_PATH } from 'global/constants/internalPaths';
-import fetchEgoJwt from 'global/utils/auth/fetchEgoJwt';
-import { getStoredJwt, removeStoredJwt, setStoredToken } from 'global/utils/auth/helpers';
-import refreshJwt from 'global/utils/auth/refreshJwt';
+import {
+  getStoredJwt,
+  refreshJwt,
+  removeStoredJwt,
+  setStoredToken,
+  fetchEgoJwt,
+} from 'global/utils/authUtils';
 import {
   decodeToken,
   extractUser,
@@ -98,7 +102,8 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     // different sections of an application
     if (ctx.asPath === LOGGED_IN_PATH) {
       console.log('🎃 USER /logged-in');
-      router.prefetch(APPLICATIONS_PATH);
+      // router.prefetch(APPLICATIONS_PATH);
+      // TODO put back in at the end
       setUserLoading(true);
       fetchEgoJwt()
         .then((egoJwt = '') => {
@@ -118,6 +123,8 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
         });
     }
   }, []);
+
+  console.log({ ctx });
 
   useEffect(() => {
     // on page render - DOES detect navigating to

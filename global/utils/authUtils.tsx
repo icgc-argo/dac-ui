@@ -17,16 +17,81 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import urlJoin from 'url-join';
 import Queue from 'promise-queue';
+import Router from 'next/router';
+
+import { isValidJwt } from 'global/utils/egoTokenUtils';
+import { getConfig } from 'global/config';
 import { EGO_JWT_KEY } from 'global/constants';
-import { isValidJwt } from '../egoTokenUtils';
 import { egoRefreshUrl } from 'global/constants/externalPaths';
+
+const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
+
+export const getStoredJwt = (): string => localStorage.getItem(EGO_JWT_KEY) || '';
+export const removeStoredJwt = () => {
+  localStorage.removeItem(EGO_JWT_KEY);
+};
+export const setStoredToken = (token: string) => {
+  localStorage.setItem(EGO_JWT_KEY, token);
+};
+
+export const fetchEgoJwt = async (): Promise<string> => {
+  console.log('fetchEgoJwt');
+  const egoLoginUrl = urlJoin(
+    NEXT_PUBLIC_EGO_API_ROOT,
+    `/oauth/ego-token?client_id=${NEXT_PUBLIC_EGO_CLIENT_ID}`,
+  );
+
+  const res = await fetch(egoLoginUrl, {
+    credentials: 'include',
+    headers: { accept: '*/*' },
+    body: null,
+    method: 'POST',
+  });
+  if (res.status !== 200) {
+    throw new Error();
+  }
+  return await res.text();
+};
+
+export const deleteTokens = () => {
+  const storedToken = localStorage.getItem(EGO_JWT_KEY) || '';
+
+  console.log('DELETE TOKENS jwt in localStorage', storedToken.slice(-10));
+
+  if (storedToken) {
+    return fetch(egoRefreshUrl, {
+      credentials: 'include',
+      headers: {
+        accept: '*/*',
+        authorization: `Bearer ${storedToken}`,
+      },
+      method: 'DELETE',
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error();
+        }
+        console.log('DELETE REFRESH deleted the refresh token', res);
+      })
+      .catch((err) => {
+        console.warn(err);
+      })
+      .finally(() => {
+        console.log('DELETE TOKENS finally delete localStorage jwt');
+        localStorage.removeItem(EGO_JWT_KEY);
+      });
+  } else {
+    return Promise.resolve();
+  }
+};
 
 var maxConcurrent = 1;
 var maxQueue = Infinity;
 var queue = new Queue(maxConcurrent, maxQueue);
 
-const refreshJwt = () =>
+export const refreshJwt = () =>
   queue.add(async () => {
     // get token from localStorage, not context,
     // in case another tab got a new JWT.
@@ -64,4 +129,29 @@ const refreshJwt = () =>
     return newJwt;
   });
 
-export default refreshJwt;
+export const logoutUtil = ({
+  handleTokenState = () => {},
+  isManual = false,
+  isPublic = false,
+}: {
+  handleTokenState: ((jwt: string) => void | PromiseLike<void>) | undefined;
+  isManual: boolean;
+  isPublic?: boolean;
+}) => {
+  console.log('logoutUtil');
+
+  deleteTokens().then(() => {
+    handleTokenState('');
+  });
+
+  if (isManual || !isPublic) {
+    Router.push({
+      pathname: '/',
+      ...(isManual
+        ? {}
+        : {
+            query: { session_expired: true },
+          }),
+    });
+  }
+};

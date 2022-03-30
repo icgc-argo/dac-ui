@@ -23,9 +23,8 @@ import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
 import { useToaster } from './useToaster';
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
-import refreshJwt from 'global/utils/auth/refreshJwt';
 import useAuthContext from './useAuthContext';
-import { getStoredJwt } from 'global/utils/auth/helpers';
+import { refreshJwt, getStoredJwt } from 'global/utils/authUtils';
 
 type T_DataContext = {
   cancelFetchWithAuth: Canceler;
