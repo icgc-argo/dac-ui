@@ -62,10 +62,6 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
   const [userJwtState, setUserJwtState] = useState<T_AuthContext['token']>(
     authContextDefaultValues.token,
   );
-  const [user, setUser] = useState<T_AuthContext['user']>(authContextDefaultValues.user);
-  const [permissions, setPermissions] = useState<T_AuthContext['permissions']>(
-    authContextDefaultValues.permissions,
-  );
   const [userLoading, setUserLoading] = useState<T_AuthContext['userLoading']>(
     authContextDefaultValues.userLoading,
   );
@@ -81,20 +77,10 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     handleUserJwt(authContextDefaultValues.token);
   };
 
-  const handleUserState = (token: string) => {
-    const userInfo = token ? decodeToken(token) : null;
-    const nextUser = userInfo ? extractUser(userInfo) : authContextDefaultValues.user;
-    const nextPermissions = getPermissionsFromToken(token);
-    setUser(nextUser);
-    setPermissions(nextPermissions);
-  };
-
   const handleUserJwt = (token: string) => {
-    // TODO reducer?
     console.log('🎃 USER handleUserJwt', token.slice(-10));
     setUserJwtState(token);
     setStoredToken(token);
-    // handleUserState(); NOTE might need this, depending on server latency
   };
 
   useEffect(() => {
@@ -162,10 +148,11 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     }
   });
 
-  useEffect(() => {
-    // populate user state when userJwt updates & initial render
-    handleUserState(userJwtState);
-  }, [userJwtState]);
+  const userInfo = userJwtState ? decodeToken(userJwtState) : null;
+  const user: T_AuthContext['user'] = userInfo
+    ? extractUser(userInfo)
+    : authContextDefaultValues.user;
+  const permissions: T_AuthContext['permissions'] = getPermissionsFromToken(userJwtState);
 
   const authContextValue = {
     handleUserJwt,
