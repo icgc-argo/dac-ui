@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React, { ReactElement } from 'react';
+import React, { ReactNode } from 'react';
 import { css } from '@emotion/core';
 import ReactDOM from 'react-dom';
 
@@ -164,13 +164,7 @@ const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const Root = ({
-  children,
-  pageContext,
-}: {
-  children: ReactElement;
-  pageContext: NextPageContext;
-}) => {
+const Root = ({ children, pageContext }: { children: ReactNode; pageContext: NextPageContext }) => {
   return (
     <React.Fragment>
       <CSSGlobalReset />
