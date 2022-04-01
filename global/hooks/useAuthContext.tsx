@@ -38,7 +38,7 @@ import usePageContext from './usePageContext';
 // TODO: rename these variables. userJwt, userModel, userPermissions
 type T_AuthContext = {
   handleUserJwt: (token: string) => void;
-  logout: ({ isManual }: { isManual?: boolean }) => void;
+  logout: ({ sessionExpired }: { sessionExpired?: boolean }) => void;
   permissions: string[];
   setUserLoading: (loading: boolean) => void;
   token: string;
@@ -70,9 +70,9 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
 
   const router = useRouter();
 
-  const logout = ({ isManual = false } = {}) => {
+  const logout = ({ sessionExpired = true } = {}) => {
     console.log('🎃 USER logout');
-    router.push(`${HOMEPAGE_PATH}${isManual ? '' : '?session_expired=true'}`);
+    router.push(`${HOMEPAGE_PATH}${sessionExpired ? '?session_expired=true' : ''}`);
     removeStoredJwt();
     handleUserJwt(authContextDefaultValues.token);
   };
@@ -102,7 +102,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
         .then(() => router.push(APPLICATIONS_PATH))
         .catch((err) => {
           console.warn(err);
-          logout({ isManual: false });
+          logout({ sessionExpired: true });
         })
         .finally(() => {
           setUserLoading(false);
@@ -131,12 +131,12 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
             handleUserJwt(refreshedJwt);
           } else {
             console.log('🎃 USER non valid refreshed token', refreshedJwt.slice(-10));
-            logout({ isManual: false });
+            logout({ sessionExpired: true });
           }
         }
       } else if (ctx.asPath !== HOMEPAGE_PATH) {
         console.log('🎃 USER not homepage, not /logged-in, no token');
-        logout({ isManual: false });
+        logout({ sessionExpired: true });
       }
       setUserLoading(false);
     };
