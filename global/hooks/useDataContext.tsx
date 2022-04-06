@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2022 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -19,7 +19,7 @@
 
 import React, { createContext, useContext, useState } from 'react';
 import { isValidJwt } from '../utils/egoTokenUtils';
-import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
 import { useToaster } from './useToaster';
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
@@ -59,7 +59,7 @@ export const DataProvider = ({ children }: { children: React.ReactElement }) => 
     params = {},
     responseType,
     url,
-  }: AxiosRequestConfig) => {
+  }: AxiosRequestConfig): Promise<AxiosResponse> => {
     setDataLoading(true);
 
     if (!url) {
@@ -110,13 +110,13 @@ export const DataProvider = ({ children }: { children: React.ReactElement }) => 
       });
   };
 
-  const authData = {
+  const dataContextValue = {
     cancelFetchWithAuth,
     dataLoading,
     fetchWithAuth,
   };
 
-  return <DataContext.Provider value={authData}>{children}</DataContext.Provider>;
+  return <DataContext.Provider value={dataContextValue}>{children}</DataContext.Provider>;
 };
 
 export default function useDataContext() {

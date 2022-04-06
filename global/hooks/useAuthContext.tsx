@@ -19,11 +19,11 @@
 
 import { APPLICATIONS_PATH, HOMEPAGE_PATH, LOGGED_IN_PATH } from 'global/constants/internalPaths';
 import {
+  fetchEgoJwt,
   getStoredJwt,
   refreshJwt,
   removeStoredJwt,
-  setStoredToken,
-  fetchEgoJwt,
+  setStoredJwt,
 } from 'global/utils/authUtils';
 import {
   decodeToken,
@@ -35,13 +35,14 @@ import { useRouter } from 'next/router';
 import { createContext, ReactElement, useContext, useEffect, useState } from 'react';
 import { usePageContext } from 'global/hooks';
 import { egoRefreshUrl } from 'global/constants/externalPaths';
+import { UserWithId } from 'global/types';
 
 type T_AuthContext = {
   getUserJwt: () => string | Promise<string>;
   logout: ({ sessionExpired }: { sessionExpired?: boolean }) => void;
   permissions: string[];
   token: string;
-  user: any;
+  user?: UserWithId;
   userLoading: boolean;
 };
 
@@ -71,8 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
   const logout = ({ sessionExpired = true } = {}) => {
     console.log('AUTH - logout');
     const storedJwt = getStoredJwt();
-    removeStoredJwt();
-    handleUserJwt(authContextDefaultValues.token);
+    handleUserJwt();
     router.push(`${HOMEPAGE_PATH}${sessionExpired ? '?session_expired=true' : ''}`);
     fetch(egoRefreshUrl, {
       credentials: 'include',
@@ -93,13 +93,22 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
       });
   };
 
-  const handleUserJwt = (token: string) => {
+  const handleUserJwt = (token: string = '') => {
+    // make sure logout() is handled when using this function.
     console.log('AUTH - handleUserJwt');
-    setUserJwtState(token);
-    setStoredToken(token);
+    if (isValidJwt(token)) {
+      setStoredJwt(token);
+      setUserJwtState(token);
+    } else {
+      setUserJwtState(authContextDefaultValues.token);
+      removeStoredJwt();
+    }
   };
 
-  const getUserJwt = async () => {
+  const getUserJwt = async (): Promise<string> => {
+    // this function returns a string and updates the JWT in state & localStorage.
+    // you have to handle logout() if this function doesn't return a valid JWT.
+
     setUserLoading(true);
     if (isValidJwt(userJwtState)) {
       console.log('AUTH - getUserJwt - state', userJwtState.slice(-10));
@@ -124,7 +133,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     }
 
     console.log('AUTH - getUserJwt - none');
-    handleUserJwt(authContextDefaultValues.token);
+    handleUserJwt();
     setUserLoading(false);
     return authContextDefaultValues.token;
   };
