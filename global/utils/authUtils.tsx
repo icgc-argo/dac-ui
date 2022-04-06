@@ -92,42 +92,47 @@ var maxQueue = Infinity;
 var queue = new Queue(maxConcurrent, maxQueue);
 
 export const refreshJwt = () =>
-  queue.add(async () => {
-    // get token from localStorage, not context,
-    // in case another tab got a new JWT.
-    const storedToken = localStorage.getItem(EGO_JWT_KEY) || '';
+  queue
+    .add(async () => {
+      // get token from localStorage, not context,
+      // in case another tab got a new JWT.
+      const storedToken = localStorage.getItem(EGO_JWT_KEY) || '';
 
-    if (!storedToken) {
-      console.log('REFRESH no localStorage token');
+      if (!storedToken) {
+        console.log('REFRESH - no localStorage token');
+        return '';
+      }
+
+      if (isValidJwt(storedToken)) {
+        console.log('REFRESH - found valid localStorage token', storedToken.slice(-10));
+        localStorage.setItem(EGO_JWT_KEY, storedToken);
+        return storedToken;
+      }
+
+      console.log('REFRESH - no valid localStorage token', storedToken.slice(-10));
+
+      const res = await fetch(egoRefreshUrl, {
+        credentials: 'include',
+        headers: {
+          accept: '*/*',
+          authorization: `Bearer ${storedToken}`,
+        },
+        method: 'POST',
+      });
+      const newJwt = await res.text();
+      if (isValidJwt(newJwt)) {
+        console.log('REFRESH - valid refreshed token', newJwt.slice(-10));
+        localStorage.setItem(EGO_JWT_KEY, newJwt);
+      } else {
+        throw new Error('Invalid refreshed JWT');
+      }
+
+      return newJwt;
+    })
+    .catch((e) => {
+      console.log(e);
       return '';
-    }
-
-    if (isValidJwt(storedToken)) {
-      console.log('REFRESH found valid localStorage token', storedToken.slice(-10));
-      localStorage.setItem(EGO_JWT_KEY, storedToken);
-      return storedToken;
-    }
-
-    console.log('REFRESH no valid localStorage token', storedToken.slice(-10));
-
-    const res = await fetch(egoRefreshUrl, {
-      credentials: 'include',
-      headers: {
-        accept: '*/*',
-        authorization: `Bearer ${storedToken}`,
-      },
-      method: 'POST',
     });
-    const newJwt = await res.text();
-    if (isValidJwt(newJwt)) {
-      console.log('REFRESH valid refreshed token', newJwt.slice(-10));
-      localStorage.setItem(EGO_JWT_KEY, newJwt);
-    } else {
-      throw new Error('Invalid refreshed JWT');
-    }
-
-    return newJwt;
-  });
 
 export const logoutUtil = ({
   handleTokenState = () => {},

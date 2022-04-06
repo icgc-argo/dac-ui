@@ -23,8 +23,7 @@ import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
 import { useToaster } from './useToaster';
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
-import useAuthContext from './useAuthContext';
-import { refreshJwt, getStoredJwt } from 'global/utils/authUtils';
+import { useAuthContext } from 'global/hooks';
 
 type T_DataContext = {
   cancelFetchWithAuth: Canceler;
@@ -42,7 +41,7 @@ const DataContext = createContext<T_DataContext>(dataContextDefaults);
 
 export const DataProvider = ({ children }: { children: React.ReactElement }) => {
   const [dataLoading, setDataLoading] = useState<boolean>(dataContextDefaults.dataLoading);
-  const { token, logout, handleUserJwt } = useAuthContext();
+  const { getUserJwt, logout } = useAuthContext();
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const toaster = useToaster();
 
@@ -62,35 +61,21 @@ export const DataProvider = ({ children }: { children: React.ReactElement }) => 
     url,
   }: AxiosRequestConfig) => {
     setDataLoading(true);
-    if (!url || !token) {
+
+    if (!url) {
       setDataLoading(false);
       return Promise.reject(undefined);
     }
 
-    let fetchToken = token;
-
-    if (!isValidJwt(token)) {
-      console.log('🐶 FETCH state token is not valid');
-      const storageToken = getStoredJwt();
-      if (isValidJwt(storageToken)) {
-        console.log('🐶 FETCH localStorage token is valid');
-        handleUserJwt(storageToken);
-        fetchToken = storageToken;
-      } else {
-        console.log('🐶 FETCH localStorage token is not valid');
-        const refreshedJwt = (await refreshJwt().catch(logout)) as string;
-        if (isValidJwt(refreshedJwt)) {
-          console.log('FETCH refreshed token is valid');
-          handleUserJwt(refreshedJwt);
-          fetchToken = refreshedJwt;
-        } else {
-          console.log('🐶 FETCH refreshed token is not valid');
-          logout({ sessionExpired: true });
-          setDataLoading(false);
-          return Promise.reject(undefined);
-        }
-      }
+    const fetchJwt = await getUserJwt();
+    if (!isValidJwt(fetchJwt)) {
+      console.log('FETCH - jwt invalid', fetchJwt.slice(-10));
+      setDataLoading(false);
+      logout({ sessionExpired: true });
+      return Promise.reject(undefined);
     }
+
+    console.log('FETCH - valid jwt', fetchJwt.slice(-10));
 
     const config: AxiosRequestConfig = {
       ...(!['DELETE', 'GET'].includes(method) && { data }),
@@ -99,7 +84,7 @@ export const DataProvider = ({ children }: { children: React.ReactElement }) => 
       headers: {
         accept: '*/*',
         ...headers,
-        Authorization: `Bearer ${fetchToken || ''}`,
+        Authorization: `Bearer ${fetchJwt}`,
       },
       method,
       params,

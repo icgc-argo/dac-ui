@@ -44,6 +44,8 @@ import { getConfig } from 'global/config';
 import Link from '@icgc-argo/uikit/Link';
 import ApplicationHistoryModal from './ApplicationHistoryModal';
 import { SetLastUpdated } from '../types';
+import { useAuthContext } from 'global/hooks';
+import { isValidJwt } from 'global/utils/egoTokenUtils';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -114,19 +116,33 @@ const ApplicationFormsBase = ({
     [formState],
   );
 
+  const { getUserJwt, logout } = useAuthContext();
+
+  const handleAuthOnSectionChange = async () => {
+    console.log('handleAuthOnSectionChange');
+    const userJwt = await getUserJwt();
+    if (!isValidJwt(userJwt)) {
+      logout({ sessionExpired: true });
+    }
+  };
+
   useEffect(() => {
     if (sectionFromQuery !== selectedSection) {
-      // This adds the selected section to the history
-      // without the initial switch when it's not in the query
-      (sectionFromQuery ? router.push : router.replace)(
-        `/applications/${appId}?section=${selectedSection}`,
-        undefined,
-        {
-          shallow: true,
-        },
-      );
+      handleAuthOnSectionChange().then(() => {
+        // This adds the selected section to the history
+        // without the initial switch when it's not in the query
+        (sectionFromQuery ? router.push : router.replace)(
+          `/applications/${appId}?section=${selectedSection}`,
+          undefined,
+          {
+            shallow: true,
+          },
+        );
+      });
     }
+  }, [sectionFromQuery, selectedSection]);
 
+  useEffect(() => {
     // avoid validating a section that has already been validated.
     formState.sections[selectedSection]?.meta.validated ||
       triggerSectionValidation('initialValidation', selectedSection);

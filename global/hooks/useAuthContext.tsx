@@ -35,22 +35,19 @@ import { useRouter } from 'next/router';
 import { createContext, ReactElement, useContext, useEffect, useState } from 'react';
 import usePageContext from './usePageContext';
 
-// TODO: rename these variables. userJwt, userModel, userPermissions
 type T_AuthContext = {
-  handleUserJwt: (token: string) => void;
+  getUserJwt: () => string | Promise<string>;
   logout: ({ sessionExpired }: { sessionExpired?: boolean }) => void;
   permissions: string[];
-  setUserLoading: (loading: boolean) => void;
   token: string;
   user: any;
   userLoading: boolean;
 };
 
 const authContextDefaultValues = {
-  handleUserJwt: () => {},
+  getUserJwt: () => '',
   logout: () => {},
   permissions: [],
-  setUserLoading: () => {},
   token: '',
   user: undefined,
   userLoading: true,
@@ -71,26 +68,62 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
   const router = useRouter();
 
   const logout = ({ sessionExpired = true } = {}) => {
-    console.log('🎃 USER logout');
+    console.log('AUTH - logout');
     router.push(`${HOMEPAGE_PATH}${sessionExpired ? '?session_expired=true' : ''}`);
     removeStoredJwt();
     handleUserJwt(authContextDefaultValues.token);
   };
 
   const handleUserJwt = (token: string) => {
-    console.log('🎃 USER handleUserJwt', token.slice(-10));
+    console.log('AUTH - handleUserJwt');
     setUserJwtState(token);
     setStoredToken(token);
   };
 
+  const getUserJwt = async () => {
+    setUserLoading(true);
+    if (isValidJwt(userJwtState)) {
+      console.log('AUTH - getUserJwt - state', userJwtState.slice(-10));
+      setUserLoading(false);
+      return userJwtState;
+    }
+
+    const storedJwt = getStoredJwt();
+    if (isValidJwt(storedJwt)) {
+      console.log('AUTH - getUserJwt - localStorage', storedJwt.slice(-10));
+      setUserJwtState(storedJwt);
+      setUserLoading(false);
+      return storedJwt;
+    }
+
+    const refreshedJwt = await refreshJwt();
+    if (isValidJwt(refreshedJwt)) {
+      console.log('AUTH - getUserJwt - refreshed', refreshedJwt.slice(-10));
+      handleUserJwt(refreshedJwt);
+      setUserLoading(false);
+      return refreshedJwt;
+    }
+
+    console.log('AUTH - getUserJwt - none');
+    handleUserJwt(authContextDefaultValues.token);
+    setUserLoading(false);
+    return authContextDefaultValues.token;
+  };
+
+  const handleAuth = async () => {
+    console.log('AUTH - handleAuth');
+    const userJwt = await getUserJwt();
+    if (!isValidJwt(userJwt) && ctx.asPath !== HOMEPAGE_PATH) {
+      logout({ sessionExpired: true });
+    }
+  };
+
   useEffect(() => {
-    // on page change - doesn't detect navigating to
-    // different sections of an application
+    console.log('PAGE CHANGE');
     if (ctx.asPath === LOGGED_IN_PATH) {
-      console.log('🎃 USER /logged-in');
-      // router.prefetch(APPLICATIONS_PATH);
-      // TODO put back in at the end
+      console.log('AUTH - /logged-in');
       setUserLoading(true);
+      router.prefetch(APPLICATIONS_PATH);
       fetchEgoJwt()
         .then((egoJwt = '') => {
           if (isValidJwt(egoJwt)) {
@@ -108,45 +141,14 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
           setUserLoading(false);
         });
     }
-  }, []);
 
-  console.log({ ctx });
-
-  useEffect(() => {
-    // on page render - DOES detect navigating to
-    // different sections of an application
-    const handleAuth = async () => {
-      console.log('🎃 USER handleAuth');
-      setUserLoading(true);
-      const storedJwt = getStoredJwt();
-      if (storedJwt) {
-        if (isValidJwt(storedJwt)) {
-          console.log('🎃 USER valid localStorage token', storedJwt.slice(-10));
-          setUserJwtState(storedJwt);
-        } else {
-          console.log('🎃 USER non valid localStorage token', storedJwt.slice(-10));
-          const refreshedJwt = (await refreshJwt().catch(logout)) || '';
-          if (isValidJwt(refreshedJwt)) {
-            console.log('🎃 USER valid refreshed token', refreshedJwt.slice(-10));
-            handleUserJwt(refreshedJwt);
-          } else {
-            console.log('🎃 USER non valid refreshed token', refreshedJwt.slice(-10));
-            logout({ sessionExpired: true });
-          }
-        }
-      } else if (ctx.asPath !== HOMEPAGE_PATH) {
-        console.log('🎃 USER not homepage, not /logged-in, no token');
-        logout({ sessionExpired: true });
-      }
-      setUserLoading(false);
-    };
     if (
       isValidJwt(userJwtState) ||
       (!ctx.query?.session_expired && ctx.asPath !== LOGGED_IN_PATH)
     ) {
       handleAuth();
     }
-  });
+  }, []);
 
   const userInfo = userJwtState ? decodeToken(userJwtState) : null;
   const user: T_AuthContext['user'] = userInfo
@@ -155,13 +157,12 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
   const permissions: T_AuthContext['permissions'] = getPermissionsFromToken(userJwtState);
 
   const authContextValue = {
-    handleUserJwt,
+    getUserJwt,
     logout,
     permissions,
-    setUserLoading,
     token: userJwtState,
     user,
-    userLoading,
+    userLoading: userLoading && !userJwtState,
   };
 
   return <AuthContext.Provider value={authContextValue}>{children}</AuthContext.Provider>;
