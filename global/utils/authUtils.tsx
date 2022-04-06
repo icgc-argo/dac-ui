@@ -19,7 +19,6 @@
 
 import urlJoin from 'url-join';
 import Queue from 'promise-queue';
-import Router from 'next/router';
 
 import { isValidJwt } from 'global/utils/egoTokenUtils';
 import { getConfig } from 'global/config';
@@ -53,38 +52,6 @@ export const fetchEgoJwt = async (): Promise<string> => {
     throw new Error();
   }
   return await res.text();
-};
-
-export const deleteTokens = () => {
-  const storedToken = localStorage.getItem(EGO_JWT_KEY) || '';
-
-  console.log('DELETE TOKENS jwt in localStorage', storedToken.slice(-10));
-
-  if (storedToken) {
-    return fetch(egoRefreshUrl, {
-      credentials: 'include',
-      headers: {
-        accept: '*/*',
-        authorization: `Bearer ${storedToken}`,
-      },
-      method: 'DELETE',
-    })
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new Error();
-        }
-        console.log('DELETE REFRESH deleted the refresh token', res);
-      })
-      .catch((err) => {
-        console.warn(err);
-      })
-      .finally(() => {
-        console.log('DELETE TOKENS finally delete localStorage jwt');
-        localStorage.removeItem(EGO_JWT_KEY);
-      });
-  } else {
-    return Promise.resolve();
-  }
 };
 
 var maxConcurrent = 1;
@@ -133,30 +100,3 @@ export const refreshJwt = () =>
       console.log(e);
       return '';
     });
-
-export const logoutUtil = ({
-  handleTokenState = () => {},
-  isManual = false,
-  isPublic = false,
-}: {
-  handleTokenState: ((jwt: string) => void | PromiseLike<void>) | undefined;
-  isManual: boolean;
-  isPublic?: boolean;
-}) => {
-  console.log('logoutUtil');
-
-  deleteTokens().then(() => {
-    handleTokenState('');
-  });
-
-  if (isManual || !isPublic) {
-    Router.push({
-      pathname: '/',
-      ...(isManual
-        ? {}
-        : {
-            query: { session_expired: true },
-          }),
-    });
-  }
-};

@@ -33,7 +33,8 @@ import {
 } from 'global/utils/egoTokenUtils';
 import { useRouter } from 'next/router';
 import { createContext, ReactElement, useContext, useEffect, useState } from 'react';
-import usePageContext from './usePageContext';
+import { usePageContext } from 'global/hooks';
+import { egoRefreshUrl } from 'global/constants/externalPaths';
 
 type T_AuthContext = {
   getUserJwt: () => string | Promise<string>;
@@ -69,9 +70,27 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
 
   const logout = ({ sessionExpired = true } = {}) => {
     console.log('AUTH - logout');
-    router.push(`${HOMEPAGE_PATH}${sessionExpired ? '?session_expired=true' : ''}`);
+    const storedJwt = getStoredJwt();
     removeStoredJwt();
     handleUserJwt(authContextDefaultValues.token);
+    router.push(`${HOMEPAGE_PATH}${sessionExpired ? '?session_expired=true' : ''}`);
+    fetch(egoRefreshUrl, {
+      credentials: 'include',
+      headers: {
+        accept: '*/*',
+        authorization: `Bearer ${storedJwt}`,
+      },
+      method: 'DELETE',
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error();
+        }
+        console.log('AUTH - deleted the refresh token');
+      })
+      .catch((err) => {
+        console.warn(err);
+      });
   };
 
   const handleUserJwt = (token: string) => {
