@@ -161,10 +161,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
         });
     }
 
-    if (
-      isValidJwt(userJwtState) ||
-      (!ctx.query?.session_expired && ctx.asPath !== LOGGED_IN_PATH)
-    ) {
+    if (!ctx.query?.session_expired && ctx.asPath !== LOGGED_IN_PATH) {
       getUserJwt().then((userJwt: T_AuthContext['token']) => {
         if (!isValidJwt(userJwt) && ctx.asPath !== HOMEPAGE_PATH) {
           logout({ sessionExpired: true });
