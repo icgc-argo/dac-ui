@@ -37,8 +37,8 @@ import { usePageContext } from 'global/hooks';
 import { egoRefreshUrl } from 'global/constants/externalPaths';
 import { UserWithId } from 'global/types';
 
-type T_AuthContext = {
-  getUserJwt: () => string | Promise<string>;
+export type T_AuthContext = {
+  getUserJwt: () => Promise<string>;
   logout: ({ sessionExpired }: { sessionExpired?: boolean }) => void;
   permissions: string[];
   token: string;
@@ -47,7 +47,7 @@ type T_AuthContext = {
 };
 
 const authContextDefaultValues = {
-  getUserJwt: () => '',
+  getUserJwt: () => Promise.resolve(''),
   logout: () => {},
   permissions: [],
   token: '',
@@ -106,8 +106,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
   };
 
   const getUserJwt = async (): Promise<string> => {
-    // this function returns a string and updates the JWT in state & localStorage.
-    // you have to handle logout() if this function doesn't return a valid JWT.
+    // You need to handle logout() if this function doesn't return a valid JWT.
 
     setUserLoading(true);
     if (isValidJwt(userJwtState)) {
@@ -138,14 +137,6 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     return authContextDefaultValues.token;
   };
 
-  const handleAuth = async () => {
-    console.log('AUTH - handleAuth');
-    const userJwt = await getUserJwt();
-    if (!isValidJwt(userJwt) && ctx.asPath !== HOMEPAGE_PATH) {
-      logout({ sessionExpired: true });
-    }
-  };
-
   useEffect(() => {
     console.log('PAGE CHANGE');
     if (ctx.asPath === LOGGED_IN_PATH) {
@@ -174,7 +165,11 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
       isValidJwt(userJwtState) ||
       (!ctx.query?.session_expired && ctx.asPath !== LOGGED_IN_PATH)
     ) {
-      handleAuth();
+      getUserJwt().then((userJwt: T_AuthContext['token']) => {
+        if (!isValidJwt(userJwt) && ctx.asPath !== HOMEPAGE_PATH) {
+          logout({ sessionExpired: true });
+        }
+      });
     }
   }, []);
 

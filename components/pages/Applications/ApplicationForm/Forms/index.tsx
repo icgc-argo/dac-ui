@@ -46,6 +46,7 @@ import ApplicationHistoryModal from './ApplicationHistoryModal';
 import { SetLastUpdated } from '../types';
 import { useAuthContext } from 'global/hooks';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
+import { T_AuthContext } from 'global/hooks/useAuthContext';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -118,27 +119,25 @@ const ApplicationFormsBase = ({
 
   const { getUserJwt, logout } = useAuthContext();
 
-  const handleAuthOnSectionChange = async () => {
-    console.log('handleAuthOnSectionChange');
-    const userJwt = await getUserJwt();
-    if (!isValidJwt(userJwt)) {
-      logout({ sessionExpired: true });
-    }
-  };
-
   useEffect(() => {
     if (sectionFromQuery !== selectedSection) {
-      handleAuthOnSectionChange().then(() => {
-        // This adds the selected section to the history
-        // without the initial switch when it's not in the query
-        (sectionFromQuery ? router.push : router.replace)(
-          `/applications/${appId}?section=${selectedSection}`,
-          undefined,
-          {
-            shallow: true,
-          },
-        );
-      });
+      getUserJwt()
+        .then((userJwt: T_AuthContext['token']) => {
+          if (!isValidJwt(userJwt)) {
+            logout({ sessionExpired: true });
+          }
+        })
+        .then(() => {
+          // This adds the selected section to the history
+          // without the initial switch when it's not in the query
+          (sectionFromQuery ? router.push : router.replace)(
+            `/applications/${appId}?section=${selectedSection}`,
+            undefined,
+            {
+              shallow: true,
+            },
+          );
+        });
     }
   }, [sectionFromQuery, selectedSection]);
 
