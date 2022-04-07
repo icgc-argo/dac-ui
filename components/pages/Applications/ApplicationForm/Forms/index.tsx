@@ -121,6 +121,7 @@ const ApplicationFormsBase = ({
 
   useEffect(() => {
     if (sectionFromQuery !== selectedSection) {
+      console.log('SECTION CHANGE:', selectedSection);
       getUserJwt()
         .then((userJwt: T_AuthContext['token']) => {
           if (!isValidJwt(userJwt)) {

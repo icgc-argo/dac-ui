@@ -69,13 +69,13 @@ export const DataProvider = ({ children }: { children: React.ReactElement }) => 
 
     const fetchJwt = await getUserJwt();
     if (!isValidJwt(fetchJwt)) {
-      console.log('FETCH - jwt invalid', fetchJwt.slice(-10));
+      console.log('FETCH - invalid JWT:', fetchJwt.slice(-10));
       setDataLoading(false);
       logout({ sessionExpired: true });
       return Promise.reject(undefined);
     }
 
-    console.log('FETCH - valid jwt', fetchJwt.slice(-10));
+    console.log('FETCH - valid JWT:', fetchJwt.slice(-10));
 
     const config: AxiosRequestConfig = {
       ...(!['DELETE', 'GET'].includes(method) && { data }),

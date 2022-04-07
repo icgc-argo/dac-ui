@@ -69,12 +69,12 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
 
   const router = useRouter();
 
-  const logout = ({ sessionExpired = true } = {}) => {
-    console.log('AUTH - logout');
+  const logout = async ({ sessionExpired = true } = {}) => {
+    console.log('LOGOUT');
     const storedJwt = getStoredJwt();
-    handleUserJwt();
+    removeUserJwt();
     router.push(`${HOMEPAGE_PATH}${sessionExpired ? '?session_expired=true' : ''}`);
-    fetch(egoRefreshUrl, {
+    await fetch(egoRefreshUrl, {
       credentials: 'include',
       headers: {
         accept: '*/*',
@@ -93,9 +93,14 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
       });
   };
 
-  const handleUserJwt = (token: string = '') => {
+  const removeUserJwt = () => {
+    console.log('AUTH - remove JWT in state and localStorage');
+    handleUserJwt(authContextDefaultValues.token);
+  };
+
+  const handleUserJwt = (token: string = authContextDefaultValues.token) => {
     // make sure logout() is handled when using this function.
-    console.log('AUTH - handleUserJwt');
+    console.log('AUTH - update JWT in state and localStorage');
     if (isValidJwt(token)) {
       setStoredJwt(token);
       setUserJwtState(token);
@@ -106,41 +111,42 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
   };
 
   const getUserJwt = async (): Promise<string> => {
-    // You need to handle logout() if this function doesn't return a valid JWT.
+    // You need to handle logout() after this function,
+    // for cases where this function returns an invalid JWT
 
     setUserLoading(true);
     if (isValidJwt(userJwtState)) {
-      console.log('AUTH - getUserJwt - state', userJwtState.slice(-10));
+      console.log('AUTH - get JWT - state:', userJwtState.slice(-10));
       setUserLoading(false);
       return userJwtState;
     }
 
     const storedJwt = getStoredJwt();
     if (isValidJwt(storedJwt)) {
-      console.log('AUTH - getUserJwt - localStorage', storedJwt.slice(-10));
+      console.log('AUTH - get JWT - localStorage:', storedJwt.slice(-10));
       setUserJwtState(storedJwt);
       setUserLoading(false);
       return storedJwt;
     }
 
-    const refreshedJwt = await refreshJwt();
-    if (isValidJwt(refreshedJwt)) {
-      console.log('AUTH - getUserJwt - refreshed', refreshedJwt.slice(-10));
-      handleUserJwt(refreshedJwt);
+    return refreshJwt().then((refreshedJwt = '') => {
+      console.log('refreshedJwt', refreshedJwt.slice(-10));
+      if (isValidJwt(refreshedJwt)) {
+        handleUserJwt(refreshedJwt);
+        setUserLoading(false);
+        return refreshedJwt;
+      }
+      console.log('AUTH - get JWT - none');
+      // removeUserJwt();
+      // remove JWT in logout() not here
       setUserLoading(false);
-      return refreshedJwt;
-    }
-
-    console.log('AUTH - getUserJwt - none');
-    handleUserJwt();
-    setUserLoading(false);
-    return authContextDefaultValues.token;
+      return authContextDefaultValues.token;
+    });
   };
 
   useEffect(() => {
-    console.log('PAGE CHANGE');
     if (ctx.asPath === LOGGED_IN_PATH) {
-      console.log('AUTH - /logged-in');
+      console.log('PAGE CHANGE', ctx.asPath);
       setUserLoading(true);
       router.prefetch(APPLICATIONS_PATH);
       fetchEgoJwt()
@@ -162,6 +168,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     }
 
     if (!ctx.query?.session_expired && ctx.asPath !== LOGGED_IN_PATH) {
+      console.log('PAGE CHANGE:', ctx.asPath);
       getUserJwt().then((userJwt: T_AuthContext['token']) => {
         if (!isValidJwt(userJwt) && ctx.asPath !== HOMEPAGE_PATH) {
           logout({ sessionExpired: true });

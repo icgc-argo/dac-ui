@@ -36,7 +36,7 @@ export const setStoredJwt = (token: string) => {
 };
 
 export const fetchEgoJwt = async (): Promise<string> => {
-  console.log('fetchEgoJwt');
+  console.log('logged in, get JWT from Ego');
   const egoLoginUrl = urlJoin(
     NEXT_PUBLIC_EGO_API_ROOT,
     `/oauth/ego-token?client_id=${NEXT_PUBLIC_EGO_CLIENT_ID}`,
@@ -59,46 +59,55 @@ var maxQueue = Infinity;
 var queue = new Queue(maxConcurrent, maxQueue);
 
 export const refreshJwt = () =>
-  queue
-    .add(
-      async (): Promise<string> => {
-        // get token from localStorage, not context,
-        // in case another tab got a new JWT.
-        const storedJwt = getStoredJwt();
+  queue.add(
+    async (): Promise<string> => {
+      // get token from localStorage, not context,
+      // in case another tab got a new JWT.
+      const storedJwt = getStoredJwt();
 
-        if (!storedJwt) {
-          console.log('REFRESH - no localStorage token');
-          return '';
-        }
+      if (!storedJwt) {
+        console.log('REFRESH - no localStorage token');
+        return '';
+      }
 
-        if (isValidJwt(storedJwt)) {
-          console.log('REFRESH - found valid localStorage token', storedJwt.slice(-10));
-          localStorage.setItem(EGO_JWT_KEY, storedJwt);
-          return storedJwt;
-        }
+      if (isValidJwt(storedJwt)) {
+        console.log('REFRESH - found valid localStorage JWT:', storedJwt.slice(-10));
+        localStorage.setItem(EGO_JWT_KEY, storedJwt);
+        return storedJwt;
+      }
 
-        console.log('REFRESH - no valid localStorage token', storedJwt.slice(-10));
+      console.log('REFRESH - no valid localStorage JWT:', storedJwt.slice(-10));
 
-        const res = await fetch(egoRefreshUrl, {
-          credentials: 'include',
-          headers: {
-            accept: '*/*',
-            authorization: `Bearer ${storedJwt}`,
-          },
-          method: 'POST',
-        });
-        const newJwt = await res.text();
-        if (isValidJwt(newJwt)) {
-          console.log('REFRESH - valid refreshed token', newJwt.slice(-10));
-          localStorage.setItem(EGO_JWT_KEY, newJwt);
-        } else {
-          throw new Error('Invalid refreshed JWT');
-        }
+      const refreshedJwt = await fetch(egoRefreshUrl, {
+        credentials: 'include',
+        headers: {
+          accept: '*/*',
+          authorization: `Bearer ${storedJwt}`,
+        },
+        method: 'POST',
+      }).then((res) => {
+        console.log('refresh res', res);
+        return res.text();
+      });
 
-        return newJwt;
-      },
-    )
-    .catch((e) => {
-      console.log(e);
-      return '';
-    });
+      return refreshedJwt || '';
+
+      // const res = await fetch(egoRefreshUrl, {
+      //   credentials: 'include',
+      //   headers: {
+      //     accept: '*/*',
+      //     authorization: `Bearer ${storedJwt}`,
+      //   },
+      //   method: 'POST',
+      // });
+      // const newJwt = await res.text();
+      // if (isValidJwt(newJwt)) {
+      //   console.log('REFRESH - valid refreshed JWT:', newJwt.slice(-10));
+      //   localStorage.setItem(EGO_JWT_KEY, newJwt);
+      // } else {
+      //   throw new Error('Invalid refreshed JWT');
+      // }
+
+      // return newJwt;
+    },
+  );
