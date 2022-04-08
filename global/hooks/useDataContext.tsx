@@ -18,7 +18,6 @@
  */
 
 import React, { createContext, useContext, useState } from 'react';
-import { isValidJwt } from '../utils/egoTokenUtils';
 import axios, { AxiosRequestConfig, AxiosResponse, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
 import { useToaster } from './useToaster';
@@ -41,7 +40,7 @@ const DataContext = createContext<T_DataContext>(dataContextDefaults);
 
 export const DataProvider = ({ children }: { children: React.ReactElement }) => {
   const [dataLoading, setDataLoading] = useState<boolean>(dataContextDefaults.dataLoading);
-  const { getUserJwt, logout } = useAuthContext();
+  const { getUserJwt } = useAuthContext();
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const toaster = useToaster();
 
@@ -67,11 +66,11 @@ export const DataProvider = ({ children }: { children: React.ReactElement }) => 
       return Promise.reject(undefined);
     }
 
+    console.log('FETCH - start');
     const fetchJwt = await getUserJwt();
-    if (!isValidJwt(fetchJwt)) {
+    if (!fetchJwt) {
       console.log('FETCH - invalid JWT:', fetchJwt.slice(-10));
       setDataLoading(false);
-      logout({ sessionExpired: true });
       return Promise.reject(undefined);
     }
 

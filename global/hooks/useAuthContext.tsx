@@ -69,11 +69,11 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
 
   const router = useRouter();
 
-  const logout = async ({ sessionExpired = true } = {}) => {
+  const logout = async ({ sessionExpired = true, redirect = true } = {}) => {
     console.log('LOGOUT');
     const storedJwt = getStoredJwt();
     removeUserJwt();
-    router.push(`${HOMEPAGE_PATH}${sessionExpired ? '?session_expired=true' : ''}`);
+    redirect && router.push(`${HOMEPAGE_PATH}${sessionExpired ? '?session_expired=true' : ''}`);
     await fetch(egoRefreshUrl, {
       credentials: 'include',
       headers: {
@@ -129,19 +129,34 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
       return storedJwt;
     }
 
-    return refreshJwt().then((refreshedJwt = '') => {
-      console.log('refreshedJwt', refreshedJwt.slice(-10));
-      if (isValidJwt(refreshedJwt)) {
-        handleUserJwt(refreshedJwt);
+    return refreshJwt()
+      .then((refreshedJwt = '') => {
+        console.log('refreshedJwt', refreshedJwt.slice(-10));
+        if (isValidJwt(refreshedJwt)) {
+          handleUserJwt(refreshedJwt);
+          setUserLoading(false);
+          return refreshedJwt;
+        }
+        console.log('AUTH - get JWT - none');
+        // removeUserJwt();
+        // remove JWT in logout() not here
         setUserLoading(false);
-        return refreshedJwt;
-      }
-      console.log('AUTH - get JWT - none');
-      // removeUserJwt();
-      // remove JWT in logout() not here
-      setUserLoading(false);
-      return authContextDefaultValues.token;
-    });
+
+        logout({
+          sessionExpired: ctx.asPath !== HOMEPAGE_PATH,
+          redirect: ctx.asPath !== HOMEPAGE_PATH,
+        });
+
+        return authContextDefaultValues.token;
+      })
+      .catch(() => {
+        logout({
+          sessionExpired: ctx.asPath !== HOMEPAGE_PATH,
+          redirect: ctx.asPath !== HOMEPAGE_PATH,
+        });
+
+        return authContextDefaultValues.token;
+      });
   };
 
   useEffect(() => {
@@ -160,7 +175,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
         .then(() => router.push(APPLICATIONS_PATH))
         .catch((err) => {
           console.warn(err);
-          logout({ sessionExpired: true });
+          logout({ sessionExpired: true, redirect: true });
         })
         .finally(() => {
           setUserLoading(false);
@@ -169,11 +184,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
 
     if (!ctx.query?.session_expired && ctx.asPath !== LOGGED_IN_PATH) {
       console.log('PAGE CHANGE:', ctx.asPath);
-      getUserJwt().then((userJwt: T_AuthContext['token']) => {
-        if (!isValidJwt(userJwt) && ctx.asPath !== HOMEPAGE_PATH) {
-          logout({ sessionExpired: true });
-        }
-      });
+      getUserJwt();
     }
   }, []);
 

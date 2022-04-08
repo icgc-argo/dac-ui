@@ -45,7 +45,6 @@ import Link from '@icgc-argo/uikit/Link';
 import ApplicationHistoryModal from './ApplicationHistoryModal';
 import { SetLastUpdated } from '../types';
 import { useAuthContext } from 'global/hooks';
-import { isValidJwt } from 'global/utils/egoTokenUtils';
 import { T_AuthContext } from 'global/hooks/useAuthContext';
 
 enum VisibleModalOption {
@@ -117,18 +116,13 @@ const ApplicationFormsBase = ({
     [formState],
   );
 
-  const { getUserJwt, logout } = useAuthContext();
+  const { getUserJwt } = useAuthContext();
 
   useEffect(() => {
     if (sectionFromQuery !== selectedSection) {
       console.log('SECTION CHANGE:', selectedSection);
-      getUserJwt()
-        .then((userJwt: T_AuthContext['token']) => {
-          if (!isValidJwt(userJwt)) {
-            logout({ sessionExpired: true });
-          }
-        })
-        .then(() => {
+      getUserJwt().then((userJwt: T_AuthContext['token']) => {
+        if (userJwt) {
           // This adds the selected section to the history
           // without the initial switch when it's not in the query
           (sectionFromQuery ? router.push : router.replace)(
@@ -138,7 +132,8 @@ const ApplicationFormsBase = ({
               shallow: true,
             },
           );
-        });
+        }
+      });
     }
   }, [sectionFromQuery, selectedSection]);
 
