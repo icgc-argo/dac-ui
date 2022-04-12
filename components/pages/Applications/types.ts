@@ -136,10 +136,6 @@ export interface Meta {
   updated?: boolean;
   lastUpdatedAtUtc?: string;
 }
-interface Terms {
-  agreement: Agreement;
-  meta: Meta;
-}
 
 interface Individual {
   address: Address;
@@ -246,7 +242,6 @@ export interface ApplicationData {
   approvedAtUtc: string;
   state: ApplicationState;
   sections: {
-    terms: Terms;
     applicant: Individual;
     representative: Representative;
     collaborators: Collaborators;

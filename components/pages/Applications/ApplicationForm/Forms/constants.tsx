@@ -51,7 +51,7 @@ export const sectionsData = {
       disabled: 'All required fields must be filled out before submitting the application.',
     },
   },
-  terms: { component: Terms, description: 'Application Terms' },
+  terms: { component: Terms, description: 'Introduction' },
 } as Record<FormSectionNames, Record<string, any>>;
 
 export const sectionsOrder = [

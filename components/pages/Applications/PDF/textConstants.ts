@@ -24,9 +24,6 @@ import {
 } from '../ApplicationForm/Forms/validations/schemas';
 
 const FORM_TEXT = {
-  terms: {
-    title: 'ACKNOWLEDGEMENT',
-  },
   applicant: {
     title: 'PRINCIPAL INVESTIGATOR INFORMATION',
     address: 'INSTITUTION/COMPANY MAILING ADDRESS',
