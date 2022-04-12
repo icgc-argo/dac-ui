@@ -294,16 +294,6 @@ export const StaticLaySummary = ({ isPdf = false }: { isPdf?: boolean }) => {
           How to write a lay summary
         </ButtonComponent>
       </SectionTitle>
-
-      <TextComponent>
-        The lay summaries of ICGC DACO approved projects are posted on the{' '}
-        <LinkComponent href={CONTROLLED_DATA_USERS_PAGE} rel="noopener noreferrer" target="_blank">
-          ICGC ARGO website
-        </LinkComponent>
-        <TextComponent as="span" style={{ margin: 0 }}>
-          .
-        </TextComponent>
-      </TextComponent>
     </SectionComponent>
   );
 };

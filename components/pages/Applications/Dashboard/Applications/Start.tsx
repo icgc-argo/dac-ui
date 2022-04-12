@@ -68,10 +68,7 @@ const StartApplication = () => {
           `}
         >
           Start a new application, fill out all required sections, then sign and submit the
-          application. The ICGC DACO will review and grant access to{' '}
-          <Link href={DACO_APPLYING_DOCS} rel="noopener noreferrer" target="_blank">
-            eligible project teams.
-          </Link>
+          application. The ICGC DACO will review and grant access to eligible project teams.
         </Typography>
 
         <Button onClick={createNewApplication} size="sm">

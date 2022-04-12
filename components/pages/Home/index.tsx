@@ -298,8 +298,8 @@ const Home = () => {
               <Link href={POLICIES_PAGE} rel="noopener noreferrer" target="_blank">
                 ICGC Policies and Guidelines
               </Link>
-              . The ICGC DACO has been created as an independent body to ensure that data from the
-              ICGC will only be used by qualified individuals for public health objectives.
+              . The ICGC DACO is the overarching authority to ensure that data from the ICGC will
+              only be used by qualified individuals for public health objectives.
             </ParagraphBlack>
             <ParagraphBlack bold>
               Before starting your application, learn more about{' '}
@@ -324,11 +324,8 @@ const Home = () => {
               review.
             </IconParagraphRow>
             <IconParagraphRow img="/icons-brand-review.svg">
-              The ICGC DACO will review the application and{' '}
-              <Link href={DACO_APPLYING_DOCS} rel="noopener noreferrer" target="_blank">
-                eligible project teams
-              </Link>{' '}
-              will be granted 2 years of access to ICGC Controlled Data.
+              The ICGC DACO will review the application and approved project teams will be granted 2
+              years of access to ICGC Controlled Data.
             </IconParagraphRow>
           </PaddedColumn>
         </PaddedRow>
