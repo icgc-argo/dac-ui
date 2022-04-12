@@ -241,15 +241,6 @@ export const signatureSchema = yup.object().shape({
   uploadedAtUtc: yup.string(),
 });
 
-export const termsSchema = yup.object().shape({
-  agreement: yup
-    .boolean()
-    .default(false)
-    .meta({ shape: 'singleAcceptance', type: 'boolean' })
-    .oneOf([true])
-    .required(),
-});
-
 export const combinedSchema = {
   appendices: appendicesSchema,
   applicant: applicantSchema,
@@ -259,7 +250,6 @@ export const combinedSchema = {
   projectInfo: projectInfoSchema,
   representative: representativeSchema,
   signature: signatureSchema,
-  terms: termsSchema,
 } as Record<FormSectionNames, any>;
 
 export default yup;

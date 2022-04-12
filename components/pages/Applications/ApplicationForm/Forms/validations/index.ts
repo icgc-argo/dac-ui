@@ -57,6 +57,11 @@ import { AxiosResponse } from 'axios';
 
 export { getMin, isRequired } from './helpers';
 
+export const TERMS_PLACEHOLDER_FORM_DATA = {
+  meta: { status: SECTION_STATUS.PRISTINE, overall: SECTION_STATUS.PRISTINE },
+  fields: {},
+};
+
 export const validationReducer = (
   formState: FormValidationStateParameters,
   action: FormValidationAction,
@@ -227,15 +232,18 @@ export const validationReducer = (
         lastUpdatedAtUtc,
         revisionRequest,
         sections: sectionsOrder.reduce((seededSectionsData, sectionName) => {
-          const seedData = sections[sectionName] || {};
+          const seedData =
+            sectionName === 'terms' ? TERMS_PLACEHOLDER_FORM_DATA : sections[sectionName] || {};
           const overall = sectionStatusMapping[seedData?.meta?.status as SECTION_STATUS];
           const showOverall = !formState.__seeded &&
             overall !== FORM_STATES.PRISTINE && {
               showOverall: true,
             };
           const validationData =
-            formState.sections[sectionName] ||
-            (console.error(`Seeding for "${sectionName}" hasn't been implemented yet`), {});
+            sectionName === 'terms'
+              ? TERMS_PLACEHOLDER_FORM_DATA
+              : formState.sections[sectionName] ||
+                (console.error(`Seeding for "${sectionName}" hasn't been implemented yet`), {});
 
           return Object.keys(seedData).length
             ? {
