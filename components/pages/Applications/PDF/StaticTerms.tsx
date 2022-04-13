@@ -17,16 +17,13 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Text, View } from '@react-pdf/renderer';
 import css from '@emotion/css';
-
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import Typography from '@icgc-argo/uikit/Typography';
-
-import { CONTROLLED_DATA_USERS_PAGE, POLICIES_PAGE } from 'global/constants';
-
+import { Text, View } from '@react-pdf/renderer';
+import { POLICIES_PAGE } from 'global/constants';
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
-import { getStaticComponents, Checkbox, SectionTitle } from './common';
+import { Checkbox, getStaticComponents, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
 import { StaticComponentProps } from './types';
 
@@ -138,16 +135,8 @@ const StaticTerms = ({ isPdf = false, data, sectionLastUpdatedAt }: StaticCompon
           including, but not limited to, policies concerning the purpose and relevance of the
           research, the protection of the donors and the security of the donors’ data. If your
           application is approved, you agree that your applicant's name, institution, and scientific
-          lay summary may be included in a registry of all projects that have been granted access to
-          ICGC Controlled Data. The ICGC DACO approved projects are posted on the{' '}
-          <LinkComponent
-            href={CONTROLLED_DATA_USERS_PAGE}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            ICGC ARGO website
-          </LinkComponent>
-          .
+          lay summary may be included in a public registry of projects that have been granted access
+          to ICGC Controlled Data.
         </TextComponent>
 
         <TextComponent>
