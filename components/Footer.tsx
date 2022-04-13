@@ -173,7 +173,8 @@ const LinksSection = () => {
             ${theme.typography.caption};
           `}
         >
-          © 2021 ICGC Data Access Compliance Office. All rights reserved. UI v{APP_VERSION}
+          © {new Date().getFullYear()} ICGC Data Access Compliance Office. All rights reserved. UI v
+          {APP_VERSION}
           {apiVersion && ` - API v${apiVersion}`}
         </div>
         <div
