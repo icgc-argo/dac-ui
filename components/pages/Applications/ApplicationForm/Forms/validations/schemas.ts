@@ -29,9 +29,8 @@ import {
 
 export const countryNameMsg = 'Please select a country from the list.';
 export const requiredMsg = 'Please fill out the required field.';
-export const textareaLimit = 200;
-export const laySummaryMinWords = 100;
-export const laySummaryMaxWords = 250;
+export const projectInfoSectionMinWords = 100;
+export const projectInfoSectionMaxWords = 250;
 
 yup.setLocale({
   mixed: {
@@ -173,9 +172,27 @@ export const ethicsLetterSchema = yup.object().shape({
 });
 
 export const projectInfoSchema = yup.object().shape({
-  aims: yup.string().default('').trim().test(maxWords(textareaLimit)).required(),
-  background: yup.string().default('').trim().test(maxWords(textareaLimit)).required(),
-  methodology: yup.string().default('').trim().test(maxWords(textareaLimit)).required(),
+  aims: yup
+    .string()
+    .default('')
+    .trim()
+    .test(maxWords(projectInfoSectionMaxWords))
+    .test(minWords(projectInfoSectionMinWords))
+    .required(),
+  background: yup
+    .string()
+    .default('')
+    .trim()
+    .test(maxWords(projectInfoSectionMaxWords))
+    .test(minWords(projectInfoSectionMinWords))
+    .required(),
+  methodology: yup
+    .string()
+    .default('')
+    .trim()
+    .test(maxWords(projectInfoSectionMaxWords))
+    .test(minWords(projectInfoSectionMinWords))
+    .required(),
   publicationsURLs: yup
     .array(
       yup
@@ -195,8 +212,8 @@ export const projectInfoSchema = yup.object().shape({
     .string()
     .default('')
     .trim()
-    .test(maxWords(laySummaryMaxWords))
-    .test(minWords(laySummaryMinWords))
+    .test(maxWords(projectInfoSectionMaxWords))
+    .test(minWords(projectInfoSectionMinWords))
     .required(),
   title: yup.string().default('').trim().required(),
   website: yup
