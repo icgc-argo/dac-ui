@@ -155,7 +155,7 @@ const LinksSection = () => {
             <StyledLink href={link.href} target={link.target || '_blank'}>
               {link.title}
             </StyledLink>
-            {showBreak(i, footerLinks.length)}
+            {showBreak(i, footerLinks().length)}
           </span>
         ))}
       </div>
