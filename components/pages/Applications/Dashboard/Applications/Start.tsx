@@ -17,19 +17,15 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { useRouter } from 'next/router';
 import { css } from '@emotion/core';
-import urlJoin from 'url-join';
-
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
-import Link from '@icgc-argo/uikit/Link';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
-
-import { API, APPLICATIONS_PATH, DACO_APPLYING_DOCS } from 'global/constants';
+import { API, APPLICATIONS_PATH } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
-
+import { useRouter } from 'next/router';
+import urlJoin from 'url-join';
 import DashboardCard from '../Card';
 
 const StartApplication = () => {

@@ -17,16 +17,13 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Text, View } from '@react-pdf/renderer';
 import css from '@emotion/css';
-
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import Typography from '@icgc-argo/uikit/Typography';
-
-import { CONTROLLED_DATA_USERS_PAGE, POLICIES_PAGE } from 'global/constants';
-
+import { Text, View } from '@react-pdf/renderer';
+import { POLICIES_PAGE } from 'global/constants';
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
-import { getStaticComponents, Checkbox, SectionTitle } from './common';
+import { Checkbox, getStaticComponents, SectionTitle } from './common';
 import FORM_TEXT from './textConstants';
 import { StaticComponentProps } from './types';
 

@@ -17,23 +17,22 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { useState } from 'react';
 import { css, styled } from '@icgc-argo/uikit';
-import Typography from '@icgc-argo/uikit/Typography';
 import Button from '@icgc-argo/uikit/Button';
 import Link from '@icgc-argo/uikit/Link';
-import { Col, Row } from 'react-grid-system';
+import Typography from '@icgc-argo/uikit/Typography';
+import ApplyForAccessModal from 'components/ApplyForAccessModal';
 import { PageHead } from 'components/Head';
+import { getConfig } from 'global/config';
 import {
   CONTROLLED_DATA_POLICY,
-  DACO_APPLYING_DOCS,
   ICGC_ARGO_FAQS,
   ICGC_DCC_LINK,
   ICGC_PCAWG_LINK,
   POLICIES_PAGE,
 } from 'global/constants/externalPaths';
-import { getConfig } from 'global/config';
-import ApplyForAccessModal from 'components/ApplyForAccessModal';
+import { useState } from 'react';
+import { Col, Row } from 'react-grid-system';
 
 const LinkWhite = ({ children, href }: { children: any; href: string }) => (
   <Link href={href} style={{ color: '#fff' }} target="_blank">
