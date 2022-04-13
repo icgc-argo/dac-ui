@@ -30,7 +30,9 @@ import {
 export const countryNameMsg = 'Please select a country from the list.';
 export const requiredMsg = 'Please fill out the required field.';
 export const projectInfoSectionMinWords = 100;
-export const projectInfoSectionMaxWords = 250;
+export const projectInfoSectionMaxWords = 200;
+export const laySummaryMinWords = 100;
+export const laySummaryMaxWords = 250;
 
 yup.setLocale({
   mixed: {
@@ -212,8 +214,8 @@ export const projectInfoSchema = yup.object().shape({
     .string()
     .default('')
     .trim()
-    .test(maxWords(projectInfoSectionMaxWords))
-    .test(minWords(projectInfoSectionMinWords))
+    .test(maxWords(laySummaryMaxWords))
+    .test(minWords(laySummaryMinWords))
     .required(),
   title: yup.string().default('').trim().required(),
   website: yup

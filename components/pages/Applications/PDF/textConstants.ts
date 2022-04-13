@@ -18,6 +18,8 @@
  */
 
 import {
+  laySummaryMaxWords,
+  laySummaryMinWords,
   projectInfoSectionMaxWords,
   projectInfoSectionMinWords,
 } from '../ApplicationForm/Forms/validations/schemas';
@@ -51,7 +53,7 @@ const FORM_TEXT = {
       background: `Background (min. ${projectInfoSectionMinWords} words, max. ${projectInfoSectionMaxWords} words)`,
       aims: `Aims (min. ${projectInfoSectionMinWords} words, max. ${projectInfoSectionMaxWords} words)`,
       dataUse: `Use of Data and Methodology (min. ${projectInfoSectionMinWords} words, max. ${projectInfoSectionMaxWords} words)`,
-      laySummary: `Lay Summary (min. ${projectInfoSectionMinWords} words, max. ${projectInfoSectionMaxWords} words)`,
+      laySummary: `Lay Summary (min. ${laySummaryMinWords} words, max. ${laySummaryMaxWords} words)`,
     },
   },
   ethics: {
