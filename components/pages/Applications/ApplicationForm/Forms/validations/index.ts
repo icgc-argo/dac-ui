@@ -240,10 +240,10 @@ export const validationReducer = (
               showOverall: true,
             };
           const validationData =
-            sectionName === 'terms'
-              ? TERMS_PLACEHOLDER_FORM_DATA
-              : formState.sections[sectionName] ||
-                (console.error(`Seeding for "${sectionName}" hasn't been implemented yet`), {});
+            formState.sections[sectionName] ||
+            (sectionName === 'terms' ||
+              console.error(`Seeding for "${sectionName}" hasn't been implemented yet`),
+            {});
 
           return Object.keys(seedData).length
             ? {
