@@ -21,10 +21,10 @@ import { View } from '@react-pdf/renderer';
 import css from '@emotion/css';
 
 import Typography from '@icgc-argo/uikit/Typography';
-
-import { CONTROLLED_DATA_USERS_PAGE, POLICIES_PAGE } from 'global/constants';
-
 import { getStaticComponents } from './common';
+import css from '@emotion/css';
+import { POLICIES_PAGE } from 'global/constants';
+
 import { StaticComponentProps } from './types';
 
 const StaticTerms = ({ isPdf = false, data }: StaticComponentProps) => {
@@ -135,16 +135,8 @@ const StaticTerms = ({ isPdf = false, data }: StaticComponentProps) => {
           including, but not limited to, policies concerning the purpose and relevance of the
           research, the protection of the donors and the security of the donors’ data. If your
           application is approved, you agree that your applicant's name, institution, and scientific
-          lay summary may be included in a registry of all projects that have been granted access to
-          ICGC Controlled Data. The ICGC DACO approved projects are posted on the{' '}
-          <LinkComponent
-            href={CONTROLLED_DATA_USERS_PAGE}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            ICGC ARGO website
-          </LinkComponent>
-          .
+          lay summary may be included in a public registry of projects that have been granted access
+          to ICGC Controlled Data.
         </TextComponent>
 
         <TextComponent>

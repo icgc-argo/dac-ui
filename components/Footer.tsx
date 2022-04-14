@@ -155,7 +155,7 @@ const LinksSection = () => {
             <StyledLink href={link.href} target={link.target || '_blank'}>
               {link.title}
             </StyledLink>
-            {showBreak(i, footerLinks.length)}
+            {showBreak(i, footerLinks().length)}
           </span>
         ))}
       </div>
@@ -173,7 +173,8 @@ const LinksSection = () => {
             ${theme.typography.caption};
           `}
         >
-          © 2021 ICGC Data Access Compliance Office. All rights reserved. UI v{APP_VERSION}
+          © {new Date().getFullYear()} ICGC Data Access Compliance Office. All rights reserved. UI v
+          {APP_VERSION}
           {apiVersion && ` - API v${apiVersion}`}
         </div>
         <div
