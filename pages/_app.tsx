@@ -30,8 +30,6 @@ import {
 } from 'global/constants';
 import { isValidJwt } from 'global/utils/egoTokenUtils';
 import Router, { useRouter } from 'next/router';
-import refreshJwt from 'global/utils/auth/refreshJwt';
-import deleteTokens from 'global/utils/auth/deleteTokens';
 import NewWebsiteNotice from 'components/pages/NewWebsiteNotice';
 
 const resetFlashData = () => {
@@ -69,43 +67,21 @@ const App = ({
     };
   }, []);
 
-  const logout = () => {
-    deleteTokens();
-    setInitialJwt('');
-    // redirect to logout when token is expired/missing only if user is on a non-public page
-    if (!Component.isPublic) {
-      Router.push({
-        pathname: '/',
-        query: { session_expired: true },
-      });
-    }
-  };
-
   useEffect(() => {
-    const handleAuth = async () => {
-      console.log('APP handleAuth');
-      const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
-      if (egoJwt) {
-        if (isValidJwt(egoJwt)) {
-          console.log('APP valid localStorage token', egoJwt.slice(-10));
-          setInitialJwt(egoJwt);
-        } else {
-          console.log('APP non valid localStorage token');
-          const refreshedJwt = (await refreshJwt().catch(logout)) as string;
-          if (isValidJwt(refreshedJwt)) {
-            console.log('APP valid refreshed token', refreshedJwt.slice(-10));
-            setInitialJwt(refreshedJwt);
-          } else {
-            console.log('APP non valid refreshed token', refreshedJwt.slice(-10));
-            logout();
-          }
-        }
-      } else {
-        console.log('APP no localStorage token');
-        logout();
+    const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
+    if (isValidJwt(egoJwt)) {
+      setInitialJwt(egoJwt);
+    } else {
+      setInitialJwt('');
+      localStorage.removeItem(EGO_JWT_KEY);
+      // redirect to logout when token is expired/missing only if user is on a non-public page
+      if (!Component.isPublic) {
+        Router.push({
+          pathname: '/',
+          query: { session_expired: true },
+        });
       }
-    };
-    handleAuth();
+    }
   });
 
   return ctx.pathname === NEW_WEBSITE_NOTICE_PATH ? (

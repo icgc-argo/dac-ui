@@ -316,7 +316,7 @@ const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
                     isDropdown={true}
                     isLink={false}
                     LinkComp={() => <div />}
-                    onClick={() => logout({ manual: true })}
+                    onClick={() => logout()}
                   />
                 </DropdownMenu>
               }

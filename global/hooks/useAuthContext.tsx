@@ -31,14 +31,12 @@ import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import { getConfig } from 'global/config';
 import { useToaster } from './useToaster';
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
-import refreshJwt from 'global/utils/auth/refreshJwt';
-import deleteTokens from 'global/utils/auth/deleteTokens';
 
 type T_AuthContext = {
   cancelFetchWithAuth: Canceler;
   fetchWithAuth: any;
   isLoading: boolean;
-  logout: ({ manual }: { manual: boolean }) => void;
+  logout: () => void;
   permissions: string[];
   token?: string;
   user?: UserWithId | void;
@@ -70,18 +68,21 @@ export const AuthProvider = ({
   const toaster = useToaster();
 
   const removeToken = () => {
-    deleteTokens();
+    localStorage.removeItem(EGO_JWT_KEY);
     setTokenState('');
   };
 
-  const logout = ({ manual = false } = {}) => {
-    console.log('LOGOUT manual?', manual);
-    router.push(`/${manual ? '' : '?session_expired=true'}`);
+  const logout = () => {
+    router.push('/?session_expired=true');
     removeToken();
   };
 
   if (token) {
-    if (isValidJwt(token) && !egoJwt) {
+    if (!isValidJwt(token)) {
+      if (egoJwt && token === egoJwt) {
+        logout();
+      }
+    } else if (!egoJwt) {
       setTokenState('');
     }
   } else if (isValidJwt(egoJwt)) {
@@ -94,7 +95,7 @@ export const AuthProvider = ({
 
   const cancelTokenSource = axios.CancelToken.source();
   const cancelFetchWithAuth = cancelTokenSource.cancel;
-  const fetchWithAuth = async ({
+  const fetchWithAuth = ({
     data,
     headers = {},
     method = 'GET' as Method,
@@ -103,34 +104,14 @@ export const AuthProvider = ({
     url,
   }: AxiosRequestConfig) => {
     setLoading(true);
-    if (!url || !token) {
+    if (!url) {
       setLoading(false);
       return Promise.reject(undefined);
     }
 
-    let fetchToken = token;
-
-    if (!isValidJwt(token)) {
-      console.log('FETCH state token is not valid');
-      const storageToken = localStorage.getItem(EGO_JWT_KEY) || '';
-      if (isValidJwt(storageToken)) {
-        console.log('FETCH localStorage token is valid');
-        setTokenState(storageToken);
-        fetchToken = storageToken;
-      } else {
-        console.log('FETCH localStorage token is not valid');
-        const refreshedJwt = (await refreshJwt().catch(logout)) as string;
-        if (isValidJwt(refreshedJwt)) {
-          console.log('FETCH refreshed token is valid');
-          setTokenState(refreshedJwt);
-          fetchToken = refreshedJwt;
-        } else {
-          console.log('FETCH refreshed token is not valid');
-          logout();
-          setLoading(false);
-          return Promise.reject(undefined);
-        }
-      }
+    if (!token) {
+      setLoading(false);
+      return Promise.reject(undefined);
     }
 
     const config: AxiosRequestConfig = {
@@ -140,7 +121,7 @@ export const AuthProvider = ({
       headers: {
         accept: '*/*',
         ...headers,
-        Authorization: `Bearer ${fetchToken || ''}`,
+        Authorization: `Bearer ${token || ''}`,
       },
       method,
       params,
