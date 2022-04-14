@@ -22,7 +22,6 @@ import css from '@emotion/css';
 
 import Typography from '@icgc-argo/uikit/Typography';
 import { getStaticComponents } from './common';
-import css from '@emotion/css';
 import { POLICIES_PAGE } from 'global/constants';
 
 import { StaticComponentProps } from './types';
