@@ -25,29 +25,27 @@ const deleteTokens = () => {
 
   console.log('DELETE TOKENS jwt in localStorage', storedToken.slice(-10));
 
-  if (storedToken) {
-    fetch(egoRefreshUrl, {
-      credentials: 'include',
-      headers: {
-        accept: '*/*',
-        authorization: `Bearer ${storedToken}`,
-      },
-      method: 'DELETE',
+  fetch(egoRefreshUrl, {
+    credentials: 'include',
+    headers: {
+      accept: '*/*',
+      authorization: `Bearer ${storedToken}`,
+    },
+    method: 'DELETE',
+  })
+    .then((res) => {
+      if (res.status !== 200) {
+        throw new Error();
+      }
+      console.log('DELETE REFRESH deleted the refresh token', res);
     })
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new Error();
-        }
-        console.log('DELETE REFRESH deleted the refresh token', res);
-      })
-      .catch((err) => {
-        console.warn(err);
-      })
-      .finally(() => {
-        console.log('DELETE TOKENS finally delete localStorage jwt');
-        localStorage.removeItem(EGO_JWT_KEY);
-      });
-  }
+    .catch((err) => {
+      console.warn(err);
+    })
+    .finally(() => {
+      console.log('DELETE TOKENS finally delete localStorage jwt');
+      localStorage.removeItem(EGO_JWT_KEY);
+    });
 };
 
 export default deleteTokens;
