@@ -17,17 +17,16 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import { View } from '@react-pdf/renderer';
 import css from '@emotion/css';
-import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
+
 import Typography from '@icgc-argo/uikit/Typography';
-import { Text, View } from '@react-pdf/renderer';
+import { getStaticComponents } from './common';
 import { POLICIES_PAGE } from 'global/constants';
-import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
-import { Checkbox, getStaticComponents, SectionTitle } from './common';
-import FORM_TEXT from './textConstants';
+
 import { StaticComponentProps } from './types';
 
-const StaticTerms = ({ isPdf = false, data, sectionLastUpdatedAt }: StaticComponentProps) => {
+const StaticTerms = ({ isPdf = false, data }: StaticComponentProps) => {
   const {
     TextComponent,
     TitleComponent,
@@ -45,7 +44,7 @@ const StaticTerms = ({ isPdf = false, data, sectionLastUpdatedAt }: StaticCompon
       state={data?.state}
       applicant={data?.sections?.applicant.info}
     >
-      <TitleComponent sectionLastUpdatedAt={sectionLastUpdatedAt}>Application Terms</TitleComponent>
+      <TitleComponent>Introduction</TitleComponent>
 
       <SectionComponent>
         <TextComponent
@@ -149,24 +148,7 @@ const StaticTerms = ({ isPdf = false, data, sectionLastUpdatedAt }: StaticCompon
           the applicant and a bi-annual renewal must be completed in order to access/use controlled
           data beyond that two-year time period.
         </TextComponent>
-
-        {!isPdf && <RequiredFieldsMessage />}
       </SectionComponent>
-      {isPdf && (
-        <SectionComponent style={{ borderTop: `1px solid ${defaultTheme.colors.grey_1}` }}>
-          <SectionTitle>{FORM_TEXT.terms.title}</SectionTitle>
-          <Checkbox
-            // added '|| false' because typescript complained with possibly undefined data prop
-            checked={data?.sections.terms.agreement.accepted || false}
-            TextComponent={
-              <Text>
-                <Text style={{ fontWeight: 600 }}>I acknowledge</Text> that I have read and
-                understand the above terms.
-              </Text>
-            }
-          />
-        </SectionComponent>
-      )}
     </ContainerComponent>
   );
 };
