@@ -27,7 +27,6 @@ const {
   NEXT_PUBLIC_ARGO_DOCS_ROOT,
 } = getConfig();
 
-export const DACO_ROOT = 'https://daco.icgc-argo.org';
 const ARGO_DOCS_URL = urlJoin(NEXT_PUBLIC_ARGO_DOCS_ROOT, 'docs');
 
 const ARGO_POLICIES = urlJoin(NEXT_PUBLIC_ARGO_ROOT, 'page');

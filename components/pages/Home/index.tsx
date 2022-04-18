@@ -17,23 +17,22 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { useState } from 'react';
 import { css, styled } from '@icgc-argo/uikit';
-import Typography from '@icgc-argo/uikit/Typography';
 import Button from '@icgc-argo/uikit/Button';
 import Link from '@icgc-argo/uikit/Link';
-import { Col, Row } from 'react-grid-system';
+import Typography from '@icgc-argo/uikit/Typography';
+import ApplyForAccessModal from 'components/ApplyForAccessModal';
 import { PageHead } from 'components/Head';
+import { getConfig } from 'global/config';
 import {
   CONTROLLED_DATA_POLICY,
-  DACO_APPLYING_DOCS,
   ICGC_ARGO_FAQS,
   ICGC_DCC_LINK,
   ICGC_PCAWG_LINK,
   POLICIES_PAGE,
 } from 'global/constants/externalPaths';
-import { getConfig } from 'global/config';
-import ApplyForAccessModal from 'components/ApplyForAccessModal';
+import { useState } from 'react';
+import { Col, Row } from 'react-grid-system';
 
 const LinkWhite = ({ children, href }: { children: any; href: string }) => (
   <Link href={href} style={{ color: '#fff' }} target="_blank">
@@ -298,8 +297,8 @@ const Home = () => {
               <Link href={POLICIES_PAGE} rel="noopener noreferrer" target="_blank">
                 ICGC Policies and Guidelines
               </Link>
-              . The ICGC DACO has been created as an independent body to ensure that data from the
-              ICGC will only be used by qualified individuals for public health objectives.
+              . The ICGC DACO is the overarching authority to ensure that data from the ICGC will
+              only be used by qualified individuals for public health objectives.
             </ParagraphBlack>
             <ParagraphBlack bold>
               Before starting your application, learn more about{' '}
@@ -324,11 +323,8 @@ const Home = () => {
               review.
             </IconParagraphRow>
             <IconParagraphRow img="/icons-brand-review.svg">
-              The ICGC DACO will review the application and{' '}
-              <Link href={DACO_APPLYING_DOCS} rel="noopener noreferrer" target="_blank">
-                eligible project teams
-              </Link>{' '}
-              will be granted 2 years of access to ICGC Controlled Data.
+              The ICGC DACO will review the application and approved project teams will be granted 2
+              years of access to ICGC Controlled Data.
             </IconParagraphRow>
           </PaddedColumn>
         </PaddedRow>

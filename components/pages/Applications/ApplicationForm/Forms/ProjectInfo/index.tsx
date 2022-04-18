@@ -41,7 +41,7 @@ import StaticProjectInfo, {
 } from '../../../PDF/StaticProjectInfo';
 import FORM_TEXT from 'components/pages/Applications/PDF/textConstants';
 import { getStaticComponents } from '../../../PDF/common';
-import { laySummaryMaxWords, textareaLimit } from '../validations/schemas';
+import { laySummaryMaxWords, projectInfoSectionMaxWords } from '../validations/schemas';
 
 const ProjectInfo = ({
   isSectionDisabled,
@@ -117,7 +117,7 @@ const ProjectInfo = ({
 
           <Textarea
             aria-label={FORM_TEXT.project_info.inputLabel.background}
-            countLimit={textareaLimit}
+            countLimit={projectInfoSectionMaxWords}
             countPosition="absolute"
             countType="words"
             id="background"
@@ -142,7 +142,7 @@ const ProjectInfo = ({
 
           <Textarea
             aria-label={FORM_TEXT.project_info.inputLabel.aims}
-            countLimit={textareaLimit}
+            countLimit={projectInfoSectionMaxWords}
             countPosition="absolute"
             countType="words"
             id="aims"
@@ -167,7 +167,7 @@ const ProjectInfo = ({
 
           <Textarea
             aria-label={FORM_TEXT.project_info.inputLabel.dataUse}
-            countLimit={textareaLimit}
+            countLimit={projectInfoSectionMaxWords}
             countPosition="absolute"
             countType="words"
             id="methodology"

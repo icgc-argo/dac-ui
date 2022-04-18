@@ -27,12 +27,12 @@ import icgcDacoLogo from '../../public/icgc-daco-logo.svg';
 import argoLogo from '../../public/stacked-argo-logo.svg';
 import icgc25kLogo from '../../public/icgc-25k-full-logo.svg';
 import Link from '@icgc-argo/uikit/Link';
-import { CONTACT_PAGE, DACO_ROOT, ICGC_DCC_LINK } from 'global/constants';
+import { CONTACT_PAGE, ICGC_DCC_LINK } from 'global/constants';
 import { getConfig } from 'global/config';
 import Button from '@icgc-argo/uikit/Button';
 
 const NewWebsiteNotice = () => {
-  const { NEXT_PUBLIC_ARGO_ROOT } = getConfig();
+  const { NEXT_PUBLIC_ARGO_ROOT, NEXT_PUBLIC_DACO_ROOT } = getConfig();
   return (
     <>
       <Head />
@@ -52,7 +52,7 @@ const NewWebsiteNotice = () => {
               padding-bottom: 30px;
             `}
           >
-            <Link target="_blank" href={DACO_ROOT}>
+            <Link target="_blank" href={NEXT_PUBLIC_DACO_ROOT}>
               <img src={icgcDacoLogo} alt="ICGC-DACO logo" width={300} height={44} />
             </Link>
           </div>
@@ -84,7 +84,7 @@ const NewWebsiteNotice = () => {
               announce the launch of a new website to manage Applications for Access to ICGC
               Controlled Data. The old website, daco.icgc.org has been retired and replaced with a
               new and improved website,{' '}
-              <Link target="_blank" href={DACO_ROOT}>
+              <Link target="_blank" href={NEXT_PUBLIC_DACO_ROOT}>
                 daco.icgc-argo.org
               </Link>
               .
@@ -110,7 +110,7 @@ const NewWebsiteNotice = () => {
               team and project information over to the new website. At your earliest convenience,
               please use the approved pdf copy that was emailed to you from the ICGC DACO and copy
               the content from your old application to a new application on{' '}
-              <Link target="_blank" href={DACO_ROOT}>
+              <Link target="_blank" href={NEXT_PUBLIC_DACO_ROOT}>
                 daco.icgc-argo.org
               </Link>
               . When you submit the signed new application, the ICGC DACO will review and grant your
@@ -138,14 +138,14 @@ const NewWebsiteNotice = () => {
             >
               If you haven't filled out a DACO Application before, but would like to gain access to
               ICGC Controlled Data for your project team, please proceed to{' '}
-              <Link target="_blank" href={DACO_ROOT}>
+              <Link target="_blank" href={NEXT_PUBLIC_DACO_ROOT}>
                 daco.icgc-argo.org
               </Link>{' '}
               and click the <strong>Get Started: Apply for Access</strong> button.{' '}
             </Typography>
             <Link
               target="_blank"
-              href={DACO_ROOT}
+              href={NEXT_PUBLIC_DACO_ROOT}
               css={css`
                 text-decoration: none;
               `}

@@ -18,10 +18,10 @@
  */
 
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
-
-import { CONTROLLED_DATA_USERS_PAGE, LAY_SUMMARY_GUIDE } from 'global/constants';
-
+import { View } from '@react-pdf/renderer';
+import { LAY_SUMMARY_GUIDE } from 'global/constants';
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
+import { ApplicationDataByField } from '../types';
 import {
   getStaticComponents,
   PdfFormFields,
@@ -31,10 +31,8 @@ import {
   styles,
 } from './common';
 import FORM_TEXT from './textConstants';
-import { View } from '@react-pdf/renderer';
-import VerticalTable, { DataCell } from './VerticalTable';
 import { FieldAccessor, PdfFieldName, StaticComponentProps } from './types';
-import { ApplicationDataByField } from '../types';
+import VerticalTable, { DataCell } from './VerticalTable';
 
 const MIN_PUBLICATION_FIELDS = 3;
 
@@ -265,13 +263,7 @@ export const StaticResearchSummary = ({ isPdf = false }: { isPdf?: boolean }) =>
 };
 
 export const StaticLaySummary = ({ isPdf = false }: { isPdf?: boolean }) => {
-  const {
-    SectionComponent,
-    TextComponent,
-    SectionTitle,
-    LinkComponent,
-    ButtonComponent,
-  } = getStaticComponents(isPdf);
+  const { SectionComponent, SectionTitle, ButtonComponent } = getStaticComponents(isPdf);
 
   return (
     <SectionComponent
@@ -294,16 +286,6 @@ export const StaticLaySummary = ({ isPdf = false }: { isPdf?: boolean }) => {
           How to write a lay summary
         </ButtonComponent>
       </SectionTitle>
-
-      <TextComponent>
-        The lay summaries of ICGC DACO approved projects are posted on the{' '}
-        <LinkComponent href={CONTROLLED_DATA_USERS_PAGE} rel="noopener noreferrer" target="_blank">
-          ICGC ARGO website
-        </LinkComponent>
-        <TextComponent as="span" style={{ margin: 0 }}>
-          .
-        </TextComponent>
-      </TextComponent>
     </SectionComponent>
   );
 };

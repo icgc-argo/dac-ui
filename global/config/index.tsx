@@ -37,6 +37,7 @@ export const getConfig = () => {
     NEXT_PUBLIC_MAINTENANCE_MODE_ON: publicConfig.NEXT_PUBLIC_MAINTENANCE_MODE_ON === 'true',
     NEXT_PUBLIC_DACO_SURVEY_URL: publicConfig.NEXT_PUBLIC_DACO_SURVEY_URL || '#',
     NEXT_PUBLIC_DACO_EMAIL_ADDRESS: publicConfig.NEXT_PUBLIC_DACO_EMAIL_ADDRESS || '',
+    NEXT_PUBLIC_DACO_ROOT: publicConfig.NEXT_PUBLIC_DACO_ROOT || '',
   } as {
     NEXT_PUBLIC_EGO_API_ROOT: string;
     NEXT_PUBLIC_EGO_CLIENT_ID: string;
@@ -49,5 +50,6 @@ export const getConfig = () => {
     NEXT_PUBLIC_MAINTENANCE_MODE_ON: boolean;
     NEXT_PUBLIC_DACO_SURVEY_URL: string;
     NEXT_PUBLIC_DACO_EMAIL_ADDRESS: string;
+    NEXT_PUBLIC_DACO_ROOT: string;
   };
 };
