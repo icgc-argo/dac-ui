@@ -41,7 +41,7 @@ import { css } from '@emotion/core';
 import DnaLoader from '@icgc-argo/uikit/DnaLoader';
 
 export type T_AuthContext = {
-  getUserJwt: () => Promise<string>;
+  getUserJwt: (url?: string, isRouting?: boolean) => Promise<string>;
   logout: ({ sessionExpired }: { sessionExpired?: boolean }) => void;
   permissions: string[];
   token: string;
@@ -72,12 +72,16 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
 
   const router = useRouter();
 
-  const logout = async ({ sessionExpired = true, redirect = true } = {}) => {
+  const logout = async ({ sessionExpired = true, redirect = true, url = '' } = {}) => {
     console.log('LOGOUT');
     const storedJwt = getStoredJwt();
     removeUserJwt();
     if (redirect) {
       router.push(`${HOMEPAGE_PATH}${sessionExpired ? '?session_expired=true' : ''}`);
+    } else if (sessionExpired && url === HOMEPAGE_PATH) {
+      router.push(`${HOMEPAGE_PATH}?session_expired=true`, undefined, {
+        shallow: true,
+      });
     }
     if (storedJwt) {
       await fetch(egoRefreshUrl, {
@@ -116,11 +120,12 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     }
   };
 
-  const handleLogout = (url: string = '') => {
-    console.log('✨ handleLogout', url);
+  const forceLogout = (url: string = '', isRouting: boolean = false) => {
+    console.log('forceLogout URL:', url, 'isRouting:', isRouting, 'asPath:', ctx.asPath);
     logout({
-      sessionExpired: ctx.asPath !== HOMEPAGE_PATH,
+      sessionExpired: isRouting || ctx.asPath !== HOMEPAGE_PATH,
       redirect: url !== HOMEPAGE_PATH,
+      url,
     });
 
     if (url === HOMEPAGE_PATH) {
@@ -128,7 +133,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     }
   };
 
-  const getUserJwt = async (url: string = ''): Promise<string> => {
+  const getUserJwt = async (url?: string, isRouting?: boolean): Promise<string> => {
     const currentUrl = url || ctx.asPath || '';
     if (isValidJwt(userJwtState)) {
       console.log('AUTH - get JWT - state:', userJwtState.slice(-10));
@@ -140,7 +145,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
 
     if (!storedJwt) {
       console.log('AUTH - get JWT - none, logout');
-      handleLogout(currentUrl);
+      forceLogout(currentUrl, isRouting);
       return authContextDefaultValues.token;
     }
 
@@ -165,7 +170,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
       })
       .catch((e) => {
         console.error(e);
-        handleLogout(currentUrl);
+        forceLogout(currentUrl, isRouting);
         return authContextDefaultValues.token;
       });
   };
@@ -204,14 +209,14 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
   }, []);
 
   useEffect(() => {
-    const handleStart = (url?: any) => {
+    const handleStart = (url: any) => {
       console.log('ROUTER START:', url, typeof url);
       if (!forceString(url).includes('session_expired=true') && url !== LOGGED_IN_PATH) {
-        getUserJwt(forceString(url));
+        getUserJwt(forceString(url), true);
       }
     };
 
-    const handleStop = (url?: any) => {
+    const handleStop = (url: any) => {
       if (forceString(url).includes('session_expired=true')) {
         setUserLoading(false);
       }
