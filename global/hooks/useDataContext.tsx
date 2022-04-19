@@ -66,7 +66,7 @@ export const DataProvider = ({ children }: { children: React.ReactElement }) => 
       return Promise.reject(undefined);
     }
 
-    console.log('FETCH - start');
+    console.log('FETCH - start:', url);
     const fetchJwt = await getUserJwt();
     if (!fetchJwt) {
       console.log('FETCH - invalid JWT:', fetchJwt.slice(-10));

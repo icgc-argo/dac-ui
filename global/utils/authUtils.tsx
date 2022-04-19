@@ -27,6 +27,8 @@ import { egoRefreshUrl } from 'global/constants/externalPaths';
 
 const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
 
+export const forceString = (input?: any): string => (typeof input === 'string' ? input : '');
+
 export const getStoredJwt = (): string => localStorage.getItem(EGO_JWT_KEY) || '';
 export const removeStoredJwt = () => {
   localStorage.removeItem(EGO_JWT_KEY);
@@ -91,23 +93,5 @@ export const refreshJwt = () =>
       });
 
       return refreshedJwt || '';
-
-      // const res = await fetch(egoRefreshUrl, {
-      //   credentials: 'include',
-      //   headers: {
-      //     accept: '*/*',
-      //     authorization: `Bearer ${storedJwt}`,
-      //   },
-      //   method: 'POST',
-      // });
-      // const newJwt = await res.text();
-      // if (isValidJwt(newJwt)) {
-      //   console.log('REFRESH - valid refreshed JWT:', newJwt.slice(-10));
-      //   localStorage.setItem(EGO_JWT_KEY, newJwt);
-      // } else {
-      //   throw new Error('Invalid refreshed JWT');
-      // }
-
-      // return newJwt;
     },
   );

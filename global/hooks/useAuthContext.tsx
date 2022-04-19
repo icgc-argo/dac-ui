@@ -24,6 +24,7 @@ import {
   refreshJwt,
   removeStoredJwt,
   setStoredJwt,
+  forceString,
 } from 'global/utils/authUtils';
 import {
   decodeToken,
@@ -36,6 +37,8 @@ import { createContext, ReactElement, useContext, useEffect, useState } from 're
 import { usePageContext } from 'global/hooks';
 import { egoRefreshUrl } from 'global/constants/externalPaths';
 import { UserWithId } from 'global/types';
+import { css } from '@emotion/core';
+import DnaLoader from '@icgc-argo/uikit/DnaLoader';
 
 export type T_AuthContext = {
   getUserJwt: () => Promise<string>;
@@ -73,24 +76,28 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     console.log('LOGOUT');
     const storedJwt = getStoredJwt();
     removeUserJwt();
-    redirect && router.push(`${HOMEPAGE_PATH}${sessionExpired ? '?session_expired=true' : ''}`);
-    await fetch(egoRefreshUrl, {
-      credentials: 'include',
-      headers: {
-        accept: '*/*',
-        authorization: `Bearer ${storedJwt}`,
-      },
-      method: 'DELETE',
-    })
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new Error();
-        }
-        console.log('AUTH - deleted the refresh token');
+    if (redirect) {
+      router.push(`${HOMEPAGE_PATH}${sessionExpired ? '?session_expired=true' : ''}`);
+    }
+    if (storedJwt) {
+      await fetch(egoRefreshUrl, {
+        credentials: 'include',
+        headers: {
+          accept: '*/*',
+          authorization: `Bearer ${storedJwt}`,
+        },
+        method: 'DELETE',
       })
-      .catch((err) => {
-        console.warn(err);
-      });
+        .then((res) => {
+          if (res.status !== 200) {
+            throw new Error();
+          }
+          console.log('AUTH - deleted the refresh token');
+        })
+        .catch((err) => {
+          console.warn(err);
+        });
+    }
   };
 
   const removeUserJwt = () => {
@@ -99,7 +106,6 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
   };
 
   const handleUserJwt = (token: string = authContextDefaultValues.token) => {
-    // make sure logout() is handled when using this function.
     console.log('AUTH - update JWT in state and localStorage');
     if (isValidJwt(token)) {
       setStoredJwt(token);
@@ -110,11 +116,20 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     }
   };
 
-  const getUserJwt = async (): Promise<string> => {
-    // You need to handle logout() after this function,
-    // for cases where this function returns an invalid JWT
+  const handleLogout = (url: string = '') => {
+    console.log('✨ handleLogout', url);
+    logout({
+      sessionExpired: ctx.asPath !== HOMEPAGE_PATH,
+      redirect: url !== HOMEPAGE_PATH,
+    });
 
-    setUserLoading(true);
+    if (url === HOMEPAGE_PATH) {
+      setUserLoading(false);
+    }
+  };
+
+  const getUserJwt = async (url: string = ''): Promise<string> => {
+    const currentUrl = url || ctx.asPath || '';
     if (isValidJwt(userJwtState)) {
       console.log('AUTH - get JWT - state:', userJwtState.slice(-10));
       setUserLoading(false);
@@ -122,6 +137,13 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     }
 
     const storedJwt = getStoredJwt();
+
+    if (!storedJwt) {
+      console.log('AUTH - get JWT - none, logout');
+      handleLogout(currentUrl);
+      return authContextDefaultValues.token;
+    }
+
     if (isValidJwt(storedJwt)) {
       console.log('AUTH - get JWT - localStorage:', storedJwt.slice(-10));
       setUserJwtState(storedJwt);
@@ -129,37 +151,30 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
       return storedJwt;
     }
 
+    setUserLoading(true);
+
     return refreshJwt()
       .then((refreshedJwt = '') => {
-        console.log('refreshedJwt', refreshedJwt.slice(-10));
+        console.log('AUTH - get JWT - refreshed JWT:', refreshedJwt.slice(-10));
         if (isValidJwt(refreshedJwt)) {
           handleUserJwt(refreshedJwt);
           setUserLoading(false);
           return refreshedJwt;
         }
-        console.log('AUTH - get JWT - none');
-        // removeUserJwt();
-        // remove JWT in logout() not here
-        setUserLoading(false);
-
-        logout({
-          sessionExpired: ctx.asPath !== HOMEPAGE_PATH,
-          redirect: ctx.asPath !== HOMEPAGE_PATH,
-        });
-
-        return authContextDefaultValues.token;
+        throw new Error('AUTH - get JWT - refresh failed, logout');
       })
-      .catch(() => {
-        logout({
-          sessionExpired: ctx.asPath !== HOMEPAGE_PATH,
-          redirect: ctx.asPath !== HOMEPAGE_PATH,
-        });
-
+      .catch((e) => {
+        console.error(e);
+        handleLogout(currentUrl);
         return authContextDefaultValues.token;
       });
   };
 
   useEffect(() => {
+    if (ctx.query?.session_expired) {
+      setUserLoading(false);
+    }
+
     if (ctx.asPath === LOGGED_IN_PATH) {
       console.log('PAGE CHANGE', ctx.asPath);
       setUserLoading(true);
@@ -188,6 +203,31 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     }
   }, []);
 
+  useEffect(() => {
+    const handleStart = (url?: any) => {
+      console.log('ROUTER START:', url, typeof url);
+      if (!forceString(url).includes('session_expired=true') && url !== LOGGED_IN_PATH) {
+        getUserJwt(forceString(url));
+      }
+    };
+
+    const handleStop = (url?: any) => {
+      if (forceString(url).includes('session_expired=true')) {
+        setUserLoading(false);
+      }
+    };
+
+    router.events.on('routeChangeStart', handleStart);
+    router.events.on('routeChangeComplete', handleStop);
+    router.events.on('routeChangeError', handleStop);
+
+    return () => {
+      router.events.off('routeChangeStart', handleStart);
+      router.events.off('routeChangeComplete', handleStop);
+      router.events.off('routeChangeError', handleStop);
+    };
+  }, [router]);
+
   const userInfo = userJwtState ? decodeToken(userJwtState) : null;
   const user: T_AuthContext['user'] = userInfo
     ? extractUser(userInfo)
@@ -203,7 +243,27 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     userLoading: userLoading && !userJwtState,
   };
 
-  return <AuthContext.Provider value={authContextValue}>{children}</AuthContext.Provider>;
+  console.log('userLoading', userLoading);
+
+  return (
+    <AuthContext.Provider value={authContextValue}>
+      {userLoading ? (
+        <div
+          css={css`
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+          `}
+        >
+          <DnaLoader />
+        </div>
+      ) : (
+        children
+      )}
+    </AuthContext.Provider>
+  );
 };
 
 export default function useAuthContext() {

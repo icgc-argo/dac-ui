@@ -170,9 +170,9 @@ const Root = ({ children, pageContext }: { children: ReactNode; pageContext: Nex
       <CSSGlobalReset />
       <Head />
       <PageContext.Provider value={pageContext}>
-        <AuthProvider>
-          <DataProvider>
-            <ThemeProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <DataProvider>
               <ToastProvider>
                 <div
                   css={css`
@@ -187,9 +187,9 @@ const Root = ({ children, pageContext }: { children: ReactNode; pageContext: Nex
                 <GdprBanner />
                 <DefaultPageLayout>{children}</DefaultPageLayout>
               </ToastProvider>
-            </ThemeProvider>
-          </DataProvider>
-        </AuthProvider>
+            </DataProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </PageContext.Provider>
     </React.Fragment>
   );
