@@ -24,6 +24,7 @@ import Typography from '@icgc-argo/uikit/Typography';
 import { APPLICATIONS_PATH } from 'global/constants';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import { ApplicationExpiry } from '.';
+import NextLink from 'next/link';
 
 const Expiry = ({ date, isExpired }: { date: string; isExpired: boolean }) => {
   const theme = useTheme();
@@ -68,7 +69,10 @@ const HeaderDetails = ({
           margin: 0 0 5px;
         `}
       >
-        <Link href={APPLICATIONS_PATH}>My Applications</Link>: {appId.toUpperCase()}
+        <NextLink href={APPLICATIONS_PATH} passHref>
+          <Link href={APPLICATIONS_PATH}>My Applications</Link>
+        </NextLink>
+        : {appId.toUpperCase()}
         {expiry && <Expiry date={expiry.date} isExpired={expiry.isExpired} />}
       </Typography>
 

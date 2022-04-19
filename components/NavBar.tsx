@@ -36,6 +36,7 @@ import Link from '@icgc-argo/uikit/Link';
 import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import useClickAway from '@icgc-argo/uikit/utils/useClickAway';
+import NextLink from 'next/link';
 
 import {
   CONTROLLED_DATA_USERS_PAGE,
@@ -43,7 +44,12 @@ import {
   HELP_PAGE,
   POLICIES_PAGE,
 } from 'global/constants/externalPaths';
-import { APPLICATIONS_PATH, LOGGED_IN_PATH, PRIVATE_PATHS } from 'global/constants/internalPaths';
+import {
+  APPLICATIONS_PATH,
+  HOMEPAGE_PATH,
+  LOGGED_IN_PATH,
+  PRIVATE_PATHS,
+} from 'global/constants/internalPaths';
 import { useAuthContext, usePageContext } from 'global/hooks';
 import { UserWithId } from 'global/types';
 import { isDacoAdmin } from 'global/utils/egoTokenUtils';
@@ -221,16 +227,18 @@ const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
       <Section>
         <Logo
           DomComponent={() => (
-            <Link
-              href={'/'}
-              css={css`
-                padding: 5px 20px;
-                display: flex;
-                align-items: center;
-              `}
-            >
-              <img src={navDacoLogo} width="208px" height="30px" alt="ICGC DACO Home" />
-            </Link>
+            <NextLink href={HOMEPAGE_PATH} passHref>
+              <Link
+                href={HOMEPAGE_PATH}
+                css={css`
+                  padding: 5px 20px;
+                  display: flex;
+                  align-items: center;
+                `}
+              >
+                <img src={navDacoLogo} width="208px" height="30px" alt="ICGC DACO Home" />
+              </Link>
+            </NextLink>
           )}
         />
         <MenuGroup>
@@ -251,26 +259,27 @@ const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
       <Section>
         <MenuGroup>
           {user ? (
-            <Link
-              // TODO should be a next link
-              css={css`
-                text-decoration: none;
-              `}
-              href={APPLICATIONS_PATH}
-            >
-              <StyledMenuItem
-                css={(theme: UikitTheme) =>
-                  css`
-                    color: ${theme.colors.secondary};
-                    border-left: 1px solid ${theme.colors.grey_2};
-                    border-right: 1px solid ${theme.colors.grey_2};
-                    border-bottom: 3px solid ${theme.colors.secondary};
-                  `
-                }
+            <NextLink href={APPLICATIONS_PATH} passHref>
+              <Link
+                css={css`
+                  text-decoration: none;
+                `}
+                href={APPLICATIONS_PATH}
               >
-                {applicationsTitle}
-              </StyledMenuItem>
-            </Link>
+                <StyledMenuItem
+                  css={(theme: UikitTheme) =>
+                    css`
+                      color: ${theme.colors.secondary};
+                      border-left: 1px solid ${theme.colors.grey_2};
+                      border-right: 1px solid ${theme.colors.grey_2};
+                      border-bottom: 3px solid ${theme.colors.secondary};
+                    `
+                  }
+                >
+                  {applicationsTitle}
+                </StyledMenuItem>
+              </Link>
+            </NextLink>
           ) : (
             isLoginVisible && (
               <Link
