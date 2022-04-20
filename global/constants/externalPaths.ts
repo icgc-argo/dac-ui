@@ -76,6 +76,11 @@ const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
 const egoLoginUrl = new URL(urlJoin(NEXT_PUBLIC_EGO_API_ROOT, 'oauth/login/google'));
 egoLoginUrl.searchParams.append('client_id', NEXT_PUBLIC_EGO_CLIENT_ID);
 
+export const egoRefreshUrl = urlJoin(
+  NEXT_PUBLIC_EGO_API_ROOT,
+  `/oauth/refresh?client_id=${NEXT_PUBLIC_EGO_CLIENT_ID}`,
+);
+
 export const EGO_LOGIN_URL = egoLoginUrl.href;
 
 // API
