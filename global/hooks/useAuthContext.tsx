@@ -105,7 +105,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
 
   const removeUserJwt = () => {
     console.log('AUTH - remove JWT in state and localStorage');
-    handleUserJwt(authContextDefaultValues.token);
+    handleUserJwt();
   };
 
   const handleUserJwt = (token: string = authContextDefaultValues.token) => {
@@ -120,6 +120,8 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
   };
 
   const forceLogout = (url: string = '', isRouting: boolean = false) => {
+    // isRouting = in the middle of a NextJS router event
+    // see router.events in this file
     console.log('forceLogout URL:', url, 'isRouting:', isRouting, 'asPath:', ctx.asPath);
     logout({
       sessionExpired: isRouting || ctx.asPath !== HOMEPAGE_PATH,
