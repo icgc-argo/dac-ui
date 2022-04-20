@@ -17,19 +17,17 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { useRouter } from 'next/router';
 import { css } from '@emotion/core';
-import urlJoin from 'url-join';
-
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
-import Link from '@icgc-argo/uikit/Link';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
 
-import { API, APPLICATIONS_PATH, DACO_APPLYING_DOCS } from 'global/constants';
 import { useDataContext } from 'global/hooks';
 
+import { API, APPLICATIONS_PATH } from 'global/constants';
+import { useRouter } from 'next/router';
+import urlJoin from 'url-join';
 import DashboardCard from '../Card';
 
 const StartApplication = () => {
@@ -68,10 +66,7 @@ const StartApplication = () => {
           `}
         >
           Start a new application, fill out all required sections, then sign and submit the
-          application. The ICGC DACO will review and grant access to{' '}
-          <Link href={DACO_APPLYING_DOCS} rel="noopener noreferrer" target="_blank">
-            eligible project teams.
-          </Link>
+          application. The ICGC DACO will review and grant access to eligible project teams.
         </Typography>
 
         <Button onClick={createNewApplication} size="sm">

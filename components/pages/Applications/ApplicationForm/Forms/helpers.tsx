@@ -30,7 +30,7 @@ import {
   FormValidationStateParameters,
   FormSectionValidationState_SectionBase,
 } from './types';
-import { useLocalValidation } from './validations';
+import { TERMS_PLACEHOLDER_FORM_DATA, useLocalValidation } from './validations';
 import { pickBy } from 'lodash';
 import { ApplicationData } from '../../types';
 
@@ -61,7 +61,10 @@ export const sectionSelector = ({
   const {
     fields: storedFields,
     meta: { overall },
-  }: FormSectionValidationState_SectionBase = formState.sections[selectedSection] || {};
+  }: FormSectionValidationState_SectionBase =
+    selectedSection === 'terms'
+      ? (TERMS_PLACEHOLDER_FORM_DATA as FormSectionValidationState_SectionBase)
+      : formState.sections[selectedSection];
 
   const isSectionDisabled =
     !overall ||
@@ -97,8 +100,10 @@ export const sectionSelector = ({
       primaryAffiliation={primaryAffiliation}
       refetchAllData={formState.__refetchAllData}
       validateFieldTouched={validateFieldTouched}
-      sectionLastUpdatedAt={sectionData[selectedSection].meta.lastUpdatedAtUtc}
-      errorsList={sectionData[selectedSection].meta.errorsList}
+      sectionLastUpdatedAt={
+        selectedSection === 'terms' ? null : sectionData[selectedSection].meta.lastUpdatedAtUtc
+      }
+      errorsList={selectedSection === 'terms' ? [] : sectionData[selectedSection].meta.errorsList}
     />
   ) : (
     `Section not implemented: "${selectedSection}"`

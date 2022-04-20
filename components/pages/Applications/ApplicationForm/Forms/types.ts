@@ -205,10 +205,6 @@ export type FormSectionValidationState_Signature = FormSectionValidationState_Se
   };
 }>;
 
-export type FormSectionValidationState_Terms = FormSectionValidationState_SectionsGenericType<{
-  agreement: { value: boolean };
-}>;
-
 export type FormSectionValidationState_Sections =
   | FormSectionValidationState_Appendices
   | FormSectionValidationState_Applicant
@@ -217,8 +213,7 @@ export type FormSectionValidationState_Sections =
   | FormSectionValidationState_EthicsLetter
   | FormSectionValidationState_ProjectInfo
   | FormSectionValidationState_Representative
-  | FormSectionValidationState_Signature
-  | FormSectionValidationState_Terms;
+  | FormSectionValidationState_Signature;
 
 export type FormSectionValidationState_SectionBase = {
   fields: Partial<FormSectionValidationState_Sections>;
