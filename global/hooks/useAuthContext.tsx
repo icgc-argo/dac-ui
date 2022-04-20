@@ -167,7 +167,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
         }
         throw new Error('AUTH - get JWT - refresh failed, logout');
       })
-      .catch((e) => {
+      .catch((e: any) => {
         console.error(e);
         forceLogout(currentUrl, isRouting);
         return authContextDefaultValues.token;
