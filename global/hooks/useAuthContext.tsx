@@ -24,7 +24,6 @@ import {
   refreshJwt,
   removeStoredJwt,
   setStoredJwt,
-  forceString,
 } from 'global/utils/authUtils';
 import {
   decodeToken,
@@ -209,27 +208,32 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
   }, []);
 
   useEffect(() => {
-    const handleStart = (url: any) => {
+    const handleStart = (url: string) => {
       console.log('ROUTER START:', url, typeof url);
-      if (!forceString(url).includes('session_expired=true') && url !== LOGGED_IN_PATH) {
-        getUserJwt(forceString(url), true);
+      if (!url.includes('session_expired=true') && url !== LOGGED_IN_PATH) {
+        getUserJwt(url, true);
       }
     };
 
-    const handleStop = (url: any) => {
-      if (forceString(url).includes('session_expired=true')) {
+    const handleComplete = (url: string) => {
+      if (url.includes('session_expired=true')) {
         setUserLoading(false);
       }
     };
 
+    const handleError = (err: any, url: string) => {
+      console.error(err);
+      handleComplete(url);
+    };
+
     router.events.on('routeChangeStart', handleStart);
-    router.events.on('routeChangeComplete', handleStop);
-    router.events.on('routeChangeError', handleStop);
+    router.events.on('routeChangeComplete', handleComplete);
+    router.events.on('routeChangeError', handleError);
 
     return () => {
       router.events.off('routeChangeStart', handleStart);
-      router.events.off('routeChangeComplete', handleStop);
-      router.events.off('routeChangeError', handleStop);
+      router.events.off('routeChangeComplete', handleComplete);
+      router.events.off('routeChangeError', handleError);
     };
   }, [router]);
 
