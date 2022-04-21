@@ -88,8 +88,8 @@ spec:
         stage('Publish Develop') {
             when {
                 anyOf {
-                  branch 'master'
-                  branch 'main'
+                  branch 'develop'
+                  branch 'fix-refresh-logout-v2'
                 }
             }
             steps {
@@ -110,8 +110,8 @@ spec:
         stage('deploy to argo-dev') {
             when {
                 anyOf {
-                  branch 'master'
-                  branch 'main'
+                  branch 'develop'
+                  branch 'fix-refresh-logout-v2'
                 }
             }
             steps {
