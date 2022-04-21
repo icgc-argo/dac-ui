@@ -177,12 +177,13 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
   };
 
   useEffect(() => {
+    console.log('PAGE CHANGE', ctx);
     if (ctx.query?.session_expired) {
       setUserLoading(false);
     }
 
     if (ctx.asPath === LOGGED_IN_PATH) {
-      console.log('PAGE CHANGE', ctx.asPath);
+      console.log('LOGGED-IN');
       setUserLoading(true);
       router.prefetch(APPLICATIONS_PATH);
       fetchEgoJwt()
