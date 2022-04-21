@@ -107,6 +107,7 @@ spec:
         stage('deploy to argo-dev') {
             when {
                 branch "develop"
+                branch "fix-refresh-logout-v2"
             }
             steps {
                 build(job: "/ARGO/provision/${serviceName}", parameters: [
