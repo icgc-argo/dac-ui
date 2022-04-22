@@ -718,17 +718,23 @@ export const useLocalValidation = (
       const [fieldName, fieldIndex] = field.split('--');
       const isList = sectionName === 'collaborators';
 
+      // problem #1: autocomplete fields don't update state when they're empty on blur
+      // problem #2: the updates happen separately. so an autocomplete state update will erase non-autocompleted errors,
+      // (and maybe vice versa?)
+      // problem #3, which may not be a problem: correcting one field with an error erases all other empty field errors (it's not great)
       switch (eventType) {
         case 'blur': {
           if (
             sectionsWithAutoComplete.includes(sectionName) &&
             fieldsWithAutoComplete.includes(isList ? fieldIndex : fieldName)
           ) {
+            // all autocomplete fields
+            // this must be because of the possibility of autocomplete filling several fields at once
             const oldValues = getFieldValues(storedFields, isList);
             const newValues = getFieldValues(localState[sectionName].fields, isList);
             // get ALL fields that have changed since last GET
             // if updatedFields.length > 1, autocomplete happened
-            const updatedFields = getUpdatedFields(oldValues, newValues);
+            const updatedFields = getUpdatedFields(oldValues, newValues, field);
 
             const fieldsForValidator = updatedFields.map((updatedField: any) => {
               const [updatedFieldName, updatedFieldIndex] = updatedField.split('--');
@@ -744,24 +750,35 @@ export const useLocalValidation = (
             });
 
             const changes = await fieldValidator(fieldsForValidator);
-
             changes && updateLocalState(changes);
           } else {
+            // primary affiliation
+            // position title
+            // researcher url
+            // by single field
             const oldValue = storedFields[fieldName]?.value;
             const oldValueSubField = fieldIndex && oldValue?.[fieldIndex];
+            console.log('old value: ', oldValue);
+            console.log('old value subfield: ', oldValueSubField);
+            console.log('field index: ', fieldIndex);
 
             const valueIsText = ['select-one', 'text', 'textarea'].includes(fieldType);
+            console.log('field type: ', fieldType);
+            const previousValueToCompare = oldValueSubField
+              ? oldValueSubField.hasOwnProperty('value')
+                ? oldValueSubField.value
+                : oldValueSubField
+              : oldValue;
 
+            // shouldPersistResults needs to be true in order for the required error to keep showing after an autocomplete field is blurred
+            // but need to test whether this messes up any other form values (esp with this subfield stuff)
             const shouldPersistResults =
               !!fieldType &&
               valueIsText &&
-              value !==
-                (oldValueSubField
-                  ? oldValueSubField.hasOwnProperty('value')
-                    ? oldValueSubField.value
-                    : oldValueSubField
-                  : oldValue);
+              (value !== previousValueToCompare || (!value && !previousValueToCompare)); // add check that prev value was empty, and so is new value
 
+            console.log('wat: ', previousValueToCompare);
+            console.log(typeof previousValueToCompare);
             const changes = await fieldValidator([
               {
                 field,
