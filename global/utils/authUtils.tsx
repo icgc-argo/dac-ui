@@ -54,9 +54,9 @@ export const fetchEgoJwt = async (): Promise<string> => {
   return await res.text();
 };
 
-const refreshMaxConccurent = 1;
+const refreshMaxConcurrent = 1;
 const refreshMaxQueue = 1;
-const refreshQueue = new Queue(refreshMaxConccurent, refreshMaxQueue);
+const refreshQueue = new Queue(refreshMaxConcurrent, refreshMaxQueue);
 
 export const refreshJwt = () =>
   refreshQueue.add(

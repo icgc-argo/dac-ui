@@ -39,6 +39,10 @@ const dataContextDefaults = {
 
 const DataContext = createContext<T_DataContext>(dataContextDefaults);
 
+const fetchMaxConcurrent = 1;
+const fetchMaxQueue = Infinity;
+const fetchQueue = new Queue(fetchMaxConcurrent, fetchMaxQueue);
+
 export const DataProvider = ({ children }: { children: React.ReactElement }) => {
   const [dataLoading, setDataLoading] = useState<boolean>(dataContextDefaults.dataLoading);
   const { getUserJwt } = useAuthContext();
