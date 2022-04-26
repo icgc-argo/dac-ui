@@ -18,7 +18,8 @@
  */
 
 import React, { createContext, useContext, useState } from 'react';
-import axios, { AxiosRequestConfig, AxiosResponse, Canceler, Method } from 'axios';
+import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
+import Queue from 'promise-queue';
 import { getConfig } from 'global/config';
 import { useToaster } from './useToaster';
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
@@ -63,56 +64,117 @@ export const DataProvider = ({ children }: { children: React.ReactElement }) => 
     params = {},
     responseType,
     url,
-  }: AxiosRequestConfig): Promise<AxiosResponse> => {
-    setDataLoading(true);
+  }: AxiosRequestConfig) =>
+    fetchQueue.add(async () => {
+      const isQueueEmpty = fetchQueue.getQueueLength() === 0;
 
-    if (!url) {
-      setDataLoading(false);
-      return Promise.reject(undefined);
-    }
+      setDataLoading(true);
 
-    console.log('FETCH - start:', url);
-    const fetchJwt = await getUserJwt({ type: GetUserJwt_Types.FETCH_WITH_AUTH });
-    if (!fetchJwt) {
-      console.log('FETCH - invalid JWT:', fetchJwt.slice(-10));
-      setDataLoading(false);
-      return Promise.reject(undefined);
-    }
-
-    console.log('FETCH - valid JWT:', fetchJwt.slice(-10));
-
-    const config: AxiosRequestConfig = {
-      ...(!['DELETE', 'GET'].includes(method) && { data }),
-      baseURL: NEXT_PUBLIC_DAC_API_ROOT,
-      cancelToken: cancelTokenSource.token,
-      headers: {
-        accept: '*/*',
-        ...headers,
-        Authorization: `Bearer ${fetchJwt}`,
-      },
-      method,
-      params,
-      ...(responseType ? { responseType } : {}),
-      url,
-    };
-
-    return axios(config)
-      .catch((error) => {
-        // status code outside 2xx range
-        toaster.addToast({
-          title: 'Something went wrong!',
-          variant: TOAST_VARIANTS.ERROR,
-          content: 'Please try performing your action again.',
-        });
-        // TODO: log errors somewhere not visible to the user?
-        // Leaving this log here pre-release, for troubleshooting
-        console.error('Error in fetchWithAuth', { error });
-        throw { error };
-      })
-      .finally(() => {
+      if (!url) {
         setDataLoading(false);
-      });
-  };
+        return Promise.reject(undefined);
+      }
+
+      console.log('FETCH - start:', url);
+      const fetchJwt = await getUserJwt({ type: GetUserJwt_Types.FETCH_WITH_AUTH });
+      if (!fetchJwt) {
+        console.log('FETCH - invalid JWT:', fetchJwt.slice(-10));
+        setDataLoading(false);
+        return Promise.reject(undefined);
+      }
+
+      const config: AxiosRequestConfig = {
+        ...(!['DELETE', 'GET'].includes(method) && { data }),
+        baseURL: NEXT_PUBLIC_DAC_API_ROOT,
+        cancelToken: cancelTokenSource.token,
+        headers: {
+          accept: '*/*',
+          ...headers,
+          Authorization: `Bearer ${fetchJwt}`,
+        },
+        method,
+        params,
+        ...(responseType ? { responseType } : {}),
+        url,
+      };
+
+      console.log('FETCH - config', config);
+
+      return axios(config)
+        .catch((error) => {
+          // status code outside 2xx range
+          toaster.addToast({
+            title: 'Something went wrong!',
+            variant: TOAST_VARIANTS.ERROR,
+            content: 'Please try performing your action again.',
+          });
+          // TODO: log errors somewhere not visible to the user?
+          // Leaving this log here pre-release, for troubleshooting
+          console.error('Error in fetchWithAuth', { error });
+          throw { error };
+        })
+        .finally(() => {
+          setDataLoading(!isQueueEmpty);
+        });
+    });
+
+  // const fetchOld = async ({
+  //   data,
+  //   headers = {},
+  //   method = 'GET' as Method,
+  //   params = {},
+  //   responseType,
+  //   url,
+  // }: AxiosRequestConfig): Promise<AxiosResponse> => {
+  //   setDataLoading(true);
+
+  //   if (!url) {
+  //     setDataLoading(false);
+  //     return Promise.reject(undefined);
+  //   }
+
+  //   console.log('FETCH - start:', url);
+  //   const fetchJwt = await getUserJwt({ type: GetUserJwt_Types.FETCH_WITH_AUTH });
+  //   if (!fetchJwt) {
+  //     console.log('FETCH - invalid JWT:', fetchJwt.slice(-10));
+  //     setDataLoading(false);
+  //     return Promise.reject(undefined);
+  //   }
+
+  //   console.log('FETCH - valid JWT:', fetchJwt.slice(-10));
+
+  //   const config: AxiosRequestConfig = {
+  //     ...(!['DELETE', 'GET'].includes(method) && { data }),
+  //     baseURL: NEXT_PUBLIC_DAC_API_ROOT,
+  //     cancelToken: cancelTokenSource.token,
+  //     headers: {
+  //       accept: '*/*',
+  //       ...headers,
+  //       Authorization: `Bearer ${fetchJwt}`,
+  //     },
+  //     method,
+  //     params,
+  //     ...(responseType ? { responseType } : {}),
+  //     url,
+  //   };
+
+  //   return axios(config)
+  //     .catch((error) => {
+  //       // status code outside 2xx range
+  //       toaster.addToast({
+  //         title: 'Something went wrong!',
+  //         variant: TOAST_VARIANTS.ERROR,
+  //         content: 'Please try performing your action again.',
+  //       });
+  //       // TODO: log errors somewhere not visible to the user?
+  //       // Leaving this log here pre-release, for troubleshooting
+  //       console.error('Error in fetchWithAuth', { error });
+  //       throw { error };
+  //     })
+  //     .finally(() => {
+  //       setDataLoading(false);
+  //     });
+  // };
 
   const dataContextValue = {
     cancelFetchWithAuth,

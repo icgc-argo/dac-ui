@@ -17,6 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import Queue from 'promise-queue';
 import { APPLICATIONS_PATH, HOMEPAGE_PATH, LOGGED_IN_PATH } from 'global/constants/internalPaths';
 import {
   fetchEgoJwt,
@@ -152,49 +153,57 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     }
   };
 
-  const getUserJwt = async ({ url, type }: GetUserJwt_Args): Promise<string> => {
-    // provide a URL if it's different from ctx.asPath
-    // e.g. for route changes, this function needs to know the destination URL
-    const currentUrl = url || ctx.asPath || '';
-    if (isValidJwt(userJwtState)) {
-      console.log('AUTH - get JWT - state:', userJwtState.slice(-10));
-      setUserLoading(false);
-      return userJwtState;
-    }
+  const authMaxConcurrent = 1;
+  const authMaxQueue = Infinity;
+  const authQueue = new Queue(authMaxConcurrent, authMaxQueue);
 
-    const storedJwt = getStoredJwt();
-
-    if (!storedJwt) {
-      console.log('AUTH - get JWT - none, logout');
-      forceLogout(currentUrl, type === GetUserJwt_Types.ROUTE_CHANGE);
-      return authContextDefaultValues.token;
-    }
-
-    if (isValidJwt(storedJwt)) {
-      console.log('AUTH - get JWT - localStorage:', storedJwt.slice(-10));
-      setUserJwtState(storedJwt);
-      setUserLoading(false);
-      return storedJwt;
-    }
-
-    setUserLoading(true);
-
-    return refreshJwt()
-      .then((refreshedJwt = '') => {
-        console.log('AUTH - get JWT - refreshed JWT:', refreshedJwt.slice(-10));
-        if (isValidJwt(refreshedJwt)) {
-          handleUserJwt(refreshedJwt);
-          setUserLoading(false);
-          return refreshedJwt;
+  const getUserJwt = async ({ url, type }: GetUserJwt_Args) =>
+    authQueue.add(
+      async (): Promise<string> => {
+        const isQueueEmpty = authQueue.getQueueLength() === 0;
+        // provide a URL if it's different from ctx.asPath
+        // e.g. for route changes, this function needs to know the destination URL
+        const currentUrl = url || ctx.asPath || '';
+        if (isValidJwt(userJwtState)) {
+          console.log('AUTH - get JWT - state:', userJwtState.slice(-10));
+          setUserLoading(!isQueueEmpty);
+          return userJwtState;
         }
-        throw new Error('AUTH - get JWT - refresh failed, logout');
-      })
-      .catch((e: any) => {
-        console.error(e);
-        forceLogout(currentUrl, type === GetUserJwt_Types.ROUTE_CHANGE);
-        return authContextDefaultValues.token;
-      });
-  };
+
+        const storedJwt = getStoredJwt();
+
+        if (!storedJwt) {
+          console.log('AUTH - get JWT - none, logout');
+          forceLogout(currentUrl, type === GetUserJwt_Types.ROUTE_CHANGE);
+          return authContextDefaultValues.token;
+        }
+
+        if (isValidJwt(storedJwt)) {
+          console.log('AUTH - get JWT - localStorage:', storedJwt.slice(-10));
+          setUserJwtState(storedJwt);
+          setUserLoading(!isQueueEmpty);
+          return storedJwt;
+        }
+
+        setUserLoading(true);
+
+        return refreshJwt()
+          .then((refreshedJwt = '') => {
+            console.log('AUTH - get JWT - refreshed JWT:', refreshedJwt.slice(-10));
+            if (isValidJwt(refreshedJwt)) {
+              handleUserJwt(refreshedJwt);
+              setUserLoading(!isQueueEmpty);
+              return refreshedJwt;
+            }
+            throw new Error('AUTH - get JWT - refresh failed, logout');
+          })
+          .catch((e: any) => {
+            console.error(e);
+            forceLogout(currentUrl, type === GetUserJwt_Types.ROUTE_CHANGE);
+            return authContextDefaultValues.token;
+          });
+      },
+    );
 
   useEffect(() => {
     console.log('PAGE CHANGE', ctx);

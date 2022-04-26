@@ -18,7 +18,6 @@
  */
 
 import urlJoin from 'url-join';
-import Queue from 'promise-queue';
 
 import { isValidJwt } from 'global/utils/egoTokenUtils';
 import { getConfig } from 'global/config';
@@ -54,42 +53,35 @@ export const fetchEgoJwt = async (): Promise<string> => {
   return await res.text();
 };
 
-const refreshMaxConcurrent = 1;
-const refreshMaxQueue = 1;
-const refreshQueue = new Queue(refreshMaxConcurrent, refreshMaxQueue);
+export const refreshJwt = async (): Promise<string> => {
+  // get token from localStorage, not context,
+  // in case another tab got a new JWT.
+  const storedJwt = getStoredJwt();
 
-export const refreshJwt = () =>
-  refreshQueue.add(
-    async (): Promise<string> => {
-      // get token from localStorage, not context,
-      // in case another tab got a new JWT.
-      const storedJwt = getStoredJwt();
+  if (!storedJwt) {
+    console.log('REFRESH - no localStorage token');
+    return '';
+  }
 
-      if (!storedJwt) {
-        console.log('REFRESH - no localStorage token');
-        return '';
-      }
+  if (isValidJwt(storedJwt)) {
+    console.log('REFRESH - found valid localStorage JWT:', storedJwt.slice(-10));
+    localStorage.setItem(EGO_JWT_KEY, storedJwt);
+    return storedJwt;
+  }
 
-      if (isValidJwt(storedJwt)) {
-        console.log('REFRESH - found valid localStorage JWT:', storedJwt.slice(-10));
-        localStorage.setItem(EGO_JWT_KEY, storedJwt);
-        return storedJwt;
-      }
+  console.log('REFRESH - no valid localStorage JWT:', storedJwt.slice(-10));
 
-      console.log('REFRESH - no valid localStorage JWT:', storedJwt.slice(-10));
-
-      const refreshedJwt = await fetch(egoRefreshUrl, {
-        credentials: 'include',
-        headers: {
-          accept: '*/*',
-          authorization: `Bearer ${storedJwt}`,
-        },
-        method: 'POST',
-      }).then((res) => {
-        console.log('refresh res', res);
-        return res.text();
-      });
-
-      return refreshedJwt || '';
+  const refreshedJwt = await fetch(egoRefreshUrl, {
+    credentials: 'include',
+    headers: {
+      accept: '*/*',
+      authorization: `Bearer ${storedJwt}`,
     },
-  );
+    method: 'POST',
+  }).then((res) => {
+    console.log('refresh res', res);
+    return res.text();
+  });
+
+  return refreshedJwt || '';
+};
