@@ -23,6 +23,7 @@ import { getConfig } from 'global/config';
 import { useToaster } from './useToaster';
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
 import { useAuthContext } from 'global/hooks';
+import { GetUserJwt_Types } from './useAuthContext';
 
 type T_DataContext = {
   cancelFetchWithAuth: Canceler;
@@ -67,7 +68,7 @@ export const DataProvider = ({ children }: { children: React.ReactElement }) => 
     }
 
     console.log('FETCH - start:', url);
-    const fetchJwt = await getUserJwt();
+    const fetchJwt = await getUserJwt({ type: GetUserJwt_Types.FETCH_WITH_AUTH });
     if (!fetchJwt) {
       console.log('FETCH - invalid JWT:', fetchJwt.slice(-10));
       setDataLoading(false);
@@ -90,6 +91,7 @@ export const DataProvider = ({ children }: { children: React.ReactElement }) => 
       ...(responseType ? { responseType } : {}),
       url,
     };
+    console.log('FETCH - config', config);
 
     return axios(config)
       .catch((error) => {

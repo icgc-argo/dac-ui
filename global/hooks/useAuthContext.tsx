@@ -39,8 +39,19 @@ import { UserWithId } from 'global/types';
 import { css } from '@emotion/core';
 import DnaLoader from '@icgc-argo/uikit/DnaLoader';
 
+export enum GetUserJwt_Types {
+  FETCH_WITH_AUTH = 'FETCH_WITH_AUTH',
+  PAGE_LOAD = 'PAGE_LOAD',
+  ROUTE_CHANGE = 'ROUTE_CHANGE',
+}
+
+export type GetUserJwt_Args = {
+  type: GetUserJwt_Types;
+  url?: string;
+};
+
 export type T_AuthContext = {
-  getUserJwt: (url?: string, isRouting?: boolean) => Promise<string>;
+  getUserJwt: ({ type, url }: GetUserJwt_Args) => Promise<string>;
   logout: ({ sessionExpired }: { sessionExpired?: boolean }) => void;
   permissions: string[];
   token: string;
@@ -119,12 +130,19 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     }
   };
 
-  const forceLogout = (url: string = '', isRouting: boolean = false) => {
-    // isRouting = in the middle of a NextJS router event
-    // see router.events in this file
-    console.log('forceLogout URL:', url, 'isRouting:', isRouting, 'asPath:', ctx.asPath);
+  const forceLogout = (url: string, addSessionExpiredParam: boolean) => {
+    console.log(
+      'forceLogout URL:',
+      url,
+      'addSessionExpiredParam:',
+      addSessionExpiredParam,
+      'asPath:',
+      ctx.asPath,
+    );
+    // don't add the session_expired param if the user was visiting the homepage
+    // but DO add it if the user was navigating to the homepage from another page
     logout({
-      sessionExpired: isRouting || ctx.asPath !== HOMEPAGE_PATH,
+      sessionExpired: addSessionExpiredParam || ctx.asPath !== HOMEPAGE_PATH,
       redirect: url !== HOMEPAGE_PATH,
       url,
     });
@@ -134,7 +152,9 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     }
   };
 
-  const getUserJwt = async (url?: string, isRouting?: boolean): Promise<string> => {
+  const getUserJwt = async ({ url, type }: GetUserJwt_Args): Promise<string> => {
+    // provide a URL if it's different from ctx.asPath
+    // e.g. for route changes, this function needs to know the destination URL
     const currentUrl = url || ctx.asPath || '';
     if (isValidJwt(userJwtState)) {
       console.log('AUTH - get JWT - state:', userJwtState.slice(-10));
@@ -146,7 +166,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
 
     if (!storedJwt) {
       console.log('AUTH - get JWT - none, logout');
-      forceLogout(currentUrl, isRouting);
+      forceLogout(currentUrl, type === GetUserJwt_Types.ROUTE_CHANGE);
       return authContextDefaultValues.token;
     }
 
@@ -171,7 +191,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
       })
       .catch((e: any) => {
         console.error(e);
-        forceLogout(currentUrl, isRouting);
+        forceLogout(currentUrl, type === GetUserJwt_Types.ROUTE_CHANGE);
         return authContextDefaultValues.token;
       });
   };
@@ -206,7 +226,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
 
     if (!ctx.query?.session_expired && ctx.asPath !== LOGGED_IN_PATH) {
       console.log('PAGE CHANGE:', ctx.asPath);
-      getUserJwt();
+      getUserJwt({ type: GetUserJwt_Types.PAGE_LOAD });
     }
   }, []);
 
@@ -214,7 +234,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     const handleStart = (url: string) => {
       console.log('ROUTER START:', url, typeof url);
       if (!url.includes('session_expired=true') && url !== LOGGED_IN_PATH) {
-        getUserJwt(url, true);
+        getUserJwt({ type: GetUserJwt_Types.ROUTE_CHANGE, url });
       }
     };
 
