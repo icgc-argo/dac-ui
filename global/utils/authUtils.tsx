@@ -54,12 +54,12 @@ export const fetchEgoJwt = async (): Promise<string> => {
   return await res.text();
 };
 
-var maxConcurrent = 1;
-var maxQueue = Infinity;
-var queue = new Queue(maxConcurrent, maxQueue);
+const refreshMaxConccurent = 1;
+const refreshMaxQueue = 1;
+const refreshQueue = new Queue(refreshMaxConccurent, refreshMaxQueue);
 
 export const refreshJwt = () =>
-  queue.add(
+  refreshQueue.add(
     async (): Promise<string> => {
       // get token from localStorage, not context,
       // in case another tab got a new JWT.

@@ -91,7 +91,6 @@ export const DataProvider = ({ children }: { children: React.ReactElement }) => 
       ...(responseType ? { responseType } : {}),
       url,
     };
-    console.log('FETCH - config', config);
 
     return axios(config)
       .catch((error) => {
