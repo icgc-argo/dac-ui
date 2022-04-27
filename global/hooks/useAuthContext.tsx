@@ -125,7 +125,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     // don't add the session_expired param if the user was visiting the homepage
     // but DO add it if the user was navigating to the homepage from another page
     logout({
-      sessionExpired: userHadSession,
+      sessionExpired: userHadSession || url !== HOMEPAGE_PATH,
       redirect: url !== HOMEPAGE_PATH,
       // don't redirect if:
       // - on the homepage, not making a route change
@@ -133,7 +133,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
       url,
     });
 
-    if (ctx.asPath === HOMEPAGE_PATH && url === ctx.asPath) {
+    if (ctx.asPath === HOMEPAGE_PATH) {
       // turn off loading if on homepage & not changing routes
       setUserLoading(false);
     }
