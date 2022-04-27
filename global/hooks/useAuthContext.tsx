@@ -127,8 +127,16 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     logout({
       sessionExpired: userHadSession,
       redirect: url !== HOMEPAGE_PATH,
+      // don't redirect if:
+      // - on the homepage, not making a route change
+      // - in the middle of a route change to the homepage
       url,
     });
+
+    if (ctx.asPath === HOMEPAGE_PATH && url === ctx.asPath) {
+      // turn off loading if on homepage & not changing routes
+      setUserLoading(false);
+    }
   };
 
   const authMaxConcurrent = 1;
