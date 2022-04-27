@@ -48,7 +48,8 @@ const getButtonConfig = (
   appId = '',
   state = '',
 ): { content: string; link: string; icon: any }[] => {
-  const link = urlJoin(APPLICATIONS_PATH, appId);
+  const linkBase = urlJoin(APPLICATIONS_PATH, appId);
+  const link = urlJoin(linkBase, '?section=terms');
   switch (state) {
     case ApplicationState.DRAFT:
     case ApplicationState.SIGN_AND_SUBMIT:
@@ -80,7 +81,7 @@ const getButtonConfig = (
         },
         {
           content: 'Manage Collaborators',
-          link: urlJoin(link, '?section=collaborators'),
+          link: urlJoin(linkBase, '?section=collaborators'),
           icon: icons.user,
         },
       ];
