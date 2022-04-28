@@ -307,7 +307,8 @@ export type FormFieldValidationTriggerFunction = (event: any) => Promise<void>;
 export type FormValidationFunctionArguments = {
   field?: string;
   value?: any;
-  shouldPersistResults?: Boolean;
+  shouldPersistResults?: boolean;
+  valueStayedEmpty?: boolean;
 };
 
 export type FormFieldValidatorFunction = (

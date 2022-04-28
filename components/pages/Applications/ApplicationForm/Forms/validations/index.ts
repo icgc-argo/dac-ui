@@ -465,15 +465,11 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
         return {
           fieldName,
           results,
-          shouldPatch: fieldObj.shouldPersistResults && !isModalShape,
+          shouldPatch: fieldObj.shouldPersistResults && !fieldObj.valueStayedEmpty && !isModalShape,
         };
       });
 
-      const fieldsForPatch = fieldsResults.filter(
-        (fieldObj: any) =>
-          fieldObj.shouldPatch || fieldsWithAutoComplete.includes(fieldObj.fieldName),
-      );
-
+      const fieldsForPatch = fieldsResults.filter((fieldObj: any) => fieldObj.shouldPatch);
       const valuesForPatch = fieldsForPatch.map((fieldObj: any) =>
         getValueByFieldTypeToPublish(
           fieldObj.results,
@@ -718,18 +714,12 @@ export const useLocalValidation = (
       const [fieldName, fieldIndex] = field.split('--');
       const isList = sectionName === 'collaborators';
 
-      // problem #1: autocomplete fields don't update state when they're empty on blur
-      // problem #2: the updates happen separately. so an autocomplete state update will erase non-autocompleted errors,
-      // (and maybe vice versa?)
-      // problem #3, which may not be a problem: correcting one field with an error erases all other empty field errors (it's not great)
       switch (eventType) {
         case 'blur': {
           if (
             sectionsWithAutoComplete.includes(sectionName) &&
             fieldsWithAutoComplete.includes(isList ? fieldIndex : fieldName)
           ) {
-            // all autocomplete fields
-            // this must be because of the possibility of autocomplete filling several fields at once
             const oldValues = getFieldValues(storedFields, isList);
             const newValues = getFieldValues(localState[sectionName].fields, isList);
             // get ALL fields that have changed since last GET
@@ -741,49 +731,45 @@ export const useLocalValidation = (
               const fieldObj = isList
                 ? localState[sectionName].fields.list?.innerType?.fields[updatedFieldIndex]
                 : localState[sectionName].fields[updatedFieldName];
-
+              const valueStayedEmpty =
+                oldValues[updatedFieldName].value === '' &&
+                newValues[updatedFieldName].value === '';
               return {
                 field: updatedField,
                 shouldPersistResults: fieldObj.type === 'string',
                 value: fieldObj.type === 'string' ? (fieldObj.value || '').trim() : fieldObj.value,
+                valueStayedEmpty,
               };
             });
 
             const changes = await fieldValidator(fieldsForValidator);
             changes && updateLocalState(changes);
           } else {
-            // primary affiliation
-            // position title
-            // researcher url
-            // by single field
             const oldValue = storedFields[fieldName]?.value;
             const oldValueSubField = fieldIndex && oldValue?.[fieldIndex];
-            console.log('old value: ', oldValue);
-            console.log('old value subfield: ', oldValueSubField);
-            console.log('field index: ', fieldIndex);
 
             const valueIsText = ['select-one', 'text', 'textarea'].includes(fieldType);
-            console.log('field type: ', fieldType);
+
             const previousValueToCompare = oldValueSubField
               ? oldValueSubField.hasOwnProperty('value')
                 ? oldValueSubField.value
                 : oldValueSubField
               : oldValue;
 
-            // shouldPersistResults needs to be true in order for the required error to keep showing after an autocomplete field is blurred
-            // but need to test whether this messes up any other form values (esp with this subfield stuff)
+            const valueStayedEmpty = !value && !previousValueToCompare;
+            // if there is an oldValueSubField (i.e. publication urls), don't do value stays empty check
+            // for some reason this causes the required field error to flash on then off when tabbing through pub fields
             const shouldPersistResults =
-              !!fieldType &&
-              valueIsText &&
-              (value !== previousValueToCompare || (!value && !previousValueToCompare)); // add check that prev value was empty, and so is new value
+              !!fieldType && valueIsText && oldValueSubField
+                ? value !== previousValueToCompare
+                : value !== oldValue || valueStayedEmpty;
 
-            console.log('wat: ', previousValueToCompare);
-            console.log(typeof previousValueToCompare);
             const changes = await fieldValidator([
               {
                 field,
                 value: valueIsText ? (value || '').trim() : value,
                 shouldPersistResults,
+                valueStayedEmpty,
               },
             ]);
 
