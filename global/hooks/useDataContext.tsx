@@ -18,12 +18,14 @@
  */
 
 import React, { createContext, useContext, useState } from 'react';
-import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, Canceler, Method } from 'axios';
 import Queue from 'promise-queue';
 import { getConfig } from 'global/config';
 import { useToaster } from './useToaster';
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
 import { useAuthContext } from 'global/hooks';
+
+type FetchAxiosRequestConfig = AxiosRequestConfig & { retry: boolean };
 
 type T_DataContext = {
   cancelFetchWithAuth: Canceler;
@@ -39,19 +41,19 @@ const dataContextDefaults = {
 
 const DataContext = createContext<T_DataContext>(dataContextDefaults);
 
+// setup queue to avoid concurrent requests
 const fetchMaxConcurrent = 1;
 const fetchMaxQueue = Infinity;
 const fetchQueue = new Queue(fetchMaxConcurrent, fetchMaxQueue);
 
+// custom instance of axios
+const fetchClient = axios.create();
+
 export const DataProvider = ({ children }: { children: React.ReactElement }) => {
   const [dataLoading, setDataLoading] = useState<boolean>(dataContextDefaults.dataLoading);
-  const { getUserJwt } = useAuthContext();
+  const { forceLogout, getUserJwt } = useAuthContext();
   const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
   const toaster = useToaster();
-
-  // TODO: decide if we want these for all types of requests or only POST
-  axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
-  axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 
   const cancelTokenSource = axios.CancelToken.source();
   const cancelFetchWithAuth = cancelTokenSource.cancel;
@@ -74,7 +76,7 @@ export const DataProvider = ({ children }: { children: React.ReactElement }) => 
         return Promise.reject(undefined);
       }
 
-      console.log('FETCH - start:', url);
+      console.log('FETCH - start:', method, url);
       const fetchJwt = await getUserJwt();
       if (!fetchJwt) {
         console.log('FETCH - invalid JWT:', fetchJwt.slice(-10));
@@ -82,29 +84,56 @@ export const DataProvider = ({ children }: { children: React.ReactElement }) => 
         return Promise.reject(undefined);
       }
 
-      const config: AxiosRequestConfig = {
+      const config: FetchAxiosRequestConfig = {
         ...(!['DELETE', 'GET'].includes(method) && { data }),
         baseURL: NEXT_PUBLIC_DAC_API_ROOT,
         cancelToken: cancelTokenSource.token,
         headers: {
           accept: '*/*',
+          ...(['POST'].includes(method) && {
+            ['Access-Control-Allow-Origin']: '*',
+            ['Content-Type']: 'application/json;charset=utf-8',
+          }),
+          Authorization: `Bearer ${method.toLowerCase() === 'patch' ? 'test' : fetchJwt}`,
           ...headers,
-          Authorization: `Bearer ${fetchJwt}`,
         },
         method,
         params,
+        retry: false,
         ...(responseType ? { responseType } : {}),
         url,
       };
 
-      return axios(config)
+      fetchClient.interceptors.response.use(
+        (response: AxiosResponse) => response,
+        async (error: AxiosError) => {
+          const retryConfig = error.config as FetchAxiosRequestConfig;
+          if (error?.response?.status === 401 && !retryConfig.retry) {
+            retryConfig.retry = true;
+            const retryJwt = await getUserJwt();
+            console.log('FETCH - retry - JWT:', retryJwt.slice(-10));
+            retryConfig.headers.Authorization = `Bearer ${retryJwt}`;
+            return fetchClient(retryConfig);
+          }
+          return Promise.reject(error);
+        },
+      );
+
+      return fetchClient(config)
         .catch((error) => {
           // status code outside 2xx range
-          toaster.addToast({
-            title: 'Something went wrong!',
-            variant: TOAST_VARIANTS.ERROR,
-            content: 'Please try performing your action again.',
-          });
+          if (error?.response?.status === 401) {
+            // retry failed
+            console.log('FETCH - retry failed with 401');
+            forceLogout({ userHadSession: true });
+            setDataLoading(false);
+          } else {
+            toaster.addToast({
+              title: 'Something went wrong!',
+              variant: TOAST_VARIANTS.ERROR,
+              content: 'Please try performing your action again.',
+            });
+          }
           // TODO: log errors somewhere not visible to the user?
           // Leaving this log here pre-release, for troubleshooting
           console.error('Error in fetchWithAuth', { error });

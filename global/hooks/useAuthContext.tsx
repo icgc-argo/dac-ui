@@ -47,6 +47,12 @@ export type T_AuthContext = {
   token: string;
   user?: UserWithId;
   userLoading: boolean;
+  forceLogout: ({ url, userHadSession }: ForceLogoutArgs) => void;
+};
+
+type ForceLogoutArgs = {
+  url?: string;
+  userHadSession: boolean;
 };
 
 const authContextDefaultValues = {
@@ -56,6 +62,7 @@ const authContextDefaultValues = {
   token: '',
   user: undefined,
   userLoading: true,
+  forceLogout: () => {},
 };
 
 const AuthContext = createContext<T_AuthContext>(authContextDefaultValues);
@@ -120,7 +127,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     }
   };
 
-  const forceLogout = (url: string, userHadSession: boolean) => {
+  const forceLogout = ({ url, userHadSession }: ForceLogoutArgs) => {
     console.log('forceLogout URL:', url, 'userHadSession:', userHadSession, 'asPath:', ctx.asPath);
     // don't add the session_expired param if the user was visiting the homepage
     // but DO add it if the user was navigating to the homepage from another page
@@ -160,7 +167,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
 
         if (!storedJwt) {
           console.log('AUTH - get JWT - none, logout');
-          forceLogout(currentUrl, false);
+          forceLogout({ url: currentUrl, userHadSession: false });
           return authContextDefaultValues.token;
         }
 
@@ -185,7 +192,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
           })
           .catch((e: any) => {
             console.error(e);
-            forceLogout(currentUrl, true);
+            forceLogout({ url: currentUrl, userHadSession: true });
             return authContextDefaultValues.token;
           });
       },
@@ -264,6 +271,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
   const authContextValue = {
     getUserJwt,
     logout,
+    forceLogout,
     permissions,
     token: userJwtState,
     user,
