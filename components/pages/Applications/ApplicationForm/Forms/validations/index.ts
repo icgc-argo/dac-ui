@@ -465,6 +465,8 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
         return {
           fieldName,
           results,
+          // shouldPersistResults:true is necessary to get the required field error to persist after other fields are focused/blurred/changed
+          // valueStayedEmpty is used to ensure that fields that remain empty after being touched do not trigger a PATCH request
           shouldPatch: fieldObj.shouldPersistResults && !fieldObj.valueStayedEmpty && !isModalShape,
         };
       });
@@ -715,6 +717,14 @@ export const useLocalValidation = (
       const isList = sectionName === 'collaborators';
 
       switch (eventType) {
+        /**  **NOTE** Firefox and Chrome handle autofill events differently:
+        Chrome will fire a CHANGE event for each field that is autofilled, this updates local state but does not trigger an api request
+        The api request containing all changed fields will be triggered once the user blurs the focused field
+        Firefox will *immediately* fire a CHANGE and a BLUR event for each field that is autofilled, which triggers an api request *for each* autofilled field
+        github thread here: https://github.com/whatwg/html/issues/3016
+        older SO answer but references the general issue: https://stackoverflow.com/questions/11708092/detecting-browser-autofill/11710295#11710295
+        TODO: add notes about this to the frontend dev wiki
+        */
         case 'blur': {
           if (
             sectionsWithAutoComplete.includes(sectionName) &&
@@ -759,6 +769,7 @@ export const useLocalValidation = (
             const valueStayedEmpty = !value && !previousValueToCompare;
             // if there is an oldValueSubField (i.e. publication urls), don't do value stays empty check
             // for some reason this causes the required field error to flash on then off when tabbing through pub fields
+            // shouldPersistResults needs to be false for the required field error to persist while modifying other pub url fields
             const shouldPersistResults =
               !!fieldType && valueIsText && oldValueSubField
                 ? value !== previousValueToCompare
