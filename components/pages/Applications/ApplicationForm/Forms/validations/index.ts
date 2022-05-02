@@ -717,14 +717,7 @@ export const useLocalValidation = (
       const isList = sectionName === 'collaborators';
 
       switch (eventType) {
-        /**  **NOTE** Firefox and Chrome handle autofill events differently:
-        Chrome will fire a CHANGE event for each field that is autofilled, this updates local state but does not trigger an api request
-        The api request containing all changed fields will be triggered once the user blurs the focused field
-        Firefox will *immediately* fire a CHANGE and a BLUR event for each field that is autofilled, which triggers an api request *for each* autofilled field
-        github thread here: https://github.com/whatwg/html/issues/3016
-        older SO answer but references the general issue: https://stackoverflow.com/questions/11708092/detecting-browser-autofill/11710295#11710295
-        TODO: add notes about this to the frontend dev wiki
-        */
+        // **NOTE** Firefox and Chrome handle autofill events differently, see note in wiki: https://wiki.oicr.on.ca/display/icgcargotech/Frontend#Frontend-Autofill(DAC-UI)
         case 'blur': {
           if (
             sectionsWithAutoComplete.includes(sectionName) &&
