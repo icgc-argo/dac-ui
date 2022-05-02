@@ -29,6 +29,8 @@ import {
 } from 'global/constants';
 import { useRouter } from 'next/router';
 import NewWebsiteNotice from 'components/pages/NewWebsiteNotice';
+import { getConfig } from 'global/config';
+import MaintenancePage from './maintenance';
 
 const resetFlashData = () => {
   [SUBMISSION_SUCCESS_CHECK, APPROVED_APP_CLOSED_CHECK].forEach((key) =>
@@ -46,6 +48,7 @@ const App = ({
   ctx: NextPageContext;
 }) => {
   const router = useRouter();
+  const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
 
   // set up router event listeners
   useEffect(() => {
@@ -63,11 +66,11 @@ const App = ({
     };
   }, []);
 
-  return ctx.pathname === NEW_WEBSITE_NOTICE_PATH ? (
+  return ctx.pathname === NEW_WEBSITE_NOTICE_PATH && !NEXT_PUBLIC_MAINTENANCE_MODE_ON ? (
     <NewWebsiteNotice />
   ) : (
     <Root pageContext={ctx}>
-      <Component {...pageProps} />
+      {NEXT_PUBLIC_MAINTENANCE_MODE_ON ? <MaintenancePage /> : <Component {...pageProps} />}
     </Root>
   );
 };
