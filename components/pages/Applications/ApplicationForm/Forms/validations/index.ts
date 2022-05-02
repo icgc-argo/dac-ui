@@ -717,7 +717,7 @@ export const useLocalValidation = (
       const isList = sectionName === 'collaborators';
 
       switch (eventType) {
-        // **NOTE** Firefox and Chrome handle autofill events differently, see note in wiki: https://wiki.oicr.on.ca/display/icgcargotech/Frontend#Frontend-Autofill(DAC-UI)
+        // **NOTE** Firefox and Chrome handle autofill events differently, see note in Frontend wiki
         case 'blur': {
           if (
             sectionsWithAutoComplete.includes(sectionName) &&
