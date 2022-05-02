@@ -126,9 +126,7 @@ const ApplicationFormsBase = ({
         },
       );
     }
-  }, [sectionFromQuery, selectedSection]);
 
-  useEffect(() => {
     // avoid validating a section that has already been validated.
     formState.sections[selectedSection]?.meta.validated ||
       triggerSectionValidation('initialValidation', selectedSection);
