@@ -121,7 +121,7 @@ const Collaborators = ({
   const toaster = useToaster();
 
   const handleCollaboratorCreateOrEdit = useCallback(() => {
-    const newCollaboratorData = Object.entries(localState.list?.innerType?.fields).reduce(
+    const newCollaboratorData = Object.entries(localState.list?.innerType?.fields || {}).reduce(
       (dataAcc, field) => {
         const [fieldName, fieldData] = field as [string, FormFieldType];
         const [prefix, suffix] = fieldName.split('_');
@@ -254,10 +254,10 @@ const Collaborators = ({
 
     collaboratorCount === newCollaboratorCount || setCollaboratorCount(newCollaboratorCount);
     setModalHasErrors(
-      Object.values(localState.list?.innerType?.fields).some(
+      Object.values(localState.list?.innerType?.fields || {}).some(
         (field: any) => field?.error?.length > 0,
       ) ||
-        !Object.entries(localState.list?.innerType?.fields)
+        !Object.entries(localState.list?.innerType?.fields || {})
           .filter(
             ([fieldName, fieldData]) =>
               fieldName !== 'type' && isRequired(fieldData as FormFieldType),
