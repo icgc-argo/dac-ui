@@ -109,7 +109,10 @@ spec:
 
         stage('deploy to argo-dev') {
             when {
-                branch "develop"
+              anyOf {
+                  branch 'develop'
+                  branch 'fix-collab-issue'
+              }
             }
             steps {
                 build(job: "/ARGO/provision/${serviceName}", parameters: [
