@@ -94,7 +94,7 @@ export const DataProvider = ({ children }: { children: React.ReactElement }) => 
             ['Access-Control-Allow-Origin']: '*',
             ['Content-Type']: 'application/json;charset=utf-8',
           }),
-          Authorization: `Bearer ${method.toLowerCase() === 'patch' ? 'test' : fetchJwt}`,
+          Authorization: `Bearer ${fetchJwt}`,
           ...headers,
         },
         method,
