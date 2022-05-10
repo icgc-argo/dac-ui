@@ -89,7 +89,6 @@ spec:
             when {
               anyOf {
                   branch 'develop'
-                  branch 'fix-collab-issue'
               }
             }
             steps {
@@ -111,7 +110,6 @@ spec:
             when {
               anyOf {
                   branch 'develop'
-                  branch 'fix-collab-issue'
               }
             }
             steps {
