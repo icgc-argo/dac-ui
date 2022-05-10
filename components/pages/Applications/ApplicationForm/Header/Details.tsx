@@ -70,7 +70,7 @@ const HeaderDetails = ({
         `}
       >
         <NextLink href={APPLICATIONS_PATH} passHref>
-          <Link href={APPLICATIONS_PATH}>My Applications</Link>
+          <Link>My Applications</Link>
         </NextLink>
         : {appId.toUpperCase()}
         {expiry && <Expiry date={expiry.date} isExpired={expiry.isExpired} />}

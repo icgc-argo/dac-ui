@@ -79,11 +79,11 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
 
   const router = useRouter();
 
-  const logout = async ({ sessionExpired = true, redirect = true, url = '' } = {}) => {
+  const logout = async ({ sessionExpired = true, redirectHome = true, url = '' } = {}) => {
     console.log('LOGOUT');
     const storedJwt = getStoredJwt();
     removeUserJwt();
-    if (redirect) {
+    if (redirectHome) {
       router.push(`${HOMEPAGE_PATH}${sessionExpired ? '?session_expired=true' : ''}`);
     } else if (sessionExpired && url === HOMEPAGE_PATH) {
       router.push(`${HOMEPAGE_PATH}?session_expired=true`, undefined, {
@@ -133,7 +133,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     // but DO add it if the user was navigating to the homepage from another page
     logout({
       sessionExpired: userHadSession || url !== HOMEPAGE_PATH,
-      redirect: url !== HOMEPAGE_PATH,
+      redirectHome: url !== HOMEPAGE_PATH,
       // don't redirect if:
       // - on the homepage, not making a route change
       // - in the middle of a route change to the homepage
@@ -219,7 +219,7 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
         .then(() => router.push(APPLICATIONS_PATH))
         .catch((err) => {
           console.warn(err);
-          logout({ sessionExpired: true, redirect: true });
+          logout({ sessionExpired: true, redirectHome: true });
         })
         .finally(() => {
           setUserLoading(false);

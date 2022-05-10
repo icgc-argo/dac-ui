@@ -264,7 +264,6 @@ const NavBar = ({ hideLinks }: { hideLinks?: boolean }) => {
                 css={css`
                   text-decoration: none;
                 `}
-                href={APPLICATIONS_PATH}
               >
                 <StyledMenuItem
                   css={(theme: UikitTheme) =>
