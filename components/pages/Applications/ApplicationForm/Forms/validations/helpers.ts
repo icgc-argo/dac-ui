@@ -414,7 +414,12 @@ export const getFieldValues = (fieldsObj: any, isList: boolean): { [key: string]
     );
 };
 
-export const getUpdatedFields = (oldFields: any, newFields: any): string[] =>
+export const getUpdatedFields = (oldFields: any, newFields: any, currentField: string): string[] =>
   Object.keys(oldFields).filter(
-    (fieldName: string) => !isEqual(oldFields[fieldName].value, newFields[fieldName].value),
+    (fieldName: string) =>
+      !isEqual(oldFields[fieldName].value, newFields[fieldName].value) ||
+      // check if current field remains empty so it is regarded as "updated" for the purposes of triggering local state update
+      (currentField === fieldName &&
+        oldFields[fieldName].value === '' &&
+        newFields[fieldName].value === ''),
   );

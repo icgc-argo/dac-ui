@@ -465,15 +465,13 @@ export const validator: FormSectionValidatorFunction_Main = (formState, dispatch
         return {
           fieldName,
           results,
-          shouldPatch: fieldObj.shouldPersistResults && !isModalShape,
+          // shouldPersistResults:true is necessary to get the required field error to persist after other fields are focused/blurred/changed
+          // valueStayedEmpty is used to ensure that fields that remain empty after being touched do not trigger a PATCH request
+          shouldPatch: fieldObj.shouldPersistResults && !fieldObj.valueStayedEmpty && !isModalShape,
         };
       });
 
-      const fieldsForPatch = fieldsResults.filter(
-        (fieldObj: any) =>
-          fieldObj.shouldPatch || fieldsWithAutoComplete.includes(fieldObj.fieldName),
-      );
-
+      const fieldsForPatch = fieldsResults.filter((fieldObj: any) => fieldObj.shouldPatch);
       const valuesForPatch = fieldsForPatch.map((fieldObj: any) =>
         getValueByFieldTypeToPublish(
           fieldObj.results,
@@ -719,6 +717,7 @@ export const useLocalValidation = (
       const isList = sectionName === 'collaborators';
 
       switch (eventType) {
+        // **NOTE** Firefox and Chrome handle autofill events differently, see note in Frontend wiki
         case 'blur': {
           if (
             sectionsWithAutoComplete.includes(sectionName) &&
@@ -728,23 +727,25 @@ export const useLocalValidation = (
             const newValues = getFieldValues(localState[sectionName].fields, isList);
             // get ALL fields that have changed since last GET
             // if updatedFields.length > 1, autocomplete happened
-            const updatedFields = getUpdatedFields(oldValues, newValues);
+            const updatedFields = getUpdatedFields(oldValues, newValues, field);
 
             const fieldsForValidator = updatedFields.map((updatedField: any) => {
               const [updatedFieldName, updatedFieldIndex] = updatedField.split('--');
               const fieldObj = isList
                 ? localState[sectionName].fields.list?.innerType?.fields[updatedFieldIndex]
                 : localState[sectionName].fields[updatedFieldName];
-
+              const valueStayedEmpty =
+                oldValues[updatedFieldName].value === '' &&
+                newValues[updatedFieldName].value === '';
               return {
                 field: updatedField,
                 shouldPersistResults: fieldObj.type === 'string',
                 value: fieldObj.type === 'string' ? (fieldObj.value || '').trim() : fieldObj.value,
+                valueStayedEmpty,
               };
             });
 
             const changes = await fieldValidator(fieldsForValidator);
-
             changes && updateLocalState(changes);
           } else {
             const oldValue = storedFields[fieldName]?.value;
@@ -752,21 +753,27 @@ export const useLocalValidation = (
 
             const valueIsText = ['select-one', 'text', 'textarea'].includes(fieldType);
 
+            const previousValueToCompare = oldValueSubField
+              ? oldValueSubField.hasOwnProperty('value')
+                ? oldValueSubField.value
+                : oldValueSubField
+              : oldValue;
+
+            const valueStayedEmpty = !value && !previousValueToCompare;
+            // if there is an oldValueSubField (i.e. publication urls), don't do value stays empty check
+            // for some reason this causes the required field error to flash on then off when tabbing through pub fields
+            // shouldPersistResults needs to be false for the required field error to persist while modifying other pub url fields
             const shouldPersistResults =
-              !!fieldType &&
-              valueIsText &&
-              value !==
-                (oldValueSubField
-                  ? oldValueSubField.hasOwnProperty('value')
-                    ? oldValueSubField.value
-                    : oldValueSubField
-                  : oldValue);
+              !!fieldType && valueIsText && oldValueSubField
+                ? value !== previousValueToCompare
+                : value !== oldValue || valueStayedEmpty;
 
             const changes = await fieldValidator([
               {
                 field,
                 value: valueIsText ? (value || '').trim() : value,
                 shouldPersistResults,
+                valueStayedEmpty,
               },
             ]);
 
