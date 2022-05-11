@@ -51,6 +51,7 @@ import {
   getUpdatedFields,
   sectionsWithAutoComplete,
   fieldsWithAutoComplete,
+  valueIsEmpty,
 } from './helpers';
 import yup, { combinedSchema } from './schemas';
 import { AxiosResponse } from 'axios';
@@ -734,9 +735,11 @@ export const useLocalValidation = (
               const fieldObj = isList
                 ? localState[sectionName].fields.list?.innerType?.fields[updatedFieldIndex]
                 : localState[sectionName].fields[updatedFieldName];
+
               const valueStayedEmpty =
-                oldValues[updatedFieldName].value === '' &&
-                newValues[updatedFieldName].value === '';
+                valueIsEmpty(oldValues[updatedFieldName]?.value) &&
+                valueIsEmpty(newValues[updatedFieldName]?.value);
+
               return {
                 field: updatedField,
                 shouldPersistResults: fieldObj.type === 'string',
@@ -759,7 +762,7 @@ export const useLocalValidation = (
                 : oldValueSubField
               : oldValue;
 
-            const valueStayedEmpty = !value && !previousValueToCompare;
+            const valueStayedEmpty = valueIsEmpty(value) && valueIsEmpty(previousValueToCompare);
             // if there is an oldValueSubField (i.e. publication urls), don't do value stays empty check
             // for some reason this causes the required field error to flash on then off when tabbing through pub fields
             // shouldPersistResults needs to be false for the required field error to persist while modifying other pub url fields
