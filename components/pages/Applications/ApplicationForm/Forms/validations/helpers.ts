@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { countBy, isEqual } from 'lodash';
+import { countBy, isEqual, isUndefined } from 'lodash';
 import { AnyObject } from 'yup/lib/types';
 
 // locale-customised import
@@ -414,7 +414,15 @@ export const getFieldValues = (fieldsObj: any, isList: boolean): { [key: string]
     );
 };
 
-export const getUpdatedFields = (oldFields: any, newFields: any): string[] =>
+export const valueIsEmpty = (value?: string) => isUndefined(value) || value === '';
+
+export const getUpdatedFields = (oldFields: any, newFields: any, currentField: string): string[] =>
   Object.keys(oldFields).filter(
-    (fieldName: string) => !isEqual(oldFields[fieldName].value, newFields[fieldName].value),
+    (fieldName: string) =>
+      !isEqual(oldFields[fieldName].value, newFields[fieldName].value) ||
+      // check if current field remains empty so it is regarded as "updated" for the purposes of triggering local state update
+      // collaborator fields do not have a default empty string value so need to check for undefined as well
+      (currentField === fieldName &&
+        valueIsEmpty(oldFields[fieldName]?.value) &&
+        valueIsEmpty(newFields[fieldName]?.value)),
   );
