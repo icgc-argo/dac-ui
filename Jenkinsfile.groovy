@@ -87,10 +87,9 @@ spec:
        // publish the edge tag
         stage('Publish Develop') {
             when {
-                anyOf {
+              anyOf {
                   branch 'develop'
-                  branch 'fix-refresh-logout-v2'
-                }
+              }
             }
             steps {
                 container('docker') {
@@ -109,10 +108,9 @@ spec:
 
         stage('deploy to argo-dev') {
             when {
-                anyOf {
+              anyOf {
                   branch 'develop'
-                  branch 'fix-refresh-logout-v2'
-                }
+              }
             }
             steps {
                 build(job: "/ARGO/provision/${serviceName}", parameters: [
