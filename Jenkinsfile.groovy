@@ -89,6 +89,7 @@ spec:
             when {
               anyOf {
                   branch 'develop'
+                  branch 'fix-refresh-logout-v2'
               }
             }
             steps {
