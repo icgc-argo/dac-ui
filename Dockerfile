@@ -14,7 +14,7 @@ WORKDIR /usr/src
 
 COPY . /usr/src
 
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 RUN npm run build
 
 EXPOSE 3000
