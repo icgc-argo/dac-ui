@@ -43,11 +43,11 @@ enum PROGRESS_LABELS {
 }
 
 const progressStates: ProgressStates = {
-  // [ApplicationState.DRAFT]: [
-  //   { label: PROGRESS_LABELS.DRAFT, state: 'pending', completed: true },
-  //   { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'disabled', completed: false },
-  //   { label: PROGRESS_LABELS.DACO_REVIEW, state: 'disabled', completed: false },
-  // ],
+  [ApplicationState.DRAFT]: [
+    { label: PROGRESS_LABELS.DRAFT, state: 'pending', completed: true },
+    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'disabled', completed: false },
+    { label: PROGRESS_LABELS.DACO_REVIEW, state: 'disabled', completed: false },
+  ],
   [ApplicationState.SIGN_AND_SUBMIT]: [
     { label: PROGRESS_LABELS.DRAFT, state: 'success', completed: true },
     { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'pending', completed: true },
@@ -88,7 +88,7 @@ const progressStates: ProgressStates = {
     { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'closed', completed: true },
     { label: PROGRESS_LABELS.CLOSED, state: 'closed', completed: true },
   ],
-  [ApplicationState.DRAFT]: [
+  [ApplicationState.PAUSED]: [
     { label: PROGRESS_LABELS.DRAFT, state: 'success', completed: true },
     { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'success', completed: true },
     { label: PROGRESS_LABELS.PAUSED, state: 'error', completed: true },
