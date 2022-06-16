@@ -44,6 +44,7 @@ export enum ApplicationState {
   RENEWING = 'RENEWING',
   CLOSED = 'CLOSED',
   EXPIRED = 'EXPIRED',
+  PAUSED = 'PAUSED',
 }
 
 export type SortedChangeFunction = (
