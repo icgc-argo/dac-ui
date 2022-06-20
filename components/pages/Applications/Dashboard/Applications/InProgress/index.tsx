@@ -73,9 +73,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
           color: ${theme.colors.error};
         `}
       >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
-    ) : 
-    // Display text on the top right corner of InProgress Application. Need to double check the condition
-    attestationByUtc ? (
+    ) : state === 'PAUSED' && attestationByUtc ? (
       <div
         css={css`
           color: ${theme.colors.error};
