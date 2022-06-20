@@ -105,6 +105,7 @@ export type ApplicationsResponseItem = {
   approvedAtUtc: string;
   revisionsRequested: boolean;
   currentApprovedAppDoc: boolean;
+  attestationByUtc: string;
 };
 
 export type ApplicationDataByField = {

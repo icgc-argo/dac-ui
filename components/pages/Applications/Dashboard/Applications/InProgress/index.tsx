@@ -38,6 +38,7 @@ export interface StatusDates {
   submittedAtUtc: string;
   closedAtUtc: string;
   approvedAtUtc: string;
+  attestationByUtc:string;
 }
 
 const InProgress = ({ application }: { application: ApplicationsResponseItem }) => {
@@ -55,11 +56,12 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     closedAtUtc,
     approvedAtUtc,
     revisionsRequested,
+    attestationByUtc,
   } = application;
 
   const dates: StatusDates = {
     lastUpdatedAtUtc,
-    ...pick(application, ['createdAtUtc', 'submittedAtUtc', 'closedAtUtc', 'approvedAtUtc']),
+    ...pick(application, ['createdAtUtc', 'submittedAtUtc', 'closedAtUtc', 'approvedAtUtc', 'attestationByUtc']),
   };
 
   const expiryDate =
@@ -71,6 +73,14 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
           color: ${theme.colors.error};
         `}
       >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
+    ) : 
+    // Display text on the top right corner of InProgress Application. Need to double check the condition
+    attestationByUtc ? (
+      <div
+        css={css`
+          color: ${theme.colors.error};
+        `}
+      >{`! Access Paused: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
     ) : null;
 
   const statusError =

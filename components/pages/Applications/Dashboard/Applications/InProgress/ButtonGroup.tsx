@@ -85,7 +85,6 @@ const getButtonConfig = (
           icon: icons.user,
         },
       ];
-
       case ApplicationState.PAUSED:
         return [
           {
@@ -94,7 +93,6 @@ const getButtonConfig = (
             icon: icons.calendar,
           },
         ];
-
     case ApplicationState.CLOSED:
       [
         {
