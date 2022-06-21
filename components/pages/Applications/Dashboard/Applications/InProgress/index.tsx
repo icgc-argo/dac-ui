@@ -38,6 +38,8 @@ export interface StatusDates {
   submittedAtUtc: string;
   closedAtUtc: string;
   approvedAtUtc: string;
+  attestedAtUtc: string;
+  attestationByUtc: string;
 }
 
 const InProgress = ({ application }: { application: ApplicationsResponseItem }) => {
@@ -55,11 +57,13 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     closedAtUtc,
     approvedAtUtc,
     revisionsRequested,
+    attestedAtUtc,
+    attestationByUtc
   } = application;
 
   const dates: StatusDates = {
     lastUpdatedAtUtc,
-    ...pick(application, ['createdAtUtc', 'submittedAtUtc', 'closedAtUtc', 'approvedAtUtc']),
+    ...pick(application, ['createdAtUtc', 'submittedAtUtc', 'closedAtUtc', 'approvedAtUtc', 'attestedAtUtc', 'attestationByUtc']),
   };
 
   const expiryDate =
@@ -71,13 +75,19 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
           color: ${theme.colors.error};
         `}
       >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
+    ) : !attestedAtUtc ? (
+      <div
+        css={css`
+          color: ${theme.colors.error};
+        `}
+      >{`!Access Pausing: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
     ) : null;
 
   const statusError =
     revisionsRequested &&
     [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
       state as ApplicationState,
-    );
+    ) || !attestedAtUtc;
 
   return (
     <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={expiryDate}>
