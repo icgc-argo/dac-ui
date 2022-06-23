@@ -42,6 +42,7 @@ const icons = {
   ),
   user: <Icon fill="white" height="12px" width="12px" name="user" />,
   reset: <Icon fill="white" height="12px" width="10px" name="reset" />,
+  calendar: <Icon fill="white" height="12px" width="9px" name="calendar" />,
 };
 
 const getButtonConfig = (
@@ -84,6 +85,16 @@ const getButtonConfig = (
           icon: icons.user,
         },
       ];
+
+      case ApplicationState.ATTESTATION:
+        return [
+          {
+            content: 'Complete Attestation',
+            link,
+            icon: icons.calendar,
+          },
+        ];
+
     case ApplicationState.CLOSED:
       [
         {
