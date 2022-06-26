@@ -51,6 +51,7 @@ export const fieldDisplayNames = {
   lastUpdatedAtUtc: 'Last Updated',
   state: 'Status',
   'ethics.declaredAsRequired': 'Ethics Letter',
+  attestedAtUtc: 'Annual Attestation',
   currentApprovedAppDoc: 'Approved PDF',
 };
 
@@ -113,6 +114,12 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
     Cell: ({ original }: { original: ApplicationRecord }) =>
       original.currentApprovedAppDoc ? 'Yes' : null,
   },
+  {
+    Header: fieldDisplayNames.attestedAtUtc,
+    id: ApplicationsField.attestedAtUtc,
+    Cell: ({ original }: { original: ApplicationRecord }) => (original.attestedAtUtc ? 'No' : 'Yes'),
+  },
+
   {
     Header: fieldDisplayNames.expiresAtUtc,
     id: ApplicationsField.expiresAtUtc,
