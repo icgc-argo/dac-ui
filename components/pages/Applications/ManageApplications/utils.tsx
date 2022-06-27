@@ -120,8 +120,8 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
     Header: fieldDisplayNames.attestedAtUtc,
     id: ApplicationsField.attestedAtUtc,
     Cell: ({ original }: { original: ApplicationRecord }) => (
-      new Date() < new Date(original.attestationBy) ? '' 
-      : original.attestedAt ? 'Yes' 
+      original.attestedAt ? 'Yes' :
+      (new Date() < new Date(original.attestationBy) || original.status !== 'PAUSED') ? '' 
       : 'No'),
   },
 
