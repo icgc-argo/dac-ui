@@ -32,7 +32,8 @@ export type ApplicationRecord = {
   status: string;
   country: string;
   currentApprovedAppDoc: boolean;
-  attestedAtUtc: string;
+  attestedAt: string;
+  attestationBy: string;
 };
 
 export enum ApplicationState {
@@ -105,6 +106,8 @@ export type ApplicationsResponseItem = {
   approvedAtUtc: string;
   revisionsRequested: boolean;
   currentApprovedAppDoc: boolean;
+  attestedAtUtc: string;
+  attestationByUtc: string;
 };
 
 export type ApplicationDataByField = {

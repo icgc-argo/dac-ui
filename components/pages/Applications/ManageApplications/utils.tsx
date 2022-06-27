@@ -67,6 +67,8 @@ export const formatTableData = (data: ApplicationsResponseItem[]) =>
     accessExpiry: datum.closedAtUtc || datum.expiresAtUtc,
     lastUpdated: datum.lastUpdatedAtUtc,
     status: datum.state,
+    attestedAt: datum.attestedAtUtc,
+    attestationBy: datum.attestationByUtc,
   }));
 
 export const tableColumns: TableColumnConfig<ApplicationRecord> & {
@@ -117,7 +119,10 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
   {
     Header: fieldDisplayNames.attestedAtUtc,
     id: ApplicationsField.attestedAtUtc,
-    Cell: ({ original }: { original: ApplicationRecord }) => (original.attestedAtUtc ? 'No' : 'Yes'),
+    Cell: ({ original }: { original: ApplicationRecord }) => (
+      new Date() < new Date(original.attestationBy) ? '' 
+      : original.attestedAt ? 'Yes' 
+      : 'No'),
   },
 
   {
