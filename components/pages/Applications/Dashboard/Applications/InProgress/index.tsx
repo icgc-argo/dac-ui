@@ -58,13 +58,15 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     approvedAtUtc,
     revisionsRequested,
     attestedAtUtc,
-    attestationByUtc
+    attestationByUtc // = '2022-07-20T13:40:53.311Z'
   } = application;
 
   const dates: StatusDates = {
     lastUpdatedAtUtc,
     ...pick(application, ['createdAtUtc', 'submittedAtUtc', 'closedAtUtc', 'approvedAtUtc', 'attestedAtUtc', 'attestationByUtc']),
   };
+
+  const requiresAttestation = !attestedAtUtc && getFortyFiveDaysPriorAttestationByDate(attestationByUtc) < new Date() && new Date() < new Date(attestationByUtc);
 
   const expiryDate =
     expiresAtUtc && !closedAtUtc ? (
@@ -75,12 +77,12 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
           color: ${theme.colors.error};
         `}
       >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
-    ) : !attestedAtUtc && getFortyFiveDaysPriorAttestationByDate(attestationByUtc) < new Date() && new Date() < new Date(attestationByUtc)  ? (
+    ) : requiresAttestation  ? (
       <div
         css={css`
           color: ${theme.colors.error};
         `}
-      >{`!Access Pausing: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
+      >{`! Access Pausing: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
     ) : null;
 
   const statusError =
@@ -141,7 +143,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
               min-width: 160px;
             `}
           >
-            <ButtonGroup appId={appId} state={state as ApplicationState} />
+            <ButtonGroup appId={appId} state={requiresAttestation ? ApplicationState.REQUIRES_ATTESTATION : state as ApplicationState} />
           </div>
           <div
             css={css`

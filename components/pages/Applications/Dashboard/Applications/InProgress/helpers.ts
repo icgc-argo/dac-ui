@@ -18,7 +18,7 @@
  */
 
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
-import { format as formatDate } from 'date-fns';
+import { format as formatDate, sub } from 'date-fns';
 import { DATE_TEXT_FORMAT } from 'global/constants';
 import { StatusDates } from '.';
 
@@ -73,4 +73,5 @@ export const getFormattedDate = (date: string | number | Date, format: string) =
   date ? formatDate(new Date(date), format) : '';
 
 export const getFortyFiveDaysPriorAttestationByDate = (date: string) =>
-  new Date(new Date(date).setDate(new Date(date).getDate() - 45));
+  // new Date(new Date(date).setDate(new Date(date).getDate() - 45));
+  sub(new Date(date), { days: 45 });

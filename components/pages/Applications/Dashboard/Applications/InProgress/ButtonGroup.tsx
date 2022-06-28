@@ -86,7 +86,7 @@ const getButtonConfig = (
         },
       ];
 
-      case ApplicationState.ATTESTATION:
+      case ApplicationState.REQUIRES_ATTESTATION:
         return [
           {
             content: 'Complete Attestation',
