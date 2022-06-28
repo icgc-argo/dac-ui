@@ -69,6 +69,26 @@ export const formatTableData = (data: ApplicationsResponseItem[]) =>
     status: datum.state,
     attestedAt: datum.attestedAtUtc,
     attestationBy: datum.attestationByUtc,
+    
+     //case 1: in 45 days period prior to due date and attested (expect to have yes columns)
+    // attestedAt: datum.attestedAtUtc = "2022-06-20T13:40:53.311Z",
+    // attestationBy: datum.attestationByUtc = "2022-07-20T13:40:53.311Z",
+    // status: datum.state,
+    
+    //case 2: in 45 days period prior to due date and not attested (expect to have blank columns)
+    // attestedAt: datum.attestedAtUtc,
+    // attestationBy: datum.attestationByUtc = "2022-07-20T13:40:53.311Z",
+    // status: datum.state,
+     
+    // case 3: past due date and attested (expect to have yes columns)
+    // attestedAt: datum.attestedAtUtc = "2022-06-19T13:40:53.311Z",
+    // attestationBy: datum.attestationByUtc = "2022-06-20T13:40:53.311Z",
+    // status: datum.state = "PAUSED",
+
+    //case 4: past due date and not attested (expect to have no colums)
+    // attestedAt: datum.attestedAtUtc,
+    // attestationBy: datum.attestationByUtc = "2022-06-20T13:40:53.311Z",
+    // status: datum.state = "PAUSED",
   }));
 
 export const tableColumns: TableColumnConfig<ApplicationRecord> & {
@@ -124,7 +144,6 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
       (new Date() < new Date(original.attestationBy) || original.status !== 'PAUSED') ? '' 
       : 'No'),
   },
-
   {
     Header: fieldDisplayNames.expiresAtUtc,
     id: ApplicationsField.expiresAtUtc,
