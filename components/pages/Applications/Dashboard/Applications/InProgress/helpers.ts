@@ -42,8 +42,8 @@ export const getStatusText = (
       )}. You now have access to ICGC Controlled Data.`;
     case ApplicationState.SIGN_AND_SUBMIT:
       return revisionsRequested ? revisionsRequestedText : createdOnText;
-    // case ApplicationState.DRAFT:
-    //   return createdOnText;
+    case ApplicationState.DRAFT:
+      return createdOnText;
     case ApplicationState.REVIEW:
       return `Submitted on ${formatStatusDate(
         dates.submittedAtUtc,
@@ -60,7 +60,7 @@ export const getStatusText = (
       )}. This application cannot be reopened.`;
     case ApplicationState.RENEWING:
       return `Closed on ${formatStatusDate(dates.closedAtUtc)}.`;
-    case ApplicationState.DRAFT:
+    case ApplicationState.REQUIRES_ATTESTATION:
       return `An annual attestation is required for this application. Access for this project team will be paused on ${formatStatusDate(
         dates.attestationByUtc,
       )} until you submit your attestation.`;

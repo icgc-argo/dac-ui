@@ -58,7 +58,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     approvedAtUtc,
     revisionsRequested,
     attestedAtUtc,
-    attestationByUtc // = '2022-07-20T13:40:53.311Z'
+    attestationByUtc //= '2022-07-20T13:40:53.311Z'
   } = application;
 
   const dates: StatusDates = {
@@ -89,7 +89,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     revisionsRequested &&
     [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
       state as ApplicationState,
-    ) || !attestedAtUtc && getFortyFiveDaysPriorAttestationByDate(attestationByUtc) < new Date() && new Date() < new Date(attestationByUtc);
+    ) || requiresAttestation;
 
   return (
     <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={expiryDate}>
@@ -120,7 +120,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
                 color: ${statusError ? theme.colors.error : 'inherit'};
               `}
             >
-              {getStatusText(state as ApplicationState, dates, revisionsRequested)}
+              {getStatusText(requiresAttestation ? ApplicationState.REQUIRES_ATTESTATION : state as ApplicationState, dates, revisionsRequested)}
             </span>
           </div>
           <div>
