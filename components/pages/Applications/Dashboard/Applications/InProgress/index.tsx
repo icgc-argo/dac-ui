@@ -22,7 +22,7 @@ import { css } from '@emotion/core';
 import Typography from '@icgc-argo/uikit/Typography';
 import ProgressBar from '../../../../../ApplicationProgressBar';
 import { TIME_AND_DATE_FORMAT } from './constants';
-import { getFormattedDate, getStatusText } from './helpers';
+import { getFormattedDate, getStatusText, getFortyFiveDaysPriorAttestationByDate } from './helpers';
 import ButtonGroup from './ButtonGroup';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { DATE_TEXT_FORMAT } from 'global/constants';
@@ -75,7 +75,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
           color: ${theme.colors.error};
         `}
       >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
-    ) : !attestedAtUtc ? (
+    ) : !attestedAtUtc && getFortyFiveDaysPriorAttestationByDate(attestationByUtc) < new Date() && new Date() < new Date(attestationByUtc)  ? (
       <div
         css={css`
           color: ${theme.colors.error};
@@ -87,7 +87,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     revisionsRequested &&
     [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
       state as ApplicationState,
-    ) || !attestedAtUtc;
+    ) || !attestedAtUtc && getFortyFiveDaysPriorAttestationByDate(attestationByUtc) < new Date() && new Date() < new Date(attestationByUtc);
 
   return (
     <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={expiryDate}>
