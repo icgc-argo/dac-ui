@@ -58,7 +58,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     approvedAtUtc,
     revisionsRequested,
     attestedAtUtc,
-    attestationByUtc //= '2022-07-20T13:40:53.311Z'
+    attestationByUtc
   } = application;
 
   const dates: StatusDates = {
@@ -69,7 +69,13 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
   const requiresAttestation = !attestedAtUtc && getFortyFiveDaysPriorAttestationByDate(attestationByUtc) < new Date() && new Date() < new Date(attestationByUtc);
 
   const expiryDate =
-    expiresAtUtc && !closedAtUtc ? (
+    requiresAttestation  ? (
+      <div
+        css={css`
+          color: ${theme.colors.error};
+        `}
+      >{`! Access Pausing: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
+    ) : expiresAtUtc && !closedAtUtc ? (
       `Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`
     ) : closedAtUtc && approvedAtUtc ? (
       <div
@@ -77,12 +83,6 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
           color: ${theme.colors.error};
         `}
       >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
-    ) : requiresAttestation  ? (
-      <div
-        css={css`
-          color: ${theme.colors.error};
-        `}
-      >{`! Access Pausing: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
     ) : null;
 
   const statusError =
