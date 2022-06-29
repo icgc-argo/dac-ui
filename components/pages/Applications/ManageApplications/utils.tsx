@@ -70,7 +70,7 @@ export const formatTableData = (data: ApplicationsResponseItem[]) =>
     attestedAt: datum.attestedAtUtc,
     attestationBy: datum.attestationByUtc,
     
-     //case 1: in 45 days period prior to due date and attested (expect to have yes columns)
+    //  case 1: in 45 days period prior to due date and attested (expect to have yes columns)
     // attestedAt: datum.attestedAtUtc = "2022-06-20T13:40:53.311Z",
     // attestationBy: datum.attestationByUtc = "2022-07-20T13:40:53.311Z",
     // status: datum.state,
