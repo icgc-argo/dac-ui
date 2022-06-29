@@ -50,13 +50,13 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     applicant: {
       info: { primaryAffiliation },
     },
-    state = "PAUSED",
+    state,
     expiresAtUtc,
     lastUpdatedAtUtc,
     closedAtUtc,
     approvedAtUtc,
     revisionsRequested,
-    attestationByUtc = '2022-07-20T13:40:53.311Z',
+    attestationByUtc,
   } = application;
 
   const dates: StatusDates = {
@@ -65,7 +65,13 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
   };
 
   const expiryDate =
-    expiresAtUtc && !closedAtUtc ? (
+    state === ApplicationState.PAUSED ? (
+      <div
+        css={css`
+          color: ${theme.colors.error};
+        `}
+      >{`! Access Paused: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
+    ) : expiresAtUtc && !closedAtUtc ? (
       `Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`
     ) : closedAtUtc && approvedAtUtc ? (
       <div
@@ -73,19 +79,13 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
           color: ${theme.colors.error};
         `}
       >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
-    ) : state === ApplicationState.SIGN_AND_SUBMIT ? (
-      <div
-        css={css`
-          color: ${theme.colors.error};
-        `}
-      >{`! Access Paused: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
     ) : null;
 
   const statusError =
     revisionsRequested &&
     [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
       state as ApplicationState,
-    ) || state === ApplicationState.SIGN_AND_SUBMIT
+    ) || state === ApplicationState.PAUSED
     ;
 
   return (

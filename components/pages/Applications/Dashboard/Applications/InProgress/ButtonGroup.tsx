@@ -52,7 +52,7 @@ const getButtonConfig = (
   const link = urlJoin(APPLICATIONS_PATH, appId);
   switch (state) {
     case ApplicationState.DRAFT:
-    // case ApplicationState.SIGN_AND_SUBMIT:
+    case ApplicationState.SIGN_AND_SUBMIT:
     case ApplicationState.REVISIONS_REQUESTED:
       return [
         {
@@ -85,7 +85,7 @@ const getButtonConfig = (
           icon: icons.user,
         },
       ];
-      case ApplicationState.SIGN_AND_SUBMIT:
+      case ApplicationState.PAUSED:
         return [
           {
             content: 'Complete Attestation',
