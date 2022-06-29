@@ -66,9 +66,9 @@ export const formatTableData = (data: ApplicationsResponseItem[]) =>
     currentApprovedAppDoc: datum.currentApprovedAppDoc,
     accessExpiry: datum.closedAtUtc || datum.expiresAtUtc,
     lastUpdated: datum.lastUpdatedAtUtc,
-    status: datum.state,
-    attestedAt: datum.attestedAtUtc,
-    attestationBy: datum.attestationByUtc,
+    // status: datum.state,
+    // attestedAt: datum.attestedAtUtc,
+    // attestationBy: datum.attestationByUtc,
     
     //  case 1: in 45 days period prior to due date and attested (expect to have yes columns)
     // attestedAt: datum.attestedAtUtc = "2022-06-20T13:40:53.311Z",
@@ -86,9 +86,9 @@ export const formatTableData = (data: ApplicationsResponseItem[]) =>
     // status: datum.state = "PAUSED",
 
     //case 4: past due date and not attested (expect to have no colums)
-    // attestedAt: datum.attestedAtUtc,
-    // attestationBy: datum.attestationByUtc = "2022-06-20T13:40:53.311Z",
-    // status: datum.state = "PAUSED",
+    attestedAt: datum.attestedAtUtc,
+    attestationBy: datum.attestationByUtc = "2022-06-20T13:40:53.311Z",
+    status: datum.state = "PAUSED",
   }));
 
 export const tableColumns: TableColumnConfig<ApplicationRecord> & {
