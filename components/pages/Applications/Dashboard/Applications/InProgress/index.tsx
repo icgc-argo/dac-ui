@@ -50,13 +50,13 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     applicant: {
       info: { primaryAffiliation },
     },
-    state,
+    state = "PAUSED",
     expiresAtUtc,
     lastUpdatedAtUtc,
     closedAtUtc,
     approvedAtUtc,
     revisionsRequested,
-    attestationByUtc,
+    attestationByUtc = '2022-07-20T13:40:53.311Z',
   } = application;
 
   const dates: StatusDates = {
@@ -73,7 +73,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
           color: ${theme.colors.error};
         `}
       >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
-    ) : state === 'PAUSED' && attestationByUtc ? (
+    ) : state === ApplicationState.SIGN_AND_SUBMIT ? (
       <div
         css={css`
           color: ${theme.colors.error};
@@ -85,7 +85,8 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     revisionsRequested &&
     [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
       state as ApplicationState,
-    ) || state === 'PAUSED';
+    ) || state === ApplicationState.SIGN_AND_SUBMIT
+    ;
 
   return (
     <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={expiryDate}>
