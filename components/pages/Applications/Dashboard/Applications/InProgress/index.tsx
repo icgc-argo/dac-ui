@@ -82,11 +82,9 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     ) : null;
 
   const statusError =
-    revisionsRequested &&
-    [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
-      state as ApplicationState,
-    ) || state === ApplicationState.PAUSED
-    ;
+    (revisionsRequested && [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
+      state as ApplicationState)) 
+      || state === ApplicationState.PAUSED;
 
   return (
     <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={expiryDate}>

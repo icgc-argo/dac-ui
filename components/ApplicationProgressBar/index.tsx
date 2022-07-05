@@ -95,7 +95,6 @@ const progressStates: ProgressStates = {
   ],
 };
 
-
 const ApplicationProgressBar = ({ state }: { state: ApplicationState }) => {
   const progressItems = state ? progressStates[state] : defaultProgressItems;
   return (

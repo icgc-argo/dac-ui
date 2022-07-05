@@ -85,16 +85,17 @@ const getButtonConfig = (
           icon: icons.user,
         },
       ];
-      case ApplicationState.PAUSED:
-        return [
-          {
-            content: 'Complete Attestation',
-            link,
-            icon: icons.calendar,
-          },
-        ];
+      //Paused state implies attestation is needed
+    case ApplicationState.PAUSED:
+      return [
+        {
+          content: 'Complete Attestation',
+          link,
+          icon: icons.calendar,
+        },
+      ];
     case ApplicationState.CLOSED:
-      [
+      return [
         {
           content: 'View Application',
           link,
