@@ -66,29 +66,23 @@ export const formatTableData = (data: ApplicationsResponseItem[]) =>
     currentApprovedAppDoc: datum.currentApprovedAppDoc,
     accessExpiry: datum.closedAtUtc || datum.expiresAtUtc,
     lastUpdated: datum.lastUpdatedAtUtc,
-    // status: datum.state,
+    status: datum.state,
+    attestationBy: datum.attestationByUtc,
     // attestedAt: datum.attestedAtUtc,
-    // attestationBy: datum.attestationByUtc,
+    // isAttestable: datum.isAttestable,
     
-    //  case 1: in 45 days period prior to due date and attested (expect to have yes columns)
+    //  case 1: is attestable (entering 45 days prior to the due date and beyond) and attested (expect to have yes columns)
     // attestedAt: datum.attestedAtUtc = "2022-06-20T13:40:53.311Z",
-    // attestationBy: datum.attestationByUtc = "2022-07-20T13:40:53.311Z",
-    // status: datum.state,
+    // isAttestable: true,
     
-    //case 2: in 45 days period prior to due date and not attested (expect to have blank columns)
+    //case 2: is attestable and not attested (expect to have no columns)
     // attestedAt: datum.attestedAtUtc,
-    // attestationBy: datum.attestationByUtc = "2022-07-20T13:40:53.311Z",
-    // status: datum.state,
+    // isAttestable: true, 
      
-    // case 3: past due date and attested (expect to have yes columns)
-    // attestedAt: datum.attestedAtUtc = "2022-06-19T13:40:53.311Z",
-    // attestationBy: datum.attestationByUtc = "2022-06-20T13:40:53.311Z",
-    // status: datum.state = "PAUSED",
-
-    //case 4: past due date and not attested (expect to have no colums)
+    // case 3: is not attestable and not attested (expect to have blank columns)
     attestedAt: datum.attestedAtUtc,
-    attestationBy: datum.attestationByUtc = "2022-06-20T13:40:53.311Z",
-    status: datum.state = "PAUSED",
+    isAttestable: false,
+
   }));
 
 export const tableColumns: TableColumnConfig<ApplicationRecord> & {
@@ -140,9 +134,9 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
     Header: fieldDisplayNames.attestedAtUtc,
     id: ApplicationsField.attestedAtUtc,
     Cell: ({ original }: { original: ApplicationRecord }) => (
-      original.attestedAt ? 'Yes' :
-      (new Date() < new Date(original.attestationBy) || original.status !== 'PAUSED') ? '' 
-      : 'No'),
+      original.attestedAt ? 'Yes' 
+      : original.isAttestable ? 'No' 
+      : ' '),
   },
   {
     Header: fieldDisplayNames.expiresAtUtc,
@@ -155,7 +149,7 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
           css={css`
             color: ${theme.colors[
               original.status === ApplicationState.CLOSED ? 'error' : 'secondary'
-            ]}; ;
+            ]}; 
           `}
         >
           {original.accessExpiry
