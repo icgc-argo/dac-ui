@@ -64,7 +64,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     ...pick(application, ['createdAtUtc', 'submittedAtUtc', 'closedAtUtc', 'approvedAtUtc', 'attestationByUtc']),
   };
 
-  const expiryDate =
+  const statusDate =
     state === ApplicationState.PAUSED ? (
       <div
         css={css`
@@ -82,12 +82,12 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     ) : null;
 
   const statusError =
+    state === ApplicationState.PAUSED ||
     (revisionsRequested && [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
-      state as ApplicationState)) 
-      || state === ApplicationState.PAUSED;
+      state as ApplicationState));
 
   return (
-    <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={expiryDate}>
+    <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={statusDate}>
       <div
         css={css`
           margin-top: 5px;
