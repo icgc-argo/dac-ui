@@ -39,7 +39,7 @@ enum PROGRESS_LABELS {
   REJECTED = 'Rejected',
   CLOSED = 'Closed',
   REVISIONS_REQUESTED = 'Revisions Requested',
-  PAUSED = 'Paused'
+  PAUSED = 'Paused',
 }
 
 const progressStates: ProgressStates = {

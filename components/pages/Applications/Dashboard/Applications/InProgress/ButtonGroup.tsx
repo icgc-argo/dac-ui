@@ -85,7 +85,7 @@ const getButtonConfig = (
           icon: icons.user,
         },
       ];
-      //Paused state implies attestation is needed
+    //Paused state implies attestation is needed
     case ApplicationState.PAUSED:
       return [
         {

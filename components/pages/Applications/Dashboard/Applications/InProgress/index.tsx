@@ -38,7 +38,7 @@ export interface StatusDates {
   submittedAtUtc: string;
   closedAtUtc: string;
   approvedAtUtc: string;
-  attestationByUtc:string;
+  attestationByUtc: string;
 }
 
 const InProgress = ({ application }: { application: ApplicationsResponseItem }) => {
@@ -61,7 +61,13 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
 
   const dates: StatusDates = {
     lastUpdatedAtUtc,
-    ...pick(application, ['createdAtUtc', 'submittedAtUtc', 'closedAtUtc', 'approvedAtUtc', 'attestationByUtc']),
+    ...pick(application, [
+      'createdAtUtc',
+      'submittedAtUtc',
+      'closedAtUtc',
+      'approvedAtUtc',
+      'attestationByUtc',
+    ]),
   };
 
   const statusDate =
@@ -83,8 +89,10 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
 
   const statusError =
     state === ApplicationState.PAUSED ||
-    (revisionsRequested && [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
-      state as ApplicationState));
+    (revisionsRequested &&
+      [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
+        state as ApplicationState,
+      ));
 
   return (
     <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={statusDate}>
