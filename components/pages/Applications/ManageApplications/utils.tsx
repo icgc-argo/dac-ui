@@ -68,21 +68,20 @@ export const formatTableData = (data: ApplicationsResponseItem[]) =>
     lastUpdated: datum.lastUpdatedAtUtc,
     status: datum.state,
     attestationBy: datum.attestationByUtc,
-    // attestedAt: datum.attestedAtUtc,
-    // isAttestable: datum.isAttestable,
-    
+    attestedAt: datum.attestedAtUtc,
+    isAttestable: datum.isAttestable,
+
     //  case 1: is attestable (entering 45 days prior to the due date and beyond) and attested (expect to have yes columns)
     // attestedAt: datum.attestedAtUtc = "2022-06-20T13:40:53.311Z",
     // isAttestable: true,
-    
+
     //case 2: is attestable and not attested (expect to have no columns)
     // attestedAt: datum.attestedAtUtc,
-    // isAttestable: true, 
-     
-    // case 3: is not attestable and not attested (expect to have blank columns)
-    attestedAt: datum.attestedAtUtc,
-    isAttestable: false,
+    // isAttestable: true,
 
+    // case 3: is not attestable and not attested (expect to have blank columns)
+    // attestedAt: datum.attestedAtUtc,
+    // isAttestable: false,
   }));
 
 export const tableColumns: TableColumnConfig<ApplicationRecord> & {
@@ -133,10 +132,8 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
   {
     Header: fieldDisplayNames.attestedAtUtc,
     id: ApplicationsField.attestedAtUtc,
-    Cell: ({ original }: { original: ApplicationRecord }) => (
-      original.attestedAt ? 'Yes' 
-      : original.isAttestable ? 'No' 
-      : ' '),
+    Cell: ({ original }: { original: ApplicationRecord }) =>
+      original.attestedAt ? 'Yes' : original.isAttestable ? 'No' : ' ',
   },
   {
     Header: fieldDisplayNames.expiresAtUtc,
@@ -149,7 +146,7 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
           css={css`
             color: ${theme.colors[
               original.status === ApplicationState.CLOSED ? 'error' : 'secondary'
-            ]}; 
+            ]};
           `}
         >
           {original.accessExpiry
