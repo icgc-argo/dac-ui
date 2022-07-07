@@ -18,7 +18,7 @@
  */
 
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
-import { format as formatDate, sub } from 'date-fns';
+import { format as formatDate } from 'date-fns';
 import { DATE_TEXT_FORMAT } from 'global/constants';
 import { StatusDates } from '.';
 
@@ -26,6 +26,7 @@ export const getStatusText = (
   state: ApplicationState,
   dates: StatusDates,
   revisionsRequested: boolean,
+  requiresAttestation: boolean,
 ) => {
   const formatStatusDate = (date: string) =>
     formatDate(new Date(date || dates.lastUpdatedAtUtc), DATE_TEXT_FORMAT);
@@ -37,9 +38,13 @@ export const getStatusText = (
 
   switch (state) {
     case ApplicationState.APPROVED:
-      return `Approved on ${formatStatusDate(
-        dates.approvedAtUtc,
-      )}. You now have access to ICGC Controlled Data.`;
+      return requiresAttestation
+        ? `An annual attestation is required for this application. Access for this project team will be paused on ${formatStatusDate(
+            dates.attestationByUtc,
+          )} until you submit your attestation.`
+        : `Approved on ${formatStatusDate(
+            dates.approvedAtUtc,
+          )}. You now have access to ICGC Controlled Data.`;
     case ApplicationState.SIGN_AND_SUBMIT:
       return revisionsRequested ? revisionsRequestedText : createdOnText;
     case ApplicationState.DRAFT:
@@ -60,10 +65,6 @@ export const getStatusText = (
       )}. This application cannot be reopened.`;
     case ApplicationState.RENEWING:
       return `Closed on ${formatStatusDate(dates.closedAtUtc)}.`;
-    case ApplicationState.REQUIRES_ATTESTATION:
-      return `An annual attestation is required for this application. Access for this project team will be paused on ${formatStatusDate(
-        dates.attestationByUtc,
-      )} until you submit your attestation.`;
     default:
       return '';
   }
@@ -71,7 +72,3 @@ export const getStatusText = (
 
 export const getFormattedDate = (date: string | number | Date, format: string) =>
   date ? formatDate(new Date(date), format) : '';
-
-export const getFortyFiveDaysPriorAttestationByDate = (date: string) =>
-  // new Date(new Date(date).setDate(new Date(date).getDate() - 45));
-  sub(new Date(date), { days: 45 });

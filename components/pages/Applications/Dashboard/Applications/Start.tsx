@@ -71,6 +71,7 @@ const StartApplication = () => {
           <Icon
             css={css`
               margin-bottom: -2px;
+              margin-right: 2px;
             `}
             fill={theme.colors.white}
             height="12px"

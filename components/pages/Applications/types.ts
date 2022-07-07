@@ -45,7 +45,6 @@ export enum ApplicationState {
   CLOSED = 'CLOSED',
   EXPIRED = 'EXPIRED',
   PAUSED = 'PAUSED',
-  REQUIRES_ATTESTATION = 'REQUIRES ATTESTATION',
 }
 
 export type SortedChangeFunction = (
@@ -108,6 +107,7 @@ export type ApplicationsResponseItem = {
   currentApprovedAppDoc: boolean;
   attestedAtUtc: string;
   attestationByUtc: string;
+  isAttestable: boolean;
 };
 
 export type ApplicationDataByField = {

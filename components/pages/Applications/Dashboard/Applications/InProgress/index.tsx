@@ -22,7 +22,7 @@ import { css } from '@emotion/core';
 import Typography from '@icgc-argo/uikit/Typography';
 import ProgressBar from '../../../../../ApplicationProgressBar';
 import { TIME_AND_DATE_FORMAT } from './constants';
-import { getFormattedDate, getStatusText, getFortyFiveDaysPriorAttestationByDate } from './helpers';
+import { getFormattedDate, getStatusText } from './helpers';
 import ButtonGroup from './ButtonGroup';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { DATE_TEXT_FORMAT } from 'global/constants';
@@ -58,41 +58,49 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     approvedAtUtc,
     revisionsRequested,
     attestedAtUtc,
-    attestationByUtc
+    attestationByUtc,
+    isAttestable,
   } = application;
 
   const dates: StatusDates = {
     lastUpdatedAtUtc,
-    ...pick(application, ['createdAtUtc', 'submittedAtUtc', 'closedAtUtc', 'approvedAtUtc', 'attestedAtUtc', 'attestationByUtc']),
+    ...pick(application, [
+      'createdAtUtc',
+      'submittedAtUtc',
+      'closedAtUtc',
+      'approvedAtUtc',
+      'attestedAtUtc',
+      'attestationByUtc',
+    ]),
   };
 
-  const requiresAttestation = !attestedAtUtc && getFortyFiveDaysPriorAttestationByDate(attestationByUtc) < new Date() && new Date() < new Date(attestationByUtc);
+  const requiresAttestation = !attestedAtUtc && isAttestable;
 
-  const expiryDate =
-    requiresAttestation  ? (
-      <div
-        css={css`
-          color: ${theme.colors.error};
-        `}
-      >{`! Access Pausing: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
-    ) : expiresAtUtc && !closedAtUtc ? (
-      `Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`
-    ) : closedAtUtc && approvedAtUtc ? (
-      <div
-        css={css`
-          color: ${theme.colors.error};
-        `}
-      >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
-    ) : null;
+  const statusDate = requiresAttestation ? (
+    <div
+      css={css`
+        color: ${theme.colors.error};
+      `}
+    >{`! Access Pausing: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
+  ) : expiresAtUtc && !closedAtUtc ? (
+    `Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`
+  ) : closedAtUtc && approvedAtUtc ? (
+    <div
+      css={css`
+        color: ${theme.colors.error};
+      `}
+    >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
+  ) : null;
 
   const statusError =
-    revisionsRequested &&
-    [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
-      state as ApplicationState,
-    ) || requiresAttestation;
+    requiresAttestation ||
+    (revisionsRequested &&
+      [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
+        state as ApplicationState,
+      ));
 
   return (
-    <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={expiryDate}>
+    <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={statusDate}>
       <div
         css={css`
           margin-top: 5px;
@@ -120,7 +128,12 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
                 color: ${statusError ? theme.colors.error : 'inherit'};
               `}
             >
-              {getStatusText(requiresAttestation ? ApplicationState.REQUIRES_ATTESTATION : state as ApplicationState, dates, revisionsRequested)}
+              {getStatusText(
+                state as ApplicationState,
+                dates,
+                revisionsRequested,
+                requiresAttestation,
+              )}
             </span>
           </div>
           <div>
@@ -143,7 +156,11 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
               min-width: 160px;
             `}
           >
-            <ButtonGroup appId={appId} state={requiresAttestation ? ApplicationState.REQUIRES_ATTESTATION : state as ApplicationState} />
+            <ButtonGroup
+              appId={appId}
+              state={state as ApplicationState}
+              requiresAttestation={requiresAttestation}
+            />
           </div>
           <div
             css={css`

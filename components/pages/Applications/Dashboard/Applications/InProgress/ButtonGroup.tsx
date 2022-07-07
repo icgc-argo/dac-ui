@@ -27,27 +27,62 @@ import { APPLICATIONS_PATH } from 'global/constants';
 import urlJoin from 'url-join';
 
 const icons = {
-  file: <Icon fill="white" height="12px" width="9px" name="file" />,
-  edit: (
+  file: (
     <Icon
       css={css`
-        position: relative;
-        top: 2px;
+        margin-bottom: -2px;
       `}
       fill="white"
       height="12px"
-      width="12px"
+      name="file"
+    />
+  ),
+  edit: (
+    <Icon
+      css={css`
+        margin-bottom: -2px;
+      `}
+      fill="white"
+      height="12px"
       name="edit"
     />
   ),
-  user: <Icon fill="white" height="12px" width="12px" name="user" />,
-  reset: <Icon fill="white" height="12px" width="10px" name="reset" />,
-  calendar: <Icon fill="white" height="12px" width="9px" name="calendar" />,
+  user: (
+    <Icon
+      css={css`
+        margin-bottom: -2px;
+      `}
+      fill="white"
+      height="12px"
+      name="user"
+    />
+  ),
+  reset: (
+    <Icon
+      css={css`
+        margin-bottom: -2px;
+      `}
+      fill="white"
+      height="12px"
+      name="reset"
+    />
+  ),
+  calendar: (
+    <Icon
+      css={css`
+        margin-bottom: -2px;
+      `}
+      fill="white"
+      height="12px"
+      name="calendar"
+    />
+  ),
 };
 
 const getButtonConfig = (
   appId = '',
   state = '',
+  requiresAttestation = false,
 ): { content: string; link: string; icon: any }[] => {
   const link = urlJoin(APPLICATIONS_PATH, appId);
   switch (state) {
@@ -73,30 +108,28 @@ const getButtonConfig = (
         },
       ];
     case ApplicationState.APPROVED:
-      return [
-        {
-          content: 'View Application',
-          link,
-          icon: icons.file,
-        },
-        {
-          content: 'Manage Collaborators',
-          link: urlJoin(link, '?section=collaborators'),
-          icon: icons.user,
-        },
-      ];
-
-      case ApplicationState.REQUIRES_ATTESTATION:
-        return [
-          {
-            content: 'Complete Attestation',
-            link,
-            icon: icons.calendar,
-          },
-        ];
-
+      return requiresAttestation
+        ? [
+            {
+              content: 'Complete Attestation',
+              link,
+              icon: icons.calendar,
+            },
+          ]
+        : [
+            {
+              content: 'View Application',
+              link,
+              icon: icons.file,
+            },
+            {
+              content: 'Manage Collaborators',
+              link: urlJoin(link, '?section=collaborators'),
+              icon: icons.user,
+            },
+          ];
     case ApplicationState.CLOSED:
-      [
+      return [
         {
           content: 'View Application',
           link,
@@ -109,17 +142,24 @@ const getButtonConfig = (
         },
       ];
   }
-
   return [];
 };
 
-const ButtonGroup = ({ appId, state }: { appId: string; state: ApplicationState }) => (
+const ButtonGroup = ({
+  appId,
+  state,
+  requiresAttestation,
+}: {
+  appId: string;
+  state: ApplicationState;
+  requiresAttestation: boolean;
+}) => (
   <div
     css={css`
       display: flex;
     `}
   >
-    {getButtonConfig(appId, state).map(({ content, link, icon }, index) => (
+    {getButtonConfig(appId, state, requiresAttestation).map(({ content, link, icon }, index) => (
       <Fragment key={link}>
         <Button
           className="action-btns"
