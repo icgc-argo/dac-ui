@@ -82,6 +82,8 @@ const ApplicationFormsBase = ({
   formState,
   validateSection,
   sectionData,
+  isAttestable,
+  attestedAtUtc,
 }: {
   appId: string;
   applicationState: ApplicationState;
@@ -90,6 +92,8 @@ const ApplicationFormsBase = ({
   formState: FormValidationStateParameters;
   validateSection: FormSectionValidatorFunction_Origin;
   sectionData: ApplicationData['sections'];
+  isAttestable: boolean;
+  attestedAtUtc: string;
 }): ReactElement => {
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
 
@@ -152,6 +156,8 @@ const ApplicationFormsBase = ({
   const sectionsAfter = enabledSections(sectionsOrder.slice(sectionIndex + 1), formState);
   const sectionsBefore = enabledSections(sectionsOrder.slice(0, sectionIndex), formState);
 
+  const requiresAttestation = !attestedAtUtc && isAttestable;
+
   const handleSectionChange = useCallback(
     (section: FormSectionNames) => {
       if (section !== selectedSection) {
@@ -176,6 +182,57 @@ const ApplicationFormsBase = ({
   return (
     <>
       <ContentBody>
+        {requiresAttestation && [ApplicationState.APPROVED].includes(applicationState) && (
+          <Notification
+            title={
+              <div
+                css={css`
+                  margin-top: 5px;
+                  margin-left: 10px;
+                `}
+              >
+                Annual Attestation is required by July 28, 2022 or access will be paused
+              </div>
+            }
+            content={
+              <div
+                css={css`
+                  margin-top: 20px;
+                  margin-left: 10px;
+                `}
+              >
+                <span>
+                  At every one year interval you must confirm your ongoing compliance with the ICGC
+                  ARGO Data Access Agreement and ICGC ARGO Polices. Specifically;
+                </span>
+                <br />
+                <br />
+                <span>
+                  1. I agree not to attempt to identify individuals represented in the dataset.
+                </span>
+                <br />
+                <span>
+                  2. My use of the data will be consistent with the ICGC ARGO Data Access Policy and
+                  Publication Policy.
+                </span>
+                <br />
+                <span>
+                  3. Only authorized personnel will access the data and any changes to authorized
+                  personnel will be reported to the ICGC DACO team immediately.
+                </span>
+                <br />
+                <span>
+                  4. I will comply with all ethical and regulatory requirements applicable within my
+                  institution and country/region in my use of the data.
+                </span>
+              </div>
+            }
+            interactionType="NONE"
+            variant="WARNING"
+            css={notificationStyle}
+          />
+        )}
+
         {JSON.parse(localStorage.getItem(SUBMISSION_SUCCESS_CHECK) || 'false') &&
           [ApplicationState.REVIEW].includes(applicationState) && (
             <Notification

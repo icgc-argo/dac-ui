@@ -72,6 +72,8 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
         isLoading={isFormLoading}
         formState={formState}
         validateSection={validateSection}
+        isAttestable={data?.isAttestable}
+        attestedAtUtc={data?.attestedAtUtc}
       />
     </>
   ) : (
