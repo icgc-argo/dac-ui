@@ -245,6 +245,9 @@ export interface ApplicationData {
   revisionsRequested: boolean;
   approvedAtUtc: string;
   state: ApplicationState;
+  isAttestable: boolean;
+  attestedAtUtc: string;
+  attestationByUtc: string;
   sections: {
     applicant: Individual;
     representative: Representative;

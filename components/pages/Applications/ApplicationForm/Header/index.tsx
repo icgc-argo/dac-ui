@@ -30,7 +30,7 @@ import { RefetchDataFunction } from '../Forms/types';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ApplicationData } from '../../types';
 
-export type ApplicationExpiry = { date: string; isExpired: boolean };
+export type ApplicationExpiry = { date: string; isExpired: boolean; status: string };
 
 const ApplicationHeader = ({
   data,
@@ -50,6 +50,9 @@ const ApplicationHeader = ({
     sections: { applicant: { info: { displayName = '', primaryAffiliation = '' } = {} } = {} } = {},
     state,
     approvedAppDocs,
+    isAttestable,
+    attestedAtUtc,
+    attestationByUtc,
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
@@ -59,11 +62,21 @@ const ApplicationHeader = ({
     revisionsRequested &&
     [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state);
 
+  const requiresAttestation = !attestedAtUtc && isAttestable;
+
   // only pass expiry for applications that have been approved
-  const expiry = approvedAtUtc
+  // add 'status' key to allow easy string changes
+  const expiry = requiresAttestation
+    ? {
+        date: format(new Date(attestationByUtc || ''), DATE_TEXT_FORMAT),
+        isExpired: true,
+        status: '!Pausing',
+      }
+    : approvedAtUtc
     ? {
         date: format(new Date(closedAtUtc || expiresAtUtc || ''), DATE_TEXT_FORMAT),
         isExpired: closedAtUtc ? true : false,
+        status: closedAtUtc ? 'Expired' : 'Expires',
       }
     : undefined;
 
@@ -88,7 +101,7 @@ const ApplicationHeader = ({
         />
 
         <div>
-          {showRevisionsRequestedFlag && (
+          {showRevisionsRequestedFlag ? (
             <div
               css={(theme: UikitTheme) =>
                 css`
@@ -106,7 +119,25 @@ const ApplicationHeader = ({
             >
               Revisions Requested
             </div>
-          )}
+          ) : requiresAttestation ? (
+            <div
+              css={(theme: UikitTheme) =>
+                css`
+                  ${theme.typography.data};
+                  background: ${theme.colors.primary_1};
+                  border-radius: 8px;
+                  color: ${theme.colors.white};
+                  font-weight: bold;
+                  margin: 0 auto 10px 72px;
+                  padding: 3px 8px;
+                  text-align: center;
+                  width: 150px;
+                `
+              }
+            >
+              Attestation Requested
+            </div>
+          ) : null}
           <Progress state={state} />
         </div>
 
