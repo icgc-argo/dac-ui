@@ -76,7 +76,13 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
 
   const requiresAttestation = !attestedAtUtc && isAttestable;
 
-  const statusDate = requiresAttestation ? (
+  const statusDate = [ApplicationState.PAUSED].includes(state as ApplicationState) ? (
+    <div
+      css={css`
+        color: ${theme.colors.error};
+      `}
+    >{`! Access Paused: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
+  ) : requiresAttestation && ![ApplicationState.PAUSED].includes(state as ApplicationState) ? (
     <div
       css={css`
         color: ${theme.colors.error};
@@ -94,6 +100,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
 
   const statusError =
     requiresAttestation ||
+    [ApplicationState.PAUSED].includes(state as ApplicationState) ||
     (revisionsRequested &&
       [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
         state as ApplicationState,
