@@ -199,6 +199,7 @@ const ApplicationFormsBase = ({
                 css={css`
                   margin-top: 20px;
                   margin-left: 10px;
+                  margin-bottom: 20px;
                 `}
               >
                 <span>
@@ -225,6 +226,18 @@ const ApplicationFormsBase = ({
                   4. I will comply with all ethical and regulatory requirements applicable within my
                   institution and country/region in my use of the data.
                 </span>
+                <br />
+                <br />
+                <Button
+                  css={css`
+                    margin-top: 20px;
+                    margin-left: 10px;
+                    margin-bottom: 20px;
+                  `}
+                  size="sm"
+                >
+                  I ATTESTED TO THE ABOVE TERMS
+                </Button>
               </div>
             }
             interactionType="NONE"
