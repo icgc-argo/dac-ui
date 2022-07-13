@@ -18,7 +18,7 @@
  */
 
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
-import { View } from '@react-pdf/renderer';
+import { View, Link, Text } from '@react-pdf/renderer';
 import { LAY_SUMMARY_GUIDE } from 'global/constants';
 import RequiredFieldsMessage from '../ApplicationForm/Forms/RequiredFieldsMessage';
 import { ApplicationDataByField } from '../types';
@@ -60,12 +60,8 @@ const BasicInfo = ({ data }: { data?: Partial<ApplicationDataByField> }) => {
 };
 
 export const BackgroundBubble = ({ isPdf = false }: { isPdf?: boolean }) => {
-  const {
-    UnorderedListComponent,
-    ListComponent,
-    GenericContainer,
-    TextComponent,
-  } = getStaticComponents(isPdf);
+  const { UnorderedListComponent, ListComponent, GenericContainer, TextComponent } =
+    getStaticComponents(isPdf);
 
   return (
     <GenericContainer style={styles.bubbleContainer} wrap={false}>
@@ -86,12 +82,8 @@ export const BackgroundBubble = ({ isPdf = false }: { isPdf?: boolean }) => {
 };
 
 export const AimsBubble = ({ isPdf = false }: { isPdf?: boolean }) => {
-  const {
-    UnorderedListComponent,
-    ListComponent,
-    GenericContainer,
-    TextComponent,
-  } = getStaticComponents(isPdf);
+  const { UnorderedListComponent, ListComponent, GenericContainer, TextComponent } =
+    getStaticComponents(isPdf);
 
   return (
     <GenericContainer style={styles.bubbleContainer} wrap={false}>
@@ -112,12 +104,8 @@ export const AimsBubble = ({ isPdf = false }: { isPdf?: boolean }) => {
 };
 
 export const DataUseBubble = ({ isPdf = false }: { isPdf?: boolean }) => {
-  const {
-    UnorderedListComponent,
-    ListComponent,
-    GenericContainer,
-    TextComponent,
-  } = getStaticComponents(isPdf);
+  const { UnorderedListComponent, ListComponent, GenericContainer, TextComponent } =
+    getStaticComponents(isPdf);
   return (
     <GenericContainer style={styles.bubbleContainer} wrap={false}>
       <TextComponent as="span" style={{ margin: 0 }}>
@@ -152,13 +140,8 @@ export const DataUseBubble = ({ isPdf = false }: { isPdf?: boolean }) => {
 };
 
 export const LaySummaryBubble = ({ isPdf = false }: { isPdf?: boolean }) => {
-  const {
-    UnorderedListComponent,
-    ListComponent,
-    GenericContainer,
-    TextComponent,
-    LinkComponent,
-  } = getStaticComponents(isPdf);
+  const { UnorderedListComponent, ListComponent, GenericContainer, TextComponent, LinkComponent } =
+    getStaticComponents(isPdf);
   return (
     <GenericContainer style={styles.bubbleContainer} wrap={false}>
       <TextComponent as="span" style={{ margin: 0 }}>
@@ -218,13 +201,17 @@ export const LaySummaryBubble = ({ isPdf = false }: { isPdf?: boolean }) => {
 const PdfPublicationsFormData = ({ data = [] }: { data?: string[] }) => {
   const pubData = data.map((d: string) => ({
     fieldName: PdfFieldName.PUBLICATION_URL,
-    fieldValue: d,
+    fieldValue: (
+      <Link src={d} style={{ textDecoration: 'underline' }}>
+        {d}
+      </Link>
+    ),
   }));
   // pdf is required to show a minimum of 3 publication fields, so appending empty rows if less than 3 publications have been added
   while (pubData.length < MIN_PUBLICATION_FIELDS) {
     pubData.push({
       fieldName: PdfFieldName.PUBLICATION_URL,
-      fieldValue: '',
+      fieldValue: <Text>{''}</Text>,
     });
   }
   return (
@@ -291,9 +278,8 @@ export const StaticLaySummary = ({ isPdf = false }: { isPdf?: boolean }) => {
 };
 
 export const StaticPublications = ({ isPdf = false }: { isPdf?: boolean }) => {
-  const { SectionComponent, TextComponent, SectionTitle, LinkComponent } = getStaticComponents(
-    isPdf,
-  );
+  const { SectionComponent, TextComponent, SectionTitle, LinkComponent } =
+    getStaticComponents(isPdf);
 
   return (
     <SectionComponent
@@ -331,12 +317,8 @@ export const StaticPublications = ({ isPdf = false }: { isPdf?: boolean }) => {
   );
 };
 const StaticProjectInfo = ({ isPdf = false, data, sectionLastUpdatedAt }: StaticComponentProps) => {
-  const {
-    ContainerComponent,
-    SectionComponent,
-    TextComponent,
-    TitleComponent,
-  } = getStaticComponents(isPdf);
+  const { ContainerComponent, SectionComponent, TextComponent, TitleComponent } =
+    getStaticComponents(isPdf);
 
   return (
     <ContainerComponent
