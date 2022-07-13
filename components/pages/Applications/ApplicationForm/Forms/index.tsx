@@ -45,6 +45,11 @@ import Link from '@icgc-argo/uikit/Link';
 import ApplicationHistoryModal from './ApplicationHistoryModal';
 import { SetLastUpdated } from '../types';
 
+import { AxiosError } from 'axios';
+import { useAuthContext } from 'global/hooks';
+import urlJoin from 'url-join';
+import { API, APPLICATIONS_PATH } from 'global/constants';
+
 enum VisibleModalOption {
   NONE = 'NONE',
   APPLICATION_HISTORY = 'APPLICATION_HISTORY',
@@ -179,6 +184,30 @@ const ApplicationFormsBase = ({
     );
   };
 
+  const { fetchWithAuth } = useAuthContext();
+  const submit = () => {
+    // setIsSubmitting(true);
+    fetchWithAuth({
+      data: {
+        // attestedAtUtc: new Date(),
+        isAttestable: 'true',
+        // attestedAtUtc: ' ',
+      },
+      method: 'PATCH',
+      url: urlJoin(API.APPLICATIONS, appId),
+    })
+      .then(() => {
+        router.push(`${APPLICATIONS_PATH}/${appId}?section=terms`);
+      })
+      .catch((err: AxiosError) => {
+        console.error('Failed to submit.', err);
+      });
+    // .finally(() => {
+    //   setModalVisible(false);
+    //   setIsSubmitting(false);
+    // });
+  };
+
   return (
     <>
       <ContentBody>
@@ -235,6 +264,7 @@ const ApplicationFormsBase = ({
                     margin-bottom: 20px;
                   `}
                   size="sm"
+                  onClick={submit}
                 >
                   I ATTESTED TO THE ABOVE TERMS
                 </Button>
