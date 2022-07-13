@@ -22,15 +22,17 @@ import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
+
+import { useDataContext } from 'global/hooks';
+
 import { API, APPLICATIONS_PATH } from 'global/constants';
-import { useAuthContext } from 'global/hooks';
 import { useRouter } from 'next/router';
 import urlJoin from 'url-join';
 import DashboardCard from '../Card';
 
 const StartApplication = () => {
   const theme = useTheme();
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth } = useDataContext();
   const router = useRouter();
 
   const createNewApplication = () => {

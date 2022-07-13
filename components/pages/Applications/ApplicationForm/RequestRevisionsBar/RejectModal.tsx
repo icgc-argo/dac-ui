@@ -30,7 +30,7 @@ import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 import InputLabel from '@icgc-argo/uikit/form/InputLabel';
 import Textarea from '@icgc-argo/uikit/form/Textarea';
 
-import { useAuthContext } from 'global/hooks';
+import { useDataContext } from 'global/hooks';
 import { API } from 'global/constants';
 
 const RejectModal = ({
@@ -45,7 +45,7 @@ const RejectModal = ({
   const [error, setError] = useState<AxiosError | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [denialReason, setDenialReason] = useState<string>('');
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth } = useDataContext();
 
   const submitRejection = () => {
     setIsLoading(true);

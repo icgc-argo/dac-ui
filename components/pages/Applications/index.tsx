@@ -40,7 +40,7 @@ const Application = (): ReactElement => {
   const {
     query: { ID: [appId = ''] = [] },
   }: QueryType = useRouter();
-  const { isLoading, permissions } = useAuthContext();
+  const { permissions, userLoading } = useAuthContext();
 
   const isAdmin = permissions.length > 0 && isDacoAdmin(permissions);
 
@@ -51,7 +51,7 @@ const Application = (): ReactElement => {
   return (
     <>
       <PageHead title={pageTitle} />
-      {isLoading ? (
+      {userLoading ? (
         <Loader />
       ) : appId ? (
         <ApplicationForm appId={normalisedAppId} isAdmin={isAdmin} />

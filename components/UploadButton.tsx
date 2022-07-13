@@ -22,7 +22,7 @@ import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import { AxiosError } from 'axios';
-import { useAuthContext } from 'global/hooks';
+import { useDataContext } from 'global/hooks';
 import React, { useState } from 'react';
 import { CustomLoadingButton } from './pages/Applications/ApplicationForm/Forms/common';
 
@@ -47,7 +47,7 @@ const UploadButton = ({
 }) => {
   const theme = useTheme();
   const fileInputRef = React.createRef<HTMLInputElement>();
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth } = useDataContext();
 
   const [uploadError, setUploadError] = useState(false);
   const [isUploadInProgress, setUploadInProgress] = useState(false);

@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { css } from '@emotion/core';
 import ReactDOM from 'react-dom';
 
@@ -25,12 +25,14 @@ import ThemeProvider from '@icgc-argo/uikit/ThemeProvider';
 import Modal from '@icgc-argo/uikit/Modal';
 
 import Head from 'components/Head';
-import { AuthProvider } from 'global/hooks/useAuthContext';
+import { DataProvider } from 'global/hooks/useDataContext';
 import { PageContext } from 'global/hooks/usePageContext';
 import DefaultPageLayout from './DefaultPageLayout';
 import { ToasterContext, useToastState } from 'global/hooks/useToaster';
 import ToastStack from '@icgc-argo/uikit/notifications/ToastStack';
 import GdprBanner from './GdprBanner';
+import { NextPageContext } from 'next';
+import { AuthProvider } from 'global/hooks/useAuthContext';
 
 /**
  * The global portal where modals will show up
@@ -162,39 +164,33 @@ const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const Root = ({
-  children,
-  pageContext,
-  egoJwt = '',
-}: {
-  children: any;
-  pageContext: any;
-  egoJwt?: string;
-}) => {
+const Root = ({ children, pageContext }: { children: ReactNode; pageContext: NextPageContext }) => {
   return (
     <React.Fragment>
       <CSSGlobalReset />
       <Head />
-      <AuthProvider egoJwt={egoJwt}>
-        <PageContext.Provider value={pageContext}>
-          <ThemeProvider>
-            <ToastProvider>
-              <div
-                css={css`
-                  position: fixed;
-                  left: 0px;
-                  top: 0px;
-                  z-index: 9999;
-                  ${fillAvailableWidth}
-                `}
-                ref={modalPortalRef}
-              />
-              <GdprBanner />
-              <DefaultPageLayout>{children}</DefaultPageLayout>
-            </ToastProvider>
-          </ThemeProvider>
-        </PageContext.Provider>
-      </AuthProvider>
+      <PageContext.Provider value={pageContext}>
+        <ThemeProvider>
+          <AuthProvider>
+            <DataProvider>
+              <ToastProvider>
+                <div
+                  css={css`
+                    position: fixed;
+                    left: 0px;
+                    top: 0px;
+                    z-index: 9999;
+                    ${fillAvailableWidth}
+                  `}
+                  ref={modalPortalRef}
+                />
+                <GdprBanner />
+                <DefaultPageLayout>{children}</DefaultPageLayout>
+              </ToastProvider>
+            </DataProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </PageContext.Provider>
     </React.Fragment>
   );
 };

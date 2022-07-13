@@ -17,19 +17,17 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { NextPageContext } from 'next';
 import { AppContext } from 'next/app';
 import Root from 'components/Root';
 import { PageConfigProps, PageWithConfig } from 'global/utils/pages/types';
 import {
   APPROVED_APP_CLOSED_CHECK,
-  EGO_JWT_KEY,
   NEW_WEBSITE_NOTICE_PATH,
   SUBMISSION_SUCCESS_CHECK,
 } from 'global/constants';
-import { isValidJwt } from 'global/utils/egoTokenUtils';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import NewWebsiteNotice from 'components/pages/NewWebsiteNotice';
 import { getConfig } from 'global/config';
 import MaintenancePage from './maintenance';
@@ -49,8 +47,6 @@ const App = ({
   pageProps: PageConfigProps;
   ctx: NextPageContext;
 }) => {
-  const [initialJwt, setInitialJwt] = useState<string>('');
-
   const router = useRouter();
   const { NEXT_PUBLIC_MAINTENANCE_MODE_ON } = getConfig();
 
@@ -70,27 +66,10 @@ const App = ({
     };
   }, []);
 
-  useEffect(() => {
-    const egoJwt = localStorage.getItem(EGO_JWT_KEY) || '';
-    if (isValidJwt(egoJwt)) {
-      setInitialJwt(egoJwt);
-    } else {
-      setInitialJwt('');
-      localStorage.removeItem(EGO_JWT_KEY);
-      // redirect to logout when token is expired/missing only if user is on a non-public page
-      if (!Component.isPublic) {
-        Router.push({
-          pathname: '/',
-          query: { session_expired: true },
-        });
-      }
-    }
-  });
-
   return ctx.pathname === NEW_WEBSITE_NOTICE_PATH && !NEXT_PUBLIC_MAINTENANCE_MODE_ON ? (
     <NewWebsiteNotice />
   ) : (
-    <Root egoJwt={initialJwt} pageContext={ctx}>
+    <Root pageContext={ctx}>
       {NEXT_PUBLIC_MAINTENANCE_MODE_ON ? <MaintenancePage /> : <Component {...pageProps} />}
     </Root>
   );

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2022 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -17,153 +17,288 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React, { createContext, useContext, useState } from 'react';
-import { useRouter } from 'next/router';
-import { EGO_JWT_KEY } from '../constants';
+import Queue from 'promise-queue';
+import { APPLICATIONS_PATH, HOMEPAGE_PATH, LOGGED_IN_PATH } from 'global/constants/internalPaths';
+import {
+  fetchEgoJwt,
+  getStoredJwt,
+  refreshJwt,
+  removeStoredJwt,
+  setStoredJwt,
+} from 'global/utils/authUtils';
 import {
   decodeToken,
   extractUser,
   getPermissionsFromToken,
   isValidJwt,
-} from '../utils/egoTokenUtils';
-import { UserWithId } from '../types';
-import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
-import { getConfig } from 'global/config';
-import { useToaster } from './useToaster';
-import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
+} from 'global/utils/egoTokenUtils';
+import { useRouter } from 'next/router';
+import { createContext, ReactElement, useContext, useEffect, useState } from 'react';
+import { usePageContext } from 'global/hooks';
+import { egoRefreshUrl } from 'global/constants/externalPaths';
+import { UserWithId } from 'global/types';
+import { css } from '@emotion/core';
+import DnaLoader from '@icgc-argo/uikit/DnaLoader';
 
-type T_AuthContext = {
-  cancelFetchWithAuth: Canceler;
-  fetchWithAuth: any;
-  isLoading: boolean;
-  logout: () => void;
+export type T_AuthContext = {
+  getUserJwt: (url?: string) => Promise<string>;
+  logout: ({ sessionExpired }: { sessionExpired?: boolean }) => void;
   permissions: string[];
-  token?: string;
-  user?: UserWithId | void;
+  token: string;
+  user?: UserWithId;
+  userLoading: boolean;
+  forceLogout: ({ url, userHadSession }: ForceLogoutArgs) => void;
 };
 
-const AuthContext = createContext<T_AuthContext>({
-  cancelFetchWithAuth: () => {},
-  token: '',
-  isLoading: false,
+type ForceLogoutArgs = {
+  url?: string;
+  userHadSession: boolean;
+};
+
+const authContextDefaultValues = {
+  getUserJwt: () => Promise.resolve(''),
   logout: () => {},
-  user: undefined,
-  fetchWithAuth: () => {},
   permissions: [],
-});
+  token: '',
+  user: undefined,
+  userLoading: true,
+  forceLogout: () => {},
+};
 
-export const AuthProvider = ({
-  children,
-  egoJwt = '',
-}: {
-  children: React.ReactElement;
-  egoJwt: string;
-}) => {
-  // TODO: typing this state as `string` causes a compiler error. the same setup exists in argo but does not cause
-  // a type issue. using `any` for now
-  const [isLoading, setLoading] = useState<boolean>(true);
-  const [token, setTokenState] = useState<string>(egoJwt);
-  const { NEXT_PUBLIC_DAC_API_ROOT } = getConfig();
+const AuthContext = createContext<T_AuthContext>(authContextDefaultValues);
+
+export const AuthProvider = ({ children }: { children: ReactElement }) => {
+  const [userJwtState, setUserJwtState] = useState<T_AuthContext['token']>(
+    authContextDefaultValues.token,
+  );
+  const [userLoading, setUserLoading] = useState<T_AuthContext['userLoading']>(
+    authContextDefaultValues.userLoading,
+  );
+
+  const ctx = usePageContext();
+
   const router = useRouter();
-  const toaster = useToaster();
 
-  const removeToken = () => {
-    localStorage.removeItem(EGO_JWT_KEY);
-    setTokenState('');
+  const logout = async ({ sessionExpired = true, redirectHome = true, url = '' } = {}) => {
+    console.log('LOGOUT');
+    const storedJwt = getStoredJwt();
+    removeUserJwt();
+    if (redirectHome) {
+      router.push(`${HOMEPAGE_PATH}${sessionExpired ? '?session_expired=true' : ''}`);
+    } else if (sessionExpired && url === HOMEPAGE_PATH) {
+      router.push(`${HOMEPAGE_PATH}?session_expired=true`, undefined, {
+        shallow: true,
+      });
+    }
+    if (storedJwt) {
+      await fetch(egoRefreshUrl, {
+        credentials: 'include',
+        headers: {
+          accept: '*/*',
+          authorization: `Bearer ${storedJwt}`,
+        },
+        method: 'DELETE',
+      })
+        .then((res) => {
+          if (res.status !== 200) {
+            throw new Error();
+          }
+          console.log('AUTH - deleted the refresh token');
+        })
+        .catch((err) => {
+          console.warn(err);
+        });
+    }
   };
 
-  const logout = () => {
-    router.push('/?session_expired=true');
-    removeToken();
+  const removeUserJwt = () => {
+    console.log('AUTH - remove JWT in state and localStorage');
+    handleUserJwt();
   };
 
-  if (token) {
-    if (!isValidJwt(token)) {
-      if (egoJwt && token === egoJwt) {
-        logout();
-      }
-    } else if (!egoJwt) {
-      setTokenState('');
+  const handleUserJwt = (token: string = authContextDefaultValues.token) => {
+    console.log('AUTH - update JWT in state and localStorage');
+    if (isValidJwt(token)) {
+      setStoredJwt(token);
+      setUserJwtState(token);
+    } else {
+      setUserJwtState(authContextDefaultValues.token);
+      removeStoredJwt();
     }
-  } else if (isValidJwt(egoJwt)) {
-    setTokenState(egoJwt);
-  }
+  };
 
-  // TODO: decide if we want these for all types of requests or only POST
-  axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
-  axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
-
-  const cancelTokenSource = axios.CancelToken.source();
-  const cancelFetchWithAuth = cancelTokenSource.cancel;
-  const fetchWithAuth = ({
-    data,
-    headers = {},
-    method = 'GET' as Method,
-    params = {},
-    responseType,
-    url,
-  }: AxiosRequestConfig) => {
-    setLoading(true);
-    if (!url) {
-      setLoading(false);
-      return Promise.reject(undefined);
-    }
-
-    if (!token) {
-      setLoading(false);
-      return Promise.reject(undefined);
-    }
-
-    const config: AxiosRequestConfig = {
-      ...(!['DELETE', 'GET'].includes(method) && { data }),
-      baseURL: NEXT_PUBLIC_DAC_API_ROOT,
-      cancelToken: cancelTokenSource.token,
-      headers: {
-        accept: '*/*',
-        ...headers,
-        Authorization: `Bearer ${token || ''}`,
-      },
-      method,
-      params,
-      ...(responseType ? { responseType } : {}),
+  const forceLogout = ({ url, userHadSession }: ForceLogoutArgs) => {
+    console.log('forceLogout URL:', url, 'userHadSession:', userHadSession, 'asPath:', ctx.asPath);
+    // don't add the session_expired param if the user was visiting the homepage
+    // but DO add it if the user was navigating to the homepage from another page
+    logout({
+      sessionExpired: userHadSession || url !== HOMEPAGE_PATH,
+      redirectHome: url !== HOMEPAGE_PATH,
+      // don't redirect if:
+      // - on the homepage, not making a route change
+      // - in the middle of a route change to the homepage
       url,
+    });
+
+    if (ctx.asPath === HOMEPAGE_PATH) {
+      // turn off loading if on homepage & not changing routes
+      setUserLoading(false);
+    }
+  };
+
+  const authMaxConcurrent = 1;
+  const authMaxQueue = Infinity;
+  const authQueue = new Queue(authMaxConcurrent, authMaxQueue);
+
+  const getUserJwt = async (url?: string) =>
+    authQueue.add(
+      async (): Promise<string> => {
+        const isQueueEmpty = authQueue.getQueueLength() === 0;
+        // provide a URL if it's different from ctx.asPath
+        // e.g. for route changes, this function needs to know the destination URL
+        const currentUrl = url || ctx.asPath || '';
+        if (isValidJwt(userJwtState)) {
+          console.log('AUTH - get JWT - state:', userJwtState.slice(-10));
+          setUserLoading(!isQueueEmpty);
+          return userJwtState;
+        }
+
+        const storedJwt = getStoredJwt();
+
+        if (!storedJwt) {
+          console.log('AUTH - get JWT - none, logout');
+          forceLogout({ url: currentUrl, userHadSession: false });
+          return authContextDefaultValues.token;
+        }
+
+        if (isValidJwt(storedJwt)) {
+          console.log('AUTH - get JWT - localStorage:', storedJwt.slice(-10));
+          setUserJwtState(storedJwt);
+          setUserLoading(!isQueueEmpty);
+          return storedJwt;
+        }
+
+        setUserLoading(true);
+
+        return refreshJwt()
+          .then((refreshedJwt = '') => {
+            console.log('🌀 AUTH - get JWT - refreshed JWT:', refreshedJwt.slice(-10));
+            if (isValidJwt(refreshedJwt)) {
+              handleUserJwt(refreshedJwt);
+              setUserLoading(!isQueueEmpty);
+              return refreshedJwt;
+            }
+            throw new Error('AUTH - get JWT - refresh failed, logout');
+          })
+          .catch((e: any) => {
+            console.error(e);
+            forceLogout({ url: currentUrl, userHadSession: true });
+            return authContextDefaultValues.token;
+          });
+      },
+    );
+
+  useEffect(() => {
+    console.log('PAGE CHANGE', ctx);
+    if (ctx.query?.session_expired) {
+      setUserLoading(false);
+    }
+
+    if (ctx.asPath === LOGGED_IN_PATH) {
+      console.log('LOGGED-IN');
+      setUserLoading(true);
+      router.prefetch(APPLICATIONS_PATH);
+      fetchEgoJwt()
+        .then((egoJwt = '') => {
+          if (isValidJwt(egoJwt)) {
+            handleUserJwt(egoJwt);
+            return;
+          }
+          throw new Error('Invalid JWT, cannot login');
+        })
+        .then(() => router.push(APPLICATIONS_PATH))
+        .catch((err) => {
+          console.warn(err);
+          logout({ sessionExpired: true, redirectHome: true });
+        })
+        .finally(() => {
+          setUserLoading(false);
+        });
+    }
+
+    if (!ctx.query?.session_expired && ctx.asPath !== LOGGED_IN_PATH) {
+      console.log('PAGE CHANGE:', ctx.asPath);
+      getUserJwt();
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleStart = (url: string) => {
+      console.log('ROUTER START:', url, typeof url);
+      if (!url.includes('session_expired=true') && url !== LOGGED_IN_PATH) {
+        getUserJwt(url);
+      }
     };
 
-    return axios(config)
-      .catch((error) => {
-        // status code outside 2xx range
-        toaster.addToast({
-          title: 'Something went wrong!',
-          variant: TOAST_VARIANTS.ERROR,
-          content: 'Please try performing your action again.',
-        });
-        // TODO: log errors somewhere not visible to the user?
-        // Leaving this log here pre-release, for troubleshooting
-        console.error('Error in fetchWithAuth', { error });
-        throw { error };
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+    const handleComplete = (url: string) => {
+      if (url.includes('session_expired=true')) {
+        setUserLoading(false);
+      }
+    };
 
-  const userInfo = token ? decodeToken(token) : null;
-  const user = userInfo ? extractUser(userInfo) : undefined;
-  const permissions = getPermissionsFromToken(token);
+    const handleError = (err: any, url: string) => {
+      console.error(err);
+      handleComplete(url);
+    };
 
-  isLoading && token && user && setLoading(false);
+    router.events.on('routeChangeStart', handleStart);
+    router.events.on('routeChangeComplete', handleComplete);
+    router.events.on('routeChangeError', handleError);
 
-  const authData = {
-    cancelFetchWithAuth,
-    fetchWithAuth,
-    isLoading,
+    return () => {
+      router.events.off('routeChangeStart', handleStart);
+      router.events.off('routeChangeComplete', handleComplete);
+      router.events.off('routeChangeError', handleError);
+    };
+  }, [router]);
+
+  const userInfo = userJwtState ? decodeToken(userJwtState) : null;
+  const user: T_AuthContext['user'] = userInfo
+    ? extractUser(userInfo)
+    : authContextDefaultValues.user;
+  const permissions: T_AuthContext['permissions'] = getPermissionsFromToken(userJwtState);
+
+  const authContextValue = {
+    getUserJwt,
     logout,
+    forceLogout,
     permissions,
-    token,
+    token: userJwtState,
     user,
+    userLoading: userLoading && !userJwtState,
   };
 
-  return <AuthContext.Provider value={authData}>{children}</AuthContext.Provider>;
+  console.log('userLoading', userLoading);
+
+  return (
+    <AuthContext.Provider value={authContextValue}>
+      {userLoading ? (
+        <div
+          css={css`
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+          `}
+        >
+          <DnaLoader />
+        </div>
+      ) : (
+        children
+      )}
+    </AuthContext.Provider>
+  );
 };
 
 export default function useAuthContext() {

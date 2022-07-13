@@ -17,61 +17,15 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { useEffect } from 'react';
 import { css } from '@emotion/core';
-import urlJoin from 'url-join';
-import Router from 'next/router';
 
 import DnaLoader from '@icgc-argo/uikit/DnaLoader';
 
-import { getConfig } from 'global/config';
-import { APPLICATIONS_PATH, EGO_JWT_KEY } from 'global/constants';
-import { isValidJwt } from 'global/utils/egoTokenUtils';
 import { createPage } from 'global/utils/pages/createPage';
 
-const fetchEgoToken = () => {
-  const { NEXT_PUBLIC_EGO_API_ROOT, NEXT_PUBLIC_EGO_CLIENT_ID } = getConfig();
-  const egoLoginUrl = urlJoin(
-    NEXT_PUBLIC_EGO_API_ROOT,
-    `/oauth/ego-token?client_id=${NEXT_PUBLIC_EGO_CLIENT_ID}`,
-  );
-
-  fetch(egoLoginUrl, {
-    credentials: 'include',
-    headers: { accept: '*/*' },
-    body: null,
-    method: 'POST',
-  })
-    .then((res) => {
-      if (res.status !== 200) {
-        throw new Error();
-      }
-      return res.text();
-    })
-    .then((jwt) => {
-      if (isValidJwt(jwt)) return localStorage.setItem(EGO_JWT_KEY, jwt);
-      throw new Error('Invalid jwt, cannot login.');
-    })
-    .then(() => Router.push(APPLICATIONS_PATH))
-    .catch((err) => {
-      console.warn(err);
-      localStorage.removeItem(EGO_JWT_KEY);
-      Router.push('/');
-    });
-};
-
 const LoginLoaderPage = createPage({
-  getInitialProps: async (ctx) => {
-    const { egoJwt, asPath, query } = ctx;
-    return { egoJwt, query, asPath };
-  },
   isPublic: true,
 })(() => {
-  useEffect(() => {
-    Router.prefetch(APPLICATIONS_PATH);
-    fetchEgoToken();
-  }, []);
-
   return (
     <div
       css={css`

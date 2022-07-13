@@ -35,7 +35,7 @@ import Modal from '@icgc-argo/uikit/Modal';
 import { BANNER_VARIANTS } from '@icgc-argo/uikit/notifications/Banner';
 
 import { API, DATE_RANGE_DISPLAY_FORMAT } from 'global/constants';
-import { useAuthContext } from 'global/hooks';
+import { useDataContext } from 'global/hooks';
 import { ModalPortal } from 'components/Root';
 
 import DoubleFieldRow from '../DoubleFieldRow';
@@ -94,7 +94,7 @@ const UploadsTable = ({
 }): ReactElement => {
   const containerRef = createRef<HTMLDivElement>();
   const fileInputRef = createRef<HTMLInputElement>();
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth } = useDataContext();
   const theme: UikitTheme = useTheme();
 
   const [ethicsLetters, setEthicsLetters] = useState<any[]>(

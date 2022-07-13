@@ -34,7 +34,7 @@ import {
 
 import useRequestRevisionsReducer, { SECONDARY_FIELDS } from './useRequestRevisionsReducer';
 import { AxiosError } from 'axios';
-import { useAuthContext } from 'global/hooks';
+import { useDataContext } from 'global/hooks';
 import urlJoin from 'url-join';
 import router from 'next/router';
 import { API } from 'global/constants';
@@ -161,7 +161,7 @@ const RequestRevisionsModal = ({
   const { fields, isSecondaryFieldsEnabled, isSendEnabled } = state;
   const [error, setError] = useState<AxiosError | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth } = useDataContext();
 
   const submitRequestRevisions = () => {
     setIsLoading(true);

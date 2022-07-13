@@ -10,7 +10,7 @@ import { AxiosResponse, AxiosError } from 'axios';
 import { format } from 'date-fns';
 
 import { ModalPortal } from 'components/Root';
-import { useAuthContext } from 'global/hooks';
+import { useDataContext } from 'global/hooks';
 import { API, DATE_RANGE_DISPLAY_FORMAT } from 'global/constants';
 import { DacoRole, UpdateEvent, UserViewApplicationUpdate } from './types';
 
@@ -54,7 +54,7 @@ const AppHistoryModal = ({ appId, onClose }: { appId: string; onClose: any }) =>
   const [historyData, setHistoryData] = useState<UserViewApplicationUpdate[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [loadingError, setLoadingError] = useState<boolean>(false);
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth } = useDataContext();
 
   useEffect(() => {
     fetchWithAuth({

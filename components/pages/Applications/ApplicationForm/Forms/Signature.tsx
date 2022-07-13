@@ -37,7 +37,7 @@ import {
 import { UPLOAD_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
 import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
 import { API, APPLICATIONS_PATH, SUBMISSION_SUCCESS_CHECK } from 'global/constants';
-import { useAuthContext } from 'global/hooks';
+import { useDataContext } from 'global/hooks';
 import Modal from '@icgc-argo/uikit/Modal';
 import { ModalPortal } from 'components/Root';
 import Link from '@icgc-argo/uikit/Link';
@@ -83,7 +83,7 @@ const Signature = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionError, setSubmissionError] = useState(false);
 
-  const { fetchWithAuth } = useAuthContext();
+  const { fetchWithAuth } = useDataContext();
   const [pdfIsLoading, setPdfIsLoading] = useState(false);
   const [isUploadInProgress, setUploadInProgress] = useState(false);
 
