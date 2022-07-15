@@ -70,7 +70,7 @@ const ApplicationHeader = ({
     ? {
         date: format(new Date(attestationByUtc || ''), DATE_TEXT_FORMAT),
         isExpired: true,
-        status: '!Pausing',
+        status: '! Pausing',
       }
     : approvedAtUtc
     ? {
