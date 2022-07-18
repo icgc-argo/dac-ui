@@ -32,8 +32,8 @@ export type ApplicationRecord = {
   status: string;
   country: string;
   currentApprovedAppDoc: boolean;
-  attestedAt: string;
-  attestationBy: string;
+  attestedAtUtc: string;
+  attestationByUtc: string;
   isAttestable: boolean;
 };
 
