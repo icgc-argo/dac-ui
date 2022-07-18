@@ -25,58 +25,27 @@ import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import router from 'next/router';
 import { APPLICATIONS_PATH } from 'global/constants';
 import urlJoin from 'url-join';
+import { UikitIconNames } from '@icgc-argo/uikit/Icon/icons';
+
+const ButtonIcon = ({ name }: { name: UikitIconNames }) => {
+  return (
+    <Icon
+      css={css`
+        margin-bottom: -2px;
+      `}
+      fill="white"
+      height="12px"
+      name={name}
+    />
+  );
+};
 
 const icons = {
-  file: (
-    <Icon
-      css={css`
-        margin-bottom: -2px;
-      `}
-      fill="white"
-      height="12px"
-      name="file"
-    />
-  ),
-  edit: (
-    <Icon
-      css={css`
-        margin-bottom: -2px;
-      `}
-      fill="white"
-      height="12px"
-      name="edit"
-    />
-  ),
-  user: (
-    <Icon
-      css={css`
-        margin-bottom: -2px;
-      `}
-      fill="white"
-      height="12px"
-      name="user"
-    />
-  ),
-  reset: (
-    <Icon
-      css={css`
-        margin-bottom: -2px;
-      `}
-      fill="white"
-      height="12px"
-      name="reset"
-    />
-  ),
-  calendar: (
-    <Icon
-      css={css`
-        margin-bottom: -2px;
-      `}
-      fill="white"
-      height="12px"
-      name="calendar"
-    />
-  ),
+  file: <ButtonIcon name="file" />,
+  edit: <ButtonIcon name="edit" />,
+  user: <ButtonIcon name="user" />,
+  reset: <ButtonIcon name="reset" />,
+  calendar: <ButtonIcon name="calendar" />,
 };
 
 const getButtonConfig = (

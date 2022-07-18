@@ -76,31 +76,38 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
 
   const requiresAttestation = !attestedAtUtc && isAttestable;
 
-  const statusDate = [ApplicationState.PAUSED].includes(state as ApplicationState) ? (
-    <div
-      css={css`
-        color: ${theme.colors.error};
-      `}
-    >{`! Access Paused: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
-  ) : requiresAttestation && ![ApplicationState.PAUSED].includes(state as ApplicationState) ? (
-    <div
-      css={css`
-        color: ${theme.colors.error};
-      `}
-    >{`! Access Pausing: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
-  ) : expiresAtUtc && !closedAtUtc ? (
-    `Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`
-  ) : closedAtUtc && approvedAtUtc ? (
-    <div
-      css={css`
-        color: ${theme.colors.error};
-      `}
-    >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
-  ) : null;
+  const statusDate =
+    state === ApplicationState.PAUSED ? (
+      <div
+        css={css`
+          color: ${theme.colors.error};
+        `}
+      >
+        {`! Access Paused: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}
+      </div>
+    ) : requiresAttestation ? (
+      <div
+        css={css`
+          color: ${theme.colors.error};
+        `}
+      >{`! Access Pausing: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
+    ) : expiresAtUtc && !closedAtUtc ? (
+      <div
+        css={css`
+          color: ${theme.colors.secondary};
+        `}
+      >{`Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`}</div>
+    ) : closedAtUtc && approvedAtUtc ? (
+      <div
+        css={css`
+          color: ${theme.colors.error};
+        `}
+      >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
+    ) : null;
 
   const statusError =
     requiresAttestation ||
-    [ApplicationState.PAUSED].includes(state as ApplicationState) ||
+    state === ApplicationState.PAUSED ||
     (revisionsRequested &&
       [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
         state as ApplicationState,
