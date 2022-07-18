@@ -38,6 +38,7 @@ export interface StatusDates {
   submittedAtUtc: string;
   closedAtUtc: string;
   approvedAtUtc: string;
+  attestedAtUtc: string;
   attestationByUtc: string;
 }
 
@@ -56,7 +57,9 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     closedAtUtc,
     approvedAtUtc,
     revisionsRequested,
+    attestedAtUtc,
     attestationByUtc,
+    isAttestable,
   } = application;
 
   const dates: StatusDates = {
@@ -66,9 +69,12 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
       'submittedAtUtc',
       'closedAtUtc',
       'approvedAtUtc',
+      'attestedAtUtc',
       'attestationByUtc',
     ]),
   };
+
+  const requiresAttestation = !attestedAtUtc && isAttestable;
 
   const statusDate =
     state === ApplicationState.PAUSED ? (
@@ -76,9 +82,21 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
         css={css`
           color: ${theme.colors.error};
         `}
-      >{`! Access Paused: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
+      >
+        {`! Access Paused: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}
+      </div>
+    ) : requiresAttestation ? (
+      <div
+        css={css`
+          color: ${theme.colors.error};
+        `}
+      >{`! Access Pausing: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
     ) : expiresAtUtc && !closedAtUtc ? (
-      `Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`
+      <div
+        css={css`
+          color: ${theme.colors.secondary};
+        `}
+      >{`Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`}</div>
     ) : closedAtUtc && approvedAtUtc ? (
       <div
         css={css`
@@ -88,6 +106,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     ) : null;
 
   const statusError =
+    requiresAttestation ||
     state === ApplicationState.PAUSED ||
     (revisionsRequested &&
       [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
@@ -123,7 +142,12 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
                 color: ${statusError ? theme.colors.error : 'inherit'};
               `}
             >
-              {getStatusText(state as ApplicationState, dates, revisionsRequested)}
+              {getStatusText(
+                state as ApplicationState,
+                dates,
+                revisionsRequested,
+                requiresAttestation,
+              )}
             </span>
           </div>
           <div>
@@ -146,7 +170,11 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
               min-width: 160px;
             `}
           >
-            <ButtonGroup appId={appId} state={state as ApplicationState} />
+            <ButtonGroup
+              appId={appId}
+              state={state as ApplicationState}
+              requiresAttestation={requiresAttestation}
+            />
           </div>
           <div
             css={css`

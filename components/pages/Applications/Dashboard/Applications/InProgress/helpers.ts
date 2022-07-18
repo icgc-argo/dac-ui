@@ -26,6 +26,7 @@ export const getStatusText = (
   state: ApplicationState,
   dates: StatusDates,
   revisionsRequested: boolean,
+  requiresAttestation: boolean,
 ) => {
   const formatStatusDate = (date: string) =>
     formatDate(new Date(date || dates.lastUpdatedAtUtc), DATE_TEXT_FORMAT);
@@ -37,9 +38,13 @@ export const getStatusText = (
 
   switch (state) {
     case ApplicationState.APPROVED:
-      return `Approved on ${formatStatusDate(
-        dates.approvedAtUtc,
-      )}. You now have access to ICGC Controlled Data.`;
+      return requiresAttestation
+        ? `An annual attestation is required for this application. Access for this project team will be paused on ${formatStatusDate(
+            dates.attestationByUtc,
+          )} until you submit your attestation.`
+        : `Approved on ${formatStatusDate(
+            dates.approvedAtUtc,
+          )}. You now have access to ICGC Controlled Data.`;
     case ApplicationState.SIGN_AND_SUBMIT:
       return revisionsRequested ? revisionsRequestedText : createdOnText;
     case ApplicationState.DRAFT:
