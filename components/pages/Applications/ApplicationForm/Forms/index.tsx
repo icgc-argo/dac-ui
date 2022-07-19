@@ -182,12 +182,13 @@ const ApplicationFormsBase = ({
   return (
     <>
       <ContentBody>
-        {requiresAttestation && [ApplicationState.APPROVED].includes(applicationState) && (
+        {/* forward thinking: requiresAttestation is also true for PAUSED state, therefore we want to make sure application is in APPROVED state */}
+        {requiresAttestation && applicationState === ApplicationState.APPROVED && (
           <Notification
             title={
               <div
                 css={css`
-                  margin-top: 5px;
+                  margin-top: 8px;
                   margin-left: 10px;
                 `}
               >
@@ -230,9 +231,8 @@ const ApplicationFormsBase = ({
                 <br />
                 <Button
                   css={css`
-                    margin-top: 20px;
-                    margin-left: 10px;
-                    margin-bottom: 20px;
+                    margin-top: 13px;
+                    margin-bottom: 13px;
                   `}
                   size="sm"
                 >

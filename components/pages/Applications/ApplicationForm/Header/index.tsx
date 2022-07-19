@@ -128,7 +128,7 @@ const ApplicationHeader = ({
                   border-radius: 8px;
                   color: ${theme.colors.white};
                   font-weight: bold;
-                  margin: 0 auto 10px 72px;
+                  margin: 0 auto 10px 57px;
                   padding: 3px 8px;
                   text-align: center;
                   width: 150px;
