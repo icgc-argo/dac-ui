@@ -51,6 +51,7 @@ export const fieldDisplayNames = {
   lastUpdatedAtUtc: 'Last Updated',
   state: 'Status',
   'ethics.declaredAsRequired': 'Ethics Letter',
+  attestedAtUtc: 'Annual Attestation',
   currentApprovedAppDoc: 'Approved PDF',
 };
 
@@ -66,6 +67,9 @@ export const formatTableData = (data: ApplicationsResponseItem[]) =>
     accessExpiry: datum.closedAtUtc || datum.expiresAtUtc,
     lastUpdated: datum.lastUpdatedAtUtc,
     status: datum.state,
+    attestationByUtc: datum.attestationByUtc,
+    attestedAtUtc: datum.attestedAtUtc,
+    isAttestable: datum.isAttestable,
   }));
 
 export const tableColumns: TableColumnConfig<ApplicationRecord> & {
@@ -114,6 +118,12 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
       original.currentApprovedAppDoc ? 'Yes' : null,
   },
   {
+    Header: fieldDisplayNames.attestedAtUtc,
+    id: ApplicationsField.attestedAtUtc,
+    Cell: ({ original }: { original: ApplicationRecord }) =>
+      original.attestedAtUtc ? 'Yes' : original.isAttestable ? 'No' : ' ',
+  },
+  {
     Header: fieldDisplayNames.expiresAtUtc,
     id: ApplicationsField.expiresAtUtc,
     accessor: 'accessExpiry',
@@ -124,7 +134,7 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
           css={css`
             color: ${theme.colors[
               original.status === ApplicationState.CLOSED ? 'error' : 'secondary'
-            ]}; ;
+            ]};
           `}
         >
           {original.accessExpiry

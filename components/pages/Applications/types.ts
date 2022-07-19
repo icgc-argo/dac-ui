@@ -32,6 +32,9 @@ export type ApplicationRecord = {
   status: string;
   country: string;
   currentApprovedAppDoc: boolean;
+  attestedAtUtc: string;
+  attestationByUtc: string;
+  isAttestable: boolean;
 };
 
 export enum ApplicationState {
@@ -281,6 +284,7 @@ export enum ApplicationsField {
   appNumber = 'appNumber',
   'applicant.address.country' = 'country',
   currentApprovedAppDoc = 'currentApprovedAppDoc',
+  attestedAtUtc = 'attestedAtUtc',
 }
 
 export type AuthAPIFetchFunction = (options?: {
