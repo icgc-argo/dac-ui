@@ -86,7 +86,7 @@ const ApplicationFormsBase = ({
   sectionData,
   isAttestable,
   attestedAtUtc,
-  attestationByUtc,
+  attestationByUtc = '',
 }: {
   appId: string;
   applicationState: ApplicationState;
@@ -197,7 +197,7 @@ const ApplicationFormsBase = ({
                 `}
               >
                 {`Annual Attestation is required by ${format(
-                  new Date(attestationByUtc || ''),
+                  new Date(attestationByUtc),
                   DATE_TEXT_FORMAT,
                 )} or access will be paused`}
               </div>

@@ -43,7 +43,7 @@ const ApplicationHeader = ({
     appId,
     createdAtUtc,
     lastUpdatedAtUtc,
-    expiresAtUtc,
+    expiresAtUtc = '',
     closedAtUtc,
     revisionsRequested,
     approvedAtUtc,
@@ -52,7 +52,7 @@ const ApplicationHeader = ({
     approvedAppDocs,
     isAttestable,
     attestedAtUtc,
-    attestationByUtc,
+    attestationByUtc = '',
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
@@ -68,13 +68,13 @@ const ApplicationHeader = ({
   // add 'status' key to allow easy string changes
   const expiry = requiresAttestation
     ? {
-        date: format(new Date(attestationByUtc || ''), DATE_TEXT_FORMAT),
+        date: format(new Date(attestationByUtc), DATE_TEXT_FORMAT),
         isExpired: true,
         status: '! Pausing',
       }
     : approvedAtUtc
     ? {
-        date: format(new Date(closedAtUtc || expiresAtUtc || ''), DATE_TEXT_FORMAT),
+        date: format(new Date(closedAtUtc || expiresAtUtc), DATE_TEXT_FORMAT),
         isExpired: closedAtUtc ? true : false,
         status: closedAtUtc ? 'Expired' : 'Expires',
       }
