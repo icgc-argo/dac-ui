@@ -44,6 +44,8 @@ import { getConfig } from 'global/config';
 import Link from '@icgc-argo/uikit/Link';
 import ApplicationHistoryModal from './ApplicationHistoryModal';
 import { SetLastUpdated } from '../types';
+import { format } from 'date-fns';
+import { DATE_TEXT_FORMAT } from 'global/constants';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -84,6 +86,7 @@ const ApplicationFormsBase = ({
   sectionData,
   isAttestable,
   attestedAtUtc,
+  attestationByUtc,
 }: {
   appId: string;
   applicationState: ApplicationState;
@@ -94,6 +97,7 @@ const ApplicationFormsBase = ({
   sectionData: ApplicationData['sections'];
   isAttestable: boolean;
   attestedAtUtc: string;
+  attestationByUtc: string;
 }): ReactElement => {
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
 
@@ -192,7 +196,10 @@ const ApplicationFormsBase = ({
                   margin-left: 10px;
                 `}
               >
-                Annual Attestation is required by July 28, 2022 or access will be paused
+                {`Annual Attestation is required by ${format(
+                  new Date(attestationByUtc || ''),
+                  DATE_TEXT_FORMAT,
+                )} or access will be paused`}
               </div>
             }
             content={
