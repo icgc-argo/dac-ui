@@ -176,4 +176,5 @@ export const adminStatesAllowList = [
   'RENEWING',
   'REVIEW',
   'REVISIONS REQUESTED',
+  'PAUSED',
 ] as ApplicationState[];
