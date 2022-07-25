@@ -32,6 +32,7 @@ export const DATE_TEXT_FORMAT = 'MMM. dd, yyyy';
 
 export const SUBMISSION_SUCCESS_CHECK = 'daco.submission-success-check';
 export const APPROVED_APP_CLOSED_CHECK = 'daco.approved-app-closed-check';
+export const APPROVED_APP_ATTESTED_CHECK = 'daco.approved-app-attested-check';
 export const GDPR_ACCEPTED = 'gdpr-accepted';
 
 export * from './externalPaths';

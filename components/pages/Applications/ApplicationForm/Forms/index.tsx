@@ -38,7 +38,11 @@ import {
   FormValidationStateParameters,
   FORM_STATES,
 } from './types';
-import { SUBMISSION_SUCCESS_CHECK, APPROVED_APP_CLOSED_CHECK } from 'global/constants';
+import {
+  SUBMISSION_SUCCESS_CHECK,
+  APPROVED_APP_CLOSED_CHECK,
+  APPROVED_APP_ATTESTED_CHECK,
+} from 'global/constants';
 import { ApplicationData, ApplicationState } from 'components/pages/Applications/types';
 import { getConfig } from 'global/config';
 import Link from '@icgc-argo/uikit/Link';
@@ -89,6 +93,7 @@ const ApplicationFormsBase = ({
   sectionData,
   isAttestable,
   attestedAtUtc,
+  refetchAllData,
 }: {
   appId: string;
   applicationState: ApplicationState;
@@ -99,8 +104,10 @@ const ApplicationFormsBase = ({
   sectionData: ApplicationData['sections'];
   isAttestable: boolean;
   attestedAtUtc: string;
+  refetchAllData: any;
 }): ReactElement => {
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
+  const [showSuccessfulAttestation, setShowSuccessfulAttestation] = useState(false);
 
   const { NEXT_PUBLIC_DACO_SURVEY_URL } = getConfig();
 
@@ -185,27 +192,22 @@ const ApplicationFormsBase = ({
   };
 
   const { fetchWithAuth } = useAuthContext();
-  const submit = () => {
-    // setIsSubmitting(true);
+  const handleSubmitAttestion = () => {
     fetchWithAuth({
       data: {
-        // attestedAtUtc: new Date(),
-        isAttestable: 'true',
-        // attestedAtUtc: ' ',
+        attestedAtUtc: new Date(),
       },
       method: 'PATCH',
       url: urlJoin(API.APPLICATIONS, appId),
     })
       .then(() => {
+        setShowSuccessfulAttestation(true);
+        refetchAllData();
         router.push(`${APPLICATIONS_PATH}/${appId}?section=terms`);
       })
       .catch((err: AxiosError) => {
         console.error('Failed to submit.', err);
       });
-    // .finally(() => {
-    //   setModalVisible(false);
-    //   setIsSubmitting(false);
-    // });
   };
 
   return (
@@ -264,7 +266,7 @@ const ApplicationFormsBase = ({
                     margin-bottom: 20px;
                   `}
                   size="sm"
-                  onClick={submit}
+                  onClick={handleSubmitAttestion}
                 >
                   I ATTESTED TO THE ABOVE TERMS
                 </Button>
@@ -272,6 +274,23 @@ const ApplicationFormsBase = ({
             }
             interactionType="NONE"
             variant="WARNING"
+            css={notificationStyle}
+          />
+        )}
+
+        {(JSON.parse(localStorage.getItem(APPROVED_APP_ATTESTED_CHECK) || 'false') ||
+          showSuccessfulAttestation) && (
+          <Notification
+            title="Your Annual Attestation has been Submitted"
+            content="This project team will continue to have access to ICGC Controlled Data until the access expiry date."
+            interactionType="CLOSE"
+            variant="SUCCESS"
+            onInteraction={({ type }) => {
+              if (type === 'CLOSE') {
+                localStorage.setItem(APPROVED_APP_ATTESTED_CHECK, 'false');
+                router.push(`/applications/${appId}?section=${selectedSection}`);
+              }
+            }}
             css={notificationStyle}
           />
         )}
