@@ -25,7 +25,15 @@ import { APPLICATIONS_PATH } from 'global/constants';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import { ApplicationExpiry } from '.';
 
-const Expiry = ({ date, isExpired }: { date: string; isExpired: boolean }) => {
+const Expiry = ({
+  date,
+  isExpired,
+  status,
+}: {
+  date: string;
+  isExpired: boolean;
+  status: string;
+}) => {
   const theme = useTheme();
   return (
     <>
@@ -36,7 +44,7 @@ const Expiry = ({ date, isExpired }: { date: string; isExpired: boolean }) => {
           color: ${theme.colors[isExpired ? 'error' : 'secondary']}; ;
         `}
       >
-        {`${isExpired ? 'Expired' : 'Expires'}: ${date}`}
+        {`${status}: ${date}`}
       </span>
     </>
   );
@@ -69,7 +77,9 @@ const HeaderDetails = ({
         `}
       >
         <Link href={APPLICATIONS_PATH}>My Applications</Link>: {appId.toUpperCase()}
-        {expiry && <Expiry date={expiry.date} isExpired={expiry.isExpired} />}
+        {expiry && (
+          <Expiry date={expiry.date} isExpired={expiry.isExpired} status={expiry.status} />
+        )}
       </Typography>
 
       {(createdAt || lastUpdated) && (
