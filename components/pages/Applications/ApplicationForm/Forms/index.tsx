@@ -186,8 +186,7 @@ const ApplicationFormsBase = ({
   return (
     <>
       <ContentBody>
-        {/* forward thinking: requiresAttestation is also true for PAUSED state, therefore we want to make sure application is in APPROVED state */}
-        {requiresAttestation && applicationState === ApplicationState.APPROVED && (
+        {requiresAttestation && (
           <Notification
             title={
               <div
