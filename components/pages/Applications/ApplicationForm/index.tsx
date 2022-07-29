@@ -76,6 +76,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
         attestedAtUtc={data?.attestedAtUtc}
         attestationByUtc={data?.attestationByUtc}
         isAdmin={isAdmin}
+        refetchAllData={formState.__refetchAllData}
       />
     </>
   ) : (
