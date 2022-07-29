@@ -38,11 +38,7 @@ import {
   FormValidationStateParameters,
   FORM_STATES,
 } from './types';
-import {
-  SUBMISSION_SUCCESS_CHECK,
-  APPROVED_APP_CLOSED_CHECK,
-  APPROVED_APP_ATTESTED_CHECK,
-} from 'global/constants';
+import { SUBMISSION_SUCCESS_CHECK, APPROVED_APP_CLOSED_CHECK } from 'global/constants';
 import { ApplicationData, ApplicationState } from 'components/pages/Applications/types';
 import { getConfig } from 'global/config';
 import Link from '@icgc-argo/uikit/Link';
@@ -195,6 +191,7 @@ const ApplicationFormsBase = ({
   const handleSubmitAttestion = () => {
     fetchWithAuth({
       data: {
+        //This works for testing. Assuming API handles the New Date object
         attestedAtUtc: new Date(),
       },
       method: 'PATCH',
@@ -278,8 +275,7 @@ const ApplicationFormsBase = ({
           />
         )}
 
-        {(JSON.parse(localStorage.getItem(APPROVED_APP_ATTESTED_CHECK) || 'false') ||
-          showSuccessfulAttestation) && (
+        {showSuccessfulAttestation && (
           <Notification
             title="Your Annual Attestation has been Submitted"
             content="This project team will continue to have access to ICGC Controlled Data until the access expiry date."
@@ -287,7 +283,7 @@ const ApplicationFormsBase = ({
             variant="SUCCESS"
             onInteraction={({ type }) => {
               if (type === 'CLOSE') {
-                localStorage.setItem(APPROVED_APP_ATTESTED_CHECK, 'false');
+                setShowSuccessfulAttestation(false);
                 router.push(`/applications/${appId}?section=${selectedSection}`);
               }
             }}
