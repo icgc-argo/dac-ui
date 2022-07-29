@@ -75,6 +75,7 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
         isAttestable={data?.isAttestable}
         attestedAtUtc={data?.attestedAtUtc}
         attestationByUtc={data?.attestationByUtc}
+        isAdmin={isAdmin}
       />
     </>
   ) : (

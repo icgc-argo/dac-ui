@@ -87,6 +87,7 @@ const ApplicationFormsBase = ({
   isAttestable,
   attestedAtUtc,
   attestationByUtc = '',
+  isAdmin,
 }: {
   appId: string;
   applicationState: ApplicationState;
@@ -98,6 +99,7 @@ const ApplicationFormsBase = ({
   isAttestable: boolean;
   attestedAtUtc: string;
   attestationByUtc: string;
+  isAdmin: boolean;
 }): ReactElement => {
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
 
@@ -186,7 +188,7 @@ const ApplicationFormsBase = ({
   return (
     <>
       <ContentBody>
-        {requiresAttestation && (
+        {requiresAttestation && !isAdmin && (
           <Notification
             title={
               <div
