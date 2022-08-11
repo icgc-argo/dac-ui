@@ -47,6 +47,11 @@ import { SetLastUpdated } from '../types';
 import { format } from 'date-fns';
 import { DATE_TEXT_FORMAT } from 'global/constants';
 
+import { AxiosError } from 'axios';
+import { useAuthContext } from 'global/hooks';
+import urlJoin from 'url-join';
+import { API, APPLICATIONS_PATH } from 'global/constants';
+
 enum VisibleModalOption {
   NONE = 'NONE',
   APPLICATION_HISTORY = 'APPLICATION_HISTORY',
@@ -88,6 +93,7 @@ const ApplicationFormsBase = ({
   attestedAtUtc,
   attestationByUtc = '',
   isAdmin,
+  refetchAllData,
 }: {
   appId: string;
   applicationState: ApplicationState;
@@ -100,8 +106,10 @@ const ApplicationFormsBase = ({
   attestedAtUtc: string;
   attestationByUtc: string;
   isAdmin: boolean;
+  refetchAllData: any;
 }): ReactElement => {
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
+  const [showSuccessfulAttestation, setShowSuccessfulAttestation] = useState(false);
 
   const { NEXT_PUBLIC_DACO_SURVEY_URL } = getConfig();
 
@@ -185,6 +193,26 @@ const ApplicationFormsBase = ({
     );
   };
 
+  const { fetchWithAuth } = useAuthContext();
+  const handleSubmitAttestion = () => {
+    fetchWithAuth({
+      data: {
+        //This works for testing. Assuming API handles the New Date object
+        attestedAtUtc: new Date(),
+      },
+      method: 'PATCH',
+      url: urlJoin(API.APPLICATIONS, appId),
+    })
+      .then(() => {
+        setShowSuccessfulAttestation(true);
+        refetchAllData();
+        router.push(`${APPLICATIONS_PATH}/${appId}?section=terms`);
+      })
+      .catch((err: AxiosError) => {
+        console.error('Failed to submit.', err);
+      });
+  };
+
   return (
     <>
       <ContentBody>
@@ -243,6 +271,7 @@ const ApplicationFormsBase = ({
                     margin-bottom: 13px;
                   `}
                   size="sm"
+                  onClick={handleSubmitAttestion}
                 >
                   I ATTESTED TO THE ABOVE TERMS
                 </Button>
@@ -250,6 +279,22 @@ const ApplicationFormsBase = ({
             }
             interactionType="NONE"
             variant="WARNING"
+            css={notificationStyle}
+          />
+        )}
+
+        {showSuccessfulAttestation && (
+          <Notification
+            title="Your Annual Attestation has been Submitted"
+            content="This project team will continue to have access to ICGC Controlled Data until the access expiry date."
+            interactionType="CLOSE"
+            variant="SUCCESS"
+            onInteraction={({ type }) => {
+              if (type === 'CLOSE') {
+                setShowSuccessfulAttestation(false);
+                router.push(`/applications/${appId}?section=${selectedSection}`);
+              }
+            }}
             css={notificationStyle}
           />
         )}
