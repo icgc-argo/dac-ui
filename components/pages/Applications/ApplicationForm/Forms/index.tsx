@@ -273,7 +273,7 @@ const ApplicationFormsBase = ({
                   size="sm"
                   onClick={handleSubmitAttestion}
                 >
-                  I ATTESTED TO THE ABOVE TERMS
+                  I ATTEST TO THE ABOVE TERMS
                 </Button>
               </div>
             }
