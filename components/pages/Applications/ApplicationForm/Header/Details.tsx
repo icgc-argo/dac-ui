@@ -21,19 +21,22 @@ import { ReactElement } from 'react';
 import { css } from '@icgc-argo/uikit';
 import Link from '@icgc-argo/uikit/Link';
 import Typography from '@icgc-argo/uikit/Typography';
-import { APPLICATIONS_PATH } from 'global/constants';
+import { APPLICATIONS_PATH, DATE_TEXT_FORMAT } from 'global/constants';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
-import { ApplicationExpiry } from '.';
+import { ApplicationAccessInfo } from '.';
+import { format, parseISO } from 'date-fns';
 
-const Expiry = ({
-  date,
-  isExpired,
-  status,
-}: {
-  date: string;
-  isExpired: boolean;
-  status: string;
-}) => {
+const isValidDate = (val?: any): boolean => {
+  try {
+    parseISO(val);
+    return true;
+  } catch (e) {
+    console.warn(e);
+    return false;
+  }
+};
+
+const ApplicationAccessInfoDisplay = ({ date, isWarning, status }: ApplicationAccessInfo) => {
   const theme = useTheme();
   return (
     <>
@@ -41,10 +44,10 @@ const Expiry = ({
       |{' '}
       <span
         css={css`
-          color: ${theme.colors[isExpired ? 'error' : 'secondary']}; ;
+          color: ${theme.colors[isWarning ? 'error' : 'secondary']};
         `}
       >
-        {`${status}: ${date}`}
+        {`${status}: ${date && isValidDate(date) ? format(new Date(date), DATE_TEXT_FORMAT) : ''}`}
       </span>
     </>
   );
@@ -55,13 +58,13 @@ const HeaderDetails = ({
   createdAt,
   appId,
   lastUpdated,
-  expiry,
+  accessInfo,
 }: {
   applicant?: string;
   createdAt?: string;
   appId: string;
   lastUpdated?: string;
-  expiry?: ApplicationExpiry;
+  accessInfo?: ApplicationAccessInfo;
 }): ReactElement => {
   return (
     <section
@@ -77,8 +80,12 @@ const HeaderDetails = ({
         `}
       >
         <Link href={APPLICATIONS_PATH}>My Applications</Link>: {appId.toUpperCase()}
-        {expiry && (
-          <Expiry date={expiry.date} isExpired={expiry.isExpired} status={expiry.status} />
+        {accessInfo && (
+          <ApplicationAccessInfoDisplay
+            date={accessInfo.date}
+            isWarning={accessInfo.isWarning}
+            status={accessInfo.status}
+          />
         )}
       </Typography>
 

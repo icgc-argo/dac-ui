@@ -238,6 +238,58 @@ interface Signature {
   signedAppDocObjId: string;
   uploadedAtUtc: string;
 }
+
+export enum AppType {
+  NEW = 'NEW',
+  RENEWAL = 'RENEWAL',
+}
+
+interface ApplicationInfo {
+  appType: AppType;
+  institution: string;
+  country: string;
+  applicant: string;
+  projectTitle: string;
+  ethicsLetterRequired: boolean | null;
+}
+
+export enum DacoRole {
+  SUBMITTER = 'SUBMITTER',
+  ADMIN = 'ADMIN',
+  SYSTEM = 'SYSTEM',
+}
+
+export type UpdateAuthor = {
+  id: string;
+  role: DacoRole;
+};
+// to differentiate update events from app State
+export enum UpdateEvent {
+  CREATED = 'CREATED',
+  SUBMITTED = 'SUBMITTED',
+  PAUSED = 'PAUSED',
+  REVISIONS_REQUESTED = 'REVISIONS REQUESTED',
+  ATTESTED = 'ATTESTED',
+  APPROVED = 'APPROVED',
+  EXPIRED = 'EXPIRED',
+  REJECTED = 'REJECTED',
+  CLOSED = 'CLOSED',
+}
+export interface ApplicationUpdate {
+  author: UpdateAuthor;
+  eventType: UpdateEvent;
+  date: string;
+  daysElapsed: number;
+  applicationInfo: ApplicationInfo;
+}
+
+export interface UserViewApplicationUpdate {
+  author: Partial<UpdateAuthor>;
+  eventType: UpdateEvent;
+  date: string;
+  applicationInfo: Partial<ApplicationInfo>;
+}
+
 export interface ApplicationData {
   appId: string;
   approvedAppDocs: ApprovedDoc[];
@@ -251,6 +303,7 @@ export interface ApplicationData {
   isAttestable: boolean;
   attestedAtUtc: string;
   attestationByUtc: string;
+  updates: ApplicationUpdate[] | UserViewApplicationUpdate[];
   sections: {
     applicant: Individual;
     representative: Representative;
