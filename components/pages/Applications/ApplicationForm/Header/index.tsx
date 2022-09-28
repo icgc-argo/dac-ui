@@ -28,9 +28,10 @@ import Details from './Details';
 import Progress from './Progress';
 import { RefetchDataFunction } from '../Forms/types';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
-import { ApplicationData } from '../../types';
+import { ApplicationData, UpdateEvent } from '../../types';
+import { findLast, sortBy } from 'lodash';
 
-export type ApplicationExpiry = { date: string; isExpired: boolean; status: string };
+export type ApplicationAccessInfo = { date?: string; isWarning: boolean; status: string };
 
 const ApplicationHeader = ({
   data,
@@ -51,8 +52,8 @@ const ApplicationHeader = ({
     state,
     approvedAppDocs,
     isAttestable,
-    attestedAtUtc,
-    attestationByUtc = '',
+    attestationByUtc,
+    updates,
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
@@ -62,23 +63,36 @@ const ApplicationHeader = ({
     revisionsRequested &&
     [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state);
 
-  const requiresAttestation = !attestedAtUtc && isAttestable;
-
   // only pass expiry for applications that have been approved
   // add 'status' key to allow easy string changes
-  const expiry = requiresAttestation
-    ? {
-        date: format(new Date(attestationByUtc), DATE_TEXT_FORMAT),
-        isExpired: true,
-        status: '! Pausing',
-      }
-    : approvedAtUtc
-    ? {
-        date: format(new Date(closedAtUtc || expiresAtUtc), DATE_TEXT_FORMAT),
-        isExpired: closedAtUtc ? true : false,
-        status: closedAtUtc ? 'Expired' : 'Expires',
-      }
-    : undefined;
+  const accessInfo =
+    state === ApplicationState.PAUSED
+      ? {
+          date:
+            // updates should appear in asc order by date but just ensuring it
+            // retrieving the most recent PAUSED event; in future applications could be paused several times
+            // otherwise display calculated attestationBy date, the assumption is the app is paused due to missing attestation
+            findLast(
+              sortBy(updates, (u) => u.date),
+              (update) => update.eventType === UpdateEvent.PAUSED,
+            )?.date || attestationByUtc,
+          isWarning: true,
+          status: '! Paused',
+        }
+      : isAttestable
+      ? {
+          date: attestationByUtc,
+          isWarning: true,
+          status: '! Pausing',
+        }
+      : // this case will also apply to applications that are going through renewal flow (they may be in DRAFT, SIGN AND SUBMIT, REVISIONS REQUESTED or REVIEW state)
+      approvedAtUtc
+      ? {
+          date: closedAtUtc || expiresAtUtc,
+          isWarning: closedAtUtc ? true : false,
+          status: closedAtUtc ? 'Expired' : 'Expires',
+        }
+      : undefined;
 
   return (
     <PageHeader>
@@ -97,7 +111,7 @@ const ApplicationHeader = ({
           applicant={applicant}
           createdAt={format(new Date(createdAtUtc), DATE_TEXT_FORMAT)}
           lastUpdated={format(new Date(lastUpdatedAtUtc), DATE_TEXT_FORMAT + ' h:mm aaaa')}
-          expiry={expiry}
+          accessInfo={accessInfo}
         />
 
         <div>
@@ -119,7 +133,7 @@ const ApplicationHeader = ({
             >
               Revisions Requested
             </div>
-          ) : requiresAttestation ? (
+          ) : isAttestable ? (
             <div
               css={(theme: UikitTheme) =>
                 css`
@@ -135,7 +149,7 @@ const ApplicationHeader = ({
                 `
               }
             >
-              Attestation Requested
+              Attestation Required
             </div>
           ) : null}
           <Progress state={state} />
