@@ -197,8 +197,7 @@ const ApplicationFormsBase = ({
   const handleSubmitAttestion = () => {
     fetchWithAuth({
       data: {
-        //This works for testing. Assuming API handles the New Date object
-        attestedAtUtc: new Date(),
+        isAttesting: true,
       },
       method: 'PATCH',
       url: urlJoin(API.APPLICATIONS, appId),
