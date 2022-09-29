@@ -302,8 +302,9 @@ export interface ApplicationData {
   approvedAtUtc: string;
   state: ApplicationState;
   isAttestable: boolean;
-  attestedAtUtc: string;
-  attestationByUtc: string;
+  attestedAtUtc?: string;
+  attestationByUtc?: string;
+  lastPausedAtUtc?: string;
   updates: ApplicationUpdate[] | UserViewApplicationUpdate[];
   sections: {
     applicant: Individual;
