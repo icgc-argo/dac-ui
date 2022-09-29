@@ -27,7 +27,7 @@ import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
 import {
   ApplicationRecord,
   ApplicationsField,
-  ApplicationsResponseItem,
+  ApplicationSummary,
   ApplicationsSort,
 } from '../types';
 
@@ -55,8 +55,8 @@ export const fieldDisplayNames = {
   currentApprovedAppDoc: 'Approved PDF',
 };
 
-export const formatTableData = (data: ApplicationsResponseItem[]) =>
-  data.map<ApplicationRecord>((datum: ApplicationsResponseItem) => ({
+export const formatTableData = (data: ApplicationSummary[]) =>
+  data.map<ApplicationRecord>((datum: ApplicationSummary) => ({
     appId: datum.appId,
     institution: datum.applicant.info.primaryAffiliation,
     country: datum.applicant.address.country,

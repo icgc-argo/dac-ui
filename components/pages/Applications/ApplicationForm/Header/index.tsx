@@ -63,7 +63,7 @@ const ApplicationHeader = ({
     revisionsRequested &&
     [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state);
 
-  // only pass expiry for applications that have been approved
+  // only pass accessInfo for applications that have been approved
   // add 'status' key to allow easy string changes
   const accessInfo =
     state === ApplicationState.PAUSED

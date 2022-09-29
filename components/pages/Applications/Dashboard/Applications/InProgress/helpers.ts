@@ -17,17 +17,28 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { ApplicationState } from 'components/ApplicationProgressBar/types';
+import { pick } from 'lodash';
 import { format as formatDate } from 'date-fns';
+
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
+import { ApplicationSummary } from 'components/pages/Applications/types';
 import { DATE_TEXT_FORMAT } from 'global/constants';
 import { StatusDates } from '.';
 
-export const getStatusText = (
-  state: ApplicationState,
-  dates: StatusDates,
-  revisionsRequested: boolean,
-  requiresAttestation: boolean,
-) => {
+export const getStatusText = (application: ApplicationSummary) => {
+  const { lastUpdatedAtUtc, isAttestable, state, revisionsRequested } = application;
+  const dates: StatusDates = {
+    lastUpdatedAtUtc,
+    ...pick(application, [
+      'createdAtUtc',
+      'submittedAtUtc',
+      'closedAtUtc',
+      'approvedAtUtc',
+      'attestedAtUtc',
+      'attestationByUtc',
+      'lastPausedAtUtc',
+    ]),
+  };
   const formatStatusDate = (date: string) =>
     formatDate(new Date(date || dates.lastUpdatedAtUtc), DATE_TEXT_FORMAT);
 
@@ -38,7 +49,7 @@ export const getStatusText = (
 
   switch (state) {
     case ApplicationState.APPROVED:
-      return requiresAttestation
+      return isAttestable
         ? `An annual attestation is required for this application. Access for this project team will be paused on ${formatStatusDate(
             dates.attestationByUtc,
           )} until you submit your attestation.`
@@ -67,7 +78,7 @@ export const getStatusText = (
       return `Closed on ${formatStatusDate(dates.closedAtUtc)}.`;
     case ApplicationState.PAUSED:
       return `Access was paused on ${formatStatusDate(
-        dates.attestationByUtc,
+        dates.lastPausedAtUtc || dates.attestationByUtc,
       )}. Access for this project team will resume once you submit the annual attestation for this application.`;
     default:
       return '';
