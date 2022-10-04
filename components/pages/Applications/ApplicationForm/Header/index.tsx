@@ -28,8 +28,7 @@ import Details from './Details';
 import Progress from './Progress';
 import { RefetchDataFunction } from '../Forms/types';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
-import { ApplicationData, UpdateEvent } from '../../types';
-import { findLast, sortBy } from 'lodash';
+import { ApplicationData } from '../../types';
 
 export type ApplicationAccessInfo = { date?: string; isWarning: boolean; status: string };
 
@@ -53,7 +52,7 @@ const ApplicationHeader = ({
     approvedAppDocs,
     isAttestable,
     attestationByUtc,
-    updates,
+    lastPausedAtUtc,
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
@@ -63,19 +62,14 @@ const ApplicationHeader = ({
     revisionsRequested &&
     [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state);
 
-  // only pass expiry for applications that have been approved
+  // only pass accessInfo for applications that have been approved
   // add 'status' key to allow easy string changes
   const accessInfo =
     state === ApplicationState.PAUSED
       ? {
           date:
-            // updates should appear in asc order by date but just ensuring it
-            // retrieving the most recent PAUSED event; in future applications could be paused several times
             // otherwise display calculated attestationBy date, the assumption is the app is paused due to missing attestation
-            findLast(
-              sortBy(updates, (u) => u.date),
-              (update) => update.eventType === UpdateEvent.PAUSED,
-            )?.date || attestationByUtc,
+            lastPausedAtUtc || attestationByUtc,
           isWarning: true,
           status: '! Paused',
         }

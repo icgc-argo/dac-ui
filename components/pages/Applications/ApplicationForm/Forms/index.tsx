@@ -103,8 +103,8 @@ const ApplicationFormsBase = ({
   validateSection: FormSectionValidatorFunction_Origin;
   sectionData: ApplicationData['sections'];
   isAttestable: boolean;
-  attestedAtUtc: string;
-  attestationByUtc: string;
+  attestedAtUtc?: string;
+  attestationByUtc?: string;
   isAdmin: boolean;
   refetchAllData: any;
 }): ReactElement => {

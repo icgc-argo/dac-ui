@@ -84,7 +84,7 @@ export interface Agreement {
   accepted: boolean;
 }
 
-export type ApplicationsResponseItem = {
+export type ApplicationSummary = {
   appId: string;
   applicant: {
     info: {
@@ -101,7 +101,7 @@ export type ApplicationsResponseItem = {
   };
   expiresAtUtc: string;
   lastUpdatedAtUtc: string;
-  state: string;
+  state: ApplicationState;
   createdAtUtc: string;
   submittedAtUtc: string;
   closedAtUtc: string;
@@ -111,6 +111,7 @@ export type ApplicationsResponseItem = {
   attestedAtUtc: string;
   attestationByUtc: string;
   isAttestable: boolean;
+  lastPausedAtUtc?: string;
 };
 
 export type ApplicationDataByField = {
@@ -301,8 +302,9 @@ export interface ApplicationData {
   approvedAtUtc: string;
   state: ApplicationState;
   isAttestable: boolean;
-  attestedAtUtc: string;
-  attestationByUtc: string;
+  attestedAtUtc?: string;
+  attestationByUtc?: string;
+  lastPausedAtUtc?: string;
   updates: ApplicationUpdate[] | UserViewApplicationUpdate[];
   sections: {
     applicant: Individual;
@@ -322,7 +324,7 @@ export type ApplicationsResponseData = {
     pagesCount: number;
     index: number;
   };
-  items: ApplicationsResponseItem[];
+  items: ApplicationSummary[];
 };
 
 export enum ApplicationsField {

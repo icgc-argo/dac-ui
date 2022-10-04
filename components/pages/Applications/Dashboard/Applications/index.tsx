@@ -20,7 +20,7 @@
 import InProgress from './InProgress';
 import StartApplication from './Start';
 import { css } from '@emotion/core';
-import { ApplicationsField, ApplicationsResponseItem } from 'components/pages/Applications/types';
+import { ApplicationsField, ApplicationSummary } from 'components/pages/Applications/types';
 import { isEmpty } from 'lodash';
 import { useGetApplications } from 'global/hooks';
 import Loader from 'components/Loader';
@@ -62,7 +62,7 @@ const Applications = () => {
       `}
     >
       {!isEmpty(applications) &&
-        applications.map((application: ApplicationsResponseItem) => (
+        applications.map((application: ApplicationSummary) => (
           <InProgress application={application} key={application.appId} />
         ))}
       {!collabAppsLoading && !collabError && collabResponse?.data.length > 0 && (
