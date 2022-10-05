@@ -240,7 +240,7 @@ const ApplicationFormsBase = ({
               >
                 <span>
                   At every one year interval you must confirm your ongoing compliance with the ICGC
-                  ARGO Data Access Agreement and ICGC ARGO Polices. Specifically;
+                  ARGO Data Access Agreement and ICGC ARGO Policies. Specifically:
                 </span>
                 <br />
                 <br />
