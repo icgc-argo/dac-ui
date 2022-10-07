@@ -113,6 +113,7 @@ const HeaderActions = ({
     ApplicationState.SIGN_AND_SUBMIT,
     ApplicationState.REVISIONS_REQUESTED,
     ApplicationState.APPROVED,
+    ApplicationState.PAUSED,
   ].includes(state);
 
   const isClosedPreApproval = state === ApplicationState.CLOSED && !approvedAtUtc;

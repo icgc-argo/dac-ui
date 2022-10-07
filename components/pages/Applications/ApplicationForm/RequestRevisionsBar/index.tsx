@@ -52,7 +52,7 @@ const RequestRevisionsBar = ({
     ApplicationState.CLOSED,
   ].includes(state);
 
-  const isApproved = ApplicationState.APPROVED === state;
+  const showPdfActions = [ApplicationState.APPROVED, ApplicationState.PAUSED].includes(state);
 
   const currentApprovedDoc = approvedAppDocs.find((doc) => doc.isCurrent);
 
@@ -85,7 +85,7 @@ const RequestRevisionsBar = ({
         </ModalPortal>
       )}
       <ActionBar>
-        {isApproved ? (
+        {showPdfActions ? (
           <PDFActions
             appId={appId}
             currentDoc={currentApprovedDoc}
