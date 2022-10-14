@@ -32,6 +32,9 @@ export type ApplicationRecord = {
   status: string;
   country: string;
   currentApprovedAppDoc: boolean;
+  attestedAtUtc: string;
+  attestationByUtc: string;
+  isAttestable: boolean;
 };
 
 export enum ApplicationState {
@@ -44,6 +47,7 @@ export enum ApplicationState {
   RENEWING = 'RENEWING',
   CLOSED = 'CLOSED',
   EXPIRED = 'EXPIRED',
+  PAUSED = 'PAUSED',
 }
 
 export type SortedChangeFunction = (
@@ -80,7 +84,7 @@ export interface Agreement {
   accepted: boolean;
 }
 
-export type ApplicationsResponseItem = {
+export type ApplicationSummary = {
   appId: string;
   applicant: {
     info: {
@@ -97,13 +101,17 @@ export type ApplicationsResponseItem = {
   };
   expiresAtUtc: string;
   lastUpdatedAtUtc: string;
-  state: string;
+  state: ApplicationState;
   createdAtUtc: string;
   submittedAtUtc: string;
   closedAtUtc: string;
   approvedAtUtc: string;
   revisionsRequested: boolean;
   currentApprovedAppDoc: boolean;
+  attestedAtUtc: string;
+  attestationByUtc: string;
+  isAttestable: boolean;
+  lastPausedAtUtc?: string;
 };
 
 export type ApplicationDataByField = {
@@ -231,6 +239,58 @@ interface Signature {
   signedAppDocObjId: string;
   uploadedAtUtc: string;
 }
+
+export enum AppType {
+  NEW = 'NEW',
+  RENEWAL = 'RENEWAL',
+}
+
+interface ApplicationInfo {
+  appType: AppType;
+  institution: string;
+  country: string;
+  applicant: string;
+  projectTitle: string;
+  ethicsLetterRequired: boolean | null;
+}
+
+export enum DacoRole {
+  SUBMITTER = 'SUBMITTER',
+  ADMIN = 'ADMIN',
+  SYSTEM = 'SYSTEM',
+}
+
+export type UpdateAuthor = {
+  id: string;
+  role: DacoRole;
+};
+// to differentiate update events from app State
+export enum UpdateEvent {
+  CREATED = 'CREATED',
+  SUBMITTED = 'SUBMITTED',
+  PAUSED = 'PAUSED',
+  REVISIONS_REQUESTED = 'REVISIONS REQUESTED',
+  ATTESTED = 'ATTESTED',
+  APPROVED = 'APPROVED',
+  EXPIRED = 'EXPIRED',
+  REJECTED = 'REJECTED',
+  CLOSED = 'CLOSED',
+}
+export interface ApplicationUpdate {
+  author: UpdateAuthor;
+  eventType: UpdateEvent;
+  date: string;
+  daysElapsed: number;
+  applicationInfo: ApplicationInfo;
+}
+
+export interface UserViewApplicationUpdate {
+  author: Partial<UpdateAuthor>;
+  eventType: UpdateEvent;
+  date: string;
+  applicationInfo: Partial<ApplicationInfo>;
+}
+
 export interface ApplicationData {
   appId: string;
   approvedAppDocs: ApprovedDoc[];
@@ -241,6 +301,11 @@ export interface ApplicationData {
   revisionsRequested: boolean;
   approvedAtUtc: string;
   state: ApplicationState;
+  isAttestable: boolean;
+  attestedAtUtc?: string;
+  attestationByUtc?: string;
+  lastPausedAtUtc?: string;
+  updates: ApplicationUpdate[] | UserViewApplicationUpdate[];
   sections: {
     applicant: Individual;
     representative: Representative;
@@ -259,7 +324,7 @@ export type ApplicationsResponseData = {
     pagesCount: number;
     index: number;
   };
-  items: ApplicationsResponseItem[];
+  items: ApplicationSummary[];
 };
 
 export enum ApplicationsField {
@@ -274,6 +339,7 @@ export enum ApplicationsField {
   appNumber = 'appNumber',
   'applicant.address.country' = 'country',
   currentApprovedAppDoc = 'currentApprovedAppDoc',
+  attestedAtUtc = 'attestedAtUtc',
 }
 
 export type AuthAPIFetchFunction = (options?: {

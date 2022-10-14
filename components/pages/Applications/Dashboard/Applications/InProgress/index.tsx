@@ -17,19 +17,21 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import DashboardCard from '../../Card';
 import { css } from '@emotion/core';
+
+import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
+import Link from '@icgc-argo/uikit/Link';
 import Typography from '@icgc-argo/uikit/Typography';
+
+import DashboardCard from '../../Card';
 import ProgressBar from '../../../../../ApplicationProgressBar';
 import { TIME_AND_DATE_FORMAT } from './constants';
 import { getFormattedDate, getStatusText } from './helpers';
 import ButtonGroup from './ButtonGroup';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { DATE_TEXT_FORMAT } from 'global/constants';
-import { ApplicationsResponseItem } from 'components/pages/Applications/types';
-import { pick } from 'lodash';
-import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
-import Link from '@icgc-argo/uikit/Link';
+import { ApplicationSummary } from 'components/pages/Applications/types';
+
 import { getConfig } from 'global/config';
 
 export interface StatusDates {
@@ -38,9 +40,12 @@ export interface StatusDates {
   submittedAtUtc: string;
   closedAtUtc: string;
   approvedAtUtc: string;
+  attestedAtUtc: string;
+  attestationByUtc: string;
+  lastPausedAtUtc?: string;
 }
 
-const InProgress = ({ application }: { application: ApplicationsResponseItem }) => {
+const InProgress = ({ application }: { application: ApplicationSummary }) => {
   const theme = useTheme();
   const { NEXT_PUBLIC_DACO_SURVEY_URL } = getConfig();
 
@@ -55,16 +60,34 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     closedAtUtc,
     approvedAtUtc,
     revisionsRequested,
+    attestationByUtc,
+    isAttestable,
   } = application;
 
-  const dates: StatusDates = {
-    lastUpdatedAtUtc,
-    ...pick(application, ['createdAtUtc', 'submittedAtUtc', 'closedAtUtc', 'approvedAtUtc']),
-  };
-
-  const expiryDate =
-    expiresAtUtc && !closedAtUtc ? (
-      `Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`
+  const statusDate =
+    state === ApplicationState.PAUSED ? (
+      <div
+        css={css`
+          color: ${theme.colors.error};
+        `}
+      >
+        {`! Access Paused: ${getFormattedDate(
+          application.lastPausedAtUtc || application.attestationByUtc,
+          DATE_TEXT_FORMAT,
+        )}`}
+      </div>
+    ) : isAttestable ? (
+      <div
+        css={css`
+          color: ${theme.colors.error};
+        `}
+      >{`! Access Pausing: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
+    ) : expiresAtUtc && !closedAtUtc ? (
+      <div
+        css={css`
+          color: ${theme.colors.secondary};
+        `}
+      >{`Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`}</div>
     ) : closedAtUtc && approvedAtUtc ? (
       <div
         css={css`
@@ -74,19 +97,19 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
     ) : null;
 
   const statusError =
-    revisionsRequested &&
-    [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(
-      state as ApplicationState,
-    );
+    isAttestable ||
+    state === ApplicationState.PAUSED ||
+    (revisionsRequested &&
+      [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state));
 
   return (
-    <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={expiryDate}>
+    <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={statusDate}>
       <div
         css={css`
           margin-top: 5px;
         `}
       >
-        <ProgressBar state={state as ApplicationState} />
+        <ProgressBar state={state} />
 
         <Typography
           variant="data"
@@ -108,7 +131,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
                 color: ${statusError ? theme.colors.error : 'inherit'};
               `}
             >
-              {getStatusText(state as ApplicationState, dates, revisionsRequested)}
+              {getStatusText(application)}
             </span>
           </div>
           <div>
@@ -131,7 +154,7 @@ const InProgress = ({ application }: { application: ApplicationsResponseItem }) 
               min-width: 160px;
             `}
           >
-            <ButtonGroup appId={appId} state={state as ApplicationState} />
+            <ButtonGroup appId={appId} state={state} requiresAttestation={isAttestable} />
           </div>
           <div
             css={css`

@@ -24,7 +24,6 @@ import Icon from '@icgc-argo/uikit/Icon';
 import { UikitTheme } from '@icgc-argo/uikit/index';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import urlJoin from 'url-join';
-import { isEqual } from 'lodash';
 import { useAuthContext } from 'global/hooks';
 import { API, APPLICATIONS_PATH, APPROVED_APP_CLOSED_CHECK } from 'global/constants';
 import { AxiosError } from 'axios';
@@ -42,7 +41,6 @@ enum VisibleModalOption {
   CLOSE_APPLICATION = 'CLOSE APPLICATION',
 }
 
-// EXPIRED and RENEWING handling is tbd, CLOSED excludes Action buttons
 const getPdfButtonText: (
   state: ApplicationState,
   approvedAtUtc: string,
@@ -54,7 +52,7 @@ const getPdfButtonText: (
     return `APPROVED ${text}`;
   }
 
-  if (ApplicationState.CLOSED.includes(state) && !!approvedAtUtc) {
+  if (state === ApplicationState.PAUSED || (state === ApplicationState.CLOSED && !!approvedAtUtc)) {
     return `SIGNED ${text}`;
   }
 
@@ -68,7 +66,7 @@ const getPdfButtonText: (
     return `DRAFT ${text}`;
   }
 
-  if (isEqual(state, ApplicationState.SIGN_AND_SUBMIT)) {
+  if (state === ApplicationState.SIGN_AND_SUBMIT) {
     return `FINALIZED ${text}`;
   }
 
@@ -115,6 +113,7 @@ const HeaderActions = ({
     ApplicationState.SIGN_AND_SUBMIT,
     ApplicationState.REVISIONS_REQUESTED,
     ApplicationState.APPROVED,
+    ApplicationState.PAUSED,
   ].includes(state);
 
   const isClosedPreApproval = state === ApplicationState.CLOSED && !approvedAtUtc;

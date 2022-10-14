@@ -44,6 +44,13 @@ import { getConfig } from 'global/config';
 import Link from '@icgc-argo/uikit/Link';
 import ApplicationHistoryModal from './ApplicationHistoryModal';
 import { SetLastUpdated } from '../types';
+import { format } from 'date-fns';
+import { DATE_TEXT_FORMAT } from 'global/constants';
+
+import { AxiosError } from 'axios';
+import { useAuthContext } from 'global/hooks';
+import urlJoin from 'url-join';
+import { API, APPLICATIONS_PATH } from 'global/constants';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -82,6 +89,11 @@ const ApplicationFormsBase = ({
   formState,
   validateSection,
   sectionData,
+  isAttestable,
+  attestedAtUtc,
+  attestationByUtc = '',
+  isAdmin,
+  refetchAllData,
 }: {
   appId: string;
   applicationState: ApplicationState;
@@ -90,8 +102,14 @@ const ApplicationFormsBase = ({
   formState: FormValidationStateParameters;
   validateSection: FormSectionValidatorFunction_Origin;
   sectionData: ApplicationData['sections'];
+  isAttestable: boolean;
+  attestedAtUtc?: string;
+  attestationByUtc?: string;
+  isAdmin: boolean;
+  refetchAllData: any;
 }): ReactElement => {
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
+  const [showSuccessfulAttestation, setShowSuccessfulAttestation] = useState(false);
 
   const { NEXT_PUBLIC_DACO_SURVEY_URL } = getConfig();
 
@@ -152,6 +170,8 @@ const ApplicationFormsBase = ({
   const sectionsAfter = enabledSections(sectionsOrder.slice(sectionIndex + 1), formState);
   const sectionsBefore = enabledSections(sectionsOrder.slice(0, sectionIndex), formState);
 
+  const requiresAttestation = !attestedAtUtc && isAttestable;
+
   const handleSectionChange = useCallback(
     (section: FormSectionNames) => {
       if (section !== selectedSection) {
@@ -173,9 +193,111 @@ const ApplicationFormsBase = ({
     );
   };
 
+  const { fetchWithAuth } = useAuthContext();
+  const handleSubmitAttestion = () => {
+    fetchWithAuth({
+      data: {
+        isAttesting: true,
+      },
+      method: 'PATCH',
+      url: urlJoin(API.APPLICATIONS, appId),
+    })
+      .then(() => {
+        setShowSuccessfulAttestation(true);
+        refetchAllData();
+        router.push(`${APPLICATIONS_PATH}/${appId}?section=terms`);
+      })
+      .catch((err: AxiosError) => {
+        console.error('Failed to submit.', err);
+      });
+  };
+
   return (
     <>
       <ContentBody>
+        {requiresAttestation && !isAdmin && (
+          <Notification
+            title={
+              <div
+                css={css`
+                  margin-top: 8px;
+                  margin-left: 10px;
+                `}
+              >
+                {`Annual Attestation is required by ${format(
+                  new Date(attestationByUtc),
+                  DATE_TEXT_FORMAT,
+                )} or access will be paused`}
+              </div>
+            }
+            content={
+              <div
+                css={css`
+                  margin-top: 20px;
+                  margin-left: 10px;
+                  margin-bottom: 20px;
+                `}
+              >
+                <span>
+                  At every one year interval you must confirm your ongoing compliance with the ICGC
+                  ARGO Data Access Agreement and ICGC ARGO Policies. Specifically:
+                </span>
+                <br />
+                <br />
+                <span>
+                  1. I agree not to attempt to identify individuals represented in the dataset.
+                </span>
+                <br />
+                <span>
+                  2. My use of the data will be consistent with the ICGC ARGO Data Access Policy and
+                  Publication Policy.
+                </span>
+                <br />
+                <span>
+                  3. Only authorized personnel will access the data and any changes to authorized
+                  personnel will be reported to the ICGC DACO team immediately.
+                </span>
+                <br />
+                <span>
+                  4. I will comply with all ethical and regulatory requirements applicable within my
+                  institution and country/region in my use of the data.
+                </span>
+                <br />
+                <br />
+                <Button
+                  css={css`
+                    margin-top: 13px;
+                    margin-bottom: 13px;
+                  `}
+                  size="sm"
+                  onClick={handleSubmitAttestion}
+                >
+                  I ATTEST TO THE ABOVE TERMS
+                </Button>
+              </div>
+            }
+            interactionType="NONE"
+            variant="WARNING"
+            css={notificationStyle}
+          />
+        )}
+
+        {showSuccessfulAttestation && (
+          <Notification
+            title="Your Annual Attestation has been Submitted"
+            content="This project team will continue to have access to ICGC Controlled Data until the access expiry date."
+            interactionType="CLOSE"
+            variant="SUCCESS"
+            onInteraction={({ type }) => {
+              if (type === 'CLOSE') {
+                setShowSuccessfulAttestation(false);
+                router.push(`/applications/${appId}?section=${selectedSection}`);
+              }
+            }}
+            css={notificationStyle}
+          />
+        )}
+
         {JSON.parse(localStorage.getItem(SUBMISSION_SUCCESS_CHECK) || 'false') &&
           [ApplicationState.REVIEW].includes(applicationState) && (
             <Notification

@@ -30,7 +30,7 @@ import { RefetchDataFunction } from '../Forms/types';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ApplicationData } from '../../types';
 
-export type ApplicationExpiry = { date: string; isExpired: boolean };
+export type ApplicationAccessInfo = { date?: string; isWarning: boolean; status: string };
 
 const ApplicationHeader = ({
   data,
@@ -43,13 +43,16 @@ const ApplicationHeader = ({
     appId,
     createdAtUtc,
     lastUpdatedAtUtc,
-    expiresAtUtc,
+    expiresAtUtc = '',
     closedAtUtc,
     revisionsRequested,
     approvedAtUtc,
     sections: { applicant: { info: { displayName = '', primaryAffiliation = '' } = {} } = {} } = {},
     state,
     approvedAppDocs,
+    isAttestable,
+    attestationByUtc,
+    lastPausedAtUtc,
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
@@ -59,13 +62,31 @@ const ApplicationHeader = ({
     revisionsRequested &&
     [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state);
 
-  // only pass expiry for applications that have been approved
-  const expiry = approvedAtUtc
-    ? {
-        date: format(new Date(closedAtUtc || expiresAtUtc || ''), DATE_TEXT_FORMAT),
-        isExpired: closedAtUtc ? true : false,
-      }
-    : undefined;
+  // only pass accessInfo for applications that have been approved
+  // add 'status' key to allow easy string changes
+  const accessInfo =
+    state === ApplicationState.PAUSED
+      ? {
+          date:
+            // otherwise display calculated attestationBy date, the assumption is the app is paused due to missing attestation
+            lastPausedAtUtc || attestationByUtc,
+          isWarning: true,
+          status: '! Paused',
+        }
+      : isAttestable
+      ? {
+          date: attestationByUtc,
+          isWarning: true,
+          status: '! Pausing',
+        }
+      : // this case will also apply to applications that are going through renewal flow (they may be in DRAFT, SIGN AND SUBMIT, REVISIONS REQUESTED or REVIEW state)
+      approvedAtUtc
+      ? {
+          date: closedAtUtc || expiresAtUtc,
+          isWarning: closedAtUtc ? true : false,
+          status: closedAtUtc ? 'Expired' : 'Expires',
+        }
+      : undefined;
 
   return (
     <PageHeader>
@@ -84,11 +105,11 @@ const ApplicationHeader = ({
           applicant={applicant}
           createdAt={format(new Date(createdAtUtc), DATE_TEXT_FORMAT)}
           lastUpdated={format(new Date(lastUpdatedAtUtc), DATE_TEXT_FORMAT + ' h:mm aaaa')}
-          expiry={expiry}
+          accessInfo={accessInfo}
         />
 
         <div>
-          {showRevisionsRequestedFlag && (
+          {showRevisionsRequestedFlag ? (
             <div
               css={(theme: UikitTheme) =>
                 css`
@@ -106,7 +127,25 @@ const ApplicationHeader = ({
             >
               Revisions Requested
             </div>
-          )}
+          ) : isAttestable ? (
+            <div
+              css={(theme: UikitTheme) =>
+                css`
+                  ${theme.typography.data};
+                  background: ${theme.colors.primary_1};
+                  border-radius: 8px;
+                  color: ${theme.colors.white};
+                  font-weight: bold;
+                  margin: 0 auto 10px 57px;
+                  padding: 3px 8px;
+                  text-align: center;
+                  width: 150px;
+                `
+              }
+            >
+              Attestation Required
+            </div>
+          ) : null}
           <Progress state={state} />
         </div>
 
