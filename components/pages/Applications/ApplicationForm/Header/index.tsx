@@ -29,6 +29,7 @@ import Progress from './Progress';
 import { RefetchDataFunction } from '../Forms/types';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ApplicationData } from '../../types';
+import { isPastExpiry } from '../Forms/helpers';
 
 export type ApplicationAccessInfo = { date?: string; isWarning: boolean; status: string };
 
@@ -53,6 +54,7 @@ const ApplicationHeader = ({
     isAttestable,
     attestationByUtc,
     lastPausedAtUtc,
+    ableToRenew,
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
@@ -62,6 +64,7 @@ const ApplicationHeader = ({
     revisionsRequested &&
     [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state);
 
+  const appPastExpiry = isPastExpiry(expiresAtUtc);
   // only pass accessInfo for applications that have been approved
   // add 'status' key to allow easy string changes
   const accessInfo =
@@ -83,8 +86,13 @@ const ApplicationHeader = ({
       approvedAtUtc
       ? {
           date: closedAtUtc || expiresAtUtc,
-          isWarning: closedAtUtc ? true : false,
-          status: closedAtUtc ? 'Expired' : 'Expires',
+          isWarning: !!closedAtUtc || appPastExpiry || ableToRenew,
+          status:
+            ableToRenew && !appPastExpiry
+              ? '! Expiring'
+              : closedAtUtc || appPastExpiry
+              ? 'Expired'
+              : 'Expires',
         }
       : undefined;
 
@@ -156,6 +164,7 @@ const ApplicationHeader = ({
           refetchAllData={refetchAllData}
           approvedAtUtc={approvedAtUtc}
           currentApprovedDoc={currentApprovedDoc}
+          ableToRenew={ableToRenew}
         />
       </div>
     </PageHeader>

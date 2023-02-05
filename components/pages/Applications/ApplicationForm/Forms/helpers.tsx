@@ -18,9 +18,10 @@
  */
 
 import { isValidElement } from 'react';
+import moment from 'moment';
+import { pickBy } from 'lodash';
 
 import Loader from 'components/Loader';
-
 import { sectionsData } from './constants';
 import {
   FORM_STATES,
@@ -31,7 +32,6 @@ import {
   FormSectionValidationState_SectionBase,
 } from './types';
 import { TERMS_PLACEHOLDER_FORM_DATA, useLocalValidation } from './validations';
-import { pickBy } from 'lodash';
 import { ApplicationData } from '../../types';
 
 export const enabledSections = (
@@ -108,4 +108,11 @@ export const sectionSelector = ({
   ) : (
     `Section not implemented: "${selectedSection}"`
   );
+};
+
+// if expiresAtUtc moment is before the beginning of the day, return true
+// for component display/style only
+export const isPastExpiry = (expiryDate: string): boolean => {
+  const now = moment.utc().startOf('day');
+  return moment(expiryDate).isBefore(now);
 };

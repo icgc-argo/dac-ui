@@ -72,6 +72,7 @@ export const formatTableData = (data: ApplicationSummary[]) =>
     attestedAtUtc: datum.attestedAtUtc,
     isAttestable: datum.isAttestable,
     isRenewal: datum.isRenewal,
+    ableToRenew: datum.ableToRenew,
   }));
 
 export const tableColumns: TableColumnConfig<ApplicationRecord> & {
