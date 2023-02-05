@@ -35,6 +35,7 @@ export type ApplicationRecord = {
   attestedAtUtc: string;
   attestationByUtc: string;
   isAttestable: boolean;
+  isRenewal: boolean;
 };
 
 export enum ApplicationState {
@@ -112,6 +113,7 @@ export type ApplicationSummary = {
   attestationByUtc: string;
   isAttestable: boolean;
   lastPausedAtUtc?: string;
+  isRenewal: boolean;
 };
 
 export type ApplicationDataByField = {
@@ -340,6 +342,7 @@ export enum ApplicationsField {
   'applicant.address.country' = 'country',
   currentApprovedAppDoc = 'currentApprovedAppDoc',
   attestedAtUtc = 'attestedAtUtc',
+  type = 'isRenewal',
 }
 
 export type AuthAPIFetchFunction = (options?: {
