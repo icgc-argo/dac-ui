@@ -74,8 +74,6 @@ export const getStatusText = (application: ApplicationSummary) => {
       return `Closed on ${formatStatusDate(
         dates.closedAtUtc,
       )}. This application cannot be reopened.`;
-    case ApplicationState.RENEWING:
-      return `Closed on ${formatStatusDate(dates.closedAtUtc)}.`;
     case ApplicationState.PAUSED:
       return `Access was paused on ${formatStatusDate(
         dates.lastPausedAtUtc || dates.attestationByUtc,

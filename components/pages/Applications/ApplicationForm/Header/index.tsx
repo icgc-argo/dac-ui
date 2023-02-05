@@ -82,8 +82,7 @@ const ApplicationHeader = ({
           isWarning: true,
           status: '! Pausing',
         }
-      : // this case will also apply to applications that are going through renewal flow (they may be in DRAFT, SIGN AND SUBMIT, REVISIONS REQUESTED or REVIEW state)
-      approvedAtUtc
+      : approvedAtUtc
       ? {
           date: closedAtUtc || expiresAtUtc,
           isWarning: !!closedAtUtc || appPastExpiry || ableToRenew,

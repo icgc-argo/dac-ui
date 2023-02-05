@@ -52,7 +52,7 @@ const getPdfButtonText: (
     return `APPROVED ${text}`;
   }
 
-  if (state === ApplicationState.PAUSED || (state === ApplicationState.CLOSED && !!approvedAtUtc)) {
+  if (state === ApplicationState.CLOSED && !!approvedAtUtc) {
     return `SIGNED ${text}`;
   }
 
@@ -71,7 +71,13 @@ const getPdfButtonText: (
   }
 
   if (
-    [ApplicationState.REVIEW, ApplicationState.APPROVED, ApplicationState.REJECTED].includes(state)
+    [
+      ApplicationState.REVIEW,
+      ApplicationState.APPROVED,
+      ApplicationState.REJECTED,
+      ApplicationState.EXPIRED,
+      ApplicationState.PAUSED,
+    ].includes(state)
   ) {
     return `SIGNED ${text}`;
   }
@@ -116,6 +122,7 @@ const HeaderActions = ({
     ApplicationState.REVISIONS_REQUESTED,
     ApplicationState.APPROVED,
     ApplicationState.PAUSED,
+    ApplicationState.EXPIRED,
   ].includes(state);
 
   const isClosedPreApproval = state === ApplicationState.CLOSED && !approvedAtUtc;

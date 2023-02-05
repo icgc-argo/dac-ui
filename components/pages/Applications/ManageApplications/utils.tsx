@@ -183,7 +183,6 @@ export const adminStatesAllowList = [
   'CLOSED',
   'EXPIRED',
   'REJECTED',
-  'RENEWING',
   'REVIEW',
   'REVISIONS REQUESTED',
   'PAUSED',
