@@ -53,6 +53,7 @@ export const fieldDisplayNames = {
   'ethics.declaredAsRequired': 'Ethics Letter',
   attestedAtUtc: 'Annual Attestation',
   currentApprovedAppDoc: 'Approved PDF',
+  type: 'Type',
 };
 
 export const formatTableData = (data: ApplicationSummary[]) =>
@@ -70,6 +71,7 @@ export const formatTableData = (data: ApplicationSummary[]) =>
     attestationByUtc: datum.attestationByUtc,
     attestedAtUtc: datum.attestedAtUtc,
     isAttestable: datum.isAttestable,
+    isRenewal: datum.isRenewal,
   }));
 
 export const tableColumns: TableColumnConfig<ApplicationRecord> & {
@@ -152,6 +154,13 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
       original.lastUpdated
         ? formatDate(new Date(original.lastUpdated), DATE_RANGE_DISPLAY_FORMAT)
         : null,
+  },
+  {
+    Header: fieldDisplayNames.type,
+    id: ApplicationsField.type,
+    accessor: 'type',
+    Cell: ({ original }: { original: ApplicationRecord }) =>
+      original.isRenewal ? 'Renewal' : 'New',
   },
   {
     Header: fieldDisplayNames.state,

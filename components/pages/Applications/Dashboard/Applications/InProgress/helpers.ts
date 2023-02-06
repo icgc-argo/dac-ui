@@ -50,9 +50,9 @@ export const getStatusText = (application: ApplicationSummary) => {
   switch (state) {
     case ApplicationState.APPROVED:
       return isAttestable
-        ? `An annual attestation is required for this application. Access for this project team will be paused on ${formatStatusDate(
+        ? `An annual attestation is required for this application. Attestation must be completed by ${formatStatusDate(
             dates.attestationByUtc,
-          )} until you submit your attestation.`
+          )} or access for this project team will be paused.`
         : `Approved on ${formatStatusDate(
             dates.approvedAtUtc,
           )}. You now have access to ICGC Controlled Data.`;
