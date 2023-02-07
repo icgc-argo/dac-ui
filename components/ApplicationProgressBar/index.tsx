@@ -40,6 +40,7 @@ enum PROGRESS_LABELS {
   CLOSED = 'Closed',
   REVISIONS_REQUESTED = 'Revisions Requested',
   PAUSED = 'Paused',
+  EXPIRED = 'Expired',
 }
 
 const progressStates: ProgressStates = {
@@ -79,14 +80,9 @@ const progressStates: ProgressStates = {
     { label: PROGRESS_LABELS.CLOSED, state: 'closed', completed: true },
   ],
   [ApplicationState.EXPIRED]: [
-    { label: PROGRESS_LABELS.DRAFT, state: 'locked', completed: true },
-    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'closed', completed: true },
-    { label: PROGRESS_LABELS.CLOSED, state: 'closed', completed: true },
-  ],
-  [ApplicationState.RENEWING]: [
-    { label: PROGRESS_LABELS.DRAFT, state: 'closed', completed: true },
-    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'closed', completed: true },
-    { label: PROGRESS_LABELS.CLOSED, state: 'closed', completed: true },
+    { label: PROGRESS_LABELS.DRAFT, state: 'success', completed: true },
+    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'success', completed: true },
+    { label: PROGRESS_LABELS.EXPIRED, state: 'error', completed: true },
   ],
   [ApplicationState.PAUSED]: [
     { label: PROGRESS_LABELS.DRAFT, state: 'success', completed: true },
