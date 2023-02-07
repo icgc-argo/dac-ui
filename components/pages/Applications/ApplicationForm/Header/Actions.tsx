@@ -88,6 +88,7 @@ const HeaderActions = ({
   refetchAllData,
   approvedAtUtc,
   currentApprovedDoc,
+  ableToRenew,
 }: {
   appId: string;
   primaryAffiliation: string;
@@ -95,6 +96,7 @@ const HeaderActions = ({
   refetchAllData: RefetchDataFunction;
   approvedAtUtc: string;
   currentApprovedDoc: ApprovedDoc | undefined;
+  ableToRenew: boolean;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();
   const { fetchWithAuth } = useAuthContext();
@@ -217,6 +219,21 @@ const HeaderActions = ({
           }
         `}
       >
+        {ableToRenew && (
+          <Button size="sm" onClick={() => console.log('To be implemented')}>
+            <Icon
+              css={css`
+                margin-bottom: -2px;
+                transform: scaleX(-1);
+              `}
+              fill={theme.colors.white}
+              height="12px"
+              width="12px"
+              name="reset"
+            />{' '}
+            Renew
+          </Button>
+        )}
         {closeApplicationVisible && (
           <Button
             onClick={() => setVisibleModal(VisibleModalOption.CLOSE_APPLICATION)}

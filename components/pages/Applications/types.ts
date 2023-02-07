@@ -36,6 +36,7 @@ export type ApplicationRecord = {
   attestationByUtc: string;
   isAttestable: boolean;
   isRenewal: boolean;
+  ableToRenew: boolean;
 };
 
 export enum ApplicationState {
@@ -114,6 +115,7 @@ export type ApplicationSummary = {
   isAttestable: boolean;
   lastPausedAtUtc?: string;
   isRenewal: boolean;
+  ableToRenew: boolean;
 };
 
 export type ApplicationDataByField = {
@@ -318,6 +320,7 @@ export interface ApplicationData {
     appendices: Appendices;
     signature: Signature;
   };
+  ableToRenew: boolean;
 }
 
 export type ApplicationsResponseData = {
