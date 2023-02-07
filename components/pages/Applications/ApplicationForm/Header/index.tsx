@@ -65,36 +65,58 @@ const ApplicationHeader = ({
     [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state);
 
   const appPastExpiry = isPastExpiry(expiresAtUtc);
+
   // only pass accessInfo for applications that have been approved
   // add 'status' key to allow easy string changes
-  const accessInfo =
-    state === ApplicationState.PAUSED
-      ? {
+  const getAccessInfo = () => {
+    switch (true) {
+      case state === ApplicationState.PAUSED:
+        return {
           date:
             // otherwise display calculated attestationBy date, the assumption is the app is paused due to missing attestation
             lastPausedAtUtc || attestationByUtc,
           isWarning: true,
           status: '! Paused',
-        }
-      : isAttestable
-      ? {
+        };
+      case state === ApplicationState.EXPIRED:
+        return {
+          date: expiresAtUtc,
+          isWarning: true,
+          status: 'Expired',
+        };
+      case isAttestable:
+        return {
           date: attestationByUtc,
           isWarning: true,
           status: '! Pausing',
-        }
-      : // this case will also apply to applications that are going through renewal flow (they may be in DRAFT, SIGN AND SUBMIT, REVISIONS REQUESTED or REVIEW state)
-      approvedAtUtc
-      ? {
+        };
+      // for remaining scenarios where the app has been approved.
+      case !!approvedAtUtc:
+        return {
           date: closedAtUtc || expiresAtUtc,
-          isWarning: !!closedAtUtc || appPastExpiry || ableToRenew,
+          /**
+           * ```
+           * isWarning true if:
+           * - closedAtUtc is present OR
+           * - ableToRenew is true -> this indicates the application expiry is approaching soon
+           * ```
+           */
+          isWarning: !!closedAtUtc || ableToRenew,
+          /**```
+           * Status:
+           * - "Expiring" -> app has not yet expired but is within the renewal period
+           * - "Expired" -> app has been closed after approval
+           * - "Expires" -> app is still approved and app has not reached the renewal period
+           * ```
+           */
           status:
-            ableToRenew && !appPastExpiry
-              ? '! Expiring'
-              : closedAtUtc || appPastExpiry
-              ? 'Expired'
-              : 'Expires',
-        }
-      : undefined;
+            ableToRenew && !appPastExpiry ? '! Expiring' : closedAtUtc ? 'Expired' : 'Expires',
+        };
+      default:
+        return undefined;
+    }
+  };
+  const accessInfo = getAccessInfo();
 
   return (
     <PageHeader>
