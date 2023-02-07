@@ -18,7 +18,6 @@
  */
 
 import { isValidElement } from 'react';
-import moment from 'moment';
 import { pickBy } from 'lodash';
 
 import Loader from 'components/Loader';
@@ -33,6 +32,7 @@ import {
 } from './types';
 import { TERMS_PLACEHOLDER_FORM_DATA, useLocalValidation } from './validations';
 import { ApplicationData } from '../../types';
+import { isBefore } from 'date-fns';
 
 export const enabledSections = (
   sections: FormSectionNames[],
@@ -110,9 +110,10 @@ export const sectionSelector = ({
   );
 };
 
-// if expiresAtUtc moment is before the beginning of the day, return true
-// for component display/style only
+// check if expiresAtUtc is earlier than the current timestamp
+// for component display/style only. "Renew" button display is based on an api calculated field, ableToRenew
 export const isPastExpiry = (expiryDate: string): boolean => {
-  const now = moment.utc().startOf('day');
-  return moment(expiryDate).isBefore(now);
+  const expiry = new Date(expiryDate);
+  const now = new Date();
+  return isBefore(expiry, now);
 };
