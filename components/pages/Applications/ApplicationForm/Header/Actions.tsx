@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { ReactElement, useState } from 'react';
+import { Dispatch, ReactElement, SetStateAction, useState } from 'react';
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
@@ -26,8 +26,8 @@ import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import urlJoin from 'url-join';
 import { useAuthContext } from 'global/hooks';
 import { API, APPLICATIONS_PATH, APPROVED_APP_CLOSED_CHECK } from 'global/constants';
-import { AxiosError } from 'axios';
-import { ApplicationState, ApprovedDoc } from '../../types';
+import { AxiosError, AxiosResponse } from 'axios';
+import { ApplicationData, ApplicationState, ApprovedDoc } from '../../types';
 import { CustomLoadingButton, generatePDFDocument } from '../Forms/common';
 import { ModalPortal } from 'components/Root';
 import Modal from '@icgc-argo/uikit/Modal';
@@ -95,6 +95,8 @@ const HeaderActions = ({
   approvedAtUtc,
   currentApprovedDoc,
   ableToRenew,
+  setIsAppLoading,
+  isFormLoading,
 }: {
   appId: string;
   primaryAffiliation: string;
@@ -103,6 +105,8 @@ const HeaderActions = ({
   approvedAtUtc: string;
   currentApprovedDoc: ApprovedDoc | undefined;
   ableToRenew: boolean;
+  setIsAppLoading: Dispatch<SetStateAction<boolean>>;
+  isFormLoading: boolean;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();
   const { fetchWithAuth } = useAuthContext();
@@ -227,7 +231,30 @@ const HeaderActions = ({
         `}
       >
         {ableToRenew && (
-          <Button size="sm" onClick={() => console.log('To be implemented')}>
+          <Button
+            isLoading={isFormLoading}
+            size="sm"
+            onClick={async () => {
+              // setIsAppLoading(true);
+              const url = urlJoin(API.APPLICATIONS, appId, 'renew');
+              await fetchWithAuth({
+                url,
+                method: 'POST',
+              })
+                .then(async (res: AxiosResponse) => {
+                  if (res.status === 200) {
+                    const appData: ApplicationData = res.data;
+                    router.push(urlJoin(APPLICATIONS_PATH, appData.appId, '?section=terms'));
+                  }
+                })
+                .catch((err: Error) => {
+                  console.error(err);
+                })
+                .finally(() => {
+                  // setIsAppLoading(false);
+                });
+            }}
+          >
             <Icon
               css={css`
                 margin-bottom: -2px;

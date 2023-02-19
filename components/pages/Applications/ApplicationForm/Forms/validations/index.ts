@@ -545,7 +545,7 @@ export const useFormValidation = (appId: string) => {
         method,
         url: `${API.APPLICATIONS}/${appId}`,
       }),
-    [],
+    [appId],
   );
 
   const [formState, validationDispatch]: [

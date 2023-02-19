@@ -320,6 +320,7 @@ export interface ApplicationData {
     signature: Signature;
   };
   ableToRenew: boolean;
+  isRenewal: boolean;
 }
 
 export type ApplicationsResponseData = {

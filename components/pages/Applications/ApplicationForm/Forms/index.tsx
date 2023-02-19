@@ -110,7 +110,7 @@ const ApplicationFormsBase = ({
 }): ReactElement => {
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
   const [showSuccessfulAttestation, setShowSuccessfulAttestation] = useState(false);
-
+  const { fetchWithAuth } = useAuthContext();
   const { NEXT_PUBLIC_DACO_SURVEY_URL } = getConfig();
 
   const {
@@ -166,6 +166,10 @@ const ApplicationFormsBase = ({
         );
   }, [formState.lastUpdatedAtUtc]);
 
+  useEffect(() => {
+    refetchAllData();
+  }, [appId]);
+
   const sectionIndex = sectionsOrder.indexOf(selectedSection);
   const sectionsAfter = enabledSections(sectionsOrder.slice(sectionIndex + 1), formState);
   const sectionsBefore = enabledSections(sectionsOrder.slice(0, sectionIndex), formState);
@@ -193,7 +197,6 @@ const ApplicationFormsBase = ({
     );
   };
 
-  const { fetchWithAuth } = useAuthContext();
   const handleSubmitAttestion = () => {
     fetchWithAuth({
       data: {
