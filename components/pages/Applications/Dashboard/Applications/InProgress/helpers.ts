@@ -26,7 +26,14 @@ import { DATE_TEXT_FORMAT } from 'global/constants';
 import { StatusDates } from '.';
 
 export const getStatusText = (application: ApplicationSummary) => {
-  const { lastUpdatedAtUtc, isAttestable, state, revisionsRequested } = application;
+  const {
+    lastUpdatedAtUtc,
+    isAttestable,
+    state,
+    revisionsRequested,
+    ableToRenew,
+    renewalAppId,
+  } = application;
   const dates: StatusDates = {
     lastUpdatedAtUtc,
     ...pick(application, [
@@ -37,6 +44,7 @@ export const getStatusText = (application: ApplicationSummary) => {
       'attestedAtUtc',
       'attestationByUtc',
       'lastPausedAtUtc',
+      'expiresAtUtc',
     ]),
   };
   const formatStatusDate = (date: string) =>
@@ -53,6 +61,10 @@ export const getStatusText = (application: ApplicationSummary) => {
         ? `An annual attestation is required for this application. Access for this project team will be paused on ${formatStatusDate(
             dates.attestationByUtc,
           )} until you submit your attestation.`
+        : ableToRenew || (renewalAppId && state === ApplicationState.APPROVED)
+        ? `Access is expiring soon. To extend your access privileges for another two years, please renew this application by ${formatStatusDate(
+            dates.expiresAtUtc,
+          )}.`
         : `Approved on ${formatStatusDate(
             dates.approvedAtUtc,
           )}. You now have access to ICGC Controlled Data.`;
