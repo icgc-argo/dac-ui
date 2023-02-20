@@ -49,10 +49,12 @@ const RenewButton = ({
   children,
   appId,
   link,
+  icon,
 }: {
   children: ReactNode;
   appId: string;
   link: string;
+  icon: UikitIconNames;
 }): JSX.Element => {
   const { fetchWithAuth } = useAuthContext();
   const toaster = useToaster();
@@ -87,7 +89,7 @@ const RenewButton = ({
         `}
       >
         <Icon
-          name="reset"
+          name={icon}
           fill="white"
           height="12px"
           css={css`
@@ -110,7 +112,7 @@ const getButtonConfig = (
 ): {
   content: string;
   link: string;
-  icon?: UikitIconNames;
+  icon: UikitIconNames;
   CustomButton?: (props: any) => JSX.Element;
 }[] => {
   const link = urlJoin(APPLICATIONS_PATH, appId);
@@ -149,6 +151,7 @@ const getButtonConfig = (
             {
               content: 'Renew Application',
               CustomButton: RenewButton,
+              icon: 'reset',
               link: urlJoin(API.APPLICATIONS, appId, RENEWAL_PATH),
             },
             {
@@ -202,7 +205,7 @@ const ButtonGroup = ({
       ({ content, link, icon, CustomButton }, index) => (
         <Fragment key={link}>
           {CustomButton ? (
-            <CustomButton appId={appId} link={link}>
+            <CustomButton appId={appId} link={link} icon={icon}>
               {content}
             </CustomButton>
           ) : (
