@@ -136,8 +136,10 @@ const InProgress = ({ application }: { application: ApplicationSummary }) => {
   const statusDate = getStatusDate(application);
 
   const statusError =
-    isAttestable || ableToRenew || (renewalAppId && state === ApplicationState.APPROVED);
-  state === ApplicationState.PAUSED ||
+    isAttestable ||
+    ableToRenew ||
+    (renewalAppId && state === ApplicationState.APPROVED) ||
+    state === ApplicationState.PAUSED ||
     (revisionsRequested &&
       [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state));
 
