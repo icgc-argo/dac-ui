@@ -90,6 +90,13 @@ export const getStatusText = (application: ApplicationSummary) => {
       return `Access was paused on ${formatStatusDate(
         dates.lastPausedAtUtc || dates.attestationByUtc,
       )}. Access for this project team will resume once you submit the annual attestation for this application.`;
+    case ApplicationState.EXPIRED:
+      const renewalEndDate = formatStatusDate(getRenewalPeriodEndDate(dates.expiresAtUtc));
+      return ableToRenew
+        ? `Access has expired. To extend your access privileges for another two years, please renew this application by ${renewalEndDate}.`
+        : renewalAppId
+        ? `An application renewal has been created. Please complete application ${renewalAppId} to extend your access privileges for another two years. This must be completed by ${renewalEndDate}.`
+        : 'The renewal period for this application has ended. If you have not completed a renewal application, you will need to start a new application to gain access privileges for another two years.';
     default:
       return '';
   }

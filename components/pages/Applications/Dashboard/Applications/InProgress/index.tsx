@@ -82,7 +82,17 @@ const getStatusDate = (application: ApplicationSummary): any => {
         >{`! Access Pausing: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
       );
       break;
-    // TODO: add state === EXPIRED case before ableToRenew case (https://github.com/icgc-argo/dac-ui/issues/505)
+    case state === ApplicationState.EXPIRED:
+      return (
+        <div
+          css={(theme) => css`
+            color: ${theme.colors.error};
+          `}
+        >
+          {`! Access Expired: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`}
+        </div>
+      );
+      break;
     // ableToRenew becomes false once a renewal is created, but we still want to display the "Expiring" text state
     case ableToRenew || (renewalAppId && state === ApplicationState.APPROVED):
       return (
@@ -115,6 +125,7 @@ const getStatusDate = (application: ApplicationSummary): any => {
       return null;
   }
 };
+
 const InProgress = ({ application }: { application: ApplicationSummary }) => {
   const theme = useTheme();
   const { NEXT_PUBLIC_DACO_SURVEY_URL } = getConfig();
@@ -135,9 +146,12 @@ const InProgress = ({ application }: { application: ApplicationSummary }) => {
 
   const statusDate = getStatusDate(application);
 
+  // TODO: an application that is past the renewal period and has no renewalAppId (no renewal has been created) will show in default text colour
   const statusError =
-    isAttestable || ableToRenew || (renewalAppId && state === ApplicationState.APPROVED);
-  state === ApplicationState.PAUSED ||
+    isAttestable ||
+    ableToRenew ||
+    (renewalAppId && [ApplicationState.APPROVED, ApplicationState.EXPIRED].includes(state)) ||
+    state === ApplicationState.PAUSED ||
     (revisionsRequested &&
       [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state));
 
