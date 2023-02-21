@@ -33,6 +33,7 @@ import { DATE_TEXT_FORMAT } from 'global/constants';
 import { ApplicationSummary } from 'components/pages/Applications/types';
 
 import { getConfig } from 'global/config';
+import { isRenewalPeriodEnded } from 'global/utils/dates/helpers';
 
 export interface StatusDates {
   lastUpdatedAtUtc: string;
@@ -142,15 +143,16 @@ const InProgress = ({ application }: { application: ApplicationSummary }) => {
     isAttestable,
     ableToRenew,
     renewalAppId,
+    expiresAtUtc,
   } = application;
 
   const statusDate = getStatusDate(application);
-
-  // TODO: an application that is past the renewal period and has no renewalAppId (no renewal has been created) will show in default text colour
   const statusError =
     isAttestable ||
     ableToRenew ||
-    (renewalAppId && [ApplicationState.APPROVED, ApplicationState.EXPIRED].includes(state)) ||
+    (renewalAppId &&
+      [ApplicationState.APPROVED, ApplicationState.EXPIRED].includes(state) &&
+      !isRenewalPeriodEnded(expiresAtUtc)) ||
     state === ApplicationState.PAUSED ||
     (revisionsRequested &&
       [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state));

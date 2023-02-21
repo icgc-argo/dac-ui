@@ -18,12 +18,13 @@
  */
 
 import { pick } from 'lodash';
-import { format as formatDate, addDays } from 'date-fns';
+import { format as formatDate } from 'date-fns';
 
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ApplicationSummary } from 'components/pages/Applications/types';
 import { DATE_TEXT_FORMAT } from 'global/constants';
 import { StatusDates } from '.';
+import { getRenewalPeriodEndDate } from 'global/utils/dates/helpers';
 
 export const getStatusText = (application: ApplicationSummary) => {
   const {
@@ -104,11 +105,3 @@ export const getStatusText = (application: ApplicationSummary) => {
 
 export const getFormattedDate = (date: string | number | Date, format: string) =>
   date ? formatDate(new Date(date), format) : '';
-
-// calculate the last day an app can be renewed, expiry + configured days post expiry
-// DACO allows 90 days after expiry to renew
-export const getRenewalPeriodEndDate = (expiryDate: string): string => {
-  const expiry = new Date(expiryDate);
-  // TODO: Get rid of hardcoded num days. Can the configured days after expiry be retrieved from the BE?
-  return addDays(expiry, 90).toDateString();
-};
