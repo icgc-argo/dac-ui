@@ -115,6 +115,7 @@ export type ApplicationSummary = {
   lastPausedAtUtc?: string;
   isRenewal: boolean;
   ableToRenew: boolean;
+  renewalAppId?: string;
 };
 
 export type ApplicationDataByField = {
