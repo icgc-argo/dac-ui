@@ -33,6 +33,7 @@ import { DATE_TEXT_FORMAT } from 'global/constants';
 import { ApplicationSummary } from 'components/pages/Applications/types';
 
 import { getConfig } from 'global/config';
+import { isRenewalPeriodEnded } from 'global/utils/dates/helpers';
 
 export interface StatusDates {
   lastUpdatedAtUtc: string;
@@ -82,7 +83,17 @@ const getStatusDate = (application: ApplicationSummary): any => {
         >{`! Access Pausing: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
       );
       break;
-    // TODO: add state === EXPIRED case before ableToRenew case (https://github.com/icgc-argo/dac-ui/issues/505)
+    case state === ApplicationState.EXPIRED:
+      return (
+        <div
+          css={(theme) => css`
+            color: ${theme.colors.error};
+          `}
+        >
+          {`! Access Expired: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`}
+        </div>
+      );
+      break;
     // ableToRenew becomes false once a renewal is created, but we still want to display the "Expiring" text state
     case ableToRenew || (renewalAppId && state === ApplicationState.APPROVED):
       return (
@@ -115,6 +126,7 @@ const getStatusDate = (application: ApplicationSummary): any => {
       return null;
   }
 };
+
 const InProgress = ({ application }: { application: ApplicationSummary }) => {
   const theme = useTheme();
   const { NEXT_PUBLIC_DACO_SURVEY_URL } = getConfig();
@@ -131,14 +143,16 @@ const InProgress = ({ application }: { application: ApplicationSummary }) => {
     isAttestable,
     ableToRenew,
     renewalAppId,
+    expiresAtUtc,
   } = application;
 
   const statusDate = getStatusDate(application);
-
   const statusError =
     isAttestable ||
     ableToRenew ||
-    (renewalAppId && state === ApplicationState.APPROVED) ||
+    (renewalAppId &&
+      [ApplicationState.APPROVED, ApplicationState.EXPIRED].includes(state) &&
+      !isRenewalPeriodEnded(expiresAtUtc)) ||
     state === ApplicationState.PAUSED ||
     (revisionsRequested &&
       [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state));

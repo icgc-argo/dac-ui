@@ -18,12 +18,13 @@
  */
 
 import { pick } from 'lodash';
-import { format as formatDate, addDays } from 'date-fns';
+import { format as formatDate } from 'date-fns';
 
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ApplicationSummary } from 'components/pages/Applications/types';
 import { DATE_TEXT_FORMAT } from 'global/constants';
 import { StatusDates } from '.';
+import { getRenewalPeriodEndDate } from 'global/utils/dates/helpers';
 
 export const getStatusText = (application: ApplicationSummary) => {
   const {
@@ -90,6 +91,13 @@ export const getStatusText = (application: ApplicationSummary) => {
       return `Access was paused on ${formatStatusDate(
         dates.lastPausedAtUtc || dates.attestationByUtc,
       )}. Access for this project team will resume once you submit the annual attestation for this application.`;
+    case ApplicationState.EXPIRED:
+      const renewalEndDate = formatStatusDate(getRenewalPeriodEndDate(dates.expiresAtUtc));
+      return ableToRenew
+        ? `Access has expired. To extend your access privileges for another two years, please renew this application by ${renewalEndDate}.`
+        : renewalAppId
+        ? `An application renewal has been created. Please complete application ${renewalAppId} to extend your access privileges for another two years. This must be completed by ${renewalEndDate}.`
+        : 'The renewal period for this application has ended. If you have not completed a renewal application, you will need to start a new application to gain access privileges for another two years.';
     default:
       return '';
   }
@@ -97,11 +105,3 @@ export const getStatusText = (application: ApplicationSummary) => {
 
 export const getFormattedDate = (date: string | number | Date, format: string) =>
   date ? formatDate(new Date(date), format) : '';
-
-// calculate the last day an app can be renewed, expiry + configured days post expiry
-// DACO allows 90 days after expiry to renew
-export const getRenewalPeriodEndDate = (expiryDate: string): string => {
-  const expiry = new Date(expiryDate);
-  // TODO: Get rid of hardcoded num days. Can the configured days after expiry be retrieved from the BE?
-  return addDays(expiry, 90).toDateString();
-};

@@ -172,6 +172,29 @@ const getButtonConfig = (
               icon: 'user',
             },
           ];
+    case ApplicationState.EXPIRED:
+      return ableToRenew
+        ? [
+            {
+              content: 'Renew Application',
+              CustomButton: RenewButton,
+              icon: 'reset',
+              link: urlJoin(API.APPLICATIONS, appId, RENEWAL_PATH),
+            },
+            {
+              content: 'View Application',
+              link,
+              icon: 'file',
+            },
+          ]
+        : [
+            {
+              content: 'View Application',
+              link,
+              icon: 'file',
+            },
+          ];
+      break;
     // Paused state implies attestation is needed
     case ApplicationState.PAUSED:
       return [
@@ -181,8 +204,9 @@ const getButtonConfig = (
           icon: 'calendar',
         },
       ];
+    default:
+      return [];
   }
-  return [];
 };
 
 const ButtonGroup = ({
