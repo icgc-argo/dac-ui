@@ -22,3 +22,4 @@ export const LOGGED_IN_PATH = '/logged-in';
 export const PRIVATE_PATHS = [APPLICATIONS_PATH];
 export const ERROR_PATH = '/_error';
 export const NEW_WEBSITE_NOTICE_PATH = '/new-website-notice';
+export const RENEWAL_PATH = '/renew';
