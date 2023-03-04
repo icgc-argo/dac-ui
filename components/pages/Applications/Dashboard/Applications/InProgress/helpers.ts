@@ -34,6 +34,9 @@ export const getStatusText = (application: ApplicationSummary) => {
     revisionsRequested,
     ableToRenew,
     renewalAppId,
+    isRenewal,
+    renewalPeriodEndDateUtc,
+    sourceAppId,
   } = application;
   const dates: StatusDates = {
     lastUpdatedAtUtc,
@@ -48,7 +51,7 @@ export const getStatusText = (application: ApplicationSummary) => {
       'expiresAtUtc',
     ]),
   };
-  const formatStatusDate = (date: string) =>
+  const formatStatusDate = (date?: string) =>
     formatDate(new Date(date || dates.lastUpdatedAtUtc), DATE_TEXT_FORMAT);
 
   const revisionsRequestedText = `Reopened for revisions on ${formatStatusDate(
@@ -73,9 +76,24 @@ export const getStatusText = (application: ApplicationSummary) => {
             dates.approvedAtUtc,
           )}. You now have access to ICGC Controlled Data.`;
     case ApplicationState.SIGN_AND_SUBMIT:
-      return revisionsRequested ? revisionsRequestedText : createdOnText;
+      // TODO: any need to differentiate a renewal with revisions vs a new app with revisions?
+      return revisionsRequested
+        ? revisionsRequestedText
+        : isRenewal
+        ? `Renewal created on ${formatStatusDate(
+            dates.createdAtUtc,
+          )} from ${sourceAppId}. Please submit this application for review by ${formatStatusDate(
+            renewalPeriodEndDateUtc,
+          )} to extend your access for another two years.`
+        : createdOnText;
     case ApplicationState.DRAFT:
-      return createdOnText;
+      return isRenewal
+        ? `Renewal created on ${formatStatusDate(
+            dates.createdAtUtc,
+          )} from ${sourceAppId}. Please submit this application for review by ${formatStatusDate(
+            renewalPeriodEndDateUtc,
+          )} to extend your access for another two years.`
+        : createdOnText;
     case ApplicationState.REVIEW:
       return `Submitted on ${formatStatusDate(
         dates.submittedAtUtc,

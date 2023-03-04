@@ -144,6 +144,7 @@ const InProgress = ({ application }: { application: ApplicationSummary }) => {
     ableToRenew,
     renewalAppId,
     expiresAtUtc,
+    isRenewal,
   } = application;
 
   const statusDate = getStatusDate(application);
@@ -157,7 +158,8 @@ const InProgress = ({ application }: { application: ApplicationSummary }) => {
       !renewalPeriodEnded) ||
     state === ApplicationState.PAUSED ||
     (revisionsRequested &&
-      [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state));
+      [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state)) ||
+    (isRenewal && [ApplicationState.DRAFT, ApplicationState.SIGN_AND_SUBMIT].includes(state));
 
   const showReport =
     (state === ApplicationState.EXPIRED && renewalPeriodEnded) ||
