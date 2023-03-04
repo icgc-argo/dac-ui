@@ -10,7 +10,10 @@ export const getRenewalPeriodEndDate = (expiryDate: string): string => {
   return addDays(expiry, NEXT_PUBLIC_DAYS_POST_EXPIRY).toDateString();
 };
 
-export const isRenewalPeriodEnded = (expiryDate: string): boolean => {
+export const isRenewalPeriodEnded = (expiryDate?: string): boolean => {
+  if (!expiryDate) {
+    return false;
+  }
   const now = new Date();
   const endDate = new Date(getRenewalPeriodEndDate(expiryDate));
   return isAfter(now, endDate);

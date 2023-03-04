@@ -117,7 +117,6 @@ const ApplicationHeader = ({
     }
   };
   const accessInfo = getAccessInfo();
-
   return (
     <PageHeader>
       <div
@@ -176,7 +175,7 @@ const ApplicationHeader = ({
               Attestation Required
             </div>
           ) : null}
-          <Progress state={state} />
+          <Progress state={state} expiryDate={expiresAtUtc} />
         </div>
 
         <Actions
