@@ -337,6 +337,7 @@ export enum DOCUMENT_TYPES {
 export enum DacoRole {
   SUBMITTER = 'SUBMITTER',
   ADMIN = 'ADMIN',
+  SYSTEM = 'SYSTEM',
 }
 
 type UpdateAuthor = {
