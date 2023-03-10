@@ -324,7 +324,9 @@ const ApplicationFormsBase = ({
               localStorage.setItem(APPROVED_APP_CLOSED_CHECK, 'false');
               router.push(`/applications/${appId}?section=${selectedSection}`);
             }}
-            title="Your Application has been Closed"
+            title={
+              isAdmin ? 'This Application has been Closed' : 'Your Application has been Closed'
+            }
             content={
               <div
                 css={css`
@@ -337,15 +339,24 @@ const ApplicationFormsBase = ({
                 </span>
                 <br />
                 <br />
-                <strong>
-                  You are required to complete a final report as per the conditions of the Data
-                  Access Agreement.{' '}
-                  <Link href={NEXT_PUBLIC_DACO_SURVEY_URL} target="_blank">
-                    Click here to fill out the report
-                  </Link>
-                </strong>
-                , describing your successes and challenges with accessing ICGC Controlled Data and
-                the outcomes of your research project.
+                {isAdmin ? (
+                  <span>
+                    The applicant is required to complete a final report as per the conditions of
+                    the Data Access Agreement.
+                  </span>
+                ) : (
+                  <span>
+                    <strong>
+                      You are required to complete a final report as per the conditions of the Data
+                      Access Agreement.{' '}
+                      <Link href={NEXT_PUBLIC_DACO_SURVEY_URL} target="_blank">
+                        Click here to fill out the report
+                      </Link>
+                    </strong>
+                    , describing your successes and challenges with accessing ICGC Controlled Data
+                    and the outcomes of your research project.
+                  </span>
+                )}
               </div>
             }
             css={notificationStyle}
