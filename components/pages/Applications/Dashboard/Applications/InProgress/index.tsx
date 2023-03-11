@@ -57,6 +57,7 @@ const getStatusDate = (application: ApplicationSummary): any => {
     ableToRenew,
     lastPausedAtUtc,
     renewalAppId,
+    expiredEventDateUtc,
   } = application;
   switch (true) {
     case state === ApplicationState.PAUSED:
@@ -92,7 +93,10 @@ const getStatusDate = (application: ApplicationSummary): any => {
             color: ${theme.colors.error};
           `}
         >
-          {`! Access Expired: ${getFormattedDate(expiresAtUtc, DateFormat.DATE_TEXT_FORMAT)}`}
+          {`! Access Expired: ${getFormattedDate(
+            expiredEventDateUtc || expiresAtUtc,
+            DateFormat.DATE_TEXT_FORMAT,
+          )}`}
         </div>
       );
       break;

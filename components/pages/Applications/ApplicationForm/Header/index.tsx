@@ -56,6 +56,7 @@ const ApplicationHeader = ({
     attestationByUtc,
     lastPausedAtUtc,
     ableToRenew,
+    expiredEventDateUtc,
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
@@ -81,7 +82,7 @@ const ApplicationHeader = ({
         };
       case state === ApplicationState.EXPIRED:
         return {
-          date: expiresAtUtc,
+          date: expiredEventDateUtc || expiresAtUtc,
           isWarning: true,
           status: 'Expired',
         };

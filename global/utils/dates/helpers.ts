@@ -1,4 +1,3 @@
-import { ApplicationUpdate, UpdateEvent } from 'components/pages/Applications/types';
 import { addDays, format, isAfter } from 'date-fns';
 import { DateFormat } from './types';
 
@@ -23,9 +22,4 @@ export const getFormattedDate = (value: string | number | Date, dateFormat: Date
     return '';
   }
   return format(valueAsDate, dateFormat);
-};
-
-export const getExpiredAtDate = (appUpdates: ApplicationUpdate[], expiresAtUtc: string): string => {
-  const expiryEvent = appUpdates.find((update) => update.eventType === UpdateEvent.EXPIRED);
-  return expiryEvent?.date || expiresAtUtc;
 };
