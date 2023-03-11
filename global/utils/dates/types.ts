@@ -17,11 +17,12 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export const DATE_RANGE_DISPLAY_FORMAT = 'Y-MM-dd';
-export const DATE_TEXT_FORMAT = 'MMM. dd, yyyy';
-export const TIME_AND_DATE_FORMAT = "MMM. dd, yyyy 'at' h:mm aaaa";
-export const FILE_DATE_FORMAT = 'yyyyMMdd';
-export const TIME_DAY_AND_DATE_FORMAT = "EEE. MMM. dd, yyyy 'at' h:mm aaaa";
-export const UPLOAD_DATE_FORMAT = 'yyyy-MM-dd';
-// API_DEFAULT_DATE_FORMAT is ISO8601
-export const API_DEFAULT_DATE_FORMAT = "yyyy-MM-ddTHH:mm:ss'Z'";
+export enum DateFormat {
+  DATE_RANGE_DISPLAY_FORMAT = 'Y-MM-dd',
+  DATE_TEXT_FORMAT = 'MMM. dd, yyyy',
+  TIME_AND_DATE_FORMAT = "MMM. dd, yyyy 'at' h:mm aaaa",
+  FILE_DATE_FORMAT = 'yyyyMMdd',
+  TIME_DAY_AND_DATE_FORMAT = "EEE. MMM. dd, yyyy 'at' h:mm aaaa",
+  UPLOAD_DATE_FORMAT = 'yyyy-MM-dd',
+  API_DEFAULT_DATE_FORMAT = "yyyy-MM-ddTHH:mm:ss'Z'", // API_DEFAULT_DATE_FORMAT is ISO8601
+}

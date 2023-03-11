@@ -25,27 +25,28 @@ import Icon from '@icgc-argo/uikit/Icon';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Typography from '@icgc-argo/uikit/Typography';
 import React, { ReactElement, useState } from 'react';
-import FormFieldHelpBubble from './FormFieldHelpBubble';
-import { RequiredStar } from './RequiredFieldsMessage';
+import router from 'next/router';
 import { styled } from '@icgc-argo/uikit';
 import { AxiosError } from 'axios';
+import urlJoin from 'url-join';
+import Modal from '@icgc-argo/uikit/Modal';
+import Link from '@icgc-argo/uikit/Link';
+
+import FormFieldHelpBubble from './FormFieldHelpBubble';
+import { RequiredStar } from './RequiredFieldsMessage';
 import {
   DOCUMENT_TYPES,
   FormSectionValidationState_Signature,
   FormValidationStateParameters,
 } from './types';
-import { UPLOAD_DATE_FORMAT } from 'global/utils/dates/constants';
-import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
+import { DateFormat } from 'global/utils/dates/types';
+import { getFormattedDate } from 'global/utils/dates/helpers';
 import { API, APPLICATIONS_PATH, SUBMISSION_SUCCESS_CHECK } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
-import Modal from '@icgc-argo/uikit/Modal';
 import { ModalPortal } from 'components/Root';
-import Link from '@icgc-argo/uikit/Link';
 import { CustomLoadingButton, generatePDFDocument } from './common';
-import urlJoin from 'url-join';
 import { ApplicationState } from '../../types';
 import { getStaticComponents, UITitle } from '../../PDF/common';
-import router from 'next/router';
 
 const FormControl = styled(Control)`
   display: flex;
@@ -345,7 +346,8 @@ const Signature = ({
                     >
                       |
                     </span>{' '}
-                    Uploaded on: {getFormattedDate(uploadedAtUtc.value, UPLOAD_DATE_FORMAT)}
+                    Uploaded on:{' '}
+                    {getFormattedDate(uploadedAtUtc.value, DateFormat.UPLOAD_DATE_FORMAT)}
                   </>
                 )}
                 {!isSectionDisabled && (

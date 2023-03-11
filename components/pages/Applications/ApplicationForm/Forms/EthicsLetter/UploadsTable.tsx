@@ -20,7 +20,6 @@
 import { createRef, ReactElement, useEffect, useState } from 'react';
 import { css } from '@emotion/core';
 import { AxiosError } from 'axios';
-import { format } from 'date-fns';
 
 import { UikitTheme } from '@icgc-argo/uikit/index';
 import Button from '@icgc-argo/uikit/Button';
@@ -51,7 +50,8 @@ import { CustomLoadingButton } from '../common';
 import Banner from '@icgc-argo/uikit/notifications/Banner';
 import { useToaster } from 'global/hooks/useToaster';
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
-import { DATE_RANGE_DISPLAY_FORMAT } from 'global/utils/dates/constants';
+import { DateFormat } from 'global/utils/dates/types';
+import { getFormattedDate } from 'global/utils/dates/helpers';
 
 const VALID_FILE_TYPE = [
   'application/msword',
@@ -353,7 +353,7 @@ const UploadsTable = ({
               {
                 accessor: 'uploadedAtUtc',
                 Cell: ({ value }: { value: string }) =>
-                  format(new Date(value), DATE_RANGE_DISPLAY_FORMAT),
+                  getFormattedDate(value, DateFormat.DATE_RANGE_DISPLAY_FORMAT),
                 Header: 'Uploaded On',
               },
               ...(isRequiredPostApproval

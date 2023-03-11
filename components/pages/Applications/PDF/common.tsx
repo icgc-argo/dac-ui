@@ -22,7 +22,6 @@ import { Text, View, Font, StyleSheet } from '@react-pdf/renderer';
 import defaultTheme from '@icgc-argo/uikit/theme/defaultTheme';
 import Typography from '@icgc-argo/uikit/Typography';
 import Link from '@icgc-argo/uikit/Link';
-import { format } from 'date-fns';
 import Button from '@icgc-argo/uikit/Button';
 import { css } from '@icgc-argo/uikit';
 import Banner from '@icgc-argo/uikit/notifications/Banner';
@@ -31,7 +30,8 @@ import PDFLayout from './PdfLayout';
 import EmptyCheckbox from './icons/EmptyCheckbox';
 import FilledCheckbox from './icons/FilledCheckbox';
 import { FieldAccessor, PdfField, PdfFieldName, PdfFormField } from './types';
-import { DATE_TEXT_FORMAT } from 'global/utils/dates/constants';
+import { DateFormat } from 'global/utils/dates/types';
+import { getFormattedDate } from 'global/utils/dates/helpers';
 
 const WorkSansBold = require('public/fonts/WorkSans-Bold.ttf').default;
 const WorkSansLight = require('public/fonts/WorkSans-Light.ttf').default;
@@ -274,7 +274,7 @@ export const UITitle = ({
             `
           }
         >
-          Last updated: {format(new Date(sectionLastUpdatedAt), DATE_TEXT_FORMAT)}
+          Last updated: {getFormattedDate(sectionLastUpdatedAt, DateFormat.DATE_TEXT_FORMAT)}
         </Typography>
       )}
     </Typography>

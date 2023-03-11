@@ -24,18 +24,8 @@ import Typography from '@icgc-argo/uikit/Typography';
 import { APPLICATIONS_PATH } from 'global/constants';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import { ApplicationAccessInfo } from '.';
-import { format, parseISO } from 'date-fns';
-import { DATE_TEXT_FORMAT } from 'global/utils/dates/constants';
-
-const isValidDate = (val?: any): boolean => {
-  try {
-    parseISO(val);
-    return true;
-  } catch (e) {
-    console.warn(e);
-    return false;
-  }
-};
+import { DateFormat } from 'global/utils/dates/types';
+import { getFormattedDate } from 'global/utils/dates/helpers';
 
 const ApplicationAccessInfoDisplay = ({ date, isWarning, status }: ApplicationAccessInfo) => {
   const theme = useTheme();
@@ -48,7 +38,7 @@ const ApplicationAccessInfoDisplay = ({ date, isWarning, status }: ApplicationAc
           color: ${theme.colors[isWarning ? 'error' : 'secondary']};
         `}
       >
-        {`${status}: ${date && isValidDate(date) ? format(new Date(date), DATE_TEXT_FORMAT) : ''}`}
+        {`${status}: ${date ? getFormattedDate(date, DateFormat.DATE_TEXT_FORMAT) : ''}`}
       </span>
     </>
   );

@@ -29,11 +29,11 @@ import { useState } from 'react';
 import { ApprovedDoc } from '../../types';
 import { CustomLoadingButton } from '../Forms/common';
 import { DOCUMENT_TYPES } from '../Forms/types';
-import { format as formatDate } from 'date-fns';
-import { API_DEFAULT_DATE_FORMAT } from 'global/utils/dates/constants';
+import { DateFormat } from 'global/utils/dates/types';
 import { SetLastUpdated } from '../types';
 import { css } from '@icgc-argo/uikit';
 import Typography from '@icgc-argo/uikit/Typography';
+import { getFormattedDate } from 'global/utils/dates/helpers';
 
 const PDFActions = ({
   appId,
@@ -64,7 +64,7 @@ const PDFActions = ({
     })
       .then(() => {
         setIsDeleting(false);
-        const d = formatDate(new Date(), API_DEFAULT_DATE_FORMAT);
+        const d = getFormattedDate(new Date(), DateFormat.API_DEFAULT_DATE_FORMAT);
         setLastUpdated(d);
       })
       .catch((err: AxiosError) => {
@@ -98,7 +98,7 @@ const PDFActions = ({
         url={`${API.APPLICATIONS}/${appId}/assets/${DOCUMENT_TYPES.APPROVED_PDF}/upload`}
         onUpload={() => {
           setUploadError(false);
-          setLastUpdated(formatDate(new Date(), API_DEFAULT_DATE_FORMAT));
+          setLastUpdated(getFormattedDate(new Date(), DateFormat.API_DEFAULT_DATE_FORMAT));
         }}
         onUploadError={() => setUploadError(true)}
         validators={[pdfValidator]}

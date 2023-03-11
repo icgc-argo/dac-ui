@@ -25,8 +25,8 @@ import PDFIcgcDaco from './icons/PdfIcgcDaco';
 import { getDisplayName, PDFText, PDFTitle } from './common';
 import VerticalTable from './VerticalTable';
 import { ApplicationData } from '../types';
-import { getFormattedDate } from '../Dashboard/Applications/InProgress/helpers';
-import { TIME_DAY_AND_DATE_FORMAT } from 'global/utils/dates/constants';
+import { getFormattedDate } from 'global/utils/dates/helpers';
+import { DateFormat } from 'global/utils/dates/types';
 import { FieldAccessor } from './types';
 
 const styles = StyleSheet.create({
@@ -76,7 +76,7 @@ const Cover = ({ data }: { data?: ApplicationData }) => {
       fieldName: 'Document rendered on',
       fieldValue: (
         <Text style={styles.tableValue}>
-          {getFormattedDate(Date.now(), TIME_DAY_AND_DATE_FORMAT)}
+          {getFormattedDate(Date.now(), DateFormat.TIME_DAY_AND_DATE_FORMAT)}
         </Text>
       ),
     },

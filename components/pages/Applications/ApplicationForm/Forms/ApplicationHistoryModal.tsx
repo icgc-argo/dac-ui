@@ -7,20 +7,21 @@ import { capitalize, startCase } from 'lodash';
 import urlJoin from 'url-join';
 import Banner from '@icgc-argo/uikit/notifications/Banner';
 import { AxiosResponse, AxiosError } from 'axios';
-import { format } from 'date-fns';
 
 import { ModalPortal } from 'components/Root';
 import { useAuthContext } from 'global/hooks';
 import { API } from 'global/constants';
 import { DacoRole, UpdateEvent, UserViewApplicationUpdate } from './types';
-import { DATE_RANGE_DISPLAY_FORMAT } from 'global/utils/dates/constants';
+import { DateFormat } from 'global/utils/dates/types';
+import { getFormattedDate } from 'global/utils/dates/helpers';
 
 const columns = [
   {
     accessor: 'date',
     Header: 'Date of Status Change',
-    Cell: ({ original }: { original: UserViewApplicationUpdate }) =>
-      format(new Date(original.date), DATE_RANGE_DISPLAY_FORMAT),
+    Cell: ({ original }: { original: UserViewApplicationUpdate }) => {
+      return getFormattedDate(original.date, DateFormat.DATE_RANGE_DISPLAY_FORMAT);
+    },
   },
   {
     accessor: 'eventType',
