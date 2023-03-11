@@ -34,7 +34,7 @@ import {
   FormSectionValidationState_Signature,
   FormValidationStateParameters,
 } from './types';
-import { UPLOAD_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
+import { UPLOAD_DATE_FORMAT } from 'global/utils/dates/constants';
 import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
 import { API, APPLICATIONS_PATH, SUBMISSION_SUCCESS_CHECK } from 'global/constants';
 import { useAuthContext } from 'global/hooks';

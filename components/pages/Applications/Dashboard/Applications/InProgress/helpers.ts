@@ -22,7 +22,7 @@ import { format as formatDate } from 'date-fns';
 
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ApplicationSummary } from 'components/pages/Applications/types';
-import { DATE_TEXT_FORMAT } from 'global/constants';
+import { DATE_TEXT_FORMAT } from 'global/utils/dates/constants';
 import { StatusDates } from '.';
 import { getRenewalPeriodEndDate } from 'global/utils/dates/helpers';
 

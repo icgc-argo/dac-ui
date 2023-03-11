@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 The Ontario Institute for Cancer Research. All rights reserved
+ * Copyright (c) 2023 The Ontario Institute for Cancer Research. All rights reserved
  *
  * This program and the accompanying materials are made available under the terms of
  * the GNU Affero General Public License v3.0. You should have received a copy of the
@@ -17,6 +17,8 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+export const DATE_RANGE_DISPLAY_FORMAT = 'Y-MM-dd';
+export const DATE_TEXT_FORMAT = 'MMM. dd, yyyy';
 export const TIME_AND_DATE_FORMAT = "MMM. dd, yyyy 'at' h:mm aaaa";
 export const FILE_DATE_FORMAT = 'yyyyMMdd';
 export const TIME_DAY_AND_DATE_FORMAT = "EEE. MMM. dd, yyyy 'at' h:mm aaaa";

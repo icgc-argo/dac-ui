@@ -30,7 +30,8 @@ import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 
 import { useAuthContext } from 'global/hooks';
-import { API, DATE_TEXT_FORMAT } from 'global/constants';
+import { API } from 'global/constants';
+import { DATE_TEXT_FORMAT } from 'global/utils/dates/constants';
 
 const ApproveModal = ({
   appId,

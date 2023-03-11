@@ -25,11 +25,10 @@ import Typography from '@icgc-argo/uikit/Typography';
 
 import DashboardCard from '../../Card';
 import ProgressBar from '../../../../../ApplicationProgressBar';
-import { TIME_AND_DATE_FORMAT } from './constants';
+import { TIME_AND_DATE_FORMAT, DATE_TEXT_FORMAT } from 'global/utils/dates/constants';
 import { getFormattedDate, getStatusText } from './helpers';
 import ButtonGroup from './ButtonGroup';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
-import { DATE_TEXT_FORMAT } from 'global/constants';
 import { ApplicationSummary } from 'components/pages/Applications/types';
 
 import { getConfig } from 'global/config';

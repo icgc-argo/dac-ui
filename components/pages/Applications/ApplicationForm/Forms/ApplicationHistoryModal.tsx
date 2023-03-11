@@ -11,8 +11,9 @@ import { format } from 'date-fns';
 
 import { ModalPortal } from 'components/Root';
 import { useAuthContext } from 'global/hooks';
-import { API, DATE_RANGE_DISPLAY_FORMAT } from 'global/constants';
+import { API } from 'global/constants';
 import { DacoRole, UpdateEvent, UserViewApplicationUpdate } from './types';
+import { DATE_RANGE_DISPLAY_FORMAT } from 'global/utils/dates/constants';
 
 const columns = [
   {

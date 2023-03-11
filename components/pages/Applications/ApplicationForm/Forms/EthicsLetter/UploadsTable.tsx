@@ -34,7 +34,7 @@ import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import Modal from '@icgc-argo/uikit/Modal';
 import { BANNER_VARIANTS } from '@icgc-argo/uikit/notifications/Banner';
 
-import { API, DATE_RANGE_DISPLAY_FORMAT } from 'global/constants';
+import { API } from 'global/constants';
 import { useAuthContext } from 'global/hooks';
 import { ModalPortal } from 'components/Root';
 
@@ -51,6 +51,7 @@ import { CustomLoadingButton } from '../common';
 import Banner from '@icgc-argo/uikit/notifications/Banner';
 import { useToaster } from 'global/hooks/useToaster';
 import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
+import { DATE_RANGE_DISPLAY_FORMAT } from 'global/utils/dates/constants';
 
 const VALID_FILE_TYPE = [
   'application/msword',

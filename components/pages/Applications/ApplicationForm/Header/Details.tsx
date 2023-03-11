@@ -21,10 +21,11 @@ import { ReactElement } from 'react';
 import { css } from '@icgc-argo/uikit';
 import Link from '@icgc-argo/uikit/Link';
 import Typography from '@icgc-argo/uikit/Typography';
-import { APPLICATIONS_PATH, DATE_TEXT_FORMAT } from 'global/constants';
+import { APPLICATIONS_PATH } from 'global/constants';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import { ApplicationAccessInfo } from '.';
 import { format, parseISO } from 'date-fns';
+import { DATE_TEXT_FORMAT } from 'global/utils/dates/constants';
 
 const isValidDate = (val?: any): boolean => {
   try {

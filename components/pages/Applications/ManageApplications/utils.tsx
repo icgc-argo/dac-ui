@@ -22,7 +22,7 @@ import { format as formatDate } from 'date-fns';
 import urlJoin from 'url-join';
 import Link from '@icgc-argo/uikit/Link';
 import { TableColumnConfig } from '@icgc-argo/uikit/Table';
-import { DATE_RANGE_DISPLAY_FORMAT } from 'global/constants';
+import { DATE_RANGE_DISPLAY_FORMAT } from 'global/utils/dates/constants';
 import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
 import {
   ApplicationRecord,

@@ -31,7 +31,7 @@ import PDFLayout from './PdfLayout';
 import EmptyCheckbox from './icons/EmptyCheckbox';
 import FilledCheckbox from './icons/FilledCheckbox';
 import { FieldAccessor, PdfField, PdfFieldName, PdfFormField } from './types';
-import { DATE_TEXT_FORMAT } from 'global/constants';
+import { DATE_TEXT_FORMAT } from 'global/utils/dates/constants';
 
 const WorkSansBold = require('public/fonts/WorkSans-Bold.ttf').default;
 const WorkSansLight = require('public/fonts/WorkSans-Light.ttf').default;

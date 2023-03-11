@@ -45,7 +45,7 @@ import Link from '@icgc-argo/uikit/Link';
 import ApplicationHistoryModal from './ApplicationHistoryModal';
 import { SetLastUpdated } from '../types';
 import { format } from 'date-fns';
-import { DATE_TEXT_FORMAT } from 'global/constants';
+import { DATE_TEXT_FORMAT } from 'global/utils/dates/constants';
 
 import { AxiosError } from 'axios';
 import { useAuthContext } from 'global/hooks';

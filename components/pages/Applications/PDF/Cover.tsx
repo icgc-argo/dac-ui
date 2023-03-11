@@ -26,7 +26,7 @@ import { getDisplayName, PDFText, PDFTitle } from './common';
 import VerticalTable from './VerticalTable';
 import { ApplicationData } from '../types';
 import { getFormattedDate } from '../Dashboard/Applications/InProgress/helpers';
-import { TIME_DAY_AND_DATE_FORMAT } from '../Dashboard/Applications/InProgress/constants';
+import { TIME_DAY_AND_DATE_FORMAT } from 'global/utils/dates/constants';
 import { FieldAccessor } from './types';
 
 const styles = StyleSheet.create({

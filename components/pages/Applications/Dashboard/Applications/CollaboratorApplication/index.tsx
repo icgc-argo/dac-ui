@@ -3,7 +3,7 @@ import Table from '@icgc-argo/uikit/Table';
 import { IndividualInfo } from 'components/pages/Applications/types';
 import { createRef } from 'react';
 import DashboardCard from '../../Card';
-import { UPLOAD_DATE_FORMAT } from '../InProgress/constants';
+import { UPLOAD_DATE_FORMAT } from 'global/utils/dates/constants';
 import { getFormattedDate } from '../InProgress/helpers';
 
 const CollaboratorApplication = ({

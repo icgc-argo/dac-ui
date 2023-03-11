@@ -22,7 +22,7 @@ import { format } from 'date-fns';
 import { css } from '@icgc-argo/uikit';
 import { UikitTheme } from '@icgc-argo/uikit/index';
 import PageHeader from 'components/PageHeader';
-import { DATE_TEXT_FORMAT } from 'global/constants';
+import { DATE_TEXT_FORMAT } from 'global/utils/dates/constants';
 import Actions from './Actions';
 import Details from './Details';
 import Progress from './Progress';
