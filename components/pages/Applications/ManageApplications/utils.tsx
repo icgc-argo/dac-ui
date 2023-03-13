@@ -18,11 +18,10 @@
  */
 
 import { startCase } from 'lodash';
-import { format as formatDate } from 'date-fns';
 import urlJoin from 'url-join';
 import Link from '@icgc-argo/uikit/Link';
 import { TableColumnConfig } from '@icgc-argo/uikit/Table';
-import { DATE_RANGE_DISPLAY_FORMAT } from 'global/constants';
+import { DateFormat } from 'global/utils/dates/types';
 import { APPLICATIONS_PATH } from 'global/constants/internalPaths';
 import {
   ApplicationRecord,
@@ -35,6 +34,7 @@ import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { css } from '@icgc-argo/uikit';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import router from 'next/router';
+import { getFormattedDate } from 'global/utils/dates/helpers';
 
 export const stringifySort = (sortArr: ApplicationsSort[]) =>
   sortArr.map(({ field, order }) => `${field}:${order}`).join(', ');
@@ -141,7 +141,7 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
           `}
         >
           {original.accessExpiry
-            ? formatDate(new Date(original.accessExpiry), DATE_RANGE_DISPLAY_FORMAT)
+            ? getFormattedDate(original.accessExpiry, DateFormat.DATE_RANGE_DISPLAY_FORMAT)
             : null}
         </div>
       );
@@ -153,7 +153,7 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
     accessor: 'lastUpdated',
     Cell: ({ original }: { original: ApplicationRecord }) =>
       original.lastUpdated
-        ? formatDate(new Date(original.lastUpdated), DATE_RANGE_DISPLAY_FORMAT)
+        ? getFormattedDate(original.lastUpdated, DateFormat.DATE_RANGE_DISPLAY_FORMAT)
         : null,
   },
   {
