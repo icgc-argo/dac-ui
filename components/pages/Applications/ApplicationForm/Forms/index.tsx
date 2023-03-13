@@ -44,13 +44,13 @@ import { getConfig } from 'global/config';
 import Link from '@icgc-argo/uikit/Link';
 import ApplicationHistoryModal from './ApplicationHistoryModal';
 import { SetLastUpdated } from '../types';
-import { format } from 'date-fns';
-import { DATE_TEXT_FORMAT } from 'global/constants';
+import { DateFormat } from 'global/utils/dates/types';
 
 import { AxiosError } from 'axios';
 import { useAuthContext } from 'global/hooks';
 import urlJoin from 'url-join';
 import { API, APPLICATIONS_PATH } from 'global/constants';
+import { getFormattedDate } from 'global/utils/dates/helpers';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -227,9 +227,9 @@ const ApplicationFormsBase = ({
                   margin-left: 10px;
                 `}
               >
-                {`Annual Attestation is required by ${format(
-                  new Date(attestationByUtc),
-                  DATE_TEXT_FORMAT,
+                {`Annual Attestation is required by ${getFormattedDate(
+                  attestationByUtc,
+                  DateFormat.DATE_TEXT_FORMAT,
                 )} or access will be paused`}
               </div>
             }

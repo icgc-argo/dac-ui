@@ -25,14 +25,14 @@ import Typography from '@icgc-argo/uikit/Typography';
 
 import DashboardCard from '../../Card';
 import ProgressBar from '../../../../../ApplicationProgressBar';
-import { TIME_AND_DATE_FORMAT } from './constants';
-import { getFormattedDate, getStatusText } from './helpers';
+import { DateFormat } from 'global/utils/dates/types';
+import { getStatusText } from './helpers';
 import ButtonGroup from './ButtonGroup';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
-import { DATE_TEXT_FORMAT } from 'global/constants';
 import { ApplicationSummary } from 'components/pages/Applications/types';
 
 import { getConfig } from 'global/config';
+import { getFormattedDate, isRenewalPeriodEnded } from 'global/utils/dates/helpers';
 
 export interface StatusDates {
   lastUpdatedAtUtc: string;
@@ -43,7 +43,95 @@ export interface StatusDates {
   attestedAtUtc: string;
   attestationByUtc: string;
   lastPausedAtUtc?: string;
+  expiresAtUtc: string;
 }
+
+const getStatusDate = (application: ApplicationSummary): any => {
+  const {
+    state,
+    expiresAtUtc,
+    closedAtUtc,
+    approvedAtUtc,
+    attestationByUtc,
+    isAttestable,
+    ableToRenew,
+    lastPausedAtUtc,
+    renewalAppId,
+    expiredEventDateUtc,
+  } = application;
+  switch (true) {
+    case state === ApplicationState.PAUSED:
+      return (
+        <div
+          css={(theme) => css`
+            color: ${theme.colors.error};
+          `}
+        >
+          {`! Access Paused: ${getFormattedDate(
+            lastPausedAtUtc || attestationByUtc,
+            DateFormat.DATE_TEXT_FORMAT,
+          )}`}
+        </div>
+      );
+      break;
+    case isAttestable:
+      return (
+        <div
+          css={(theme) => css`
+            color: ${theme.colors.error};
+          `}
+        >{`! Access Pausing: ${getFormattedDate(
+          attestationByUtc,
+          DateFormat.DATE_TEXT_FORMAT,
+        )}`}</div>
+      );
+      break;
+    case state === ApplicationState.EXPIRED:
+      return (
+        <div
+          css={(theme) => css`
+            color: ${theme.colors.error};
+          `}
+        >
+          {`! Access Expired: ${getFormattedDate(
+            expiredEventDateUtc || expiresAtUtc,
+            DateFormat.DATE_TEXT_FORMAT,
+          )}`}
+        </div>
+      );
+      break;
+    // ableToRenew becomes false once a renewal is created, but we still want to display the "Expiring" text state
+    case ableToRenew || (renewalAppId && state === ApplicationState.APPROVED):
+      return (
+        <div
+          css={(theme) => css`
+            color: ${theme.colors.error};
+          `}
+        >{`! Access Expiring: ${getFormattedDate(expiresAtUtc, DateFormat.DATE_TEXT_FORMAT)}`}</div>
+      );
+      break;
+    case expiresAtUtc && !closedAtUtc:
+      return (
+        <div
+          css={(theme) => css`
+            color: ${theme.colors.secondary};
+          `}
+        >{`Access Expiry: ${getFormattedDate(expiresAtUtc, DateFormat.DATE_TEXT_FORMAT)}`}</div>
+      );
+      break;
+    case !!closedAtUtc && !!approvedAtUtc:
+      return (
+        <div
+          css={(theme) => css`
+            color: ${theme.colors.error};
+          `}
+        >{`Access Expired: ${getFormattedDate(closedAtUtc, DateFormat.DATE_TEXT_FORMAT)}`}</div>
+      );
+      break;
+    default:
+      return null;
+  }
+};
 
 const InProgress = ({ application }: { application: ApplicationSummary }) => {
   const theme = useTheme();
@@ -55,49 +143,22 @@ const InProgress = ({ application }: { application: ApplicationSummary }) => {
       info: { primaryAffiliation },
     },
     state,
-    expiresAtUtc,
     lastUpdatedAtUtc,
-    closedAtUtc,
     approvedAtUtc,
     revisionsRequested,
-    attestationByUtc,
     isAttestable,
+    ableToRenew,
+    renewalAppId,
+    expiresAtUtc,
   } = application;
 
-  const statusDate =
-    state === ApplicationState.PAUSED ? (
-      <div
-        css={css`
-          color: ${theme.colors.error};
-        `}
-      >
-        {`! Access Paused: ${getFormattedDate(
-          application.lastPausedAtUtc || application.attestationByUtc,
-          DATE_TEXT_FORMAT,
-        )}`}
-      </div>
-    ) : isAttestable ? (
-      <div
-        css={css`
-          color: ${theme.colors.error};
-        `}
-      >{`! Access Pausing: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
-    ) : expiresAtUtc && !closedAtUtc ? (
-      <div
-        css={css`
-          color: ${theme.colors.secondary};
-        `}
-      >{`Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`}</div>
-    ) : closedAtUtc && approvedAtUtc ? (
-      <div
-        css={css`
-          color: ${theme.colors.error};
-        `}
-      >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
-    ) : null;
-
+  const statusDate = getStatusDate(application);
   const statusError =
     isAttestable ||
+    ableToRenew ||
+    (renewalAppId &&
+      [ApplicationState.APPROVED, ApplicationState.EXPIRED].includes(state) &&
+      !isRenewalPeriodEnded(expiresAtUtc)) ||
     state === ApplicationState.PAUSED ||
     (revisionsRequested &&
       [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state));
@@ -135,7 +196,8 @@ const InProgress = ({ application }: { application: ApplicationSummary }) => {
             </span>
           </div>
           <div>
-            <b>Last Updated:</b> {getFormattedDate(lastUpdatedAtUtc, TIME_AND_DATE_FORMAT)}
+            <b>Last Updated:</b>{' '}
+            {getFormattedDate(lastUpdatedAtUtc, DateFormat.TIME_AND_DATE_FORMAT)}
           </div>
         </Typography>
 
@@ -154,7 +216,12 @@ const InProgress = ({ application }: { application: ApplicationSummary }) => {
               min-width: 160px;
             `}
           >
-            <ButtonGroup appId={appId} state={state} requiresAttestation={isAttestable} />
+            <ButtonGroup
+              appId={appId}
+              state={state}
+              requiresAttestation={isAttestable}
+              ableToRenew={ableToRenew}
+            />
           </div>
           <div
             css={css`

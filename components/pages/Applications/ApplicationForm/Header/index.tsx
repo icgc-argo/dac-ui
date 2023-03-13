@@ -19,10 +19,11 @@
 
 import { Dispatch, ReactElement, SetStateAction } from 'react';
 import { format } from 'date-fns';
+import styled from '@emotion/styled-base';
 import { css } from '@icgc-argo/uikit';
 import { UikitTheme } from '@icgc-argo/uikit/index';
 import PageHeader from 'components/PageHeader';
-import { DATE_TEXT_FORMAT } from 'global/constants';
+import { DateFormat } from 'global/utils/dates/types';
 import Actions from './Actions';
 import Details from './Details';
 import Progress from './Progress';
@@ -30,7 +31,7 @@ import { RefetchDataFunction } from '../Forms/types';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ApplicationData } from '../../types';
 import { isPastExpiry } from '../Forms/helpers';
-import styled from '@emotion/styled-base';
+import { getFormattedDate } from 'global/utils/dates/helpers';
 
 export type ApplicationAccessInfo = { date?: string; isWarning: boolean; status: string };
 
@@ -132,6 +133,7 @@ const ApplicationHeader = ({
     isAttestable,
     ableToRenew,
     isRenewal,
+    expiredEventDateUtc,
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
@@ -158,8 +160,12 @@ const ApplicationHeader = ({
         <Details
           appId={appId}
           applicant={applicant}
-          createdAt={format(new Date(createdAtUtc), DATE_TEXT_FORMAT)}
-          lastUpdated={format(new Date(lastUpdatedAtUtc), DATE_TEXT_FORMAT + ' h:mm aaaa')}
+          createdAt={getFormattedDate(createdAtUtc, DateFormat.DATE_TEXT_FORMAT)}
+          // using format() here because DATE_TEXT_FORMAT + ' h:mm aaaa' was not added as a DateFormat enum, may be removed/replaced by TIME_AND_DATE_FORMAT
+          lastUpdated={format(
+            new Date(lastUpdatedAtUtc),
+            DateFormat.DATE_TEXT_FORMAT + ' h:mm aaaa',
+          )}
           accessInfo={accessInfo}
         />
 

@@ -115,6 +115,8 @@ export type ApplicationSummary = {
   lastPausedAtUtc?: string;
   isRenewal: boolean;
   ableToRenew: boolean;
+  renewalAppId?: string;
+  expiredEventDateUtc?: string;
 };
 
 export type ApplicationDataByField = {
@@ -309,6 +311,7 @@ export interface ApplicationData {
   attestationByUtc?: string;
   lastPausedAtUtc?: string;
   updates: ApplicationUpdate[] | UserViewApplicationUpdate[];
+  expiredEventDateUtc?: string;
   sections: {
     applicant: Individual;
     representative: Representative;
