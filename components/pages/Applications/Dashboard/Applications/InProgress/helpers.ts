@@ -22,9 +22,9 @@ import { format as formatDate } from 'date-fns';
 
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ApplicationSummary } from 'components/pages/Applications/types';
-import { DATE_TEXT_FORMAT } from 'global/constants';
+import { DateFormat } from 'global/utils/dates/types';
 import { StatusDates } from '.';
-import { getRenewalPeriodEndDate, isRenewalPeriodEnded } from 'global/utils/dates/helpers';
+import { getFormattedDate, getRenewalPeriodEndDate, isRenewalPeriodEnded } from 'global/utils/dates/helpers';
 
 export const getStatusText = (application: ApplicationSummary) => {
   const {
@@ -49,7 +49,7 @@ export const getStatusText = (application: ApplicationSummary) => {
     ]),
   };
   const formatStatusDate = (date: string) =>
-    formatDate(new Date(date || dates.lastUpdatedAtUtc), DATE_TEXT_FORMAT);
+    formatDate(new Date(date || dates.lastUpdatedAtUtc), DateFormat.DATE_TEXT_FORMAT);
 
   const revisionsRequestedText = `Reopened for revisions on ${formatStatusDate(
     dates.lastUpdatedAtUtc,
@@ -58,12 +58,14 @@ export const getStatusText = (application: ApplicationSummary) => {
 
   switch (state) {
     case ApplicationState.APPROVED:
-      const approvedAppRenewalEndDate = formatStatusDate(
-        getRenewalPeriodEndDate(dates.expiresAtUtc),
-      );
+      const approvedAppRenewalEndDate = getFormattedDate(
+            getRenewalPeriodEndDate(dates.expiresAtUtc),
+            DateFormat.DATE_TEXT_FORMAT,
+          );
       return isAttestable
-        ? `An annual attestation is required for this application. Access for this project team will be paused on ${formatStatusDate(
+        ? `An annual attestation is required for this application. Access for this project team will be paused on ${getFormattedDate(
             dates.attestationByUtc,
+            DateFormat.DATE_TEXT_FORMAT,
           )} until you submit your attestation.`
         : ableToRenew
         ? `Access is expiring soon. To extend your access privileges for another two years, please renew this application by ${approvedAppRenewalEndDate}.`
@@ -95,8 +97,9 @@ export const getStatusText = (application: ApplicationSummary) => {
         dates.lastPausedAtUtc || dates.attestationByUtc,
       )}. Access for this project team will resume once you submit the annual attestation for this application.`;
     case ApplicationState.EXPIRED:
-      const expiredAppRenewalEndDate = formatStatusDate(
+      const expiredAppRenewalEndDate = getFormattedDate(
         getRenewalPeriodEndDate(dates.expiresAtUtc),
+        DateFormat.DATE_TEXT_FORMAT,
       );
       return ableToRenew
         ? `Access has expired. To extend your access privileges for another two years, please renew this application by ${expiredAppRenewalEndDate}.`
@@ -107,6 +110,3 @@ export const getStatusText = (application: ApplicationSummary) => {
       return '';
   }
 };
-
-export const getFormattedDate = (date: string | number | Date, format: string) =>
-  date ? formatDate(new Date(date), format) : '';

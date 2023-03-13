@@ -25,15 +25,14 @@ import Typography from '@icgc-argo/uikit/Typography';
 
 import DashboardCard from '../../Card';
 import ProgressBar from '../../../../../ApplicationProgressBar';
-import { TIME_AND_DATE_FORMAT } from './constants';
-import { getFormattedDate, getStatusText } from './helpers';
+import { DateFormat } from 'global/utils/dates/types';
+import { getStatusText } from './helpers';
 import ButtonGroup from './ButtonGroup';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
-import { DATE_TEXT_FORMAT } from 'global/constants';
 import { ApplicationSummary } from 'components/pages/Applications/types';
 
 import { getConfig } from 'global/config';
-import { isRenewalPeriodEnded } from 'global/utils/dates/helpers';
+import { getFormattedDate, isRenewalPeriodEnded } from 'global/utils/dates/helpers';
 
 export interface StatusDates {
   lastUpdatedAtUtc: string;
@@ -58,6 +57,7 @@ const getStatusDate = (application: ApplicationSummary): any => {
     ableToRenew,
     lastPausedAtUtc,
     renewalAppId,
+    expiredEventDateUtc,
   } = application;
   switch (true) {
     case state === ApplicationState.PAUSED:
@@ -69,7 +69,7 @@ const getStatusDate = (application: ApplicationSummary): any => {
         >
           {`! Access Paused: ${getFormattedDate(
             lastPausedAtUtc || attestationByUtc,
-            DATE_TEXT_FORMAT,
+            DateFormat.DATE_TEXT_FORMAT,
           )}`}
         </div>
       );
@@ -80,7 +80,10 @@ const getStatusDate = (application: ApplicationSummary): any => {
           css={(theme) => css`
             color: ${theme.colors.error};
           `}
-        >{`! Access Pausing: ${getFormattedDate(attestationByUtc, DATE_TEXT_FORMAT)}`}</div>
+        >{`! Access Pausing: ${getFormattedDate(
+          attestationByUtc,
+          DateFormat.DATE_TEXT_FORMAT,
+        )}`}</div>
       );
       break;
     case state === ApplicationState.EXPIRED:
@@ -90,7 +93,10 @@ const getStatusDate = (application: ApplicationSummary): any => {
             color: ${theme.colors.error};
           `}
         >
-          {`! Access Expired: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`}
+          {`! Access Expired: ${getFormattedDate(
+            expiredEventDateUtc || expiresAtUtc,
+            DateFormat.DATE_TEXT_FORMAT,
+          )}`}
         </div>
       );
       break;
@@ -101,7 +107,7 @@ const getStatusDate = (application: ApplicationSummary): any => {
           css={(theme) => css`
             color: ${theme.colors.error};
           `}
-        >{`! Access Expiring: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`}</div>
+        >{`! Access Expiring: ${getFormattedDate(expiresAtUtc, DateFormat.DATE_TEXT_FORMAT)}`}</div>
       );
       break;
     case expiresAtUtc && !closedAtUtc:
@@ -110,7 +116,7 @@ const getStatusDate = (application: ApplicationSummary): any => {
           css={(theme) => css`
             color: ${theme.colors.secondary};
           `}
-        >{`Access Expiry: ${getFormattedDate(expiresAtUtc, DATE_TEXT_FORMAT)}`}</div>
+        >{`Access Expiry: ${getFormattedDate(expiresAtUtc, DateFormat.DATE_TEXT_FORMAT)}`}</div>
       );
       break;
     case !!closedAtUtc && !!approvedAtUtc:
@@ -119,7 +125,7 @@ const getStatusDate = (application: ApplicationSummary): any => {
           css={(theme) => css`
             color: ${theme.colors.error};
           `}
-        >{`Access Expired: ${getFormattedDate(closedAtUtc, DATE_TEXT_FORMAT)}`}</div>
+        >{`Access Expired: ${getFormattedDate(closedAtUtc, DateFormat.DATE_TEXT_FORMAT)}`}</div>
       );
       break;
     default:
@@ -195,7 +201,8 @@ const InProgress = ({ application }: { application: ApplicationSummary }) => {
             </span>
           </div>
           <div>
-            <b>Last Updated:</b> {getFormattedDate(lastUpdatedAtUtc, TIME_AND_DATE_FORMAT)}
+            <b>Last Updated:</b>{' '}
+            {getFormattedDate(lastUpdatedAtUtc, DateFormat.TIME_AND_DATE_FORMAT)}
           </div>
         </Typography>
 
