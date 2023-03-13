@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { ReactElement, useCallback, useEffect, useState } from 'react';
+import { Fragment, ReactElement, useCallback, useEffect, useState } from 'react';
 import router, { useRouter } from 'next/router';
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
@@ -50,7 +50,7 @@ import { AxiosError } from 'axios';
 import { useAuthContext } from 'global/hooks';
 import urlJoin from 'url-join';
 import { API, APPLICATIONS_PATH } from 'global/constants';
-import { getFormattedDate } from 'global/utils/dates/helpers';
+import { getFormattedDate, getRenewalPeriodEndDate } from 'global/utils/dates/helpers';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -83,31 +83,53 @@ const getActiveSection = (sectionFromQuery?: FormSectionNames): FormSectionNames
 
 const ApplicationFormsBase = ({
   appId = 'none',
-  applicationState,
+  appData,
+  // applicationState,
   setLastUpdated,
   isLoading,
   formState,
   validateSection,
-  sectionData,
-  isAttestable,
-  attestedAtUtc,
-  attestationByUtc = '',
+  // sectionData,
+  // isAttestable,
+  // attestedAtUtc,
+  // attestationByUtc = '',
   isAdmin,
   refetchAllData,
-}: {
+}: // isRenewal,
+// renewalAppId,
+// sourceAppId,
+// renewalPeriodEndDate,
+{
   appId: string;
-  applicationState: ApplicationState;
+  appData: ApplicationData;
+  // applicationState: ApplicationState;
   setLastUpdated: SetLastUpdated;
   isLoading: boolean;
   formState: FormValidationStateParameters;
   validateSection: FormSectionValidatorFunction_Origin;
-  sectionData: ApplicationData['sections'];
-  isAttestable: boolean;
-  attestedAtUtc?: string;
-  attestationByUtc?: string;
+  // sectionData: ApplicationData['sections'];
+  // isAttestable: boolean;
+  // attestedAtUtc?: string;
+  // attestationByUtc?: string;
   isAdmin: boolean;
   refetchAllData: any;
+  // isRenewal: boolean;
+  // renewalAppId?: string;
+  // sourceAppId?: string;
+  // renewalPeriodEndDate?: string;
 }): ReactElement => {
+  const {
+    sections: sectionData,
+    state: applicationState,
+    isAttestable,
+    attestedAtUtc,
+    attestationByUtc,
+    isRenewal,
+    renewalAppId,
+    sourceAppId,
+    renewalPeriodEndDateUtc,
+    expiresAtUtc,
+  } = appData;
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
   const [showSuccessfulAttestation, setShowSuccessfulAttestation] = useState(false);
   const { fetchWithAuth } = useAuthContext();
@@ -197,7 +219,7 @@ const ApplicationFormsBase = ({
     );
   };
 
-  const handleSubmitAttestion = () => {
+  const handleSubmitAttestation = () => {
     fetchWithAuth({
       data: {
         isAttesting: true,
@@ -218,6 +240,7 @@ const ApplicationFormsBase = ({
   return (
     <>
       <ContentBody>
+        {/* attestation required */}
         {requiresAttestation && !isAdmin && (
           <Notification
             title={
@@ -228,7 +251,7 @@ const ApplicationFormsBase = ({
                 `}
               >
                 {`Annual Attestation is required by ${getFormattedDate(
-                  attestationByUtc,
+                  attestationByUtc as string,
                   DateFormat.DATE_TEXT_FORMAT,
                 )} or access will be paused`}
               </div>
@@ -273,7 +296,7 @@ const ApplicationFormsBase = ({
                     margin-bottom: 13px;
                   `}
                   size="sm"
-                  onClick={handleSubmitAttestion}
+                  onClick={handleSubmitAttestation}
                 >
                   I ATTEST TO THE ABOVE TERMS
                 </Button>
@@ -285,6 +308,47 @@ const ApplicationFormsBase = ({
           />
         )}
 
+        {/* renewal banners, applicant view only */}
+        {!isAdmin && (
+          <Fragment>
+            {
+              /* renewal app, renewal period open */
+              isRenewal &&
+                [ApplicationState.DRAFT, ApplicationState.SIGN_AND_SUBMIT].includes(
+                  applicationState,
+                ) && (
+                  <Notification
+                    variant="WARNING"
+                    interactionType="NONE"
+                    title={`Submit application renewal by ${getFormattedDate(
+                      new Date(renewalPeriodEndDateUtc || getRenewalPeriodEndDate(expiresAtUtc)),
+                      DateFormat.DATE_TEXT_FORMAT,
+                    )} to continue DACO access`}
+                    content={`Some fields have been pre-populated with data from your previous application, ${sourceAppId}. Please go through each section carefully, update as needed and re-agree to the data access agreements and appendices before submitting your new application renewal.`}
+                    css={notificationStyle}
+                  />
+                )
+            }
+            {
+              /* renewal app, renewal period closed.
+          check for sourceAppId as well to differentiate from a manually closed renewal app */
+              // isRenewal && sourceAppId && applicationState === ApplicationState.CLOSED && (
+              true && (
+                <Notification
+                  variant="INFO"
+                  interactionType="NONE"
+                  title={`Renewal application has been closed`}
+                  content="The due date for this renewal has passed and the application is now closed. If you wish to extend your access privileges for another two years, please start a new application."
+                  css={notificationStyle}
+                />
+              )
+            }
+            {/* source app, renewal created + renewal period open */}
+            {/* source app, renewal created + renewal period closed */}
+          </Fragment>
+        )}
+
+        {/* success banners */}
         {showSuccessfulAttestation && (
           <Notification
             title="Your Annual Attestation has been Submitted"
@@ -300,7 +364,6 @@ const ApplicationFormsBase = ({
             css={notificationStyle}
           />
         )}
-
         {JSON.parse(localStorage.getItem(SUBMISSION_SUCCESS_CHECK) || 'false') &&
           [ApplicationState.REVIEW].includes(applicationState) && (
             <Notification
@@ -354,6 +417,7 @@ const ApplicationFormsBase = ({
             css={notificationStyle}
           />
         )}
+
         <ContentBox
           css={css`
             box-sizing: border-box;
