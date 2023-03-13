@@ -153,15 +153,21 @@ const InProgress = ({ application }: { application: ApplicationSummary }) => {
   } = application;
 
   const statusDate = getStatusDate(application);
+  const renewalPeriodEnded = isRenewalPeriodEnded(expiresAtUtc);
+
   const statusError =
     isAttestable ||
     ableToRenew ||
     (renewalAppId &&
       [ApplicationState.APPROVED, ApplicationState.EXPIRED].includes(state) &&
-      !isRenewalPeriodEnded(expiresAtUtc)) ||
+      !renewalPeriodEnded) ||
     state === ApplicationState.PAUSED ||
     (revisionsRequested &&
       [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state));
+
+  const showReport =
+    (state === ApplicationState.EXPIRED && renewalPeriodEnded) ||
+    (approvedAtUtc && state === ApplicationState.CLOSED);
 
   return (
     <DashboardCard title={`Application: ${appId}`} subtitle={primaryAffiliation} info={statusDate}>
@@ -170,8 +176,7 @@ const InProgress = ({ application }: { application: ApplicationSummary }) => {
           margin-top: 5px;
         `}
       >
-        <ProgressBar state={state} />
-
+        <ProgressBar state={state} expiryDate={expiresAtUtc} />
         <Typography
           variant="data"
           as="div"
@@ -228,7 +233,7 @@ const InProgress = ({ application }: { application: ApplicationSummary }) => {
               max-width: 330px;
             `}
           >
-            {approvedAtUtc && state === ApplicationState.CLOSED && (
+            {showReport && (
               <div
                 css={(theme) => css`
                   padding: 6px 10px 6px 14px;

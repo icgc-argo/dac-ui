@@ -24,7 +24,7 @@ import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ApplicationSummary } from 'components/pages/Applications/types';
 import { DateFormat } from 'global/utils/dates/types';
 import { StatusDates } from '.';
-import { getFormattedDate, getRenewalPeriodEndDate } from 'global/utils/dates/helpers';
+import { getFormattedDate, getRenewalPeriodEndDate, isRenewalPeriodEnded } from 'global/utils/dates/helpers';
 
 export const getStatusText = (application: ApplicationSummary) => {
   const {
@@ -58,16 +58,19 @@ export const getStatusText = (application: ApplicationSummary) => {
 
   switch (state) {
     case ApplicationState.APPROVED:
+      const approvedAppRenewalEndDate = getFormattedDate(
+            getRenewalPeriodEndDate(dates.expiresAtUtc),
+            DateFormat.DATE_TEXT_FORMAT,
+          );
       return isAttestable
         ? `An annual attestation is required for this application. Access for this project team will be paused on ${getFormattedDate(
             dates.attestationByUtc,
             DateFormat.DATE_TEXT_FORMAT,
           )} until you submit your attestation.`
-        : ableToRenew || (renewalAppId && state === ApplicationState.APPROVED)
-        ? `Access is expiring soon. To extend your access privileges for another two years, please renew this application by ${getFormattedDate(
-            getRenewalPeriodEndDate(dates.expiresAtUtc),
-            DateFormat.DATE_TEXT_FORMAT,
-          )}.`
+        : ableToRenew
+        ? `Access is expiring soon. To extend your access privileges for another two years, please renew this application by ${approvedAppRenewalEndDate}.`
+        : renewalAppId
+        ? `An application renewal has been created. Please complete application ${renewalAppId} to extend your access privileges for another two years. This must be completed by ${approvedAppRenewalEndDate}.`
         : `Approved on ${formatStatusDate(
             dates.approvedAtUtc,
           )}. You now have access to ICGC Controlled Data.`;
@@ -94,14 +97,14 @@ export const getStatusText = (application: ApplicationSummary) => {
         dates.lastPausedAtUtc || dates.attestationByUtc,
       )}. Access for this project team will resume once you submit the annual attestation for this application.`;
     case ApplicationState.EXPIRED:
-      const renewalEndDate = getFormattedDate(
+      const expiredAppRenewalEndDate = getFormattedDate(
         getRenewalPeriodEndDate(dates.expiresAtUtc),
         DateFormat.DATE_TEXT_FORMAT,
       );
       return ableToRenew
-        ? `Access has expired. To extend your access privileges for another two years, please renew this application by ${renewalEndDate}.`
-        : renewalAppId
-        ? `An application renewal has been created. Please complete application ${renewalAppId} to extend your access privileges for another two years. This must be completed by ${renewalEndDate}.`
+        ? `Access has expired. To extend your access privileges for another two years, please renew this application by ${expiredAppRenewalEndDate}.`
+        : renewalAppId && !isRenewalPeriodEnded(dates.expiresAtUtc)
+        ? `An application renewal has been created. Please complete application ${renewalAppId} to extend your access privileges for another two years. This must be completed by ${expiredAppRenewalEndDate}.`
         : 'The renewal period for this application has ended. If you have not completed a renewal application, you will need to start a new application to gain access privileges for another two years.';
     default:
       return '';
