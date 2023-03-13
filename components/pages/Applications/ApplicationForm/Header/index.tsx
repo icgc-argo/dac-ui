@@ -136,6 +136,7 @@ const ApplicationHeader = ({
           appId={appId}
           applicant={applicant}
           createdAt={getFormattedDate(createdAtUtc, DateFormat.DATE_TEXT_FORMAT)}
+          // using format() here because DATE_TEXT_FORMAT + ' h:mm aaaa' was not added as a DateFormat enum, may be removed/replaced by TIME_AND_DATE_FORMAT
           lastUpdated={format(
             new Date(lastUpdatedAtUtc),
             DateFormat.DATE_TEXT_FORMAT + ' h:mm aaaa',
