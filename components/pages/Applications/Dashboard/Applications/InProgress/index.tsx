@@ -33,6 +33,7 @@ import { ApplicationSummary } from 'components/pages/Applications/types';
 
 import { getConfig } from 'global/config';
 import { getFormattedDate, isRenewalPeriodEnded } from 'global/utils/dates/helpers';
+import { parseISO } from 'date-fns';
 
 export interface StatusDates {
   lastUpdatedAtUtc: string;
@@ -58,6 +59,8 @@ const getStatusDate = (application: ApplicationSummary): any => {
     lastPausedAtUtc,
     renewalAppId,
     expiredEventDateUtc,
+    sourceAppId,
+    renewalPeriodEndDateUtc,
   } = application;
   switch (true) {
     case state === ApplicationState.PAUSED:
@@ -109,6 +112,29 @@ const getStatusDate = (application: ApplicationSummary): any => {
           `}
         >{`! Access Expiring: ${getFormattedDate(expiresAtUtc, DateFormat.DATE_TEXT_FORMAT)}`}</div>
       );
+      break;
+    // TODO: discuss if this status date is necessary and, if so, what should the text be?
+    case !!sourceAppId &&
+      [
+        ApplicationState.DRAFT,
+        ApplicationState.SIGN_AND_SUBMIT,
+        ApplicationState.REVISIONS_REQUESTED,
+      ].includes(state):
+      if (
+        renewalPeriodEndDateUtc &&
+        parseISO(renewalPeriodEndDateUtc).toString() !== 'Invalid Date'
+      ) {
+        return (
+          <div
+            css={(theme) => css`
+              color: ${theme.colors.error};
+            `}
+          >{`! Renewal Expiring: ${getFormattedDate(
+            renewalPeriodEndDateUtc,
+            DateFormat.DATE_TEXT_FORMAT,
+          )}`}</div>
+        );
+      }
       break;
     case expiresAtUtc && !closedAtUtc:
       return (
