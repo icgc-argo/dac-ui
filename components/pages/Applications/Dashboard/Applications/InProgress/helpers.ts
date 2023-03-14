@@ -24,7 +24,11 @@ import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ApplicationSummary } from 'components/pages/Applications/types';
 import { DateFormat } from 'global/utils/dates/types';
 import { StatusDates } from '.';
-import { getFormattedDate, getRenewalPeriodEndDate, isRenewalPeriodEnded } from 'global/utils/dates/helpers';
+import {
+  getFormattedDate,
+  getRenewalPeriodEndDate,
+  isRenewalPeriodEnded,
+} from 'global/utils/dates/helpers';
 
 export const getStatusText = (application: ApplicationSummary) => {
   const {
@@ -34,6 +38,9 @@ export const getStatusText = (application: ApplicationSummary) => {
     revisionsRequested,
     ableToRenew,
     renewalAppId,
+    isRenewal,
+    renewalPeriodEndDateUtc,
+    sourceAppId,
   } = application;
   const dates: StatusDates = {
     lastUpdatedAtUtc,
@@ -48,10 +55,13 @@ export const getStatusText = (application: ApplicationSummary) => {
       'expiresAtUtc',
     ]),
   };
+
   const formatStatusDate = (date: string) =>
     formatDate(new Date(date || dates.lastUpdatedAtUtc), DateFormat.DATE_TEXT_FORMAT);
 
-  const revisionsRequestedText = `Reopened for revisions on ${formatStatusDate(
+  const revisionsRequestedText = `${
+    isRenewal ? 'Renewal reopened' : 'Reopened'
+  } for revisions on ${formatStatusDate(
     dates.lastUpdatedAtUtc,
   )}. Revision details were sent via email.`;
   const createdOnText = `Created on ${formatStatusDate(dates.createdAtUtc)}.`;
@@ -59,9 +69,9 @@ export const getStatusText = (application: ApplicationSummary) => {
   switch (state) {
     case ApplicationState.APPROVED:
       const approvedAppRenewalEndDate = getFormattedDate(
-            getRenewalPeriodEndDate(dates.expiresAtUtc),
-            DateFormat.DATE_TEXT_FORMAT,
-          );
+        getRenewalPeriodEndDate(dates.expiresAtUtc),
+        DateFormat.DATE_TEXT_FORMAT,
+      );
       return isAttestable
         ? `An annual attestation is required for this application. Access for this project team will be paused on ${getFormattedDate(
             dates.attestationByUtc,
@@ -75,9 +85,27 @@ export const getStatusText = (application: ApplicationSummary) => {
             dates.approvedAtUtc,
           )}. You now have access to ICGC Controlled Data.`;
     case ApplicationState.SIGN_AND_SUBMIT:
-      return revisionsRequested ? revisionsRequestedText : createdOnText;
+      return revisionsRequested
+        ? revisionsRequestedText
+        : isRenewal
+        ? `Renewal created on ${formatStatusDate(
+            dates.createdAtUtc,
+          )} from ${sourceAppId}. Please submit this application for review ${
+            renewalPeriodEndDateUtc
+              ? `by ${getFormattedDate(renewalPeriodEndDateUtc, DateFormat.DATE_TEXT_FORMAT)}`
+              : ''
+          } to extend your access for another two years.`
+        : createdOnText;
     case ApplicationState.DRAFT:
-      return createdOnText;
+      return isRenewal
+        ? `Renewal created on ${formatStatusDate(
+            dates.createdAtUtc,
+          )} from ${sourceAppId}. Please submit this application for review ${
+            renewalPeriodEndDateUtc
+              ? `by ${getFormattedDate(renewalPeriodEndDateUtc, DateFormat.DATE_TEXT_FORMAT)}`
+              : ''
+          } to extend your access for another two years.`
+        : createdOnText;
     case ApplicationState.REVIEW:
       return `Submitted on ${formatStatusDate(
         dates.submittedAtUtc,

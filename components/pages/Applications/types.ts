@@ -116,6 +116,8 @@ export type ApplicationSummary = {
   isRenewal: boolean;
   ableToRenew: boolean;
   renewalAppId?: string;
+  sourceAppId?: string;
+  renewalPeriodEndDateUtc?: string;
   expiredEventDateUtc?: string;
 };
 
