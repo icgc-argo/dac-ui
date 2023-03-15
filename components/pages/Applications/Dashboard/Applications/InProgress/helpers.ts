@@ -117,7 +117,7 @@ export const getStatusText = (application: ApplicationSummary) => {
         dates.lastUpdatedAtUtc,
       )}. This application cannot be reopened, reasons were sent via email.`;
     case ApplicationState.CLOSED:
-      return `Closed on ${formatStatusDate(
+      return `${isRenewal ? 'Renewal closed' : 'Closed'}  on ${formatStatusDate(
         dates.closedAtUtc,
       )}. This application cannot be reopened.`;
     case ApplicationState.PAUSED:
