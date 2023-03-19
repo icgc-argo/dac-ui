@@ -46,6 +46,7 @@ module.exports = withPlugins([withTranspileModules, [withImages], [withFonts]], 
     NEXT_PUBLIC_MAINTENANCE_MODE_ON: process.env.NEXT_PUBLIC_MAINTENANCE_MODE_ON,
     NEXT_PUBLIC_DACO_SURVEY_URL: process.env.NEXT_PUBLIC_DACO_SURVEY_URL,
     NEXT_PUBLIC_DACO_EMAIL_ADDRESS: process.env.NEXT_PUBLIC_DACO_EMAIL_ADDRESS,
+    NEXT_PUBLIC_DAYS_POST_EXPIRY: process.env.NEXT_PUBLIC_DAYS_POST_EXPIRY,
   },
   ...(USE_DAC_API_PROXY
     ? {

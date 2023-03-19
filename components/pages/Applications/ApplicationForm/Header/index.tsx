@@ -186,7 +186,7 @@ const ApplicationHeader = ({
             ) : null}
           </div>
 
-          <Progress state={state} />
+          <Progress state={state} expiryDate={expiresAtUtc} />
         </div>
 
         <Actions

@@ -21,9 +21,15 @@ import { ReactElement } from 'react';
 import ProgressBar from 'components/ApplicationProgressBar';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
-const ApplicationProgress = ({ state }: { state: ApplicationState }): ReactElement => (
+const ApplicationProgress = ({
+  state,
+  expiryDate,
+}: {
+  state: ApplicationState;
+  expiryDate?: string;
+}): ReactElement => (
   <section>
-    <ProgressBar state={state} />
+    <ProgressBar state={state} expiryDate={expiryDate} />
   </section>
 );
 
