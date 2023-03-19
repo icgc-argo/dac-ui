@@ -47,6 +47,8 @@ const getAccessInfo = (data: ApplicationData) => {
     approvedAtUtc,
     closedAtUtc,
     ableToRenew,
+    expiredEventDateUtc,
+    renewalAppId,
   } = data;
   const appPastExpiry = isPastExpiry(expiresAtUtc);
   switch (true) {
@@ -60,7 +62,7 @@ const getAccessInfo = (data: ApplicationData) => {
       };
     case state === ApplicationState.EXPIRED:
       return {
-        date: expiresAtUtc,
+        date: expiredEventDateUtc || expiresAtUtc,
         isWarning: true,
         status: 'Expired',
       };
@@ -81,7 +83,7 @@ const getAccessInfo = (data: ApplicationData) => {
          * - ableToRenew is true -> this indicates the application expiry is approaching soon
          * ```
          */
-        isWarning: !!closedAtUtc || ableToRenew,
+        isWarning: !!closedAtUtc || ableToRenew || (!appPastExpiry && !!renewalAppId),
         /**```
          * Status:
          * - "Expiring" -> app has not yet expired but is within the renewal period
@@ -89,7 +91,12 @@ const getAccessInfo = (data: ApplicationData) => {
          * - "Expires" -> app is still approved and app has not reached the renewal period
          * ```
          */
-        status: ableToRenew && !appPastExpiry ? '! Expiring' : closedAtUtc ? 'Expired' : 'Expires',
+        status:
+          ableToRenew || (!appPastExpiry && !!renewalAppId)
+            ? '! Expiring'
+            : closedAtUtc
+            ? 'Expired'
+            : 'Expires',
       };
     default:
       return undefined;
@@ -133,7 +140,6 @@ const ApplicationHeader = ({
     isAttestable,
     ableToRenew,
     isRenewal,
-    expiredEventDateUtc,
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
