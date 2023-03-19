@@ -245,39 +245,21 @@ const getRenewalBanners = (appData: ApplicationData, isAdmin: boolean): ReactNod
 const ApplicationFormsBase = ({
   appId = 'none',
   appData,
-  // applicationState,
   setLastUpdated,
   isLoading,
   formState,
   validateSection,
-  // sectionData,
-  // isAttestable,
-  // attestedAtUtc,
-  // attestationByUtc = '',
   isAdmin,
   refetchAllData,
-}: // isRenewal,
-// renewalAppId,
-// sourceAppId,
-// renewalPeriodEndDate,
-{
+}: {
   appId: string;
   appData: ApplicationData;
-  // applicationState: ApplicationState;
   setLastUpdated: SetLastUpdated;
   isLoading: boolean;
   formState: FormValidationStateParameters;
   validateSection: FormSectionValidatorFunction_Origin;
-  // sectionData: ApplicationData['sections'];
-  // isAttestable: boolean;
-  // attestedAtUtc?: string;
-  // attestationByUtc?: string;
   isAdmin: boolean;
   refetchAllData: any;
-  // isRenewal: boolean;
-  // renewalAppId?: string;
-  // sourceAppId?: string;
-  // renewalPeriodEndDate?: string;
 }): ReactElement => {
   const {
     sections: sectionData,
