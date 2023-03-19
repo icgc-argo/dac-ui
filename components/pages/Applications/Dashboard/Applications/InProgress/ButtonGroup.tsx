@@ -45,16 +45,18 @@ const ButtonIcon = ({ name }: { name: UikitIconNames }) => {
   );
 };
 
-const RenewButton = ({
+export const RenewButton = ({
   children,
   appId,
   link,
-  icon,
+  icon = 'reset',
+  loadingAction = (isLoading: boolean) => console.info('Loading', isLoading),
 }: {
   children: ReactNode;
   appId: string;
   link: string;
-  icon: UikitIconNames;
+  icon?: UikitIconNames;
+  loadingAction?: any;
 }): JSX.Element => {
   const { fetchWithAuth } = useAuthContext();
   const toaster = useToaster();
@@ -63,6 +65,7 @@ const RenewButton = ({
       className="action-btns"
       size="sm"
       onClick={async () => {
+        loadingAction(true);
         await fetchWithAuth({
           url: link,
           method: 'POST',
@@ -80,7 +83,8 @@ const RenewButton = ({
               content: `There was an error while trying to create a renewal application for ${appId}. Please try again later.`,
               interactionType: 'CLOSE',
             });
-          });
+          })
+          .finally(() => loadingAction(false));
       }}
     >
       <span

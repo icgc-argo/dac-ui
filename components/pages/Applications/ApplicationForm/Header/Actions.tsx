@@ -25,9 +25,9 @@ import { UikitTheme } from '@icgc-argo/uikit/index';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import urlJoin from 'url-join';
 import { useAuthContext } from 'global/hooks';
-import { API, APPLICATIONS_PATH, APPROVED_APP_CLOSED_CHECK } from 'global/constants';
-import { AxiosError, AxiosResponse } from 'axios';
-import { ApplicationData, ApplicationState, ApprovedDoc } from '../../types';
+import { API, APPLICATIONS_PATH, APPROVED_APP_CLOSED_CHECK, RENEWAL_PATH } from 'global/constants';
+import { AxiosError } from 'axios';
+import { ApplicationState, ApprovedDoc } from '../../types';
 import { CustomLoadingButton, generatePDFDocument } from '../Forms/common';
 import { ModalPortal } from 'components/Root';
 import Modal from '@icgc-argo/uikit/Modal';
@@ -35,6 +35,7 @@ import router from 'next/router';
 import { RefetchDataFunction } from '../Forms/types';
 import Banner from '@icgc-argo/uikit/notifications/Banner';
 import { createDownloadInWindow } from 'global/utils/helpers';
+import { RenewButton } from '../../Dashboard/Applications/InProgress/ButtonGroup';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -126,7 +127,7 @@ const HeaderActions = ({
     ApplicationState.REVISIONS_REQUESTED,
     ApplicationState.APPROVED,
     ApplicationState.PAUSED,
-    ApplicationState.EXPIRED,
+    ApplicationState.EXPIRED, // TODO: remove EXPIRED state?
   ].includes(state);
 
   const isClosedPreApproval = state === ApplicationState.CLOSED && !approvedAtUtc;
@@ -197,6 +198,7 @@ const HeaderActions = ({
               </div>
             )}
           >
+            {/* TODO: do we want this warning on PAUSED applications? */}
             {isApplicationApproved && (
               <Banner
                 content={
@@ -224,49 +226,21 @@ const HeaderActions = ({
       <section
         css={css`
           display: flex;
-
+          justify-content: flex-end;
           *:not(:last-of-type) {
             margin-right: 5px;
           }
+          min-width: 300px;
         `}
       >
         {ableToRenew && (
-          <Button
-            isLoading={isFormLoading}
-            size="sm"
-            onClick={async () => {
-              // setIsAppLoading(true);
-              const url = urlJoin(API.APPLICATIONS, appId, 'renew');
-              await fetchWithAuth({
-                url,
-                method: 'POST',
-              })
-                .then(async (res: AxiosResponse) => {
-                  if (res.status === 200) {
-                    const appData: ApplicationData = res.data;
-                    router.push(urlJoin(APPLICATIONS_PATH, appData.appId, '?section=terms'));
-                  }
-                })
-                .catch((err: Error) => {
-                  console.error(err);
-                })
-                .finally(() => {
-                  // setIsAppLoading(false);
-                });
-            }}
+          <RenewButton
+            appId={appId}
+            link={urlJoin(API.APPLICATIONS, appId, RENEWAL_PATH)}
+            loadingAction={setIsAppLoading} // TODO: implement correct loading state
           >
-            <Icon
-              css={css`
-                margin-bottom: -2px;
-                transform: scaleX(-1);
-              `}
-              fill={theme.colors.white}
-              height="12px"
-              width="12px"
-              name="reset"
-            />{' '}
             Renew
-          </Button>
+          </RenewButton>
         )}
         {closeApplicationVisible && (
           <Button
@@ -294,6 +268,7 @@ const HeaderActions = ({
                 ApplicationState.APPROVED,
                 ApplicationState.REJECTED,
                 ApplicationState.CLOSED,
+                ApplicationState.EXPIRED,
               ].includes(state);
               const downloadUrl = urlJoin(
                 API.APPLICATIONS,
