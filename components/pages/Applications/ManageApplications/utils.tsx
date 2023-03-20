@@ -156,18 +156,18 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
         : null,
   },
   {
-    Header: fieldDisplayNames.type,
-    id: ApplicationsField.type,
-    accessor: 'type',
-    Cell: ({ original }: { original: ApplicationRecord }) =>
-      original.isRenewal ? 'Renewal' : 'New',
-  },
-  {
     Header: fieldDisplayNames.state,
     id: ApplicationsField.state,
     accessor: 'status',
     Cell: ({ original }: { original: ApplicationRecord }) =>
       startCase(original.status.toLowerCase()),
+  },
+  {
+    Header: fieldDisplayNames.type,
+    id: ApplicationsField.type,
+    accessor: 'type',
+    Cell: ({ original }: { original: ApplicationRecord }) =>
+      original.isRenewal ? 'Renewal' : 'New',
   },
 ];
 
