@@ -267,6 +267,7 @@ const ApplicationFormsBase = ({
     isAttestable,
     attestedAtUtc,
     attestationByUtc,
+    isRenewal,
   } = appData;
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
   const [showSuccessfulAttestation, setShowSuccessfulAttestation] = useState(false);
@@ -468,7 +469,7 @@ const ApplicationFormsBase = ({
         {JSON.parse(localStorage.getItem(SUBMISSION_SUCCESS_CHECK) || 'false') &&
           [ApplicationState.REVIEW].includes(applicationState) && (
             <Notification
-              title="Your Application has been Submitted"
+              title={`Your ${isRenewal ? 'Renewal' : ''} Application has been Submitted`}
               content="The ICGC DACO has been notified for review and you should hear back within ten business days regarding the status of your application."
               interactionType="CLOSE"
               variant="SUCCESS"
