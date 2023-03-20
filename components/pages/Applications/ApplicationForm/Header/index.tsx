@@ -140,6 +140,7 @@ const ApplicationHeader = ({
     isAttestable,
     ableToRenew,
     isRenewal,
+    expiresAtUtc,
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
