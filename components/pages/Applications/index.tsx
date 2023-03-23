@@ -54,7 +54,7 @@ const Application = (): ReactElement => {
       {isLoading ? (
         <Loader />
       ) : appId ? (
-        <ApplicationForm appId={normalisedAppId} isAdmin={isAdmin} />
+        <ApplicationForm key={appId} appId={normalisedAppId} isAdmin={isAdmin} />
       ) : isAdmin ? (
         <ManageApplications />
       ) : (

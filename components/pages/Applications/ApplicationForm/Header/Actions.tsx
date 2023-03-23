@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dispatch, ReactElement, SetStateAction, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
@@ -96,8 +96,6 @@ const HeaderActions = ({
   approvedAtUtc,
   currentApprovedDoc,
   ableToRenew,
-  setIsAppLoading,
-  isFormLoading,
 }: {
   appId: string;
   primaryAffiliation: string;
@@ -106,8 +104,6 @@ const HeaderActions = ({
   approvedAtUtc: string;
   currentApprovedDoc: ApprovedDoc | undefined;
   ableToRenew: boolean;
-  setIsAppLoading: Dispatch<SetStateAction<boolean>>;
-  isFormLoading: boolean;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();
   const { fetchWithAuth } = useAuthContext();
@@ -234,11 +230,7 @@ const HeaderActions = ({
         `}
       >
         {ableToRenew && (
-          <RenewButton
-            appId={appId}
-            link={urlJoin(API.APPLICATIONS, appId, RENEWAL_PATH)}
-            loadingAction={setIsAppLoading} // TODO: implement correct loading state
-          >
+          <RenewButton appId={appId} link={urlJoin(API.APPLICATIONS, appId, RENEWAL_PATH)}>
             Renew
           </RenewButton>
         )}

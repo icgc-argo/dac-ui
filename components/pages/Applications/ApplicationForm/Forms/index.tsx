@@ -327,10 +327,6 @@ const ApplicationFormsBase = ({
         );
   }, [formState.lastUpdatedAtUtc]);
 
-  useEffect(() => {
-    refetchAllData();
-  }, [appId]);
-
   const sectionIndex = sectionsOrder.indexOf(selectedSection);
   const sectionsAfter = enabledSections(sectionsOrder.slice(sectionIndex + 1), formState);
   const sectionsBefore = enabledSections(sectionsOrder.slice(0, sectionIndex), formState);

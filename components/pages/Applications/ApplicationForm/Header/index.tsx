@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Dispatch, ReactElement, SetStateAction } from 'react';
+import { ReactElement } from 'react';
 import { format } from 'date-fns';
 import styled from '@emotion/styled-base';
 import { css } from '@icgc-argo/uikit';
@@ -120,13 +120,9 @@ const HeaderLabel = styled('div')`
 const ApplicationHeader = ({
   data,
   refetchAllData,
-  setIsAppLoading,
-  isFormLoading,
 }: {
   data: ApplicationData;
   refetchAllData: RefetchDataFunction;
-  setIsAppLoading: Dispatch<SetStateAction<boolean>>;
-  isFormLoading: boolean;
 }): ReactElement => {
   const {
     appId,
@@ -198,8 +194,6 @@ const ApplicationHeader = ({
           approvedAtUtc={approvedAtUtc}
           currentApprovedDoc={currentApprovedDoc}
           ableToRenew={ableToRenew}
-          setIsAppLoading={setIsAppLoading}
-          isFormLoading={isFormLoading}
         />
       </div>
     </PageHeader>
