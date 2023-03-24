@@ -110,6 +110,7 @@ spec:
             when {
               anyOf {
                   branch 'develop'
+                  branch 'feature-branch/renewal-expiry'
               }
             }
             steps {
