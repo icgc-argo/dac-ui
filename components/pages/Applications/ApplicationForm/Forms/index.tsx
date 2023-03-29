@@ -19,6 +19,7 @@
 
 import { ReactElement, ReactNode, useCallback, useEffect, useState } from 'react';
 import router, { useRouter } from 'next/router';
+import { isString } from 'lodash';
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
@@ -330,10 +331,6 @@ const ApplicationFormsBase = ({
   const sectionsAfter = enabledSections(sectionsOrder.slice(sectionIndex + 1), formState);
   const sectionsBefore = enabledSections(sectionsOrder.slice(0, sectionIndex), formState);
 
-  // isAttestable being true implies that an attestationByUtc date is present
-  // but adding attestationByUtc here to make TS happy in date formatter call below
-  const requiresAttestation = isAttestable && attestationByUtc;
-
   const handleSectionChange = useCallback(
     (section: FormSectionNames) => {
       if (section !== selectedSection) {
@@ -377,7 +374,8 @@ const ApplicationFormsBase = ({
     <>
       <ContentBody>
         {/* attestation required */}
-        {requiresAttestation && !isAdmin && (
+        {/* isAttestable being true implies that an attestationByUtc date is present but adding check here to make TS happy in date formatter call below */}
+        {isAttestable && isString(attestationByUtc) && !isAdmin && (
           <Notification
             title={
               <div
