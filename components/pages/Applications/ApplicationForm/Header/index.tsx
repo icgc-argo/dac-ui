@@ -19,6 +19,7 @@
 
 import { ReactElement } from 'react';
 import { format } from 'date-fns';
+import styled from '@emotion/styled-base';
 import { css } from '@icgc-argo/uikit';
 import { UikitTheme } from '@icgc-argo/uikit/index';
 import PageHeader from 'components/PageHeader';
@@ -34,6 +35,88 @@ import { getFormattedDate } from 'global/utils/dates/helpers';
 
 export type ApplicationAccessInfo = { date?: string; isWarning: boolean; status: string };
 
+// only pass accessInfo for applications that have been approved
+// add 'status' key to allow easy string changes
+const getAccessInfo = (data: ApplicationData) => {
+  const {
+    state,
+    lastPausedAtUtc,
+    attestationByUtc,
+    expiresAtUtc,
+    isAttestable,
+    approvedAtUtc,
+    closedAtUtc,
+    ableToRenew,
+    expiredEventDateUtc,
+    renewalAppId,
+  } = data;
+  const appPastExpiry = isPastExpiry(expiresAtUtc);
+  switch (true) {
+    case state === ApplicationState.PAUSED:
+      return {
+        date:
+          // otherwise display calculated attestationBy date, the assumption is the app is paused due to missing attestation
+          lastPausedAtUtc || attestationByUtc,
+        isWarning: true,
+        status: '! Paused',
+      };
+    case state === ApplicationState.EXPIRED:
+      return {
+        date: expiredEventDateUtc || expiresAtUtc,
+        isWarning: true,
+        status: 'Expired',
+      };
+    case isAttestable:
+      return {
+        date: attestationByUtc,
+        isWarning: true,
+        status: '! Pausing',
+      };
+    // for remaining scenarios where the app has been approved.
+    case !!approvedAtUtc:
+      return {
+        date: closedAtUtc || expiresAtUtc,
+        /**
+         * ```
+         * isWarning true if:
+         * - closedAtUtc is present OR
+         * - ableToRenew is true -> this indicates the application expiry is approaching soon
+         * ```
+         */
+        isWarning: !!closedAtUtc || ableToRenew || (!appPastExpiry && !!renewalAppId),
+        /**```
+         * Status:
+         * - "Expiring" -> app has not yet expired but is within the renewal period
+         * - "Expired" -> app has been closed after approval
+         * - "Expires" -> app is still approved and app has not reached the renewal period
+         * ```
+         */
+        status:
+          ableToRenew || (!appPastExpiry && !!renewalAppId)
+            ? '! Expiring'
+            : closedAtUtc
+            ? 'Expired'
+            : 'Expires',
+      };
+    default:
+      return undefined;
+  }
+};
+
+const HeaderLabel = styled('div')`
+  ${({ theme }: { theme: UikitTheme }) => css`
+    ${theme.typography.data};
+    background: ${theme.colors.primary_1};
+    border-radius: 8px;
+    color: ${theme.colors.white};
+    font-weight: bold;
+    margin: 0 auto 10px 72px;
+    padding: 3px 8px;
+    text-align: center;
+    width: 130px;
+  `}
+`;
+
 const ApplicationHeader = ({
   data,
   refetchAllData,
@@ -45,18 +128,15 @@ const ApplicationHeader = ({
     appId,
     createdAtUtc,
     lastUpdatedAtUtc,
-    expiresAtUtc = '',
-    closedAtUtc,
     revisionsRequested,
     approvedAtUtc,
     sections: { applicant: { info: { displayName = '', primaryAffiliation = '' } = {} } = {} } = {},
     state,
     approvedAppDocs,
     isAttestable,
-    attestationByUtc,
-    lastPausedAtUtc,
     ableToRenew,
-    expiredEventDateUtc,
+    isRenewal,
+    expiresAtUtc,
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
@@ -66,59 +146,8 @@ const ApplicationHeader = ({
     revisionsRequested &&
     [ApplicationState.REVISIONS_REQUESTED, ApplicationState.SIGN_AND_SUBMIT].includes(state);
 
-  const appPastExpiry = isPastExpiry(expiresAtUtc);
+  const accessInfo = getAccessInfo(data);
 
-  // only pass accessInfo for applications that have been approved
-  // add 'status' key to allow easy string changes
-  const getAccessInfo = () => {
-    switch (true) {
-      case state === ApplicationState.PAUSED:
-        return {
-          date:
-            // otherwise display calculated attestationBy date, the assumption is the app is paused due to missing attestation
-            lastPausedAtUtc || attestationByUtc,
-          isWarning: true,
-          status: '! Paused',
-        };
-      case state === ApplicationState.EXPIRED:
-        return {
-          date: expiredEventDateUtc || expiresAtUtc,
-          isWarning: true,
-          status: 'Expired',
-        };
-      case isAttestable:
-        return {
-          date: attestationByUtc,
-          isWarning: true,
-          status: '! Pausing',
-        };
-      // for remaining scenarios where the app has been approved.
-      case !!approvedAtUtc:
-        return {
-          date: closedAtUtc || expiresAtUtc,
-          /**
-           * ```
-           * isWarning true if:
-           * - closedAtUtc is present OR
-           * - ableToRenew is true -> this indicates the application expiry is approaching soon
-           * ```
-           */
-          isWarning: !!closedAtUtc || ableToRenew,
-          /**```
-           * Status:
-           * - "Expiring" -> app has not yet expired but is within the renewal period
-           * - "Expired" -> app has been closed after approval
-           * - "Expires" -> app is still approved and app has not reached the renewal period
-           * ```
-           */
-          status:
-            ableToRenew && !appPastExpiry ? '! Expiring' : closedAtUtc ? 'Expired' : 'Expires',
-        };
-      default:
-        return undefined;
-    }
-  };
-  const accessInfo = getAccessInfo();
   return (
     <PageHeader>
       <div
@@ -144,43 +173,16 @@ const ApplicationHeader = ({
         />
 
         <div>
-          {showRevisionsRequestedFlag ? (
-            <div
-              css={(theme: UikitTheme) =>
-                css`
-                  ${theme.typography.data};
-                  background: ${theme.colors.primary_1};
-                  border-radius: 8px;
-                  color: ${theme.colors.white};
-                  font-weight: bold;
-                  margin: 0 auto 10px 72px;
-                  padding: 3px 8px;
-                  text-align: center;
-                  width: 130px;
-                `
-              }
-            >
-              Revisions Requested
-            </div>
-          ) : isAttestable ? (
-            <div
-              css={(theme: UikitTheme) =>
-                css`
-                  ${theme.typography.data};
-                  background: ${theme.colors.primary_1};
-                  border-radius: 8px;
-                  color: ${theme.colors.white};
-                  font-weight: bold;
-                  margin: 0 auto 10px 57px;
-                  padding: 3px 8px;
-                  text-align: center;
-                  width: 150px;
-                `
-              }
-            >
-              Attestation Required
-            </div>
-          ) : null}
+          <div>
+            {showRevisionsRequestedFlag ? (
+              <HeaderLabel>Revisions Requested</HeaderLabel>
+            ) : isAttestable ? (
+              <HeaderLabel>Attestation Required</HeaderLabel>
+            ) : isRenewal ? (
+              <HeaderLabel>Renewal Application</HeaderLabel>
+            ) : null}
+          </div>
+
           <Progress state={state} expiryDate={expiresAtUtc} />
         </div>
 

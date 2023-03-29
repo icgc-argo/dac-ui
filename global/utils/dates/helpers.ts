@@ -1,3 +1,5 @@
+import { ApplicationState } from 'components/ApplicationProgressBar/types';
+import { ApplicationData } from 'components/pages/Applications/types';
 import { addDays, format, isAfter } from 'date-fns';
 
 import { getConfig } from 'global/config';
@@ -19,6 +21,18 @@ export const isRenewalPeriodEnded = (expiryDate?: string): boolean => {
   const now = new Date();
   const endDate = new Date(getRenewalPeriodEndDate(expiryDate));
   return isAfter(now, endDate);
+};
+
+export const isWithinRenewalPeriod = (appData: ApplicationData): boolean => {
+  const { renewalAppId, state, ableToRenew, expiresAtUtc } = appData;
+  return (
+    ableToRenew ||
+    (!!renewalAppId &&
+      [ApplicationState.APPROVED, ApplicationState.EXPIRED, ApplicationState.PAUSED].includes(
+        state,
+      ) &&
+      !isRenewalPeriodEnded(expiresAtUtc))
+  );
 };
 
 export const getFormattedDate = (value: string | number | Date, dateFormat: DateFormat): string => {

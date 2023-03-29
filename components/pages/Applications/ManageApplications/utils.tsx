@@ -41,6 +41,10 @@ export const stringifySort = (sortArr: ApplicationsSort[]) =>
 
 export const stringifyStates = (statesArr: ApplicationState[]) => statesArr.join(',');
 
+const isValidState = (state: any): state is ApplicationState => {
+  return Object.values(ApplicationState).includes(state);
+};
+
 export const fieldDisplayNames = {
   appId: 'Application #',
   'applicant.info.primaryAffiliation': 'Institution',
@@ -136,7 +140,11 @@ export const tableColumns: TableColumnConfig<ApplicationRecord> & {
         <div
           css={css`
             color: ${theme.colors[
-              original.status === ApplicationState.CLOSED ? 'error' : 'secondary'
+              // to make ts happy for includes() call, but should check whether ApplicationRecord can be modified/replaced with more custom types as in ApplicationData
+              isValidState(original.status) &&
+              [ApplicationState.CLOSED, ApplicationState.EXPIRED].includes(original.status)
+                ? 'error'
+                : 'secondary'
             ]};
           `}
         >

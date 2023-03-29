@@ -17,8 +17,9 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { ReactElement, useCallback, useEffect, useState } from 'react';
+import { ReactElement, ReactNode, useCallback, useEffect, useState } from 'react';
 import router, { useRouter } from 'next/router';
+import { isString } from 'lodash';
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
@@ -50,7 +51,12 @@ import { AxiosError } from 'axios';
 import { useAuthContext } from 'global/hooks';
 import urlJoin from 'url-join';
 import { API, APPLICATIONS_PATH } from 'global/constants';
-import { getFormattedDate } from 'global/utils/dates/helpers';
+import {
+  getFormattedDate,
+  getRenewalPeriodEndDate,
+  isRenewalPeriodEnded,
+  isWithinRenewalPeriod,
+} from 'global/utils/dates/helpers';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -81,36 +87,191 @@ const getActiveSection = (sectionFromQuery?: FormSectionNames): FormSectionNames
       sectionsOrder[0]) as FormSectionNames);
 };
 
+const getRenewalBanners = (appData: ApplicationData, isAdmin: boolean): ReactNode => {
+  const {
+    state,
+    renewalPeriodEndDateUtc,
+    renewalAppId,
+    sourceAppId,
+    isRenewal,
+    expiresAtUtc,
+  } = appData;
+
+  switch (true) {
+    /* admin view */
+    case isAdmin:
+      // TODO: determine if admins should see any banners. Likely should have some sort of visible link to source app
+      if (isRenewal && state === ApplicationState.REVIEW) {
+        return (
+          <Notification
+            variant="INFO"
+            interactionType="NONE"
+            title={<span>Renewal application</span>}
+            content={
+              <span>
+                This is a renewal application for{' '}
+                <Link href={urlJoin(APPLICATIONS_PATH, sourceAppId)}>{sourceAppId}</Link>
+              </span>
+            }
+            css={notificationStyle}
+          />
+        );
+      }
+
+      break;
+
+    /* Renewal application scenarios */
+
+    // renewal period open, state is pre-submission
+    // assumed renewal period is still open if app is in one of these states
+    case isRenewal &&
+      [
+        ApplicationState.DRAFT,
+        ApplicationState.SIGN_AND_SUBMIT,
+        ApplicationState.REVISIONS_REQUESTED,
+      ].includes(state):
+      return (
+        <Notification
+          variant="WARNING"
+          interactionType="NONE"
+          title={`Submit application renewal by ${getFormattedDate(
+            new Date(renewalPeriodEndDateUtc || getRenewalPeriodEndDate(expiresAtUtc)),
+            DateFormat.DATE_TEXT_FORMAT,
+          )} to continue DACO access`}
+          content={
+            <span>
+              Some fields have been pre-populated with data from your previous application,{' '}
+              <Link href={urlJoin(APPLICATIONS_PATH, sourceAppId)}>{sourceAppId}</Link>. Please go
+              through each section carefully, update as needed and re-agree to the data access
+              agreements and appendices before submitting your renewal application.
+            </span>
+          }
+          css={notificationStyle}
+        />
+      );
+      break;
+
+    // renewal period ended, renewal app CLOSED by SYSTEM (still linked to source app by sourceAppId)
+    case isRenewal && sourceAppId && state === ApplicationState.CLOSED:
+      return (
+        <Notification
+          variant="INFO"
+          interactionType="NONE"
+          title={`Renewal application has been closed`}
+          content="The due date for this renewal has passed and the application is now closed. If you wish to extend your access privileges for another two years, please start a new application."
+          css={notificationStyle}
+        />
+      );
+      break;
+
+    // TODO: case isRenewal && state === ApplicationState.APPROVED - possibly show banner "this is a renewal of <source app>"
+
+    /* renewals in other states do not require banners
+      case isRenewal && state === ApplicationState.REVIEW - regular UI for in review app
+      case isRenewal && state === ApplicationState.CLOSED && !sourceAppId - regular UI for closed app
+      case isRenewal && state === ApplicationState.REJECTED - regular UI for rejected app
+    */
+
+    /* Source application scenarios */
+
+    case isWithinRenewalPeriod(appData):
+      // renewal period open, state approved, renewal created
+      // renewal period open, state expired, renewal created
+      if (!!renewalAppId) {
+        return (
+          <Notification
+            variant="WARNING"
+            interactionType="NONE"
+            title={
+              <span>
+                {'This application has been renewed under the new name: '}
+                <Link href={urlJoin(APPLICATIONS_PATH, renewalAppId)}>{renewalAppId}</Link>
+              </span>
+            }
+            content={`${
+              state === ApplicationState.EXPIRED ? 'This application has expired.' : ''
+            } Please complete application ${renewalAppId} to extend your access privileges for another two years. This must be completed by ${getFormattedDate(
+              getRenewalPeriodEndDate(expiresAtUtc),
+              DateFormat.DATE_TEXT_FORMAT,
+            )}.`}
+            css={notificationStyle}
+          />
+        );
+      }
+      break;
+
+    case state === ApplicationState.EXPIRED && isRenewalPeriodEnded(expiresAtUtc):
+      if (!renewalAppId) {
+        // renewal period closed, state expired, no renewal created
+        return (
+          <Notification
+            variant="INFO"
+            interactionType="NONE"
+            title="This application has expired"
+            content="The renewal period for this application has ended. If you have not completed a renewal application, you will need to start a new application to gain access privileges for another two years."
+            css={notificationStyle}
+          />
+        );
+      } else {
+        // renewal period closed, state expired, renewal created
+        return (
+          <Notification
+            variant="INFO"
+            interactionType="NONE"
+            title={
+              <span>
+                This application has been renewed under the new name:{' '}
+                <Link href={urlJoin(APPLICATIONS_PATH, renewalAppId)}>{renewalAppId}</Link>
+              </span>
+            }
+            content={
+              <span>
+                {`The renewal period for this application has ended. A renewal has been created under the new name ${renewalAppId}.`}
+                <br />
+                <br />
+                {`If you have not completed this renewal, you will need to start a new application to gain access privileges for another two years.`}
+              </span>
+            }
+            css={notificationStyle}
+          />
+        );
+      }
+      break;
+
+    default:
+      return null;
+  }
+};
+
 const ApplicationFormsBase = ({
   appId = 'none',
-  applicationState,
+  appData,
   setLastUpdated,
   isLoading,
   formState,
   validateSection,
-  sectionData,
-  isAttestable,
-  attestedAtUtc,
-  attestationByUtc = '',
   isAdmin,
   refetchAllData,
 }: {
   appId: string;
-  applicationState: ApplicationState;
+  appData: ApplicationData;
   setLastUpdated: SetLastUpdated;
   isLoading: boolean;
   formState: FormValidationStateParameters;
   validateSection: FormSectionValidatorFunction_Origin;
-  sectionData: ApplicationData['sections'];
-  isAttestable: boolean;
-  attestedAtUtc?: string;
-  attestationByUtc?: string;
   isAdmin: boolean;
   refetchAllData: any;
 }): ReactElement => {
+  const {
+    sections: sectionData,
+    state: applicationState,
+    isAttestable,
+    attestationByUtc,
+    isRenewal,
+  } = appData;
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
   const [showSuccessfulAttestation, setShowSuccessfulAttestation] = useState(false);
-
+  const { fetchWithAuth } = useAuthContext();
   const { NEXT_PUBLIC_DACO_SURVEY_URL } = getConfig();
 
   const {
@@ -170,8 +331,6 @@ const ApplicationFormsBase = ({
   const sectionsAfter = enabledSections(sectionsOrder.slice(sectionIndex + 1), formState);
   const sectionsBefore = enabledSections(sectionsOrder.slice(0, sectionIndex), formState);
 
-  const requiresAttestation = !attestedAtUtc && isAttestable;
-
   const handleSectionChange = useCallback(
     (section: FormSectionNames) => {
       if (section !== selectedSection) {
@@ -193,8 +352,7 @@ const ApplicationFormsBase = ({
     );
   };
 
-  const { fetchWithAuth } = useAuthContext();
-  const handleSubmitAttestion = () => {
+  const handleSubmitAttestation = () => {
     fetchWithAuth({
       data: {
         isAttesting: true,
@@ -215,7 +373,9 @@ const ApplicationFormsBase = ({
   return (
     <>
       <ContentBody>
-        {requiresAttestation && !isAdmin && (
+        {/* attestation required */}
+        {/* isAttestable being true implies that an attestationByUtc date is present but adding check here to make TS happy in date formatter call below */}
+        {isAttestable && isString(attestationByUtc) && !isAdmin && (
           <Notification
             title={
               <div
@@ -270,7 +430,7 @@ const ApplicationFormsBase = ({
                     margin-bottom: 13px;
                   `}
                   size="sm"
-                  onClick={handleSubmitAttestion}
+                  onClick={handleSubmitAttestation}
                 >
                   I ATTEST TO THE ABOVE TERMS
                 </Button>
@@ -282,6 +442,10 @@ const ApplicationFormsBase = ({
           />
         )}
 
+        {/* renewal banners */}
+        {getRenewalBanners(appData, isAdmin)}
+
+        {/* success banners */}
         {showSuccessfulAttestation && (
           <Notification
             title="Your Annual Attestation has been Submitted"
@@ -297,11 +461,10 @@ const ApplicationFormsBase = ({
             css={notificationStyle}
           />
         )}
-
         {JSON.parse(localStorage.getItem(SUBMISSION_SUCCESS_CHECK) || 'false') &&
           [ApplicationState.REVIEW].includes(applicationState) && (
             <Notification
-              title="Your Application has been Submitted"
+              title={`Your ${isRenewal ? 'Renewal' : ''} Application has been Submitted`}
               content="The ICGC DACO has been notified for review and you should hear back within ten business days regarding the status of your application."
               interactionType="CLOSE"
               variant="SUCCESS"
@@ -351,6 +514,7 @@ const ApplicationFormsBase = ({
             css={notificationStyle}
           />
         )}
+
         <ContentBox
           css={css`
             box-sizing: border-box;

@@ -45,16 +45,16 @@ const ButtonIcon = ({ name }: { name: UikitIconNames }) => {
   );
 };
 
-const RenewButton = ({
+export const RenewButton = ({
   children,
   appId,
   link,
-  icon,
+  icon = 'reset',
 }: {
   children: ReactNode;
   appId: string;
   link: string;
-  icon: UikitIconNames;
+  icon?: UikitIconNames;
 }): JSX.Element => {
   const { fetchWithAuth } = useAuthContext();
   const toaster = useToaster();

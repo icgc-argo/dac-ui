@@ -325,6 +325,10 @@ export interface ApplicationData {
     signature: Signature;
   };
   ableToRenew: boolean;
+  isRenewal: boolean;
+  sourceAppId?: string;
+  renewalAppId?: string;
+  renewalPeriodEndDateUtc?: string;
 }
 
 export type ApplicationsResponseData = {
