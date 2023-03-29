@@ -265,7 +265,6 @@ const ApplicationFormsBase = ({
     sections: sectionData,
     state: applicationState,
     isAttestable,
-    attestedAtUtc,
     attestationByUtc,
     isRenewal,
   } = appData;
@@ -331,7 +330,9 @@ const ApplicationFormsBase = ({
   const sectionsAfter = enabledSections(sectionsOrder.slice(sectionIndex + 1), formState);
   const sectionsBefore = enabledSections(sectionsOrder.slice(0, sectionIndex), formState);
 
-  const requiresAttestation = !attestedAtUtc && isAttestable;
+  // isAttestable being true implies that an attestationByUtc date is present
+  // but adding attestationByUtc here to make TS happy in date formatter call below
+  const requiresAttestation = isAttestable && attestationByUtc;
 
   const handleSectionChange = useCallback(
     (section: FormSectionNames) => {
@@ -386,7 +387,7 @@ const ApplicationFormsBase = ({
                 `}
               >
                 {`Annual Attestation is required by ${getFormattedDate(
-                  attestationByUtc as string,
+                  attestationByUtc,
                   DateFormat.DATE_TEXT_FORMAT,
                 )} or access will be paused`}
               </div>
