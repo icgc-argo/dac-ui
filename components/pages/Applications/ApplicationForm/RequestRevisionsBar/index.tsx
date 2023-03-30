@@ -17,6 +17,9 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import { useState } from 'react';
+import { isAfter } from 'date-fns';
+
 import { ModalPortal } from 'components/Root';
 import RequestRevisionsModal from './RequestRevisionsModal';
 import ApproveModal from './ApproveModal';
@@ -24,7 +27,6 @@ import RejectModal from './RejectModal';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import ActionBar from './ActionBar';
 import ApplicationActions from './ApplicationActions';
-import { useState } from 'react';
 import PDFActions from './PDFActions';
 import { ApplicationData } from '../../types';
 import { SetLastUpdated } from '../types';
@@ -43,20 +45,20 @@ const RequestRevisionsBar = ({
     sections: { applicant: { info: { primaryAffiliation = '' } = {} } = {} },
     state,
     approvedAppDocs,
+    isRenewal,
+    renewalPeriodEndDateUtc,
   } = data;
 
-  const applicationActionsDisabled = [
-    ApplicationState.APPROVED,
-    ApplicationState.REVISIONS_REQUESTED,
-    ApplicationState.REJECTED,
-    ApplicationState.CLOSED,
-    ApplicationState.EXPIRED,
-  ].includes(state);
+  const applicationActionsDisabled = state !== ApplicationState.REVIEW;
 
   // TODO: API does not allow approved pdf upload in EXPIRED state, should it be allowed?
   const showPdfActions = [ApplicationState.APPROVED, ApplicationState.PAUSED].includes(state);
 
   const currentApprovedDoc = approvedAppDocs.find((doc) => doc.isCurrent);
+  // Renewals can only be approved or rejected once the renewal period has ended
+  const renewalPeriodEnded =
+    !!renewalPeriodEndDateUtc && isAfter(new Date(), new Date(renewalPeriodEndDateUtc));
+  const shouldDisableRevisions = isRenewal && renewalPeriodEnded;
 
   return (
     <>
@@ -97,6 +99,7 @@ const RequestRevisionsBar = ({
           <ApplicationActions
             disabled={applicationActionsDisabled}
             setVisibleModal={setVisibleModal}
+            shouldDisableRevisions={shouldDisableRevisions}
           />
         )}
       </ActionBar>
