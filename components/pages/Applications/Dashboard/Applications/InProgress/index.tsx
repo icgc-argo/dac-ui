@@ -59,8 +59,8 @@ const getStatusDate = (application: ApplicationSummary): any => {
     lastPausedAtUtc,
     renewalAppId,
     expiredEventDateUtc,
-    sourceAppId,
     renewalPeriodEndDateUtc,
+    isRenewal,
   } = application;
   switch (true) {
     case state === ApplicationState.PAUSED:
@@ -113,8 +113,9 @@ const getStatusDate = (application: ApplicationSummary): any => {
         >{`! Access Expiring: ${getFormattedDate(expiresAtUtc, DateFormat.DATE_TEXT_FORMAT)}`}</div>
       );
       break;
-    // TODO: discuss if this status date is necessary and, if so, what should the text be?
-    case !!sourceAppId &&
+    // application is a renewal AND in pre-submitted state AND renewal period is still open
+    // if a renewal is not submitted before the renewal period ends, no status date is shown
+    case isRenewal &&
       [
         ApplicationState.DRAFT,
         ApplicationState.SIGN_AND_SUBMIT,
@@ -129,7 +130,7 @@ const getStatusDate = (application: ApplicationSummary): any => {
             css={(theme) => css`
               color: ${theme.colors.error};
             `}
-          >{`! Renewal Expiring: ${getFormattedDate(
+          >{`! Renewal Period Closing: ${getFormattedDate(
             renewalPeriodEndDateUtc,
             DateFormat.DATE_TEXT_FORMAT,
           )}`}</div>
