@@ -25,7 +25,7 @@ import { UikitTheme } from '@icgc-argo/uikit/index';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import urlJoin from 'url-join';
 import { useAuthContext } from 'global/hooks';
-import { API, APPLICATIONS_PATH, APPROVED_APP_CLOSED_CHECK } from 'global/constants';
+import { API, APPLICATIONS_PATH, APPROVED_APP_CLOSED_CHECK, RENEWAL_PATH } from 'global/constants';
 import { AxiosError } from 'axios';
 import { ApplicationState, ApprovedDoc } from '../../types';
 import { CustomLoadingButton, generatePDFDocument } from '../Forms/common';
@@ -35,6 +35,7 @@ import router from 'next/router';
 import { RefetchDataFunction } from '../Forms/types';
 import Banner from '@icgc-argo/uikit/notifications/Banner';
 import { createDownloadInWindow } from 'global/utils/helpers';
+import { RenewButton } from '../../Dashboard/Applications/InProgress/ButtonGroup';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -52,7 +53,7 @@ const getPdfButtonText: (
     return `APPROVED ${text}`;
   }
 
-  if (state === ApplicationState.PAUSED || (state === ApplicationState.CLOSED && !!approvedAtUtc)) {
+  if (state === ApplicationState.CLOSED && !!approvedAtUtc) {
     return `SIGNED ${text}`;
   }
 
@@ -71,7 +72,13 @@ const getPdfButtonText: (
   }
 
   if (
-    [ApplicationState.REVIEW, ApplicationState.APPROVED, ApplicationState.REJECTED].includes(state)
+    [
+      ApplicationState.REVIEW,
+      ApplicationState.APPROVED,
+      ApplicationState.REJECTED,
+      ApplicationState.EXPIRED,
+      ApplicationState.PAUSED,
+    ].includes(state)
   ) {
     return `SIGNED ${text}`;
   }
@@ -88,6 +95,7 @@ const HeaderActions = ({
   refetchAllData,
   approvedAtUtc,
   currentApprovedDoc,
+  ableToRenew,
 }: {
   appId: string;
   primaryAffiliation: string;
@@ -95,6 +103,7 @@ const HeaderActions = ({
   refetchAllData: RefetchDataFunction;
   approvedAtUtc: string;
   currentApprovedDoc: ApprovedDoc | undefined;
+  ableToRenew: boolean;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();
   const { fetchWithAuth } = useAuthContext();
@@ -114,6 +123,7 @@ const HeaderActions = ({
     ApplicationState.REVISIONS_REQUESTED,
     ApplicationState.APPROVED,
     ApplicationState.PAUSED,
+    ApplicationState.EXPIRED, // TODO: remove EXPIRED state?
   ].includes(state);
 
   const isClosedPreApproval = state === ApplicationState.CLOSED && !approvedAtUtc;
@@ -184,6 +194,7 @@ const HeaderActions = ({
               </div>
             )}
           >
+            {/* TODO: do we want this warning on PAUSED applications? */}
             {isApplicationApproved && (
               <Banner
                 content={
@@ -211,12 +222,18 @@ const HeaderActions = ({
       <section
         css={css`
           display: flex;
-
+          justify-content: flex-end;
           *:not(:last-of-type) {
             margin-right: 5px;
           }
+          min-width: 300px;
         `}
       >
+        {ableToRenew && (
+          <RenewButton appId={appId} link={urlJoin(API.APPLICATIONS, appId, RENEWAL_PATH)}>
+            Renew
+          </RenewButton>
+        )}
         {closeApplicationVisible && (
           <Button
             onClick={() => setVisibleModal(VisibleModalOption.CLOSE_APPLICATION)}
@@ -243,6 +260,7 @@ const HeaderActions = ({
                 ApplicationState.APPROVED,
                 ApplicationState.REJECTED,
                 ApplicationState.CLOSED,
+                ApplicationState.EXPIRED,
               ].includes(state);
               const downloadUrl = urlJoin(
                 API.APPLICATIONS,

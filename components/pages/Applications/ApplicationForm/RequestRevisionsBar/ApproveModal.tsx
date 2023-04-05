@@ -20,7 +20,7 @@
 import { useState } from 'react';
 import { AxiosError } from 'axios';
 import urlJoin from 'url-join';
-import { add, format } from 'date-fns';
+import { add } from 'date-fns';
 import { css } from '@emotion/core';
 import router from 'next/router';
 
@@ -30,7 +30,9 @@ import FormControl from '@icgc-argo/uikit/form/FormControl';
 import FormHelperText from '@icgc-argo/uikit/form/FormHelperText';
 
 import { useAuthContext } from 'global/hooks';
-import { API, DATE_TEXT_FORMAT } from 'global/constants';
+import { API } from 'global/constants';
+import { DateFormat } from 'global/utils/dates/types';
+import { getFormattedDate } from 'global/utils/dates/helpers';
 
 const ApproveModal = ({
   appId,
@@ -42,8 +44,8 @@ const ApproveModal = ({
   primaryAffiliation: string;
 }) => {
   const currentDate = new Date();
-  const startDate = format(currentDate, DATE_TEXT_FORMAT);
-  const endDate = format(add(currentDate, { years: 2 }), DATE_TEXT_FORMAT);
+  const startDate = getFormattedDate(currentDate, DateFormat.DATE_TEXT_FORMAT);
+  const endDate = getFormattedDate(add(currentDate, { years: 2 }), DateFormat.DATE_TEXT_FORMAT);
 
   const [error, setError] = useState<AxiosError | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);

@@ -17,15 +17,20 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Fragment } from 'react';
+import { Fragment, ReactNode } from 'react';
 import { css } from '@emotion/core';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import router from 'next/router';
-import { APPLICATIONS_PATH } from 'global/constants';
+import { API, APPLICATIONS_PATH, RENEWAL_PATH } from 'global/constants';
 import urlJoin from 'url-join';
 import { UikitIconNames } from '@icgc-argo/uikit/Icon/icons';
+import { useAuthContext } from 'global/hooks';
+import { AxiosResponse } from 'axios';
+import { ApplicationData } from 'components/pages/Applications/types';
+import { TOAST_VARIANTS } from '@icgc-argo/uikit/notifications/Toast';
+import { useToaster } from 'global/hooks/useToaster';
 
 const ButtonIcon = ({ name }: { name: UikitIconNames }) => {
   return (
@@ -40,19 +45,76 @@ const ButtonIcon = ({ name }: { name: UikitIconNames }) => {
   );
 };
 
-const icons = {
-  file: <ButtonIcon name="file" />,
-  edit: <ButtonIcon name="edit" />,
-  user: <ButtonIcon name="user" />,
-  reset: <ButtonIcon name="reset" />,
-  calendar: <ButtonIcon name="calendar" />,
+export const RenewButton = ({
+  children,
+  appId,
+  link,
+  icon = 'reset',
+}: {
+  children: ReactNode;
+  appId: string;
+  link: string;
+  icon?: UikitIconNames;
+}): JSX.Element => {
+  const { fetchWithAuth } = useAuthContext();
+  const toaster = useToaster();
+  return (
+    <Button
+      className="action-btns"
+      size="sm"
+      onClick={async () => {
+        await fetchWithAuth({
+          url: link,
+          method: 'POST',
+        })
+          .then(async (res: AxiosResponse) => {
+            if (res.status === 201) {
+              const appData: ApplicationData = res.data;
+              router.push(urlJoin(APPLICATIONS_PATH, appData.appId, '?section=terms'));
+            }
+          })
+          .catch((err: Error) => {
+            toaster.addToast({
+              variant: TOAST_VARIANTS.ERROR,
+              title: 'Renewal Failed',
+              content: `There was an error while trying to create a renewal application for ${appId}. Please try again later.`,
+              interactionType: 'CLOSE',
+            });
+          });
+      }}
+    >
+      <span
+        css={css`
+          margin-right: 3px;
+        `}
+      >
+        <Icon
+          name={icon}
+          fill="white"
+          height="12px"
+          css={css`
+            margin-bottom: -2px;
+            margin-right: 2px;
+            transform: scaleX(-1);
+          `}
+        />
+      </span>
+      {children}
+    </Button>
+  );
 };
 
 const getButtonConfig = (
-  appId = '',
-  state = '',
-  requiresAttestation = false,
-): { content: string; link: string; icon: any }[] => {
+  appId: string = '',
+  state: ApplicationState,
+  requiresAttestation: boolean = false,
+  ableToRenew: boolean,
+): {
+  content: string;
+  link: string;
+  icon: UikitIconNames;
+  CustomButton?: (props: any) => JSX.Element;
+}[] => {
   const link = urlJoin(APPLICATIONS_PATH, appId);
   switch (state) {
     case ApplicationState.DRAFT:
@@ -62,18 +124,17 @@ const getButtonConfig = (
         {
           content: 'Edit Application',
           link,
-          icon: icons.edit,
+          icon: 'edit',
         },
       ];
     case ApplicationState.REVIEW:
     case ApplicationState.REJECTED:
-    // closed after approval
     case ApplicationState.CLOSED:
       return [
         {
           content: 'View Application',
           link,
-          icon: icons.file,
+          icon: 'file',
         },
       ];
     case ApplicationState.APPROVED:
@@ -82,82 +143,117 @@ const getButtonConfig = (
             {
               content: 'Complete Attestation',
               link,
-              icon: icons.calendar,
+              icon: 'calendar',
+            },
+          ]
+        : ableToRenew
+        ? [
+            {
+              content: 'Renew Application',
+              CustomButton: RenewButton,
+              icon: 'reset',
+              link: urlJoin(API.APPLICATIONS, appId, RENEWAL_PATH),
+            },
+            {
+              content: 'View Application',
+              link,
+              icon: 'file',
             },
           ]
         : [
             {
               content: 'View Application',
               link,
-              icon: icons.file,
+              icon: 'file',
             },
             {
               content: 'Manage Collaborators',
               link: urlJoin(link, '?section=collaborators'),
-              icon: icons.user,
+              icon: 'user',
             },
           ];
-    //Paused state implies attestation is needed
+    case ApplicationState.EXPIRED:
+      return ableToRenew
+        ? [
+            {
+              content: 'Renew Application',
+              CustomButton: RenewButton,
+              icon: 'reset',
+              link: urlJoin(API.APPLICATIONS, appId, RENEWAL_PATH),
+            },
+            {
+              content: 'View Application',
+              link,
+              icon: 'file',
+            },
+          ]
+        : [
+            {
+              content: 'View Application',
+              link,
+              icon: 'file',
+            },
+          ];
+      break;
+    // Paused state implies attestation is needed
     case ApplicationState.PAUSED:
       return [
         {
           content: 'Complete Attestation',
           link,
-          icon: icons.calendar,
+          icon: 'calendar',
         },
       ];
-    case ApplicationState.CLOSED:
-      return [
-        {
-          content: 'View Application',
-          link,
-          icon: icons.file,
-        },
-        {
-          content: 'Reopen',
-          link,
-          icon: icons.reset,
-        },
-      ];
+    default:
+      return [];
   }
-  return [];
 };
 
 const ButtonGroup = ({
   appId,
   state,
   requiresAttestation,
+  ableToRenew,
 }: {
   appId: string;
   state: ApplicationState;
   requiresAttestation: boolean;
+  ableToRenew: boolean;
 }) => (
   <div
     css={css`
       display: flex;
     `}
   >
-    {getButtonConfig(appId, state, requiresAttestation).map(({ content, link, icon }, index) => (
-      <Fragment key={link}>
-        <Button
-          className="action-btns"
-          size="sm"
-          onClick={() => router.push(link)}
-          css={css`
-            margin-left: ${index ? '8px !important;' : 0};
-          `}
-        >
-          <span
-            css={css`
-              margin-right: 3px;
-            `}
-          >
-            {icon}
-          </span>
-          {content}
-        </Button>
-      </Fragment>
-    ))}
+    {getButtonConfig(appId, state, requiresAttestation, ableToRenew).map(
+      ({ content, link, icon, CustomButton }, index) => (
+        <Fragment key={link}>
+          {CustomButton ? (
+            <CustomButton appId={appId} link={link} icon={icon}>
+              {content}
+            </CustomButton>
+          ) : (
+            <Button
+              className="action-btns"
+              size="sm"
+              onClick={() => router.push(link)}
+              css={css`
+                margin-left: ${index ? '8px !important;' : 0};
+              `}
+            >
+              <span
+                css={css`
+                  margin-right: 3px;
+                `}
+              >
+                <ButtonIcon name={icon} />
+              </span>
+              {content}
+            </Button>
+          )}
+        </Fragment>
+      ),
+    )}
   </div>
 );
 

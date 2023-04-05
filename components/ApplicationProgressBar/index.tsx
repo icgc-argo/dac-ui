@@ -20,6 +20,7 @@
 import Progress, { ProgressItem as ProgressItemDefault } from '@icgc-argo/uikit/Progress';
 import { styled } from '@icgc-argo/uikit';
 import { ApplicationState, ProgressStates } from './types';
+import { isRenewalPeriodEnded } from 'global/utils/dates/helpers';
 
 const ProgressItem = styled(ProgressItemDefault)`
   min-width: 100px;
@@ -40,6 +41,7 @@ enum PROGRESS_LABELS {
   CLOSED = 'Closed',
   REVISIONS_REQUESTED = 'Revisions Requested',
   PAUSED = 'Paused',
+  EXPIRED = 'Expired',
 }
 
 const progressStates: ProgressStates = {
@@ -79,24 +81,35 @@ const progressStates: ProgressStates = {
     { label: PROGRESS_LABELS.CLOSED, state: 'closed', completed: true },
   ],
   [ApplicationState.EXPIRED]: [
-    { label: PROGRESS_LABELS.DRAFT, state: 'locked', completed: true },
-    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'closed', completed: true },
-    { label: PROGRESS_LABELS.CLOSED, state: 'closed', completed: true },
-  ],
-  [ApplicationState.RENEWING]: [
-    { label: PROGRESS_LABELS.DRAFT, state: 'closed', completed: true },
-    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'closed', completed: true },
-    { label: PROGRESS_LABELS.CLOSED, state: 'closed', completed: true },
+    { label: PROGRESS_LABELS.DRAFT, state: 'success', completed: true },
+    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'success', completed: true },
+    { label: PROGRESS_LABELS.EXPIRED, state: 'error', completed: true },
   ],
   [ApplicationState.PAUSED]: [
     { label: PROGRESS_LABELS.DRAFT, state: 'success', completed: true },
     { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'success', completed: true },
     { label: PROGRESS_LABELS.PAUSED, state: 'error', completed: true },
   ],
+  // app is in EXPIRED state **and** is past its renewal period
+  EXPIRED_PERMANENTLY: [
+    { label: PROGRESS_LABELS.DRAFT, state: 'closed', completed: true },
+    { label: PROGRESS_LABELS.SIGN_AND_SUBMIT, state: 'closed', completed: true },
+    { label: PROGRESS_LABELS.EXPIRED, state: 'closed', completed: true },
+  ],
 };
 
-const ApplicationProgressBar = ({ state }: { state: ApplicationState }) => {
-  const progressItems = state ? progressStates[state] : defaultProgressItems;
+const ApplicationProgressBar = ({
+  state,
+  expiryDate,
+}: {
+  state: ApplicationState;
+  expiryDate?: string;
+}) => {
+  const progressStatus =
+    state === ApplicationState.EXPIRED && isRenewalPeriodEnded(expiryDate)
+      ? 'EXPIRED_PERMANENTLY'
+      : state;
+  const progressItems = state ? progressStates[progressStatus] : defaultProgressItems;
   return (
     <div>
       <Progress>

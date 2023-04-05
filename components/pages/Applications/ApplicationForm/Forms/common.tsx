@@ -18,8 +18,8 @@
  */
 
 import { pdf, Document } from '@react-pdf/renderer';
-import { FILE_DATE_FORMAT } from '../../Dashboard/Applications/InProgress/constants';
-import { getFormattedDate } from '../../Dashboard/Applications/InProgress/helpers';
+import { DateFormat } from 'global/utils/dates/types';
+import { getFormattedDate } from 'global/utils/dates/helpers';
 import Cover from '../../PDF/Cover';
 import Signatures from '../../PDF/Signatures';
 import StaticAppendices from '../../PDF/StaticAppendices';
@@ -55,7 +55,7 @@ export const generatePDFDocument = async (data: ApplicationData) => {
     </Document>,
   ).toBlob();
 
-  const dateCreated = getFormattedDate(Date.now(), FILE_DATE_FORMAT);
+  const dateCreated = getFormattedDate(Date.now(), DateFormat.FILE_DATE_FORMAT);
   saveAs(blob, `${data.appId}-${dateCreated}`);
 };
 

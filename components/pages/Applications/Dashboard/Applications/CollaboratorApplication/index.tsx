@@ -3,8 +3,8 @@ import Table from '@icgc-argo/uikit/Table';
 import { IndividualInfo } from 'components/pages/Applications/types';
 import { createRef } from 'react';
 import DashboardCard from '../../Card';
-import { UPLOAD_DATE_FORMAT } from '../InProgress/constants';
-import { getFormattedDate } from '../InProgress/helpers';
+import { DateFormat } from 'global/utils/dates/types';
+import { getFormattedDate } from 'global/utils/dates/helpers';
 
 const CollaboratorApplication = ({
   data,
@@ -43,7 +43,7 @@ const CollaboratorApplication = ({
             accessor: 'expiresAtUtc',
             Header: 'Access Expiry',
             Cell: ({ value }: { value: string }) => (
-              <span>{getFormattedDate(value, UPLOAD_DATE_FORMAT)}</span>
+              <span>{getFormattedDate(value, DateFormat.UPLOAD_DATE_FORMAT)}</span>
             ),
           },
         ]}
