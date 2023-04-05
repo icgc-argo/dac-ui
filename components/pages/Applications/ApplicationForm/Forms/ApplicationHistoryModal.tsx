@@ -47,6 +47,8 @@ const columns = [
     Cell: ({ original }: { original: UserViewApplicationUpdate }) =>
       original.author.role === DacoRole.ADMIN
         ? 'DACO Administrator'
+        : original.author.role === DacoRole.SYSTEM
+        ? 'DACO System'
         : capitalize(original.author.role),
   },
 ];
