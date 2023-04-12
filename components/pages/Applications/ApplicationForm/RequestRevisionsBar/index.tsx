@@ -51,8 +51,11 @@ const RequestRevisionsBar = ({
 
   const applicationActionsDisabled = state !== ApplicationState.REVIEW;
 
-  // TODO: API does not allow approved pdf upload in EXPIRED state, should it be allowed?
-  const showPdfActions = [ApplicationState.APPROVED, ApplicationState.PAUSED].includes(state);
+  const showPdfActions = [
+    ApplicationState.APPROVED,
+    ApplicationState.PAUSED,
+    ApplicationState.EXPIRED,
+  ].includes(state);
 
   const currentApprovedDoc = approvedAppDocs.find((doc) => doc.isCurrent);
   // Renewals can only be approved or rejected once the renewal period has ended

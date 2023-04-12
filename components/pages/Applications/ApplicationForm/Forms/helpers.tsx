@@ -32,7 +32,6 @@ import {
 } from './types';
 import { TERMS_PLACEHOLDER_FORM_DATA, useLocalValidation } from './validations';
 import { ApplicationData } from '../../types';
-import { isBefore } from 'date-fns';
 
 export const enabledSections = (
   sections: FormSectionNames[],
@@ -108,12 +107,4 @@ export const sectionSelector = ({
   ) : (
     `Section not implemented: "${selectedSection}"`
   );
-};
-
-// check if expiresAtUtc is earlier than the current timestamp
-// for component display/style only. "Renew" button display is based on an api calculated field, ableToRenew
-export const isPastExpiry = (expiryDate: string): boolean => {
-  const expiry = new Date(expiryDate);
-  const now = new Date();
-  return isBefore(expiry, now);
 };

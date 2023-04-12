@@ -23,7 +23,7 @@ export const isRenewalPeriodEnded = (expiryDate?: string): boolean => {
   return isAfter(now, endDate);
 };
 
-export const isWithinRenewalPeriod = (appData: ApplicationData): boolean => {
+export const sourceAppIsWithinRenewalPeriod = (appData: ApplicationData): boolean => {
   const { renewalAppId, state, ableToRenew, expiresAtUtc } = appData;
   return (
     ableToRenew ||

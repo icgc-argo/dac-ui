@@ -197,13 +197,27 @@ const getButtonConfig = (
       break;
     // Paused state implies attestation is needed
     case ApplicationState.PAUSED:
-      return [
-        {
-          content: 'Complete Attestation',
-          link,
-          icon: 'calendar',
-        },
-      ];
+      return ableToRenew
+        ? [
+            {
+              content: 'Complete Attestation',
+              link,
+              icon: 'calendar',
+            },
+            {
+              content: 'Renew Application',
+              CustomButton: RenewButton,
+              icon: 'reset',
+              link: urlJoin(API.APPLICATIONS, appId, RENEWAL_PATH),
+            },
+          ]
+        : [
+            {
+              content: 'Complete Attestation',
+              link,
+              icon: 'calendar',
+            },
+          ];
     default:
       return [];
   }
