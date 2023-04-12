@@ -133,7 +133,7 @@ const getRenewalBanners = (appData: ApplicationData, isAdmin: boolean): ReactNod
       break;
 
     // renewal period ended, renewal app that was never approved CLOSED by SYSTEM (still linked to source app by sourceAppId)
-    case !!sourceAppId && state === ApplicationState.CLOSED && !approvedAtUtc:
+    case isRenewal && !!sourceAppId && state === ApplicationState.CLOSED && !approvedAtUtc:
       return (
         <Notification
           variant="INFO"
@@ -147,7 +147,8 @@ const getRenewalBanners = (appData: ApplicationData, isAdmin: boolean): ReactNod
 
     // renewal is APPROVED
     // OR renewal is in REVIEW state and user is ADMIN
-    case !!sourceAppId &&
+    case isRenewal &&
+      !!sourceAppId &&
       (state === ApplicationState.APPROVED || (state === ApplicationState.REVIEW && isAdmin)):
       return (
         <Notification
@@ -166,27 +167,19 @@ const getRenewalBanners = (appData: ApplicationData, isAdmin: boolean): ReactNod
       break;
 
     /* renewals in other states do not require banners
-      case isRenewal && state === ApplicationState.CLOSED && !sourceAppId (unlinked from source app) - regular UI for closed app
-      case isRenewal && state === ApplicationState.REJECTED - regular UI for rejected app
+      case isRenewal && !!sourceAppId && state === ApplicationState.CLOSED && !sourceAppId (unlinked from source app) - regular UI for closed app
+      case isRenewal && !!sourceAppId && state === ApplicationState.REJECTED - regular UI for rejected app
     */
 
     /* Source application scenarios */
 
-    // renewal period open, state approved, renewal created
-    // renewal period open, state expired, renewal created
-    case sourceAppIsWithinRenewalPeriod(appData):
-      // no banner displayed for admin if the source app does not have a linked renewal
-      if (isAdmin && !renewalAppId) {
-        return null;
-      }
-
+    // renewal period open, state approved or expired, renewal created
+    case sourceAppIsWithinRenewalPeriod(appData) && !!renewalAppId:
       const bannerContent = isAdmin
         ? ''
         : `${
-            state === ApplicationState.EXPIRED ? 'This application has expired.' : ''
-          } Please complete ${
-            !!renewalAppId ? `application ${renewalAppId}` : 'a renewal application'
-          } to extend your access privileges for another two years. This must be completed by ${getFormattedDate(
+            state === ApplicationState.EXPIRED ? 'This application has expired. ' : ''
+          }Please complete application ${renewalAppId} to extend your access privileges for another two years. This must be completed by ${getFormattedDate(
             getRenewalPeriodEndDate(expiresAtUtc),
             DateFormat.DATE_TEXT_FORMAT,
           )}.`;
