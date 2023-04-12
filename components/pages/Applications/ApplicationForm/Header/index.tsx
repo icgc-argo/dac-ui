@@ -30,7 +30,6 @@ import Progress from './Progress';
 import { RefetchDataFunction } from '../Forms/types';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ApplicationData } from '../../types';
-import { isPastExpiry } from '../Forms/helpers';
 import { getFormattedDate } from 'global/utils/dates/helpers';
 
 export type ApplicationAccessInfo = { date?: string; isWarning: boolean; status: string };
@@ -49,8 +48,10 @@ const getAccessInfo = (data: ApplicationData) => {
     ableToRenew,
     expiredEventDateUtc,
     renewalAppId,
+    isRenewal,
+    renewalPeriodEndDateUtc,
+    sourceAppId,
   } = data;
-  const appPastExpiry = isPastExpiry(expiresAtUtc);
   switch (true) {
     case state === ApplicationState.PAUSED:
       return {
@@ -72,8 +73,21 @@ const getAccessInfo = (data: ApplicationData) => {
         isWarning: true,
         status: '! Pausing',
       };
+    case isRenewal &&
+      !!sourceAppId &&
+      [
+        ApplicationState.DRAFT,
+        ApplicationState.SIGN_AND_SUBMIT,
+        ApplicationState.REVISIONS_REQUESTED,
+      ].includes(state):
+      return {
+        date: renewalPeriodEndDateUtc,
+        isWarning: true,
+        status: '! Renewal Period Closing',
+      };
     // for remaining scenarios where the app has been approved.
     case !!approvedAtUtc:
+      const approvedAppWithRenewal = state === ApplicationState.APPROVED && !!renewalAppId;
       return {
         date: closedAtUtc || expiresAtUtc,
         /**
@@ -83,7 +97,7 @@ const getAccessInfo = (data: ApplicationData) => {
          * - ableToRenew is true -> this indicates the application expiry is approaching soon
          * ```
          */
-        isWarning: !!closedAtUtc || ableToRenew || (!appPastExpiry && !!renewalAppId),
+        isWarning: !!closedAtUtc || ableToRenew || approvedAppWithRenewal,
         /**```
          * Status:
          * - "Expiring" -> app has not yet expired but is within the renewal period
@@ -92,7 +106,7 @@ const getAccessInfo = (data: ApplicationData) => {
          * ```
          */
         status:
-          ableToRenew || (!appPastExpiry && !!renewalAppId)
+          ableToRenew || approvedAppWithRenewal
             ? '! Expiring'
             : closedAtUtc
             ? 'Expired'

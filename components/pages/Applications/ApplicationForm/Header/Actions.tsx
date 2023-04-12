@@ -123,14 +123,15 @@ const HeaderActions = ({
     ApplicationState.REVISIONS_REQUESTED,
     ApplicationState.APPROVED,
     ApplicationState.PAUSED,
-    ApplicationState.EXPIRED, // TODO: remove EXPIRED state?
   ].includes(state);
 
   const isClosedPreApproval = state === ApplicationState.CLOSED && !approvedAtUtc;
 
   const dismissModal = () => setVisibleModal(VisibleModalOption.NONE);
 
-  const isApplicationApproved = state === ApplicationState.APPROVED;
+  const showAccessLossWarning = [ApplicationState.APPROVED, ApplicationState.PAUSED].includes(
+    state,
+  );
 
   const submit = () => {
     setIsSubmitting(true);
@@ -194,8 +195,7 @@ const HeaderActions = ({
               </div>
             )}
           >
-            {/* TODO: do we want this warning on PAUSED applications? */}
-            {isApplicationApproved && (
+            {showAccessLossWarning && (
               <Banner
                 content={
                   <>

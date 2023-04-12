@@ -109,11 +109,3 @@ export const sectionSelector = ({
     `Section not implemented: "${selectedSection}"`
   );
 };
-
-// check if expiresAtUtc is earlier than the current timestamp
-// for component display/style only. "Renew" button display is based on an api calculated field, ableToRenew
-export const isPastExpiry = (expiryDate: string): boolean => {
-  const expiry = new Date(expiryDate);
-  const now = new Date();
-  return isBefore(expiry, now);
-};
