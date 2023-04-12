@@ -32,7 +32,6 @@ import {
 } from './types';
 import { TERMS_PLACEHOLDER_FORM_DATA, useLocalValidation } from './validations';
 import { ApplicationData } from '../../types';
-import { isBefore } from 'date-fns';
 
 export const enabledSections = (
   sections: FormSectionNames[],
