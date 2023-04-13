@@ -99,7 +99,7 @@ export const styles = StyleSheet.create({
   },
   bubbleContainer: {
     border: `1px solid ${defaultTheme.colors.grey_1}`,
-    padding: '10pt 5pt',
+    padding: '10pt',
     marginBottom: '10pt',
   },
   textArea: {
