@@ -36,6 +36,9 @@ import { RefetchDataFunction } from '../Forms/types';
 import Banner from '@icgc-argo/uikit/notifications/Banner';
 import { createDownloadInWindow } from 'global/utils/helpers';
 import { RenewButton } from '../../Dashboard/Applications/InProgress/ButtonGroup';
+import Input from '@icgc-argo/uikit/form/Input';
+import InputLabel from '@icgc-argo/uikit/form/InputLabel';
+import FormControl from '@icgc-argo/uikit/form/FormControl';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -110,6 +113,8 @@ const HeaderActions = ({
   const [pdfIsLoading, setPdfIsLoading] = useState<boolean>(false);
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isConfirmingClose, setIsConfirmingClose] = useState<boolean>(false);
+  const [confirmationId, setConfirmationId] = useState<string>('');
 
   const pdfButtonText = getPdfButtonText(
     state,
@@ -151,6 +156,8 @@ const HeaderActions = ({
       })
       .finally(() => {
         dismissModal();
+        setIsConfirmingClose(false);
+        setConfirmationId('');
         setIsSubmitting(false);
         if (approvedAtUtc) {
           localStorage.setItem(APPROVED_APP_CLOSED_CHECK, 'true');
@@ -163,9 +170,7 @@ const HeaderActions = ({
       {visibleModal === VisibleModalOption.CLOSE_APPLICATION && (
         <ModalPortal>
           <Modal
-            actionButtonText="Yes, close"
             title="Are you sure you want to close this application?"
-            onCloseClick={dismissModal}
             FooterEl={() => (
               <div
                 css={css`
@@ -173,14 +178,21 @@ const HeaderActions = ({
                   flex-direction: row;
                 `}
               >
-                <Button
-                  size="md"
-                  onClick={submit}
-                  Loader={(props: any) => <CustomLoadingButton text="Yes, Close" {...props} />}
-                  isLoading={isSubmitting}
-                >
-                  Yes, Close
-                </Button>
+                {isConfirmingClose ? (
+                  <Button
+                    disabled={confirmationId !== appId}
+                    size="md"
+                    onClick={submit}
+                    isLoading={isSubmitting}
+                    Loader={(props: any) => <CustomLoadingButton text="Confirm" {...props} />}
+                  >
+                    Confirm
+                  </Button>
+                ) : (
+                  <Button size="md" onClick={() => setIsConfirmingClose(true)}>
+                    Yes, Close
+                  </Button>
+                )}
 
                 <Button
                   variant="text"
@@ -188,7 +200,11 @@ const HeaderActions = ({
                     margin-left: 10px;
                   `}
                   size="md"
-                  onClick={dismissModal}
+                  onClick={(e) => {
+                    setConfirmationId('');
+                    setIsConfirmingClose(false);
+                    dismissModal();
+                  }}
                 >
                   Cancel
                 </Button>
@@ -216,6 +232,36 @@ const HeaderActions = ({
             <p>
               <b>This action cannot be undone and you will be unable to reopen this application.</b>
             </p>
+            {isConfirmingClose && (
+              <FormControl
+                css={css`
+                  display: flex;
+                  flex-direction: row;
+                  justify-content: space-between;
+                `}
+              >
+                <InputLabel
+                  htmlFor="confirm-app-id"
+                  css={css`
+                    margin-right: 10px;
+                  `}
+                >
+                  Enter the application name ({appId}) to confirm you wish to permanently close it:
+                </InputLabel>
+                <Input
+                  css={css`
+                    width: auto;
+                  `}
+                  aria-label="confirm-app-id"
+                  id="confirm-app-id"
+                  name="confirm-app-id"
+                  value={confirmationId}
+                  onChange={(e) => {
+                    setConfirmationId(e.target.value);
+                  }}
+                />
+              </FormControl>
+            )}
           </Modal>
         </ModalPortal>
       )}
