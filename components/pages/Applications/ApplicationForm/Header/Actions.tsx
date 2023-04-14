@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { ReactElement, useState } from 'react';
+import { ChangeEvent, ReactElement, SyntheticEvent, useState } from 'react';
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
@@ -138,6 +138,18 @@ const HeaderActions = ({
     state,
   );
 
+  const clearCloseModalState = () => {
+    dismissModal();
+    setIsConfirmingClose(false);
+    setConfirmationId('');
+  };
+
+  const onConfirmationIdChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setConfirmationId(e.target.value);
+  };
+  const onConfirmClose = (e: SyntheticEvent<HTMLButtonElement, Event>) =>
+    setIsConfirmingClose(true);
+
   const submit = () => {
     setIsSubmitting(true);
     fetchWithAuth({
@@ -155,9 +167,7 @@ const HeaderActions = ({
         console.error('Failed to submit.', err);
       })
       .finally(() => {
-        dismissModal();
-        setIsConfirmingClose(false);
-        setConfirmationId('');
+        clearCloseModalState();
         setIsSubmitting(false);
         if (approvedAtUtc) {
           localStorage.setItem(APPROVED_APP_CLOSED_CHECK, 'true');
@@ -170,6 +180,7 @@ const HeaderActions = ({
       {visibleModal === VisibleModalOption.CLOSE_APPLICATION && (
         <ModalPortal>
           <Modal
+            onCloseClick={clearCloseModalState}
             title="Are you sure you want to close this application?"
             FooterEl={() => (
               <div
@@ -189,7 +200,7 @@ const HeaderActions = ({
                     Confirm
                   </Button>
                 ) : (
-                  <Button size="md" onClick={() => setIsConfirmingClose(true)}>
+                  <Button size="md" onClick={onConfirmClose}>
                     Yes, Close
                   </Button>
                 )}
@@ -200,11 +211,7 @@ const HeaderActions = ({
                     margin-left: 10px;
                   `}
                   size="md"
-                  onClick={(e) => {
-                    setConfirmationId('');
-                    setIsConfirmingClose(false);
-                    dismissModal();
-                  }}
+                  onClick={clearCloseModalState}
                 >
                   Cancel
                 </Button>
@@ -256,9 +263,7 @@ const HeaderActions = ({
                   id="confirm-app-id"
                   name="confirm-app-id"
                   value={confirmationId}
-                  onChange={(e) => {
-                    setConfirmationId(e.target.value);
-                  }}
+                  onChange={onConfirmationIdChange}
                 />
               </FormControl>
             )}
