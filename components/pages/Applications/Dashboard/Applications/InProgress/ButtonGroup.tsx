@@ -49,11 +49,13 @@ export const RenewButton = ({
   children,
   appId,
   link,
+  index,
   icon = 'reset',
 }: {
   children: ReactNode;
   appId: string;
   link: string;
+  index?: number;
   icon?: UikitIconNames;
 }): JSX.Element => {
   const { fetchWithAuth } = useAuthContext();
@@ -62,6 +64,9 @@ export const RenewButton = ({
     <Button
       className="action-btns"
       size="sm"
+      css={css`
+        margin-left: ${index ? '8px !important;' : 0};
+      `}
       onClick={async () => {
         await fetchWithAuth({
           url: link,
@@ -243,7 +248,7 @@ const ButtonGroup = ({
       ({ content, link, icon, CustomButton }, index) => (
         <Fragment key={link}>
           {CustomButton ? (
-            <CustomButton appId={appId} link={link} icon={icon}>
+            <CustomButton appId={appId} link={link} icon={icon} index={index}>
               {content}
             </CustomButton>
           ) : (
