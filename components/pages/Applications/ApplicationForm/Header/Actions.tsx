@@ -312,6 +312,7 @@ const HeaderActions = ({
                 ApplicationState.REJECTED,
                 ApplicationState.CLOSED,
                 ApplicationState.EXPIRED,
+                ApplicationState.PAUSED,
               ].includes(state);
               const downloadUrl = urlJoin(
                 API.APPLICATIONS,
