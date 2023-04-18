@@ -49,13 +49,12 @@ export const RenewButton = ({
   children,
   appId,
   link,
-  index,
+
   icon = 'reset',
 }: {
   children: ReactNode;
   appId: string;
   link: string;
-  index?: number;
   icon?: UikitIconNames;
 }): JSX.Element => {
   const { fetchWithAuth } = useAuthContext();
@@ -65,7 +64,9 @@ export const RenewButton = ({
       className="action-btns"
       size="sm"
       css={css`
-        margin-left: ${index ? '8px !important;' : 0};
+        &:not(:first-of-type) {
+          margin-left: 8px;
+        }
       `}
       onClick={async () => {
         await fetchWithAuth({
@@ -245,10 +246,10 @@ const ButtonGroup = ({
     `}
   >
     {getButtonConfig(appId, state, requiresAttestation, ableToRenew).map(
-      ({ content, link, icon, CustomButton }, index) => (
+      ({ content, link, icon, CustomButton }) => (
         <Fragment key={link}>
           {CustomButton ? (
-            <CustomButton appId={appId} link={link} icon={icon} index={index}>
+            <CustomButton appId={appId} link={link} icon={icon}>
               {content}
             </CustomButton>
           ) : (
@@ -257,7 +258,9 @@ const ButtonGroup = ({
               size="sm"
               onClick={() => router.push(link)}
               css={css`
-                margin-left: ${index ? '8px !important;' : 0};
+                &:not(:first-of-type) {
+                  margin-left: 8px;
+                }
               `}
             >
               <span
