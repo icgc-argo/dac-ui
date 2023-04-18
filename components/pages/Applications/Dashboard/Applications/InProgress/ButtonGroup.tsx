@@ -49,6 +49,7 @@ export const RenewButton = ({
   children,
   appId,
   link,
+
   icon = 'reset',
 }: {
   children: ReactNode;
@@ -62,6 +63,11 @@ export const RenewButton = ({
     <Button
       className="action-btns"
       size="sm"
+      css={css`
+        &:not(:first-of-type) {
+          margin-left: 8px;
+        }
+      `}
       onClick={async () => {
         await fetchWithAuth({
           url: link,
@@ -240,7 +246,7 @@ const ButtonGroup = ({
     `}
   >
     {getButtonConfig(appId, state, requiresAttestation, ableToRenew).map(
-      ({ content, link, icon, CustomButton }, index) => (
+      ({ content, link, icon, CustomButton }) => (
         <Fragment key={link}>
           {CustomButton ? (
             <CustomButton appId={appId} link={link} icon={icon}>
@@ -252,7 +258,9 @@ const ButtonGroup = ({
               size="sm"
               onClick={() => router.push(link)}
               css={css`
-                margin-left: ${index ? '8px !important;' : 0};
+                &:not(:first-of-type) {
+                  margin-left: 8px;
+                }
               `}
             >
               <span
