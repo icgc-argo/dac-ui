@@ -99,6 +99,7 @@ const HeaderActions = ({
   approvedAtUtc,
   currentApprovedDoc,
   ableToRenew,
+  isAdmin,
 }: {
   appId: string;
   primaryAffiliation: string;
@@ -107,6 +108,7 @@ const HeaderActions = ({
   approvedAtUtc: string;
   currentApprovedDoc: ApprovedDoc | undefined;
   ableToRenew: boolean;
+  isAdmin: boolean;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();
   const { fetchWithAuth } = useAuthContext();
@@ -280,7 +282,7 @@ const HeaderActions = ({
           min-width: 300px;
         `}
       >
-        {ableToRenew && (
+        {ableToRenew && !isAdmin && (
           <RenewButton appId={appId} link={urlJoin(API.APPLICATIONS, appId, RENEWAL_PATH)}>
             Renew
           </RenewButton>
