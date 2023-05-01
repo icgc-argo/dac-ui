@@ -62,7 +62,11 @@ const ApplicationForm = ({ appId = 'none', isAdmin = false }): ReactElement => {
     <Loader />
   ) : data ? (
     <>
-      <ApplicationHeader refetchAllData={formState.__refetchAllData} data={data} />
+      <ApplicationHeader
+        refetchAllData={formState.__refetchAllData}
+        data={data}
+        isAdmin={isAdmin}
+      />
       {isAdmin && <RequestRevisionsBar data={data} setLastUpdated={setLastUpdated} />}
       <ApplicationFormsBase
         appId={appId}
