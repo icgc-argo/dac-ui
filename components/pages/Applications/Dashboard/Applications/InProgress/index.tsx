@@ -45,6 +45,7 @@ export interface StatusDates {
   attestationByUtc: string;
   lastPausedAtUtc?: string;
   expiresAtUtc: string;
+  sourceRenewalPeriodEndDateUtc: string;
 }
 
 const getStatusDate = (application: ApplicationSummary): any => {
@@ -176,12 +177,12 @@ const InProgress = ({ application }: { application: ApplicationSummary }) => {
     isAttestable,
     ableToRenew,
     renewalAppId,
-    expiresAtUtc,
     isRenewal,
+    sourceRenewalPeriodEndDateUtc,
   } = application;
 
   const statusDate = getStatusDate(application);
-  const renewalPeriodEnded = isRenewalPeriodEnded(expiresAtUtc);
+  const renewalPeriodEnded = isRenewalPeriodEnded(sourceRenewalPeriodEndDateUtc);
 
   const statusError =
     isAttestable ||
@@ -205,7 +206,7 @@ const InProgress = ({ application }: { application: ApplicationSummary }) => {
           margin-top: 5px;
         `}
       >
-        <ProgressBar state={state} expiryDate={expiresAtUtc} />
+        <ProgressBar state={state} renewalPeriodEndDate={sourceRenewalPeriodEndDateUtc} />
         <Typography
           variant="data"
           as="div"

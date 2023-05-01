@@ -100,13 +100,13 @@ const progressStates: ProgressStates = {
 
 const ApplicationProgressBar = ({
   state,
-  expiryDate,
+  renewalPeriodEndDate,
 }: {
   state: ApplicationState;
-  expiryDate?: string;
+  renewalPeriodEndDate?: string;
 }) => {
   const progressStatus =
-    state === ApplicationState.EXPIRED && isRenewalPeriodEnded(expiryDate)
+    state === ApplicationState.EXPIRED && isRenewalPeriodEnded(renewalPeriodEndDate)
       ? 'EXPIRED_PERMANENTLY'
       : state;
   const progressItems = state ? progressStates[progressStatus] : defaultProgressItems;

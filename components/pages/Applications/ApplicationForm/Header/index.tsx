@@ -150,7 +150,7 @@ const ApplicationHeader = ({
     isAttestable,
     ableToRenew,
     isRenewal,
-    expiresAtUtc,
+    sourceRenewalPeriodEndDateUtc,
   } = data;
 
   const applicant = `${displayName}${primaryAffiliation ? `. ${primaryAffiliation}` : ''}`;
@@ -197,7 +197,7 @@ const ApplicationHeader = ({
             ) : null}
           </div>
 
-          <Progress state={state} expiryDate={expiresAtUtc} />
+          <Progress state={state} renewalPeriodEndDate={sourceRenewalPeriodEndDateUtc} />
         </div>
 
         <Actions
