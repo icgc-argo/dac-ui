@@ -134,9 +134,11 @@ const HeaderLabel = styled('div')`
 const ApplicationHeader = ({
   data,
   refetchAllData,
+  isAdmin,
 }: {
   data: ApplicationData;
   refetchAllData: RefetchDataFunction;
+  isAdmin: boolean;
 }): ReactElement => {
   const {
     appId,
@@ -208,6 +210,7 @@ const ApplicationHeader = ({
           approvedAtUtc={approvedAtUtc}
           currentApprovedDoc={currentApprovedDoc}
           ableToRenew={ableToRenew}
+          isAdmin={isAdmin}
         />
       </div>
     </PageHeader>

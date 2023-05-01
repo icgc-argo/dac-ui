@@ -91,6 +91,8 @@ const Collaborators = ({
     ApplicationState.REVIEW,
     ApplicationState.REJECTED,
     ApplicationState.CLOSED,
+    ApplicationState.EXPIRED,
+    ApplicationState.PAUSED,
   ].includes(applicationState);
 
   const isApplicationApproved = applicationState === ApplicationState.APPROVED;
