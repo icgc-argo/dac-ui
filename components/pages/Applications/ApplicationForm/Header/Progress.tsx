@@ -23,13 +23,13 @@ import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
 const ApplicationProgress = ({
   state,
-  expiryDate,
+  renewalPeriodEndDate,
 }: {
   state: ApplicationState;
-  expiryDate?: string;
+  renewalPeriodEndDate?: string;
 }): ReactElement => (
   <section>
-    <ProgressBar state={state} expiryDate={expiryDate} />
+    <ProgressBar state={state} renewalPeriodEndDate={renewalPeriodEndDate} />
   </section>
 );
 

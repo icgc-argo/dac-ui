@@ -32,7 +32,6 @@ type AppConfig = {
   NEXT_PUBLIC_DACO_SURVEY_URL: string;
   NEXT_PUBLIC_DACO_EMAIL_ADDRESS: string;
   NEXT_PUBLIC_DACO_ROOT: string;
-  NEXT_PUBLIC_DAYS_POST_EXPIRY: number;
 };
 
 export const getConfig = (): AppConfig => {
@@ -54,6 +53,5 @@ export const getConfig = (): AppConfig => {
     NEXT_PUBLIC_DACO_SURVEY_URL: publicConfig.NEXT_PUBLIC_DACO_SURVEY_URL || '#',
     NEXT_PUBLIC_DACO_EMAIL_ADDRESS: publicConfig.NEXT_PUBLIC_DACO_EMAIL_ADDRESS || '',
     NEXT_PUBLIC_DACO_ROOT: publicConfig.NEXT_PUBLIC_DACO_ROOT || '',
-    NEXT_PUBLIC_DAYS_POST_EXPIRY: Number(publicConfig.NEXT_PUBLIC_DAYS_POST_EXPIRY || 90),
   };
 };

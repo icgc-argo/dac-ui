@@ -53,7 +53,6 @@ import urlJoin from 'url-join';
 import { API, APPLICATIONS_PATH } from 'global/constants';
 import {
   getFormattedDate,
-  getRenewalPeriodEndDate,
   isRenewalPeriodEnded,
   sourceAppIsWithinRenewalPeriod,
 } from 'global/utils/dates/helpers';
@@ -93,9 +92,9 @@ const getRenewalBanners = (appData: ApplicationData, isAdmin: boolean): ReactNod
     renewalPeriodEndDateUtc,
     renewalAppId,
     sourceAppId,
-    expiresAtUtc,
     isRenewal,
     approvedAtUtc,
+    sourceRenewalPeriodEndDateUtc,
   } = appData;
 
   switch (true) {
@@ -116,7 +115,7 @@ const getRenewalBanners = (appData: ApplicationData, isAdmin: boolean): ReactNod
           variant="WARNING"
           interactionType="NONE"
           title={`Submit application renewal by ${getFormattedDate(
-            new Date(renewalPeriodEndDateUtc || getRenewalPeriodEndDate(expiresAtUtc)),
+            new Date(renewalPeriodEndDateUtc || ''),
             DateFormat.DATE_TEXT_FORMAT,
           )} to continue DACO access`}
           content={
@@ -145,11 +144,13 @@ const getRenewalBanners = (appData: ApplicationData, isAdmin: boolean): ReactNod
       );
       break;
 
-    // renewal is APPROVED
+    // renewal is APPROVED and does not have a renewalAppId attached (not yet a source app)
     // OR renewal is in REVIEW state and user is ADMIN
     case isRenewal &&
       !!sourceAppId &&
-      (state === ApplicationState.APPROVED || (state === ApplicationState.REVIEW && isAdmin)):
+      !renewalAppId &&
+      ([ApplicationState.APPROVED, ApplicationState.EXPIRED].includes(state) ||
+        (state === ApplicationState.REVIEW && isAdmin)):
       return (
         <Notification
           variant="INFO"
@@ -160,7 +161,7 @@ const getRenewalBanners = (appData: ApplicationData, isAdmin: boolean): ReactNod
               <Link href={urlJoin(APPLICATIONS_PATH, sourceAppId)}>{sourceAppId}</Link>
             </span>
           }
-          content={''}
+          content={state === ApplicationState.EXPIRED ? 'This application has expired.' : ''}
           css={notificationStyle}
         />
       );
@@ -180,7 +181,7 @@ const getRenewalBanners = (appData: ApplicationData, isAdmin: boolean): ReactNod
         : `${
             state === ApplicationState.EXPIRED ? 'This application has expired. ' : ''
           }Please complete application ${renewalAppId} to extend your access privileges for another two years. This must be completed by ${getFormattedDate(
-            getRenewalPeriodEndDate(expiresAtUtc),
+            sourceRenewalPeriodEndDateUtc,
             DateFormat.DATE_TEXT_FORMAT,
           )}.`;
       return (
@@ -199,7 +200,7 @@ const getRenewalBanners = (appData: ApplicationData, isAdmin: boolean): ReactNod
       );
       break;
 
-    case state === ApplicationState.EXPIRED && isRenewalPeriodEnded(expiresAtUtc):
+    case state === ApplicationState.EXPIRED && isRenewalPeriodEnded(sourceRenewalPeriodEndDateUtc):
       // no banner displayed for admin if the source app does not have a linked renewal
       if (isAdmin && !renewalAppId) {
         return null;

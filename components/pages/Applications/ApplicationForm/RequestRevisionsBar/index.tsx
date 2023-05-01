@@ -51,11 +51,7 @@ const RequestRevisionsBar = ({
 
   const applicationActionsDisabled = state !== ApplicationState.REVIEW;
 
-  const showPdfActions = [
-    ApplicationState.APPROVED,
-    ApplicationState.PAUSED,
-    ApplicationState.EXPIRED,
-  ].includes(state);
+  const showPdfActions = state === ApplicationState.APPROVED;
 
   const currentApprovedDoc = approvedAppDocs.find((doc) => doc.isCurrent);
   // Renewals can only be approved or rejected once the renewal period has ended

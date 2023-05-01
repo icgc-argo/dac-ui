@@ -1,37 +1,27 @@
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ApplicationData } from 'components/pages/Applications/types';
-import { addDays, format, isAfter } from 'date-fns';
+import { format, isAfter } from 'date-fns';
 
-import { getConfig } from 'global/config';
 import { DateFormat } from './types';
 
-// calculate the last day an app can be renewed, expiry + configured days post expiry
-// DACO allows 90 days after expiry to renew
-export const getRenewalPeriodEndDate = (expiryDate: string): string => {
-  const expiry = new Date(expiryDate);
-  const { NEXT_PUBLIC_DAYS_POST_EXPIRY } = getConfig();
-  // TODO: Can the configured days after expiry be retrieved from the BE?
-  return addDays(expiry, NEXT_PUBLIC_DAYS_POST_EXPIRY).toDateString();
-};
-
-export const isRenewalPeriodEnded = (expiryDate?: string): boolean => {
-  if (!expiryDate) {
+export const isRenewalPeriodEnded = (sourceRenewalPeriodEndDateUtc?: string): boolean => {
+  if (!sourceRenewalPeriodEndDateUtc) {
     return false;
   }
   const now = new Date();
-  const endDate = new Date(getRenewalPeriodEndDate(expiryDate));
+  const endDate = new Date(sourceRenewalPeriodEndDateUtc);
   return isAfter(now, endDate);
 };
 
 export const sourceAppIsWithinRenewalPeriod = (appData: ApplicationData): boolean => {
-  const { renewalAppId, state, ableToRenew, expiresAtUtc } = appData;
+  const { renewalAppId, state, ableToRenew, sourceRenewalPeriodEndDateUtc } = appData;
   return (
     ableToRenew ||
     (!!renewalAppId &&
       [ApplicationState.APPROVED, ApplicationState.EXPIRED, ApplicationState.PAUSED].includes(
         state,
       ) &&
-      !isRenewalPeriodEnded(expiresAtUtc))
+      !isRenewalPeriodEnded(sourceRenewalPeriodEndDateUtc))
   );
 };
 

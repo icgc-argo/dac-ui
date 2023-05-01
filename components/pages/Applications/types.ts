@@ -119,6 +119,7 @@ export type ApplicationSummary = {
   sourceAppId?: string;
   renewalPeriodEndDateUtc?: string;
   expiredEventDateUtc?: string;
+  sourceRenewalPeriodEndDateUtc: string;
 };
 
 export type ApplicationDataByField = {
@@ -329,6 +330,7 @@ export interface ApplicationData {
   sourceAppId?: string;
   renewalAppId?: string;
   renewalPeriodEndDateUtc?: string;
+  sourceRenewalPeriodEndDateUtc: string;
 }
 
 export type ApplicationsResponseData = {

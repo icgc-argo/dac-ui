@@ -24,11 +24,7 @@ import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ApplicationSummary } from 'components/pages/Applications/types';
 import { DateFormat } from 'global/utils/dates/types';
 import { StatusDates } from '.';
-import {
-  getFormattedDate,
-  getRenewalPeriodEndDate,
-  isRenewalPeriodEnded,
-} from 'global/utils/dates/helpers';
+import { getFormattedDate, isRenewalPeriodEnded } from 'global/utils/dates/helpers';
 
 export const getStatusText = (application: ApplicationSummary) => {
   const {
@@ -53,6 +49,7 @@ export const getStatusText = (application: ApplicationSummary) => {
       'attestationByUtc',
       'lastPausedAtUtc',
       'expiresAtUtc',
+      'sourceRenewalPeriodEndDateUtc',
     ]),
   };
 
@@ -69,7 +66,7 @@ export const getStatusText = (application: ApplicationSummary) => {
   switch (state) {
     case ApplicationState.APPROVED:
       const approvedAppRenewalEndDate = getFormattedDate(
-        getRenewalPeriodEndDate(dates.expiresAtUtc),
+        dates.sourceRenewalPeriodEndDateUtc,
         DateFormat.DATE_TEXT_FORMAT,
       );
       return isAttestable
@@ -126,12 +123,12 @@ export const getStatusText = (application: ApplicationSummary) => {
       )}. Access for this project team will resume once you submit the annual attestation for this application.`;
     case ApplicationState.EXPIRED:
       const expiredAppRenewalEndDate = getFormattedDate(
-        getRenewalPeriodEndDate(dates.expiresAtUtc),
+        dates.sourceRenewalPeriodEndDateUtc,
         DateFormat.DATE_TEXT_FORMAT,
       );
       return ableToRenew
         ? `Access has expired. To extend your access privileges for another two years, please renew this application by ${expiredAppRenewalEndDate}.`
-        : renewalAppId && !isRenewalPeriodEnded(dates.expiresAtUtc)
+        : renewalAppId && !isRenewalPeriodEnded(dates.sourceRenewalPeriodEndDateUtc)
         ? `An application renewal has been created. Please complete application ${renewalAppId} to extend your access privileges for another two years. This must be completed by ${expiredAppRenewalEndDate}.`
         : 'The renewal period for this application has ended. If you have not completed a renewal application, you will need to start a new application to gain access privileges for another two years.';
     default:
