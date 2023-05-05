@@ -18,9 +18,9 @@
  */
 
 import { isValidElement } from 'react';
+import { pickBy } from 'lodash';
 
 import Loader from 'components/Loader';
-
 import { sectionsData } from './constants';
 import {
   FORM_STATES,
@@ -31,7 +31,6 @@ import {
   FormSectionValidationState_SectionBase,
 } from './types';
 import { TERMS_PLACEHOLDER_FORM_DATA, useLocalValidation } from './validations';
-import { pickBy } from 'lodash';
 import { ApplicationData } from '../../types';
 
 export const enabledSections = (

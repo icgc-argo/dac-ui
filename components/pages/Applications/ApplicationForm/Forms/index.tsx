@@ -17,8 +17,9 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { ReactElement, useCallback, useEffect, useState } from 'react';
+import { ReactElement, ReactNode, useCallback, useEffect, useState } from 'react';
 import router, { useRouter } from 'next/router';
+import { isString } from 'lodash';
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
@@ -44,13 +45,17 @@ import { getConfig } from 'global/config';
 import Link from '@icgc-argo/uikit/Link';
 import ApplicationHistoryModal from './ApplicationHistoryModal';
 import { SetLastUpdated } from '../types';
-import { format } from 'date-fns';
-import { DATE_TEXT_FORMAT } from 'global/constants';
+import { DateFormat } from 'global/utils/dates/types';
 
 import { AxiosError } from 'axios';
 import { useAuthContext } from 'global/hooks';
 import urlJoin from 'url-join';
 import { API, APPLICATIONS_PATH } from 'global/constants';
+import {
+  getFormattedDate,
+  isRenewalPeriodEnded,
+  sourceAppIsWithinRenewalPeriod,
+} from 'global/utils/dates/helpers';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -81,36 +86,201 @@ const getActiveSection = (sectionFromQuery?: FormSectionNames): FormSectionNames
       sectionsOrder[0]) as FormSectionNames);
 };
 
+const getRenewalBanners = (appData: ApplicationData, isAdmin: boolean): ReactNode => {
+  const {
+    state,
+    renewalPeriodEndDateUtc,
+    renewalAppId,
+    sourceAppId,
+    isRenewal,
+    approvedAtUtc,
+    sourceRenewalPeriodEndDateUtc,
+  } = appData;
+
+  switch (true) {
+    /* Renewal application scenarios */
+
+    // renewal period open, state is pre-submission
+    // assumed renewal period is still open if app is in one of these states
+    case !isAdmin &&
+      isRenewal &&
+      !!sourceAppId &&
+      [
+        ApplicationState.DRAFT,
+        ApplicationState.SIGN_AND_SUBMIT,
+        ApplicationState.REVISIONS_REQUESTED,
+      ].includes(state):
+      return (
+        <Notification
+          variant="WARNING"
+          interactionType="NONE"
+          title={`Submit application renewal by ${getFormattedDate(
+            new Date(renewalPeriodEndDateUtc || ''),
+            DateFormat.DATE_TEXT_FORMAT,
+          )} to continue DACO access`}
+          content={
+            <span>
+              Some fields have been pre-populated with data from your previous application,{' '}
+              <Link href={urlJoin(APPLICATIONS_PATH, sourceAppId)}>{sourceAppId}</Link>. Please go
+              through each section carefully, update as needed and re-agree to the data access
+              agreements and appendices before submitting your renewal application.
+            </span>
+          }
+          css={notificationStyle}
+        />
+      );
+      break;
+
+    // renewal period ended, renewal app that was never approved CLOSED by SYSTEM (still linked to source app by sourceAppId)
+    case isRenewal && !!sourceAppId && state === ApplicationState.CLOSED && !approvedAtUtc:
+      return (
+        <Notification
+          variant="INFO"
+          interactionType="NONE"
+          title={`Renewal application has been closed`}
+          content="The due date for this renewal has passed and the application is now closed. If you wish to extend your access privileges for another two years, please start a new application."
+          css={notificationStyle}
+        />
+      );
+      break;
+
+    // renewal is APPROVED and does not have a renewalAppId attached (not yet a source app)
+    // OR renewal is in REVIEW state and user is ADMIN
+    case isRenewal &&
+      !!sourceAppId &&
+      !renewalAppId &&
+      ([ApplicationState.APPROVED, ApplicationState.EXPIRED].includes(state) ||
+        (state === ApplicationState.REVIEW && isAdmin)):
+      return (
+        <Notification
+          variant="INFO"
+          interactionType="NONE"
+          title={
+            <span>
+              This is a renewal application for{' '}
+              <Link href={urlJoin(APPLICATIONS_PATH, sourceAppId)}>{sourceAppId}</Link>
+            </span>
+          }
+          content={state === ApplicationState.EXPIRED ? 'This application has expired.' : ''}
+          css={notificationStyle}
+        />
+      );
+      break;
+
+    /* renewals in other states do not require banners
+      case isRenewal && !!sourceAppId && state === ApplicationState.CLOSED && !sourceAppId (unlinked from source app) - regular UI for closed app
+      case isRenewal && !!sourceAppId && state === ApplicationState.REJECTED - regular UI for rejected app
+    */
+
+    /* Source application scenarios */
+
+    // renewal period open, state approved or expired, renewal created
+    case sourceAppIsWithinRenewalPeriod(appData) && !!renewalAppId:
+      const bannerContent = isAdmin
+        ? ''
+        : `${
+            state === ApplicationState.EXPIRED ? 'This application has expired. ' : ''
+          }Please complete application ${renewalAppId} to extend your access privileges for another two years. This must be completed by ${getFormattedDate(
+            sourceRenewalPeriodEndDateUtc,
+            DateFormat.DATE_TEXT_FORMAT,
+          )}.`;
+      return (
+        <Notification
+          variant="WARNING"
+          interactionType="NONE"
+          title={
+            <span>
+              {'This application has been renewed under the new name: '}
+              <Link href={urlJoin(APPLICATIONS_PATH, renewalAppId)}>{renewalAppId}</Link>
+            </span>
+          }
+          content={bannerContent}
+          css={notificationStyle}
+        />
+      );
+      break;
+
+    case state === ApplicationState.EXPIRED && isRenewalPeriodEnded(sourceRenewalPeriodEndDateUtc):
+      // no banner displayed for admin if the source app does not have a linked renewal
+      if (isAdmin && !renewalAppId) {
+        return null;
+      }
+      if (!!renewalAppId) {
+        // renewal period closed, state expired, renewal created
+        const bannerContent = isAdmin ? (
+          ''
+        ) : (
+          <span>
+            {`The renewal period for this application has ended. A renewal has been created under the new name ${renewalAppId}.`}
+            <br />
+            <br />
+            {`If you have not completed this renewal, you will need to start a new application to gain access privileges for another two years.`}
+          </span>
+        );
+        return (
+          <Notification
+            variant="INFO"
+            interactionType="NONE"
+            title={
+              <span>
+                This application has been renewed under the new name:{' '}
+                <Link href={urlJoin(APPLICATIONS_PATH, renewalAppId)}>{renewalAppId}</Link>
+              </span>
+            }
+            content={bannerContent}
+            css={notificationStyle}
+          />
+        );
+      } else {
+        // renewal period closed, state expired, no renewal created
+        const bannerContent =
+          'The renewal period for this application has ended. If you have not completed a renewal application, you will need to start a new application to gain access privileges for another two years.';
+        return (
+          <Notification
+            variant="INFO"
+            interactionType="NONE"
+            title="This application has expired"
+            content={bannerContent}
+            css={notificationStyle}
+          />
+        );
+      }
+      break;
+
+    default:
+      return null;
+  }
+};
+
 const ApplicationFormsBase = ({
   appId = 'none',
-  applicationState,
+  appData,
   setLastUpdated,
   isLoading,
   formState,
   validateSection,
-  sectionData,
-  isAttestable,
-  attestedAtUtc,
-  attestationByUtc = '',
   isAdmin,
   refetchAllData,
 }: {
   appId: string;
-  applicationState: ApplicationState;
+  appData: ApplicationData;
   setLastUpdated: SetLastUpdated;
   isLoading: boolean;
   formState: FormValidationStateParameters;
   validateSection: FormSectionValidatorFunction_Origin;
-  sectionData: ApplicationData['sections'];
-  isAttestable: boolean;
-  attestedAtUtc?: string;
-  attestationByUtc?: string;
   isAdmin: boolean;
   refetchAllData: any;
 }): ReactElement => {
+  const {
+    sections: sectionData,
+    state: applicationState,
+    isAttestable,
+    attestationByUtc,
+    isRenewal,
+  } = appData;
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
   const [showSuccessfulAttestation, setShowSuccessfulAttestation] = useState(false);
-
+  const { fetchWithAuth } = useAuthContext();
   const { NEXT_PUBLIC_DACO_SURVEY_URL } = getConfig();
 
   const {
@@ -170,8 +340,6 @@ const ApplicationFormsBase = ({
   const sectionsAfter = enabledSections(sectionsOrder.slice(sectionIndex + 1), formState);
   const sectionsBefore = enabledSections(sectionsOrder.slice(0, sectionIndex), formState);
 
-  const requiresAttestation = !attestedAtUtc && isAttestable;
-
   const handleSectionChange = useCallback(
     (section: FormSectionNames) => {
       if (section !== selectedSection) {
@@ -193,8 +361,7 @@ const ApplicationFormsBase = ({
     );
   };
 
-  const { fetchWithAuth } = useAuthContext();
-  const handleSubmitAttestion = () => {
+  const handleSubmitAttestation = () => {
     fetchWithAuth({
       data: {
         isAttesting: true,
@@ -215,7 +382,9 @@ const ApplicationFormsBase = ({
   return (
     <>
       <ContentBody>
-        {requiresAttestation && !isAdmin && (
+        {/* attestation required */}
+        {/* isAttestable being true implies that an attestationByUtc date is present but adding check here to make TS happy in date formatter call below */}
+        {isAttestable && isString(attestationByUtc) && !isAdmin && (
           <Notification
             title={
               <div
@@ -224,9 +393,9 @@ const ApplicationFormsBase = ({
                   margin-left: 10px;
                 `}
               >
-                {`Annual Attestation is required by ${format(
-                  new Date(attestationByUtc),
-                  DATE_TEXT_FORMAT,
+                {`Annual Attestation is required by ${getFormattedDate(
+                  attestationByUtc,
+                  DateFormat.DATE_TEXT_FORMAT,
                 )} or access will be paused`}
               </div>
             }
@@ -270,7 +439,7 @@ const ApplicationFormsBase = ({
                     margin-bottom: 13px;
                   `}
                   size="sm"
-                  onClick={handleSubmitAttestion}
+                  onClick={handleSubmitAttestation}
                 >
                   I ATTEST TO THE ABOVE TERMS
                 </Button>
@@ -282,6 +451,10 @@ const ApplicationFormsBase = ({
           />
         )}
 
+        {/* renewal banners */}
+        {getRenewalBanners(appData, isAdmin)}
+
+        {/* success banners */}
         {showSuccessfulAttestation && (
           <Notification
             title="Your Annual Attestation has been Submitted"
@@ -297,11 +470,10 @@ const ApplicationFormsBase = ({
             css={notificationStyle}
           />
         )}
-
         {JSON.parse(localStorage.getItem(SUBMISSION_SUCCESS_CHECK) || 'false') &&
           [ApplicationState.REVIEW].includes(applicationState) && (
             <Notification
-              title="Your Application has been Submitted"
+              title={`Your ${isRenewal ? 'Renewal' : ''} Application has been Submitted`}
               content="The ICGC DACO has been notified for review and you should hear back within ten business days regarding the status of your application."
               interactionType="CLOSE"
               variant="SUCCESS"
@@ -362,6 +534,7 @@ const ApplicationFormsBase = ({
             css={notificationStyle}
           />
         )}
+
         <ContentBox
           css={css`
             box-sizing: border-box;

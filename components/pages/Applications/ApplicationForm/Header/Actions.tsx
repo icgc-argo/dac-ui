@@ -17,7 +17,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { ReactElement, useState } from 'react';
+import { ChangeEvent, ReactElement, SyntheticEvent, useState } from 'react';
 import { css } from '@icgc-argo/uikit';
 import Button from '@icgc-argo/uikit/Button';
 import Icon from '@icgc-argo/uikit/Icon';
@@ -25,7 +25,7 @@ import { UikitTheme } from '@icgc-argo/uikit/index';
 import { useTheme } from '@icgc-argo/uikit/ThemeProvider';
 import urlJoin from 'url-join';
 import { useAuthContext } from 'global/hooks';
-import { API, APPLICATIONS_PATH, APPROVED_APP_CLOSED_CHECK } from 'global/constants';
+import { API, APPLICATIONS_PATH, APPROVED_APP_CLOSED_CHECK, RENEWAL_PATH } from 'global/constants';
 import { AxiosError } from 'axios';
 import { ApplicationState, ApprovedDoc } from '../../types';
 import { CustomLoadingButton, generatePDFDocument } from '../Forms/common';
@@ -35,6 +35,10 @@ import router from 'next/router';
 import { RefetchDataFunction } from '../Forms/types';
 import Banner from '@icgc-argo/uikit/notifications/Banner';
 import { createDownloadInWindow } from 'global/utils/helpers';
+import { RenewButton } from '../../Dashboard/Applications/InProgress/ButtonGroup';
+import Input from '@icgc-argo/uikit/form/Input';
+import InputLabel from '@icgc-argo/uikit/form/InputLabel';
+import FormControl from '@icgc-argo/uikit/form/FormControl';
 
 enum VisibleModalOption {
   NONE = 'NONE',
@@ -52,7 +56,7 @@ const getPdfButtonText: (
     return `APPROVED ${text}`;
   }
 
-  if (state === ApplicationState.PAUSED || (state === ApplicationState.CLOSED && !!approvedAtUtc)) {
+  if (state === ApplicationState.CLOSED && !!approvedAtUtc) {
     return `SIGNED ${text}`;
   }
 
@@ -71,7 +75,13 @@ const getPdfButtonText: (
   }
 
   if (
-    [ApplicationState.REVIEW, ApplicationState.APPROVED, ApplicationState.REJECTED].includes(state)
+    [
+      ApplicationState.REVIEW,
+      ApplicationState.APPROVED,
+      ApplicationState.REJECTED,
+      ApplicationState.EXPIRED,
+      ApplicationState.PAUSED,
+    ].includes(state)
   ) {
     return `SIGNED ${text}`;
   }
@@ -88,6 +98,8 @@ const HeaderActions = ({
   refetchAllData,
   approvedAtUtc,
   currentApprovedDoc,
+  ableToRenew,
+  isAdmin,
 }: {
   appId: string;
   primaryAffiliation: string;
@@ -95,12 +107,16 @@ const HeaderActions = ({
   refetchAllData: RefetchDataFunction;
   approvedAtUtc: string;
   currentApprovedDoc: ApprovedDoc | undefined;
+  ableToRenew: boolean;
+  isAdmin: boolean;
 }): ReactElement => {
   const theme: UikitTheme = useTheme();
   const { fetchWithAuth } = useAuthContext();
   const [pdfIsLoading, setPdfIsLoading] = useState<boolean>(false);
   const [visibleModal, setVisibleModal] = useState<VisibleModalOption>(VisibleModalOption.NONE);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isConfirmingClose, setIsConfirmingClose] = useState<boolean>(false);
+  const [confirmationId, setConfirmationId] = useState<string>('');
 
   const pdfButtonText = getPdfButtonText(
     state,
@@ -120,7 +136,21 @@ const HeaderActions = ({
 
   const dismissModal = () => setVisibleModal(VisibleModalOption.NONE);
 
-  const isApplicationApproved = state === ApplicationState.APPROVED;
+  const showAccessLossWarning = [ApplicationState.APPROVED, ApplicationState.PAUSED].includes(
+    state,
+  );
+
+  const clearCloseModalState = () => {
+    dismissModal();
+    setIsConfirmingClose(false);
+    setConfirmationId('');
+  };
+
+  const onConfirmationIdChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setConfirmationId(e.target.value);
+  };
+  const onConfirmClose = (e: SyntheticEvent<HTMLButtonElement, Event>) =>
+    setIsConfirmingClose(true);
 
   const submit = () => {
     setIsSubmitting(true);
@@ -139,7 +169,7 @@ const HeaderActions = ({
         console.error('Failed to submit.', err);
       })
       .finally(() => {
-        dismissModal();
+        clearCloseModalState();
         setIsSubmitting(false);
         if (approvedAtUtc) {
           localStorage.setItem(APPROVED_APP_CLOSED_CHECK, 'true');
@@ -152,9 +182,8 @@ const HeaderActions = ({
       {visibleModal === VisibleModalOption.CLOSE_APPLICATION && (
         <ModalPortal>
           <Modal
-            actionButtonText="Yes, close"
+            onCloseClick={clearCloseModalState}
             title="Are you sure you want to close this application?"
-            onCloseClick={dismissModal}
             FooterEl={() => (
               <div
                 css={css`
@@ -162,14 +191,21 @@ const HeaderActions = ({
                   flex-direction: row;
                 `}
               >
-                <Button
-                  size="md"
-                  onClick={submit}
-                  Loader={(props: any) => <CustomLoadingButton text="Yes, Close" {...props} />}
-                  isLoading={isSubmitting}
-                >
-                  Yes, Close
-                </Button>
+                {isConfirmingClose ? (
+                  <Button
+                    disabled={confirmationId !== appId}
+                    size="md"
+                    onClick={submit}
+                    isLoading={isSubmitting}
+                    Loader={(props: any) => <CustomLoadingButton text="Confirm" {...props} />}
+                  >
+                    Confirm
+                  </Button>
+                ) : (
+                  <Button size="md" onClick={onConfirmClose}>
+                    Yes, Close
+                  </Button>
+                )}
 
                 <Button
                   variant="text"
@@ -177,14 +213,14 @@ const HeaderActions = ({
                     margin-left: 10px;
                   `}
                   size="md"
-                  onClick={dismissModal}
+                  onClick={clearCloseModalState}
                 >
                   Cancel
                 </Button>
               </div>
             )}
           >
-            {isApplicationApproved && (
+            {showAccessLossWarning && (
               <Banner
                 content={
                   <>
@@ -205,18 +241,52 @@ const HeaderActions = ({
             <p>
               <b>This action cannot be undone and you will be unable to reopen this application.</b>
             </p>
+            {isConfirmingClose && (
+              <FormControl
+                css={css`
+                  display: flex;
+                  flex-direction: row;
+                  justify-content: space-between;
+                `}
+              >
+                <InputLabel
+                  htmlFor="confirm-app-id"
+                  css={css`
+                    margin-right: 10px;
+                  `}
+                >
+                  Enter the application name ({appId}) to confirm you wish to permanently close it:
+                </InputLabel>
+                <Input
+                  css={css`
+                    width: auto;
+                  `}
+                  aria-label="confirm-app-id"
+                  id="confirm-app-id"
+                  name="confirm-app-id"
+                  value={confirmationId}
+                  onChange={onConfirmationIdChange}
+                />
+              </FormControl>
+            )}
           </Modal>
         </ModalPortal>
       )}
       <section
         css={css`
           display: flex;
-
+          justify-content: flex-end;
           *:not(:last-of-type) {
             margin-right: 5px;
           }
+          min-width: 300px;
         `}
       >
+        {ableToRenew && !isAdmin && (
+          <RenewButton appId={appId} link={urlJoin(API.APPLICATIONS, appId, RENEWAL_PATH)}>
+            Renew
+          </RenewButton>
+        )}
         {closeApplicationVisible && (
           <Button
             onClick={() => setVisibleModal(VisibleModalOption.CLOSE_APPLICATION)}
@@ -243,6 +313,8 @@ const HeaderActions = ({
                 ApplicationState.APPROVED,
                 ApplicationState.REJECTED,
                 ApplicationState.CLOSED,
+                ApplicationState.EXPIRED,
+                ApplicationState.PAUSED,
               ].includes(state);
               const downloadUrl = urlJoin(
                 API.APPLICATIONS,

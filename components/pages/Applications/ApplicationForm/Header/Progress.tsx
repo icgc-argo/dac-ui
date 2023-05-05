@@ -21,9 +21,15 @@ import { ReactElement } from 'react';
 import ProgressBar from 'components/ApplicationProgressBar';
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 
-const ApplicationProgress = ({ state }: { state: ApplicationState }): ReactElement => (
+const ApplicationProgress = ({
+  state,
+  renewalPeriodEndDate,
+}: {
+  state: ApplicationState;
+  renewalPeriodEndDate?: string;
+}): ReactElement => (
   <section>
-    <ProgressBar state={state} />
+    <ProgressBar state={state} renewalPeriodEndDate={renewalPeriodEndDate} />
   </section>
 );
 

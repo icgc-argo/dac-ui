@@ -27,9 +27,11 @@ import { VisibleModalOption } from './types';
 const ApplicationActions = ({
   disabled,
   setVisibleModal,
+  shouldDisableRevisions = false,
 }: {
   disabled: boolean;
   setVisibleModal: (type: VisibleModalOption) => void;
+  shouldDisableRevisions: boolean;
 }) => {
   const theme = useTheme();
   return (
@@ -55,7 +57,7 @@ const ApplicationActions = ({
         </span>
       </Button>
       <Button
-        disabled={disabled}
+        disabled={disabled || shouldDisableRevisions}
         onClick={() => {
           setVisibleModal(VisibleModalOption.REVISIONS);
         }}

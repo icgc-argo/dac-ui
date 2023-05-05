@@ -36,6 +36,7 @@ export type ApplicationRecord = {
   attestationByUtc: string;
   isAttestable: boolean;
   isRenewal: boolean;
+  ableToRenew: boolean;
 };
 
 export enum ApplicationState {
@@ -45,7 +46,6 @@ export enum ApplicationState {
   REVISIONS_REQUESTED = 'REVISIONS REQUESTED',
   REJECTED = 'REJECTED',
   APPROVED = 'APPROVED',
-  RENEWING = 'RENEWING',
   CLOSED = 'CLOSED',
   EXPIRED = 'EXPIRED',
   PAUSED = 'PAUSED',
@@ -114,6 +114,12 @@ export type ApplicationSummary = {
   isAttestable: boolean;
   lastPausedAtUtc?: string;
   isRenewal: boolean;
+  ableToRenew: boolean;
+  renewalAppId?: string;
+  sourceAppId?: string;
+  renewalPeriodEndDateUtc?: string;
+  expiredEventDateUtc?: string;
+  sourceRenewalPeriodEndDateUtc: string;
 };
 
 export type ApplicationDataByField = {
@@ -308,6 +314,7 @@ export interface ApplicationData {
   attestationByUtc?: string;
   lastPausedAtUtc?: string;
   updates: ApplicationUpdate[] | UserViewApplicationUpdate[];
+  expiredEventDateUtc?: string;
   sections: {
     applicant: Individual;
     representative: Representative;
@@ -318,6 +325,12 @@ export interface ApplicationData {
     appendices: Appendices;
     signature: Signature;
   };
+  ableToRenew: boolean;
+  isRenewal: boolean;
+  sourceAppId?: string;
+  renewalAppId?: string;
+  renewalPeriodEndDateUtc?: string;
+  sourceRenewalPeriodEndDateUtc: string;
 }
 
 export type ApplicationsResponseData = {

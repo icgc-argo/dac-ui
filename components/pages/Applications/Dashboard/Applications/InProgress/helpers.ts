@@ -22,11 +22,22 @@ import { format as formatDate } from 'date-fns';
 
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ApplicationSummary } from 'components/pages/Applications/types';
-import { DATE_TEXT_FORMAT } from 'global/constants';
+import { DateFormat } from 'global/utils/dates/types';
 import { StatusDates } from '.';
+import { getFormattedDate, isRenewalPeriodEnded } from 'global/utils/dates/helpers';
 
 export const getStatusText = (application: ApplicationSummary) => {
-  const { lastUpdatedAtUtc, isAttestable, state, revisionsRequested } = application;
+  const {
+    lastUpdatedAtUtc,
+    isAttestable,
+    state,
+    revisionsRequested,
+    ableToRenew,
+    renewalAppId,
+    isRenewal,
+    renewalPeriodEndDateUtc,
+    sourceAppId,
+  } = application;
   const dates: StatusDates = {
     lastUpdatedAtUtc,
     ...pick(application, [
@@ -37,29 +48,61 @@ export const getStatusText = (application: ApplicationSummary) => {
       'attestedAtUtc',
       'attestationByUtc',
       'lastPausedAtUtc',
+      'expiresAtUtc',
+      'sourceRenewalPeriodEndDateUtc',
     ]),
   };
-  const formatStatusDate = (date: string) =>
-    formatDate(new Date(date || dates.lastUpdatedAtUtc), DATE_TEXT_FORMAT);
 
-  const revisionsRequestedText = `Reopened for revisions on ${formatStatusDate(
+  const formatStatusDate = (date: string) =>
+    formatDate(new Date(date || dates.lastUpdatedAtUtc), DateFormat.DATE_TEXT_FORMAT);
+
+  const revisionsRequestedText = `${
+    isRenewal ? 'Renewal reopened' : 'Reopened'
+  } for revisions on ${formatStatusDate(
     dates.lastUpdatedAtUtc,
   )}. Revision details were sent via email.`;
   const createdOnText = `Created on ${formatStatusDate(dates.createdAtUtc)}.`;
 
   switch (state) {
     case ApplicationState.APPROVED:
+      const approvedAppRenewalEndDate = getFormattedDate(
+        dates.sourceRenewalPeriodEndDateUtc,
+        DateFormat.DATE_TEXT_FORMAT,
+      );
       return isAttestable
-        ? `An annual attestation is required for this application. Attestation must be completed by ${formatStatusDate(
+        ? `An annual attestation is required for this application. Access for this project team will be paused on ${getFormattedDate(
             dates.attestationByUtc,
-          )} or access for this project team will be paused.`
+            DateFormat.DATE_TEXT_FORMAT,
+          )} until you submit your attestation.`
+        : ableToRenew
+        ? `Access is expiring soon. To extend your access privileges for another two years, please renew this application by ${approvedAppRenewalEndDate}.`
+        : renewalAppId
+        ? `An application renewal has been created. Please complete application ${renewalAppId} to extend your access privileges for another two years. This must be completed by ${approvedAppRenewalEndDate}.`
         : `Approved on ${formatStatusDate(
             dates.approvedAtUtc,
           )}. You now have access to ICGC Controlled Data.`;
     case ApplicationState.SIGN_AND_SUBMIT:
-      return revisionsRequested ? revisionsRequestedText : createdOnText;
+      return revisionsRequested
+        ? revisionsRequestedText
+        : isRenewal
+        ? `Renewal created on ${formatStatusDate(
+            dates.createdAtUtc,
+          )} from ${sourceAppId}. Please submit this application for review ${
+            renewalPeriodEndDateUtc
+              ? `by ${getFormattedDate(renewalPeriodEndDateUtc, DateFormat.DATE_TEXT_FORMAT)}`
+              : ''
+          } to extend your access for another two years.`
+        : createdOnText;
     case ApplicationState.DRAFT:
-      return createdOnText;
+      return isRenewal
+        ? `Renewal created on ${formatStatusDate(
+            dates.createdAtUtc,
+          )} from ${sourceAppId}. Please submit this application for review ${
+            renewalPeriodEndDateUtc
+              ? `by ${getFormattedDate(renewalPeriodEndDateUtc, DateFormat.DATE_TEXT_FORMAT)}`
+              : ''
+          } to extend your access for another two years.`
+        : createdOnText;
     case ApplicationState.REVIEW:
       return `Submitted on ${formatStatusDate(
         dates.submittedAtUtc,
@@ -74,16 +117,21 @@ export const getStatusText = (application: ApplicationSummary) => {
       return `Closed on ${formatStatusDate(
         dates.closedAtUtc,
       )}. This application cannot be reopened.`;
-    case ApplicationState.RENEWING:
-      return `Closed on ${formatStatusDate(dates.closedAtUtc)}.`;
     case ApplicationState.PAUSED:
       return `Access was paused on ${formatStatusDate(
         dates.lastPausedAtUtc || dates.attestationByUtc,
       )}. Access for this project team will resume once you submit the annual attestation for this application.`;
+    case ApplicationState.EXPIRED:
+      const expiredAppRenewalEndDate = getFormattedDate(
+        dates.sourceRenewalPeriodEndDateUtc,
+        DateFormat.DATE_TEXT_FORMAT,
+      );
+      return ableToRenew
+        ? `Access has expired. To extend your access privileges for another two years, please renew this application by ${expiredAppRenewalEndDate}.`
+        : renewalAppId && !isRenewalPeriodEnded(dates.sourceRenewalPeriodEndDateUtc)
+        ? `An application renewal has been created. Please complete application ${renewalAppId} to extend your access privileges for another two years. This must be completed by ${expiredAppRenewalEndDate}.`
+        : 'The renewal period for this application has ended. If you have not completed a renewal application, you will need to start a new application to gain access privileges for another two years.';
     default:
       return '';
   }
 };
-
-export const getFormattedDate = (date: string | number | Date, format: string) =>
-  date ? formatDate(new Date(date), format) : '';
