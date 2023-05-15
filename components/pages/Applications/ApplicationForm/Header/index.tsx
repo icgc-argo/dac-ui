@@ -18,7 +18,6 @@
  */
 
 import { ReactElement } from 'react';
-import { format } from 'date-fns';
 import styled from '@emotion/styled-base';
 import { css } from '@icgc-argo/uikit';
 import { UikitTheme } from '@icgc-argo/uikit/index';
@@ -180,11 +179,7 @@ const ApplicationHeader = ({
           appId={appId}
           applicant={applicant}
           createdAt={getFormattedDate(createdAtUtc, DateFormat.DATE_TEXT_FORMAT)}
-          // using format() here because DATE_TEXT_FORMAT + ' h:mm aaaa' was not added as a DateFormat enum, may be removed/replaced by TIME_AND_DATE_FORMAT
-          lastUpdated={format(
-            new Date(lastUpdatedAtUtc),
-            DateFormat.DATE_TEXT_FORMAT + ' h:mm aaaa',
-          )}
+          lastUpdated={getFormattedDate(lastUpdatedAtUtc, DateFormat.TIME_DATE_FORMAT)}
           accessInfo={accessInfo}
         />
 

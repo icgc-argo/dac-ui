@@ -18,7 +18,6 @@
  */
 
 import { pick } from 'lodash';
-import { format as formatDate } from 'date-fns';
 
 import { ApplicationState } from 'components/ApplicationProgressBar/types';
 import { ApplicationSummary } from 'components/pages/Applications/types';
@@ -54,7 +53,7 @@ export const getStatusText = (application: ApplicationSummary) => {
   };
 
   const formatStatusDate = (date: string) =>
-    formatDate(new Date(date || dates.lastUpdatedAtUtc), DateFormat.DATE_TEXT_FORMAT);
+    getFormattedDate(date || dates.lastUpdatedAtUtc, DateFormat.DATE_TEXT_FORMAT);
 
   const revisionsRequestedText = `${
     isRenewal ? 'Renewal reopened' : 'Reopened'
