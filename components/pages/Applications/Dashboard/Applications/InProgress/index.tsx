@@ -232,7 +232,7 @@ const InProgress = ({ application }: { application: ApplicationSummary }) => {
           </div>
           <div>
             <b>Last Updated:</b>{' '}
-            {getFormattedDate(lastUpdatedAtUtc, DateFormat.TIME_AND_DATE_FORMAT)}
+            {getFormattedDate(lastUpdatedAtUtc, DateFormat.TIME_AND_DATE_AT_FORMAT)}
           </div>
         </Typography>
 
